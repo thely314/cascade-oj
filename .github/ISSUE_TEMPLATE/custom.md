@@ -1,3 +1,12 @@
+---
+name: Custom issue template
+about: For bug report and feature request
+title: "[bug/feat] title"
+labels: ''
+assignees: ''
+
+---
+
 * **I'm submitting a ...**
 * \[ ] bug report
 * \[ ] feature request
@@ -25,3 +34,4 @@
   * Other info:
 
 * **Other information**
+
