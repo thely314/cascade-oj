@@ -1,1 +1,104 @@
 package biz
+
+import (
+	"context"
+	"errors"
+	"strconv"
+	"time"
+
+	"cascade-oj/app/services/public/internal/conf"
+
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/golang-jwt/jwt/v5"
+)
+
+// user model
+type User struct {
+	id           int64
+	username     string
+	email        string
+	passwordHash string
+	role         string // "competitor", "admin", "creator"
+}
+
+type MyCustomClaims struct {
+	userID int64 `json:"user_id"`
+	jwt.RegisteredClaims
+}
+
+// AuthEntry is a entry of searching user.
+type AuthEntry interface {
+	FindUserByName(context.Context, string) (*User, error)
+}
+
+type JwtConfig struct {
+	secret     string
+	expiration time.Duration
+	issuer     string
+}
+
+// AuthUsecase is a Greeter usecase.
+type AuthUsecase struct {
+	entry   AuthEntry
+	log     *log.Helper
+	jwtConf JwtConfig
+}
+
+func NewAuthUsecase(entry AuthEntry, logger log.Logger, con *conf.Jwt) *AuthUsecase {
+	var exp int32 = 24 // default 24 hours
+	if con.Expiration != 0 {
+		exp = con.Expiration
+	}
+	var issuer string = "cascade-oj"
+	if con.Issuer != "" {
+		issuer = con.Issuer
+	}
+	return &AuthUsecase{
+		entry: entry,
+		log:   log.NewHelper(logger),
+		jwtConf: JwtConfig{
+			secret:     con.Secret,
+			expiration: time.Duration(exp) * time.Hour,
+			issuer:     issuer,
+		},
+	}
+}
+
+func (auc *AuthUsecase) Login(ctx context.Context, username string, password string) (string, error) {
+	user, err := auc.entry.FindUserByName(ctx, username)
+	if err != nil {
+		return "", errors.New("username or password incorrect")
+	}
+	// TODO: verify password implementation needed
+	// if !util.VerifyPassword(password, user.Password) {
+	// 	return "", errors.New("username or password incorrect")
+	// }
+	jwt, err := auc.generateJWT(user)
+	if err != nil {
+		return "", err
+	}
+	return jwt, nil
+}
+
+func (auc *AuthUsecase) generateJWT(user *User) (string, error) {
+	// 设置 JWT 声明
+	registeredClaims := jwt.RegisteredClaims{
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(auc.jwtConf.expiration)),
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		NotBefore: jwt.NewNumericDate(time.Now()),
+		Issuer:    auc.jwtConf.issuer,
+		Subject:   user.username,
+		ID:        strconv.FormatInt(user.id, 10),
+	}
+	claims := MyCustomClaims{
+		userID:           user.id,
+		RegisteredClaims: registeredClaims,
+	}
+	// HS256 签名
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	signedToken, err := token.SignedString([]byte(auc.jwtConf.secret))
+	if err != nil {
+		return "", err
+	}
+	return signedToken, nil
+}

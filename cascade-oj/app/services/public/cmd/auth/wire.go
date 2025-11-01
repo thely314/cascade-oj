@@ -7,9 +7,13 @@ package main
 
 import (
 	"cascade-oj/app/services/public/internal/biz"
-	"log"
+	"cascade-oj/app/services/public/internal/conf"
+	"cascade-oj/app/services/public/internal/data"
+	"cascade-oj/app/services/public/internal/server"
+	"cascade-oj/app/services/public/internal/service"
 
 	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 )
 
