@@ -1,0 +1,83 @@
+/* Dark-theme About page (consistent with Home/NavBar) */
+
+.about-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #202020;
+    color: #cbd5c0;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px 20px;
+    text-align: left;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page-title {
+    color: #16a34a;
+    margin-bottom: 8px;
+    font-size: 2rem;
+}
+
+.lead {
+    color: #9ca3af;
+    margin-bottom: 24px;
+    font-size: 1.05rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #0b0f0b;
+    padding: 22px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(22, 163, 74, 0.06);
+}
+
+.card h3 {
+    color: #16a34a;
+    margin-bottom: 12px;
+    font-size: 1.25rem;
+}
+
+.card p,
+.card li,
+.card ul {
+    color: #cbd5c0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.team-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.team-list li {
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(203, 213, 192, 0.06);
+}
+
+.card a {
+    color: #16a34a;
+    text-decoration: none;
+}
+
+@media (max-width: 640px) {
+    .main-content {
+        padding: 20px 12px;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+}

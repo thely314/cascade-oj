@@ -1,0 +1,84 @@
+.navbar {
+    background-color: #000;
+    /* 顶部栏黑色 */
+    color: #cbd5c0;
+    /* 全局文字：浅灰，便于黑底阅读 */
+    padding: 0 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 60px;
+}
+
+.nav-logo span {
+    color: #16a34a;
+    /* Logo 使用绿色 */
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-item {
+    margin: 0 15px;
+}
+
+.nav-link {
+    color: #cbd5c0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.2s;
+    cursor: default;
+}
+
+.nav-link:hover {
+    background-color: rgba(22, 163, 74, 0.08);
+    /* 轻微绿色悬浮 */
+    color: #e6f7ec;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.login-btn,
+.register-btn {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.login-btn {
+    color: #cbd5c0;
+    border: 1px solid rgba(203, 213, 192, 0.12);
+    background: transparent;
+}
+
+.register-btn {
+    background-color: #16a34a;
+    /* 主绿色按钮 */
+    color: #04130a;
+    /* 深色文字在绿色按钮上更清晰 */
+    border: none;
+}
+
+.login-btn:hover,
+.register-btn:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
