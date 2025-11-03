@@ -8,12 +8,11 @@ VERSION=$(shell git describe --tags --always)
 # 	# changed to use git-bash.exe to run find cli or other cli friendly, caused of every developer has a Git.
 # 	# Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
 # 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
-# 	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find internal -name *.proto")
-# 	API_PROTO_FILES=$(shell $(Git_Bash) -c "find api -name *.proto")
+# 	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find internal -name *.proto -type f -print0 | xargs -0 echo")
 # else
+#	# Unix shell
 # 	# if you use Msys2, Cygwin or unix-like terminal in windows, you can use the below code directly.
-	INTERNAL_PROTO_FILES=$(shell find internal -name *.proto)
-	API_PROTO_FILES=$(shell find api -name *.proto)
+	INTERNAL_PROTO_FILES=$(shell find internal -name *.proto -type f -print0 | xargs -0 echo)
 # endif
 
 .PHONY: init
@@ -29,9 +28,10 @@ init:
 .PHONY: config
 # generate internal proto
 config:
+	echo "Using $(INTERNAL_PROTO_FILES)"
 	protoc --proto_path=./internal \
 	       --proto_path=./third_party \
- 	       --go_out=paths=source_relative:./internal \
+ 	       --go_out=./internal \
 	       $(INTERNAL_PROTO_FILES)
 
 .PHONY: api

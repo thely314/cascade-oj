@@ -523,7 +523,8 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\n" +
 	"expiration\x18\x02 \x01(\x05R\n" +
 	"expiration\x12\x16\n" +
-	"\x06issuer\x18\x03 \x01(\tR\x06issuerB3Z1cascade-oj/app/services/public/internal/conf;confb\x06proto3"
+	"\x06issuer\x18\x03 \x01(\tR\x06issuerB\fZ\n" +
+	"/conf;confb\x06proto3"
 
 var (
 	file_conf_conf_proto_rawDescOnce sync.Once

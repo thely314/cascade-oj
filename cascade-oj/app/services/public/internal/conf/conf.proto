@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "cascade-oj/app/services/public/internal/conf;conf";
+option go_package = "/conf;conf";
 
 import "google/protobuf/duration.proto";
 
