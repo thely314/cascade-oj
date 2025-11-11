@@ -1,7 +1,7 @@
 package server
 
 import (
-	// TODO api
+	pb "cascade-oj/api/cascade/public/auth/v1"
 	"cascade-oj/app/services/public/internal/conf"
 	"cascade-oj/app/services/public/internal/service"
 
@@ -26,6 +26,6 @@ func NewHTTPServer(c *conf.Server, auth *service.AuthService, logger log.Logger)
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	server := http.NewServer(opts...)
-	// TODO api register with auth
+	pb.RegisterAuthServiceHTTPServer(server, auth)
 	return server
 }

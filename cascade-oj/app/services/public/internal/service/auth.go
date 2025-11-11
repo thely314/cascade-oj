@@ -1,29 +1,28 @@
 package service
 
 import (
-	// TODO api
+	pb "cascade-oj/api/cascade/public/auth/v1"
 	"cascade-oj/app/services/public/internal/biz"
+	"context"
 )
 
 type AuthService struct {
-	// TODO api
+	pb.UnimplementedAuthServiceServer
 	auc *biz.AuthUsecase
 }
 
 func NewAuthService(auc *biz.AuthUsecase) *AuthService {
 	return &AuthService{
-		// TODO api
 		auc: auc,
 	}
 }
 
-// TODO api
-// func (as *AuthService) Login((ctx context.Context, req *API_REQ)) (*API_REPLAY, error) {
-// jwtToken, err := as.auc.Login(ctx, req.username, req.password)
-// if err != nil {
-// 	return nil, err
-// }
-// return &API_REPLAY {
-// 	token
-// }, nil
-// }
+func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply, error) {
+	jwtToken, err := as.auc.Login(ctx, req.Username, req.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.LoginReply{
+		Token: jwtToken,
+	}, nil
+}

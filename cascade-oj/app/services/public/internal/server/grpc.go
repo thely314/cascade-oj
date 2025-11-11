@@ -1,7 +1,7 @@
 package server
 
 import (
-	// TODO api
+	pb "cascade-oj/api/cascade/public/auth/v1"
 	"cascade-oj/app/services/public/internal/conf"
 	"cascade-oj/app/services/public/internal/service"
 
@@ -26,6 +26,6 @@ func NewGRPCServer(c *conf.Server, auth *service.AuthService, logger log.Logger)
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	server := grpc.NewServer(opts...)
-	// TODO api register with auth
+	pb.RegisterAuthServiceServer(server, auth)
 	return server
 }

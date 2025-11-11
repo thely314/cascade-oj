@@ -25,10 +25,12 @@ SUBPROJECTS:=$(addprefix $(SERVICESDIR)/,$(SUBDIRS)) $(GATEWAYDIR)
 init:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors@latest
 	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
 	go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
 	go install github.com/google/wire/cmd/wire@latest
+	go install github.com/bufbuild/buf/cmd/buf@v1.59.0
 
 .PHONY: config
 # generate internal proto at sub project internal/conf
@@ -36,6 +38,27 @@ config:
 	for dir in $(SUBPROJECTS); do  \
 		$(MAKE) -C $$dir config; \
 	done
+
+.PHONY: api
+# generate protobuf api go code: make api [module]
+api:
+	@if [ -z "$(word 2,$(MAKECMDGOALS))" ]; then \
+		cd api && \
+		buf generate -o cascade; \
+	else \
+		MODULE=$(word 2,$(MAKECMDGOALS)); \
+		case "$$MODULE" in \
+			auth) \
+				echo "Generating API code for auth module..."; \
+				cd api && buf generate -o cascade cascade/public/auth/v1/auth.proto; \
+				;; \
+			*) \
+				echo "Error: Unknown module '$$MODULE'"; \
+				echo "Available modules: auth"; \
+				exit 1; \
+				;; \
+		esac; \
+	fi
 
 # show help
 help:
@@ -45,6 +68,7 @@ help:
 	@echo 'Targets:'
 	@printf "\033[36m%-20s\033[0m %s\n" "init" "init env";
 	@printf "\033[36m%-20s\033[0m %s\n" "config" "generate internal proto";
+	@printf "\033[36m%-20s\033[0m %s\n" "api [module]" "generate api proto";
 	@echo ''
 	@echo 'Sub projects:'
 	@for dir in $(SUBPROJECTS); do  \
