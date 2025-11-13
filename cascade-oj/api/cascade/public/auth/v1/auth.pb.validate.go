@@ -57,7 +57,7 @@ func (m *LoginRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Username
+	// no validation rules for UsernameOrEmail
 
 	// no validation rules for Password
 
@@ -159,6 +159,10 @@ func (m *LoginReply) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Message
 
 	// no validation rules for Token
 
@@ -464,9 +468,9 @@ func (m *SignupRequest) validate(all bool) error {
 
 	// no validation rules for Username
 
-	// no validation rules for Password
-
 	// no validation rules for Email
+
+	// no validation rules for Password
 
 	if len(errors) > 0 {
 		return SignupRequestMultiError(errors)
@@ -568,7 +572,9 @@ func (m *SignupReply) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Success
+	// no validation rules for Code
+
+	// no validation rules for Message
 
 	if len(errors) > 0 {
 		return SignupReplyMultiError(errors)

@@ -21,7 +21,7 @@ func (entry *AuthEntry) GetContests(ctx context.Context) ([]int64, error) {
 	return []int64{}, nil
 }
 
-func (entry *AuthEntry) FindUserByName(ctx context.Context, username string) (*biz.User, error) {
+func (entry *AuthEntry) FindUserByNameOrEmail(ctx context.Context, usernameOrEmail string) (*biz.User, error) {
 	// TODO
 	// find user from database
 	return nil, nil

@@ -67,11 +67,11 @@ func (ErrorReason) EnumDescriptor() ([]byte, []int) {
 }
 
 type LoginRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	UsernameOrEmail string                 `protobuf:"bytes,1,opt,name=usernameOrEmail,proto3" json:"usernameOrEmail,omitempty"`
+	Password        string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *LoginRequest) Reset() {
@@ -104,9 +104,9 @@ func (*LoginRequest) Descriptor() ([]byte, []int) {
 	return file_public_auth_v1_auth_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *LoginRequest) GetUsername() string {
+func (x *LoginRequest) GetUsernameOrEmail() string {
 	if x != nil {
-		return x.Username
+		return x.UsernameOrEmail
 	}
 	return ""
 }
@@ -120,7 +120,9 @@ func (x *LoginRequest) GetPassword() string {
 
 type LoginReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Token         string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -153,6 +155,20 @@ func (x *LoginReply) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LoginReply.ProtoReflect.Descriptor instead.
 func (*LoginReply) Descriptor() ([]byte, []int) {
 	return file_public_auth_v1_auth_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *LoginReply) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *LoginReply) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
 }
 
 func (x *LoginReply) GetToken() string {
@@ -245,8 +261,8 @@ func (x *LogoutReply) GetSuccess() bool {
 type SignupRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -288,13 +304,6 @@ func (x *SignupRequest) GetUsername() string {
 	return ""
 }
 
-func (x *SignupRequest) GetPassword() string {
-	if x != nil {
-		return x.Password
-	}
-	return ""
-}
-
 func (x *SignupRequest) GetEmail() string {
 	if x != nil {
 		return x.Email
@@ -302,9 +311,17 @@ func (x *SignupRequest) GetEmail() string {
 	return ""
 }
 
+func (x *SignupRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
 type SignupReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -339,33 +356,43 @@ func (*SignupReply) Descriptor() ([]byte, []int) {
 	return file_public_auth_v1_auth_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *SignupReply) GetSuccess() bool {
+func (x *SignupReply) GetCode() int32 {
 	if x != nil {
-		return x.Success
+		return x.Code
 	}
-	return false
+	return 0
+}
+
+func (x *SignupReply) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
 }
 
 var File_public_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_public_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x19public/auth/v1/auth.proto\x12\x1aapi.cascade.public.auth.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x13errors/errors.proto\"F\n" +
-	"\fLoginRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\"\n" +
+	"\x19public/auth/v1/auth.proto\x12\x1aapi.cascade.public.auth.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x13errors/errors.proto\"T\n" +
+	"\fLoginRequest\x12(\n" +
+	"\x0fusernameOrEmail\x18\x01 \x01(\tR\x0fusernameOrEmail\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"P\n" +
 	"\n" +
-	"LoginReply\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"\x0f\n" +
+	"LoginReply\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12\x14\n" +
+	"\x05token\x18\x03 \x01(\tR\x05token\"\x0f\n" +
 	"\rLogoutRequest\"'\n" +
 	"\vLogoutReply\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"]\n" +
 	"\rSignupRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\"'\n" +
-	"\vSignupReply\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess*-\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\";\n" +
+	"\vSignupReply\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage*-\n" +
 	"\vErrorReason\x12\x18\n" +
 	"\x0eNOT_REGISTERED\x10\x00\x1a\x04\xa8E\x91\x03\x1a\x04\xa0E\xf4\x032\xdf\x02\n" +
 	"\vAuthService\x12l\n" +

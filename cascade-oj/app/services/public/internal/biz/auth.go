@@ -28,7 +28,7 @@ type MyCustomClaims struct {
 
 // AuthEntry is a entry of searching user.
 type AuthEntry interface {
-	FindUserByName(context.Context, string) (*User, error)
+	FindUserByNameOrEmail(context.Context, string) (*User, error)
 }
 
 type JwtConfig struct {
@@ -64,14 +64,26 @@ func NewAuthUsecase(entry AuthEntry, logger log.Logger, con *conf.Jwt) *AuthUsec
 	}
 }
 
-func (auc *AuthUsecase) Login(ctx context.Context, username string, password string) (string, error) {
-	user, err := auc.entry.FindUserByName(ctx, username)
+func (auc *AuthUsecase) Signup(ctx context.Context, username string, email string, password string) error {
+	userWithSameName, err := auc.entry.FindUserByNameOrEmail(ctx, username)
+	if err == nil && userWithSameName != nil {
+		return errors.New("username already exists")
+	}
+	userWithSameEmail, err := auc.entry.FindUserByNameOrEmail(ctx, email)
+	if err == nil && userWithSameEmail != nil {
+		return errors.New("email already registered")
+	}
+	return nil
+}
+
+func (auc *AuthUsecase) Login(ctx context.Context, usernameOrEmail string, password string) (string, error) {
+	user, err := auc.entry.FindUserByNameOrEmail(ctx, usernameOrEmail)
 	if err != nil {
-		return "", errors.New("username or password incorrect")
+		return "", errors.New("username/email or password incorrect")
 	}
 	// TODO: verify password implementation needed
 	// if !util.VerifyPassword(password, user.Password) {
-	// 	return "", errors.New("username or password incorrect")
+	// 	return "", errors.New("username/email or password incorrect")
 	// }
 	jwt, err := auc.generateJWT(user)
 	if err != nil {
