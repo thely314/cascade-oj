@@ -49,3 +49,7 @@ dist-ssr
 # Develop tools
 .vscode/
 .idea/
+
+# database
+data/
+/*.sql

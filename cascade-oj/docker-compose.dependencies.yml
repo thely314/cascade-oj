@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.4
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cascade_oj_db
+      MYSQL_USER: cascade_oj
+      MYSQL_PASSWORD: 123456
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./data/mysql_conf:/etc/mysql/mysql.conf.d
+    network_mode: bridge
+    container_name: cascade_oj_mysql
