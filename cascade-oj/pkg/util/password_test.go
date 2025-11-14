@@ -1,11 +1,14 @@
 package util
 
 import (
+	"crypto/md5"
 	"testing"
 )
 
 func TestVerifyPassword(t *testing.T) {
-	stored, err := GenerateHashPassword("password")
+	md5Password := md5.Sum([]byte("password"))
+	md5PasswordStr := string(md5Password[:])
+	stored, err := GenerateHashPassword(md5PasswordStr)
 	if err != nil {
 		t.Fatalf("GenerateHashPassword failed: %v", err)
 	}
@@ -14,9 +17,15 @@ func TestVerifyPassword(t *testing.T) {
 		stored   string
 		expected bool
 	}{
-		{"password", stored,
+		{md5PasswordStr, stored,
 			true},
+		{"password", stored,
+			false},
 		{"wrongpassword", stored,
+			false},
+		{"", stored,
+			false},
+		{md5PasswordStr, "",
 			false},
 	}
 	for _, tt := range tests {
