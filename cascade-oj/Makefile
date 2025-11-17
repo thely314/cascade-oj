@@ -60,6 +60,33 @@ api:
 		esac; \
 	fi
 
+.PHONY: ent-init
+# init ent
+ent-init:
+	go get entgo.io/ent/cmd/ent
+	go mod download entgo.io/ent
+	go get entgo.io/ent/dialect/sql/schema@v0.14.5
+	go get entgo.io/ent/dialect@v0.14.5
+	go get entgo.io/ent/dialect/sql/schema@v0.14.5
+	go get entgo.io/ent/entc/load@v0.14.5
+	go get entgo.io/ent/cmd/internal/base@v0.14.5
+	go get entgo.io/ent/entc/gen@v0.14.5
+	go get entgo.io/ent/cmd/internal/printer@v0.14.5
+	go get entgo.io/ent/cmd/ent@v0.14.5
+	go get github.com/go-sql-driver/mysql@v1.9.3
+	go mod download github.com/go-sql-driver/mysql
+
+.PHONY: ent
+# generate ent code
+ent:
+	go run entgo.io/ent/cmd/ent generate ./ent/schema
+
+.PHONY: db-init
+# initialize database
+# ensure you have started docker-compose service before running this command
+db-init:
+	go run ./tableCreator.go
+
 # show help
 help:
 	@echo 'Usage:'
