@@ -1,8 +1,6 @@
 
 <template>
 	<div class="about-container">
-		<NavBar />
-
 		<main class="main-content">
 			<h1 class="page-title">关于 CasCade</h1>
 			<p class="lead">一个轻量、开源的在线题库与竞赛平台。以下内容为示例，方便你快速替换成项目的实际信息。</p>
@@ -56,8 +54,8 @@
 	</div>
 </template>
 
-<script setup>
-import NavBar from '../../components/NavBar/NavBar.vue'
+<script setup lang="ts">
+// NavBar is provided globally by App.vue
 </script>
 
 <style scoped src="./about.css"></style>
