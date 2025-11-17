@@ -1,0 +1,18 @@
+version: v2
+
+breaking:
+  use:
+    - FILE
+
+lint:
+  use:
+    - DEFAULT
+
+modules:
+  - path: cascade
+    name: buf.build/cascade-oj/backend
+
+deps:
+  - buf.build/googleapis/googleapis
+  - buf.build/kratos/apis
+  - buf.build/envoyproxy/protoc-gen-validate

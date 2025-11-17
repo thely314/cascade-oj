@@ -1,0 +1,61 @@
+syntax = "proto3";
+package api.cascade.public.auth.v1;
+
+option go_package = "cascade-oj/api/cascade/public/auth/v1;v1";
+
+import "google/api/annotations.proto";
+import "errors/errors.proto";
+
+service AuthService {
+    rpc Login(LoginRequest) returns (LoginReply) {
+        option (google.api.http) = {
+            post: "/login"
+            body: "*"
+        };
+    }
+    rpc Logout(LogoutRequest) returns (LogoutReply) {
+        option (google.api.http) = {
+            post: "/logout"
+            body: "*"
+        };
+    }
+    rpc Signup(SignupRequest) returns (SignupReply) {
+        option (google.api.http) = {
+            post: "/signup"
+            body: "*"
+        };
+    }
+}
+
+message LoginRequest {
+    string usernameOrEmail = 1;
+    string password = 2;
+}
+
+message LoginReply {
+    int32  code = 1;
+    string message = 2;
+    string token = 3;
+}
+
+message LogoutRequest {}
+message LogoutReply {
+    bool success = 1;
+}
+
+message SignupRequest {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message SignupReply {
+    int32  code = 1;
+    string message = 2;
+}
+
+enum ErrorReason {
+    option (errors.default_code) = 500;
+
+    NOT_REGISTERED = 0 [(errors.code) = 401];
+}
