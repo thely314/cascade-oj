@@ -9,10 +9,12 @@ VERSION=$(shell git describe --tags --always)
 # 	# Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
 # 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
 # 	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find internal -name *.proto -type f -print0 | xargs -0 echo")
+# 	WIRE_DIR=$(shell $(Git_Bash) -c "find . -name wire.go -type f -exec dirname {} \; | xargs -0 echo")
 # else
 #	# Unix shell
 # 	# if you use Msys2, Cygwin or unix-like terminal in windows, you can use the below code directly.
 	INTERNAL_PROTO_FILES=$(shell find internal -name *.proto -type f -print0 | xargs -0 echo)
+	WIRE_DIR=$(shell find . -name wire.go -type f -exec dirname {} \; | xargs -0 echo)
 # endif
 
 .PHONY: init
@@ -49,6 +51,11 @@ api:
 # build
 build:
 	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+
+.PHONY: wire
+# generate wire code
+wire:
+	cd $(WIRE_DIR) && go run github.com/google/wire/cmd/wire
 
 .PHONY: generate
 # generate
