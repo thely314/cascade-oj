@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"cascade-oj/app/services/public/internal/conf"
+	"cascade-oj/ent/user"
+	"cascade-oj/pkg/util"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang-jwt/jwt/v5"
@@ -14,15 +16,15 @@ import (
 
 // user model
 type User struct {
-	id           int64
-	username     string
-	email        string
-	passwordHash string
-	role         string // "competitor", "admin", "creator"
+	ID           int64
+	Username     string
+	Email        string
+	PasswordHash string
+	Role         user.Role // "competitor", "creator", "admin"
 }
 
 type MyCustomClaims struct {
-	userID int64 `json:"user_id"`
+	UserID int64 `json:"user_id"`
 	jwt.RegisteredClaims
 }
 
@@ -81,10 +83,9 @@ func (auc *AuthUsecase) Login(ctx context.Context, usernameOrEmail string, passw
 	if err != nil {
 		return "", errors.New("username/email or password incorrect")
 	}
-	// TODO: verify password implementation needed
-	// if !util.VerifyPassword(password, user.Password) {
-	// 	return "", errors.New("username/email or password incorrect")
-	// }
+	if !util.VerifyPassword(password, user.PasswordHash) {
+		return "", errors.New("username/email or password incorrect")
+	}
 	jwt, err := auc.generateJWT(user)
 	if err != nil {
 		return "", err
@@ -99,11 +100,11 @@ func (auc *AuthUsecase) generateJWT(user *User) (string, error) {
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
 		Issuer:    auc.jwtConf.issuer,
-		Subject:   user.username,
-		ID:        strconv.FormatInt(user.id, 10),
+		Subject:   user.Username,
+		ID:        strconv.FormatInt(user.ID, 10),
 	}
 	claims := MyCustomClaims{
-		userID:           user.id,
+		UserID:           user.ID,
 		RegisteredClaims: registeredClaims,
 	}
 	// HS256 签名

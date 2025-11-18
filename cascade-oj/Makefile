@@ -35,7 +35,7 @@ init:
 .PHONY: config
 # generate internal proto at sub project internal/conf
 config:
-	for dir in $(SUBPROJECTS); do  \
+	@for dir in $(SUBPROJECTS); do  \
 		$(MAKE) -C $$dir config; \
 	done
 
@@ -86,6 +86,20 @@ ent:
 # ensure you have started docker-compose service before running this command
 db-init:
 	go run ./tableCreator.go
+
+.PHONY: wire
+# generate wire code
+wire:
+	@for dir in $(SUBPROJECTS); do  \
+		$(MAKE) -C $$dir wire; \
+	done
+
+.PHONY: generate
+# generate
+generate:
+	go mod tidy
+	go get github.com/google/wire/cmd/wire@latest
+	go generate ./...
 
 # show help
 help:
