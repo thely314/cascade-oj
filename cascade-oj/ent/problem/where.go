@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.Problem {
+func ID(id int64) predicate.Problem {
 	return predicate.Problem(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.Problem {
+func IDEQ(id int64) predicate.Problem {
 	return predicate.Problem(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.Problem {
+func IDNEQ(id int64) predicate.Problem {
 	return predicate.Problem(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.Problem {
+func IDIn(ids ...int64) predicate.Problem {
 	return predicate.Problem(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.Problem {
+func IDNotIn(ids ...int64) predicate.Problem {
 	return predicate.Problem(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.Problem {
+func IDGT(id int64) predicate.Problem {
 	return predicate.Problem(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.Problem {
+func IDGTE(id int64) predicate.Problem {
 	return predicate.Problem(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.Problem {
+func IDLT(id int64) predicate.Problem {
 	return predicate.Problem(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.Problem {
+func IDLTE(id int64) predicate.Problem {
 	return predicate.Problem(sql.FieldLTE(FieldID, id))
 }
 
 // CreatorID applies equality check predicate on the "creator_id" field. It's identical to CreatorIDEQ.
-func CreatorID(v int) predicate.Problem {
+func CreatorID(v int64) predicate.Problem {
 	return predicate.Problem(sql.FieldEQ(FieldCreatorID, v))
 }
 
@@ -80,22 +80,22 @@ func MemoryLimit(v int) predicate.Problem {
 }
 
 // CreatorIDEQ applies the EQ predicate on the "creator_id" field.
-func CreatorIDEQ(v int) predicate.Problem {
+func CreatorIDEQ(v int64) predicate.Problem {
 	return predicate.Problem(sql.FieldEQ(FieldCreatorID, v))
 }
 
 // CreatorIDNEQ applies the NEQ predicate on the "creator_id" field.
-func CreatorIDNEQ(v int) predicate.Problem {
+func CreatorIDNEQ(v int64) predicate.Problem {
 	return predicate.Problem(sql.FieldNEQ(FieldCreatorID, v))
 }
 
 // CreatorIDIn applies the In predicate on the "creator_id" field.
-func CreatorIDIn(vs ...int) predicate.Problem {
+func CreatorIDIn(vs ...int64) predicate.Problem {
 	return predicate.Problem(sql.FieldIn(FieldCreatorID, vs...))
 }
 
 // CreatorIDNotIn applies the NotIn predicate on the "creator_id" field.
-func CreatorIDNotIn(vs ...int) predicate.Problem {
+func CreatorIDNotIn(vs ...int64) predicate.Problem {
 	return predicate.Problem(sql.FieldNotIn(FieldCreatorID, vs...))
 }
 
@@ -453,7 +453,7 @@ func HasProblemSetProblems() predicate.Problem {
 }
 
 // HasProblemSetProblemsWith applies the HasEdge predicate on the "problem_set_problems" edge with a given conditions (other predicates).
-func HasProblemSetProblemsWith(preds ...predicate.ProblemSetProblem) predicate.Problem {
+func HasProblemSetProblemsWith(preds ...predicate.ProblemSet_Problem) predicate.Problem {
 	return predicate.Problem(func(s *sql.Selector) {
 		step := newProblemSetProblemsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {

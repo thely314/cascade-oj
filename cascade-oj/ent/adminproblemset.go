@@ -17,11 +17,11 @@ import (
 type AdminProblemSet struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// AdminID holds the value of the "admin_id" field.
-	AdminID int `json:"admin_id,omitempty"`
+	AdminID int64 `json:"admin_id,omitempty"`
 	// ProblemSetID holds the value of the "problem_set_id" field.
-	ProblemSetID int `json:"problem_set_id,omitempty"`
+	ProblemSetID int64 `json:"problem_set_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AdminProblemSetQuery when eager-loading is set.
 	Edges        AdminProblemSetEdges `json:"edges"`
@@ -88,18 +88,18 @@ func (_m *AdminProblemSet) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = int64(value.Int64)
 		case adminproblemset.FieldAdminID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field admin_id", values[i])
 			} else if value.Valid {
-				_m.AdminID = int(value.Int64)
+				_m.AdminID = value.Int64
 			}
 		case adminproblemset.FieldProblemSetID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field problem_set_id", values[i])
 			} else if value.Valid {
-				_m.ProblemSetID = int(value.Int64)
+				_m.ProblemSetID = value.Int64
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])

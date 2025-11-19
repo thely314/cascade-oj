@@ -16,7 +16,7 @@ import (
 type SystemLog struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// LogTime holds the value of the "log_time" field.
 	LogTime time.Time `json:"log_time,omitempty"`
 	// LogInfo holds the value of the "log_info" field.
@@ -55,7 +55,7 @@ func (_m *SystemLog) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = int64(value.Int64)
 		case systemlog.FieldLogTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field log_time", values[i])

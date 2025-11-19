@@ -50,15 +50,15 @@ const (
 	AdminProblemSetsColumn = "problem_set_id"
 	// ProblemSetProblemsTable is the table that holds the problem_set_problems relation/edge.
 	ProblemSetProblemsTable = "ProblemSet_Problems"
-	// ProblemSetProblemsInverseTable is the table name for the ProblemSetProblem entity.
-	// It exists in this package in order to avoid circular dependency with the "problemsetproblem" package.
+	// ProblemSetProblemsInverseTable is the table name for the ProblemSet_Problem entity.
+	// It exists in this package in order to avoid circular dependency with the "problemset_problem" package.
 	ProblemSetProblemsInverseTable = "ProblemSet_Problems"
 	// ProblemSetProblemsColumn is the table column denoting the problem_set_problems relation/edge.
 	ProblemSetProblemsColumn = "problem_set_id"
 	// ProblemSetUsersTable is the table that holds the problem_set_users relation/edge.
 	ProblemSetUsersTable = "ProblemSet_Users"
-	// ProblemSetUsersInverseTable is the table name for the ProblemSetUser entity.
-	// It exists in this package in order to avoid circular dependency with the "problemsetuser" package.
+	// ProblemSetUsersInverseTable is the table name for the ProblemSet_User entity.
+	// It exists in this package in order to avoid circular dependency with the "problemset_user" package.
 	ProblemSetUsersInverseTable = "ProblemSet_Users"
 	// ProblemSetUsersColumn is the table column denoting the problem_set_users relation/edge.
 	ProblemSetUsersColumn = "problem_set_id"
@@ -88,7 +88,7 @@ var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(int) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

@@ -85,7 +85,7 @@ ent:
 # initialize database
 # ensure you have started docker-compose service before running this command
 db-init:
-	go run ./tableCreator.go
+	go run ./table_creator.go
 
 .PHONY: wire
 # generate wire code

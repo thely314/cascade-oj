@@ -21,7 +21,7 @@ type AnnouncementCreate struct {
 }
 
 // SetPublisherID sets the "publisher_id" field.
-func (_c *AnnouncementCreate) SetPublisherID(v int) *AnnouncementCreate {
+func (_c *AnnouncementCreate) SetPublisherID(v int64) *AnnouncementCreate {
 	_c.mutation.SetPublisherID(v)
 	return _c
 }
@@ -39,7 +39,7 @@ func (_c *AnnouncementCreate) SetContent(v string) *AnnouncementCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *AnnouncementCreate) SetID(v int) *AnnouncementCreate {
+func (_c *AnnouncementCreate) SetID(v int64) *AnnouncementCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -131,7 +131,7 @@ func (_c *AnnouncementCreate) sqlSave(ctx context.Context) (*Announcement, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -141,7 +141,7 @@ func (_c *AnnouncementCreate) sqlSave(ctx context.Context) (*Announcement, error
 func (_c *AnnouncementCreate) createSpec() (*Announcement, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Announcement{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(announcement.Table, sqlgraph.NewFieldSpec(announcement.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(announcement.Table, sqlgraph.NewFieldSpec(announcement.FieldID, field.TypeInt64))
 	)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
@@ -163,7 +163,7 @@ func (_c *AnnouncementCreate) createSpec() (*Announcement, *sqlgraph.CreateSpec)
 			Columns: []string{announcement.PublisherColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -221,7 +221,7 @@ func (_c *AnnouncementCreateBulk) Save(ctx context.Context) ([]*Announcement, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

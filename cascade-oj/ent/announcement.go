@@ -16,9 +16,9 @@ import (
 type Announcement struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// PublisherID holds the value of the "publisher_id" field.
-	PublisherID int `json:"publisher_id,omitempty"`
+	PublisherID int64 `json:"publisher_id,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
@@ -78,12 +78,12 @@ func (_m *Announcement) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = int64(value.Int64)
 		case announcement.FieldPublisherID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field publisher_id", values[i])
 			} else if value.Valid {
-				_m.PublisherID = int(value.Int64)
+				_m.PublisherID = value.Int64
 			}
 		case announcement.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {

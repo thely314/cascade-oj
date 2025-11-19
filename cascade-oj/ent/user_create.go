@@ -7,7 +7,7 @@ import (
 	"cascade-oj/ent/announcement"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemsetuser"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/user"
 	"context"
 	"errors"
@@ -57,20 +57,20 @@ func (_c *UserCreate) SetNillableRole(v *user.Role) *UserCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *UserCreate) SetID(v int) *UserCreate {
+func (_c *UserCreate) SetID(v int64) *UserCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
 
 // AddProblemIDs adds the "problems" edge to the Problem entity by IDs.
-func (_c *UserCreate) AddProblemIDs(ids ...int) *UserCreate {
+func (_c *UserCreate) AddProblemIDs(ids ...int64) *UserCreate {
 	_c.mutation.AddProblemIDs(ids...)
 	return _c
 }
 
 // AddProblems adds the "problems" edges to the Problem entity.
 func (_c *UserCreate) AddProblems(v ...*Problem) *UserCreate {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -78,14 +78,14 @@ func (_c *UserCreate) AddProblems(v ...*Problem) *UserCreate {
 }
 
 // AddJudgeRecordIDs adds the "judge_records" edge to the JudgeRecord entity by IDs.
-func (_c *UserCreate) AddJudgeRecordIDs(ids ...int) *UserCreate {
+func (_c *UserCreate) AddJudgeRecordIDs(ids ...int64) *UserCreate {
 	_c.mutation.AddJudgeRecordIDs(ids...)
 	return _c
 }
 
 // AddJudgeRecords adds the "judge_records" edges to the JudgeRecord entity.
 func (_c *UserCreate) AddJudgeRecords(v ...*JudgeRecord) *UserCreate {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -93,14 +93,14 @@ func (_c *UserCreate) AddJudgeRecords(v ...*JudgeRecord) *UserCreate {
 }
 
 // AddAnnouncementIDs adds the "announcements" edge to the Announcement entity by IDs.
-func (_c *UserCreate) AddAnnouncementIDs(ids ...int) *UserCreate {
+func (_c *UserCreate) AddAnnouncementIDs(ids ...int64) *UserCreate {
 	_c.mutation.AddAnnouncementIDs(ids...)
 	return _c
 }
 
 // AddAnnouncements adds the "announcements" edges to the Announcement entity.
 func (_c *UserCreate) AddAnnouncements(v ...*Announcement) *UserCreate {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -108,29 +108,29 @@ func (_c *UserCreate) AddAnnouncements(v ...*Announcement) *UserCreate {
 }
 
 // AddAdminProblemSetIDs adds the "admin_problem_sets" edge to the AdminProblemSet entity by IDs.
-func (_c *UserCreate) AddAdminProblemSetIDs(ids ...int) *UserCreate {
+func (_c *UserCreate) AddAdminProblemSetIDs(ids ...int64) *UserCreate {
 	_c.mutation.AddAdminProblemSetIDs(ids...)
 	return _c
 }
 
 // AddAdminProblemSets adds the "admin_problem_sets" edges to the AdminProblemSet entity.
 func (_c *UserCreate) AddAdminProblemSets(v ...*AdminProblemSet) *UserCreate {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
 	return _c.AddAdminProblemSetIDs(ids...)
 }
 
-// AddProblemSetUserIDs adds the "problem_set_users" edge to the ProblemSetUser entity by IDs.
-func (_c *UserCreate) AddProblemSetUserIDs(ids ...int) *UserCreate {
+// AddProblemSetUserIDs adds the "problem_set_users" edge to the ProblemSet_User entity by IDs.
+func (_c *UserCreate) AddProblemSetUserIDs(ids ...int64) *UserCreate {
 	_c.mutation.AddProblemSetUserIDs(ids...)
 	return _c
 }
 
-// AddProblemSetUsers adds the "problem_set_users" edges to the ProblemSetUser entity.
-func (_c *UserCreate) AddProblemSetUsers(v ...*ProblemSetUser) *UserCreate {
-	ids := make([]int, len(v))
+// AddProblemSetUsers adds the "problem_set_users" edges to the ProblemSet_User entity.
+func (_c *UserCreate) AddProblemSetUsers(v ...*ProblemSet_User) *UserCreate {
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -233,7 +233,7 @@ func (_c *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -243,7 +243,7 @@ func (_c *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	var (
 		_node = &User{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64))
 	)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
@@ -273,7 +273,7 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.ProblemsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -289,7 +289,7 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.JudgeRecordsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -305,7 +305,7 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.AnnouncementsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(announcement.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(announcement.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -321,7 +321,7 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.AdminProblemSetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -337,7 +337,7 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.ProblemSetUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetuser.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -395,7 +395,7 @@ func (_c *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

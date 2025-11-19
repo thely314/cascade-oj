@@ -68,24 +68,24 @@ func (f ProblemSetFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProblemSetMutation", m)
 }
 
-// The ProblemSetProblemFunc type is an adapter to allow the use of ordinary
-// function as ProblemSetProblem mutator.
-type ProblemSetProblemFunc func(context.Context, *ent.ProblemSetProblemMutation) (ent.Value, error)
+// The ProblemSet_ProblemFunc type is an adapter to allow the use of ordinary
+// function as ProblemSet_Problem mutator.
+type ProblemSet_ProblemFunc func(context.Context, *ent.ProblemSetProblemMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ProblemSetProblemFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+func (f ProblemSet_ProblemFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 	if mv, ok := m.(*ent.ProblemSetProblemMutation); ok {
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProblemSetProblemMutation", m)
 }
 
-// The ProblemSetUserFunc type is an adapter to allow the use of ordinary
-// function as ProblemSetUser mutator.
-type ProblemSetUserFunc func(context.Context, *ent.ProblemSetUserMutation) (ent.Value, error)
+// The ProblemSet_UserFunc type is an adapter to allow the use of ordinary
+// function as ProblemSet_User mutator.
+type ProblemSet_UserFunc func(context.Context, *ent.ProblemSetUserMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ProblemSetUserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+func (f ProblemSet_UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 	if mv, ok := m.(*ent.ProblemSetUserMutation); ok {
 		return f(ctx, mv)
 	}

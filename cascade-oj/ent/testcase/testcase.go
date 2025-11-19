@@ -51,13 +51,13 @@ func ValidColumn(column string) bool {
 
 var (
 	// ProblemIDValidator is a validator for the "problem_id" field. It is called by the builders before save.
-	ProblemIDValidator func(int) error
+	ProblemIDValidator func(int64) error
 	// InputValidator is a validator for the "input" field. It is called by the builders before save.
 	InputValidator func(string) error
 	// OutputValidator is a validator for the "output" field. It is called by the builders before save.
 	OutputValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(int) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the TestCase queries.

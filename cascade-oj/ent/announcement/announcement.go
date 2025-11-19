@@ -51,13 +51,13 @@ func ValidColumn(column string) bool {
 
 var (
 	// PublisherIDValidator is a validator for the "publisher_id" field. It is called by the builders before save.
-	PublisherIDValidator func(int) error
+	PublisherIDValidator func(int64) error
 	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	TitleValidator func(string) error
 	// ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	ContentValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(int) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the Announcement queries.

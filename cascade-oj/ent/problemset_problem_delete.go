@@ -4,7 +4,7 @@ package ent
 
 import (
 	"cascade-oj/ent/predicate"
-	"cascade-oj/ent/problemsetproblem"
+	"cascade-oj/ent/problemset_problem"
 	"context"
 
 	"entgo.io/ent/dialect/sql"
@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ProblemSetProblemDelete is the builder for deleting a ProblemSetProblem entity.
+// ProblemSetProblemDelete is the builder for deleting a ProblemSet_Problem entity.
 type ProblemSetProblemDelete struct {
 	config
 	hooks    []Hook
@@ -20,7 +20,7 @@ type ProblemSetProblemDelete struct {
 }
 
 // Where appends a list predicates to the ProblemSetProblemDelete builder.
-func (_d *ProblemSetProblemDelete) Where(ps ...predicate.ProblemSetProblem) *ProblemSetProblemDelete {
+func (_d *ProblemSetProblemDelete) Where(ps ...predicate.ProblemSet_Problem) *ProblemSetProblemDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
@@ -40,7 +40,7 @@ func (_d *ProblemSetProblemDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *ProblemSetProblemDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(problemsetproblem.Table, sqlgraph.NewFieldSpec(problemsetproblem.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(problemset_problem.Table, sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,13 +56,13 @@ func (_d *ProblemSetProblemDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// ProblemSetProblemDeleteOne is the builder for deleting a single ProblemSetProblem entity.
+// ProblemSetProblemDeleteOne is the builder for deleting a single ProblemSet_Problem entity.
 type ProblemSetProblemDeleteOne struct {
 	_d *ProblemSetProblemDelete
 }
 
 // Where appends a list predicates to the ProblemSetProblemDelete builder.
-func (_d *ProblemSetProblemDeleteOne) Where(ps ...predicate.ProblemSetProblem) *ProblemSetProblemDeleteOne {
+func (_d *ProblemSetProblemDeleteOne) Where(ps ...predicate.ProblemSet_Problem) *ProblemSetProblemDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
@@ -74,7 +74,7 @@ func (_d *ProblemSetProblemDeleteOne) Exec(ctx context.Context) error {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{problemsetproblem.Label}
+		return &NotFoundError{problemset_problem.Label}
 	default:
 		return nil
 	}

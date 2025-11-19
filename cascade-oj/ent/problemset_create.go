@@ -5,8 +5,8 @@ package ent
 import (
 	"cascade-oj/ent/adminproblemset"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemsetproblem"
-	"cascade-oj/ent/problemsetuser"
+	"cascade-oj/ent/problemset_problem"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/submissionrecord"
 	"context"
 	"errors"
@@ -71,20 +71,20 @@ func (_c *ProblemSetCreate) SetNillableStatus(v *problemset.Status) *ProblemSetC
 }
 
 // SetID sets the "id" field.
-func (_c *ProblemSetCreate) SetID(v int) *ProblemSetCreate {
+func (_c *ProblemSetCreate) SetID(v int64) *ProblemSetCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
 
 // AddSubmissionIDs adds the "submissions" edge to the SubmissionRecord entity by IDs.
-func (_c *ProblemSetCreate) AddSubmissionIDs(ids ...int) *ProblemSetCreate {
+func (_c *ProblemSetCreate) AddSubmissionIDs(ids ...int64) *ProblemSetCreate {
 	_c.mutation.AddSubmissionIDs(ids...)
 	return _c
 }
 
 // AddSubmissions adds the "submissions" edges to the SubmissionRecord entity.
 func (_c *ProblemSetCreate) AddSubmissions(v ...*SubmissionRecord) *ProblemSetCreate {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -92,44 +92,44 @@ func (_c *ProblemSetCreate) AddSubmissions(v ...*SubmissionRecord) *ProblemSetCr
 }
 
 // AddAdminProblemSetIDs adds the "admin_problem_sets" edge to the AdminProblemSet entity by IDs.
-func (_c *ProblemSetCreate) AddAdminProblemSetIDs(ids ...int) *ProblemSetCreate {
+func (_c *ProblemSetCreate) AddAdminProblemSetIDs(ids ...int64) *ProblemSetCreate {
 	_c.mutation.AddAdminProblemSetIDs(ids...)
 	return _c
 }
 
 // AddAdminProblemSets adds the "admin_problem_sets" edges to the AdminProblemSet entity.
 func (_c *ProblemSetCreate) AddAdminProblemSets(v ...*AdminProblemSet) *ProblemSetCreate {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
 	return _c.AddAdminProblemSetIDs(ids...)
 }
 
-// AddProblemSetProblemIDs adds the "problem_set_problems" edge to the ProblemSetProblem entity by IDs.
-func (_c *ProblemSetCreate) AddProblemSetProblemIDs(ids ...int) *ProblemSetCreate {
+// AddProblemSetProblemIDs adds the "problem_set_problems" edge to the ProblemSet_Problem entity by IDs.
+func (_c *ProblemSetCreate) AddProblemSetProblemIDs(ids ...int64) *ProblemSetCreate {
 	_c.mutation.AddProblemSetProblemIDs(ids...)
 	return _c
 }
 
-// AddProblemSetProblems adds the "problem_set_problems" edges to the ProblemSetProblem entity.
-func (_c *ProblemSetCreate) AddProblemSetProblems(v ...*ProblemSetProblem) *ProblemSetCreate {
-	ids := make([]int, len(v))
+// AddProblemSetProblems adds the "problem_set_problems" edges to the ProblemSet_Problem entity.
+func (_c *ProblemSetCreate) AddProblemSetProblems(v ...*ProblemSet_Problem) *ProblemSetCreate {
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
 	return _c.AddProblemSetProblemIDs(ids...)
 }
 
-// AddProblemSetUserIDs adds the "problem_set_users" edge to the ProblemSetUser entity by IDs.
-func (_c *ProblemSetCreate) AddProblemSetUserIDs(ids ...int) *ProblemSetCreate {
+// AddProblemSetUserIDs adds the "problem_set_users" edge to the ProblemSet_User entity by IDs.
+func (_c *ProblemSetCreate) AddProblemSetUserIDs(ids ...int64) *ProblemSetCreate {
 	_c.mutation.AddProblemSetUserIDs(ids...)
 	return _c
 }
 
-// AddProblemSetUsers adds the "problem_set_users" edges to the ProblemSetUser entity.
-func (_c *ProblemSetCreate) AddProblemSetUsers(v ...*ProblemSetUser) *ProblemSetCreate {
-	ids := make([]int, len(v))
+// AddProblemSetUsers adds the "problem_set_users" edges to the ProblemSet_User entity.
+func (_c *ProblemSetCreate) AddProblemSetUsers(v ...*ProblemSet_User) *ProblemSetCreate {
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -222,7 +222,7 @@ func (_c *ProblemSetCreate) sqlSave(ctx context.Context) (*ProblemSet, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -232,7 +232,7 @@ func (_c *ProblemSetCreate) sqlSave(ctx context.Context) (*ProblemSet, error) {
 func (_c *ProblemSetCreate) createSpec() (*ProblemSet, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ProblemSet{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(problemset.Table, sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(problemset.Table, sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64))
 	)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
@@ -266,7 +266,7 @@ func (_c *ProblemSetCreate) createSpec() (*ProblemSet, *sqlgraph.CreateSpec) {
 			Columns: []string{problemset.SubmissionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -282,7 +282,7 @@ func (_c *ProblemSetCreate) createSpec() (*ProblemSet, *sqlgraph.CreateSpec) {
 			Columns: []string{problemset.AdminProblemSetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -298,7 +298,7 @@ func (_c *ProblemSetCreate) createSpec() (*ProblemSet, *sqlgraph.CreateSpec) {
 			Columns: []string{problemset.ProblemSetProblemsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetproblem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -314,7 +314,7 @@ func (_c *ProblemSetCreate) createSpec() (*ProblemSet, *sqlgraph.CreateSpec) {
 			Columns: []string{problemset.ProblemSetUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetuser.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -372,7 +372,7 @@ func (_c *ProblemSetCreateBulk) Save(ctx context.Context) ([]*ProblemSet, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

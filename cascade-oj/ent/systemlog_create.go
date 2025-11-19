@@ -41,7 +41,7 @@ func (_c *SystemLogCreate) SetLogInfo(v string) *SystemLogCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *SystemLogCreate) SetID(v int) *SystemLogCreate {
+func (_c *SystemLogCreate) SetID(v int64) *SystemLogCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -121,7 +121,7 @@ func (_c *SystemLogCreate) sqlSave(ctx context.Context) (*SystemLog, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -131,7 +131,7 @@ func (_c *SystemLogCreate) sqlSave(ctx context.Context) (*SystemLog, error) {
 func (_c *SystemLogCreate) createSpec() (*SystemLog, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SystemLog{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(systemlog.Table, sqlgraph.NewFieldSpec(systemlog.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(systemlog.Table, sqlgraph.NewFieldSpec(systemlog.FieldID, field.TypeInt64))
 	)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
@@ -195,7 +195,7 @@ func (_c *SystemLogCreateBulk) Save(ctx context.Context) ([]*SystemLog, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

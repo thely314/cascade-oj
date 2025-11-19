@@ -5,7 +5,7 @@ package ent
 import (
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemsetproblem"
+	"cascade-oj/ent/problemset_problem"
 	"fmt"
 	"strings"
 
@@ -13,25 +13,25 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ProblemSetProblem is the model entity for the ProblemSetProblem schema.
-type ProblemSetProblem struct {
+// ProblemSet_Problem is the model entity for the ProblemSet_Problem schema.
+type ProblemSet_Problem struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// ProblemSetID holds the value of the "problem_set_id" field.
-	ProblemSetID int `json:"problem_set_id,omitempty"`
+	ProblemSetID int64 `json:"problem_set_id,omitempty"`
 	// ProblemID holds the value of the "problem_id" field.
-	ProblemID int `json:"problem_id,omitempty"`
+	ProblemID int64 `json:"problem_id,omitempty"`
 	// ProblemOrder holds the value of the "problem_order" field.
 	ProblemOrder int `json:"problem_order,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ProblemSetProblemQuery when eager-loading is set.
-	Edges        ProblemSetProblemEdges `json:"edges"`
+	// The values are being populated by the ProblemSet_ProblemQuery when eager-loading is set.
+	Edges        ProblemSet_ProblemEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// ProblemSetProblemEdges holds the relations/edges for other nodes in the graph.
-type ProblemSetProblemEdges struct {
+// ProblemSet_ProblemEdges holds the relations/edges for other nodes in the graph.
+type ProblemSet_ProblemEdges struct {
 	// ProblemSet holds the value of the problem_set edge.
 	ProblemSet *ProblemSet `json:"problem_set,omitempty"`
 	// Problem holds the value of the problem edge.
@@ -43,7 +43,7 @@ type ProblemSetProblemEdges struct {
 
 // ProblemSetOrErr returns the ProblemSet value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ProblemSetProblemEdges) ProblemSetOrErr() (*ProblemSet, error) {
+func (e ProblemSet_ProblemEdges) ProblemSetOrErr() (*ProblemSet, error) {
 	if e.ProblemSet != nil {
 		return e.ProblemSet, nil
 	} else if e.loadedTypes[0] {
@@ -54,7 +54,7 @@ func (e ProblemSetProblemEdges) ProblemSetOrErr() (*ProblemSet, error) {
 
 // ProblemOrErr returns the Problem value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ProblemSetProblemEdges) ProblemOrErr() (*Problem, error) {
+func (e ProblemSet_ProblemEdges) ProblemOrErr() (*Problem, error) {
 	if e.Problem != nil {
 		return e.Problem, nil
 	} else if e.loadedTypes[1] {
@@ -64,11 +64,11 @@ func (e ProblemSetProblemEdges) ProblemOrErr() (*Problem, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*ProblemSetProblem) scanValues(columns []string) ([]any, error) {
+func (*ProblemSet_Problem) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case problemsetproblem.FieldID, problemsetproblem.FieldProblemSetID, problemsetproblem.FieldProblemID, problemsetproblem.FieldProblemOrder:
+		case problemset_problem.FieldID, problemset_problem.FieldProblemSetID, problemset_problem.FieldProblemID, problemset_problem.FieldProblemOrder:
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -78,32 +78,32 @@ func (*ProblemSetProblem) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the ProblemSetProblem fields.
-func (_m *ProblemSetProblem) assignValues(columns []string, values []any) error {
+// to the ProblemSet_Problem fields.
+func (_m *ProblemSet_Problem) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case problemsetproblem.FieldID:
+		case problemset_problem.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
-		case problemsetproblem.FieldProblemSetID:
+			_m.ID = int64(value.Int64)
+		case problemset_problem.FieldProblemSetID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field problem_set_id", values[i])
 			} else if value.Valid {
-				_m.ProblemSetID = int(value.Int64)
+				_m.ProblemSetID = value.Int64
 			}
-		case problemsetproblem.FieldProblemID:
+		case problemset_problem.FieldProblemID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field problem_id", values[i])
 			} else if value.Valid {
-				_m.ProblemID = int(value.Int64)
+				_m.ProblemID = value.Int64
 			}
-		case problemsetproblem.FieldProblemOrder:
+		case problemset_problem.FieldProblemOrder:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field problem_order", values[i])
 			} else if value.Valid {
@@ -116,44 +116,44 @@ func (_m *ProblemSetProblem) assignValues(columns []string, values []any) error 
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the ProblemSetProblem.
+// Value returns the ent.Value that was dynamically selected and assigned to the ProblemSet_Problem.
 // This includes values selected through modifiers, order, etc.
-func (_m *ProblemSetProblem) Value(name string) (ent.Value, error) {
+func (_m *ProblemSet_Problem) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryProblemSet queries the "problem_set" edge of the ProblemSetProblem entity.
-func (_m *ProblemSetProblem) QueryProblemSet() *ProblemSetQuery {
+// QueryProblemSet queries the "problem_set" edge of the ProblemSet_Problem entity.
+func (_m *ProblemSet_Problem) QueryProblemSet() *ProblemSetQuery {
 	return NewProblemSetProblemClient(_m.config).QueryProblemSet(_m)
 }
 
-// QueryProblem queries the "problem" edge of the ProblemSetProblem entity.
-func (_m *ProblemSetProblem) QueryProblem() *ProblemQuery {
+// QueryProblem queries the "problem" edge of the ProblemSet_Problem entity.
+func (_m *ProblemSet_Problem) QueryProblem() *ProblemQuery {
 	return NewProblemSetProblemClient(_m.config).QueryProblem(_m)
 }
 
-// Update returns a builder for updating this ProblemSetProblem.
-// Note that you need to call ProblemSetProblem.Unwrap() before calling this method if this ProblemSetProblem
+// Update returns a builder for updating this ProblemSet_Problem.
+// Note that you need to call ProblemSet_Problem.Unwrap() before calling this method if this ProblemSet_Problem
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *ProblemSetProblem) Update() *ProblemSetProblemUpdateOne {
+func (_m *ProblemSet_Problem) Update() *ProblemSetProblemUpdateOne {
 	return NewProblemSetProblemClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the ProblemSetProblem entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the ProblemSet_Problem entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *ProblemSetProblem) Unwrap() *ProblemSetProblem {
+func (_m *ProblemSet_Problem) Unwrap() *ProblemSet_Problem {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: ProblemSetProblem is not a transactional entity")
+		panic("ent: ProblemSet_Problem is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *ProblemSetProblem) String() string {
+func (_m *ProblemSet_Problem) String() string {
 	var builder strings.Builder
-	builder.WriteString("ProblemSetProblem(")
+	builder.WriteString("ProblemSet_Problem(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("problem_set_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ProblemSetID))
@@ -167,5 +167,5 @@ func (_m *ProblemSetProblem) String() string {
 	return builder.String()
 }
 
-// ProblemSetProblems is a parsable slice of ProblemSetProblem.
-type ProblemSetProblems []*ProblemSetProblem
+// ProblemSet_Problems is a parsable slice of ProblemSet_Problem.
+type ProblemSet_Problems []*ProblemSet_Problem

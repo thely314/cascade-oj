@@ -24,25 +24,25 @@ type SubmissionRecordCreate struct {
 }
 
 // SetJudgeID sets the "judge_id" field.
-func (_c *SubmissionRecordCreate) SetJudgeID(v int) *SubmissionRecordCreate {
+func (_c *SubmissionRecordCreate) SetJudgeID(v int64) *SubmissionRecordCreate {
 	_c.mutation.SetJudgeID(v)
 	return _c
 }
 
 // SetProblemID sets the "problem_id" field.
-func (_c *SubmissionRecordCreate) SetProblemID(v int) *SubmissionRecordCreate {
+func (_c *SubmissionRecordCreate) SetProblemID(v int64) *SubmissionRecordCreate {
 	_c.mutation.SetProblemID(v)
 	return _c
 }
 
 // SetProblemSetID sets the "problem_set_id" field.
-func (_c *SubmissionRecordCreate) SetProblemSetID(v int) *SubmissionRecordCreate {
+func (_c *SubmissionRecordCreate) SetProblemSetID(v int64) *SubmissionRecordCreate {
 	_c.mutation.SetProblemSetID(v)
 	return _c
 }
 
 // SetNillableProblemSetID sets the "problem_set_id" field if the given value is not nil.
-func (_c *SubmissionRecordCreate) SetNillableProblemSetID(v *int) *SubmissionRecordCreate {
+func (_c *SubmissionRecordCreate) SetNillableProblemSetID(v *int64) *SubmissionRecordCreate {
 	if v != nil {
 		_c.SetProblemSetID(*v)
 	}
@@ -84,7 +84,7 @@ func (_c *SubmissionRecordCreate) SetNillableScore(v *int) *SubmissionRecordCrea
 }
 
 // SetID sets the "id" field.
-func (_c *SubmissionRecordCreate) SetID(v int) *SubmissionRecordCreate {
+func (_c *SubmissionRecordCreate) SetID(v int64) *SubmissionRecordCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -208,7 +208,7 @@ func (_c *SubmissionRecordCreate) sqlSave(ctx context.Context) (*SubmissionRecor
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -218,7 +218,7 @@ func (_c *SubmissionRecordCreate) sqlSave(ctx context.Context) (*SubmissionRecor
 func (_c *SubmissionRecordCreate) createSpec() (*SubmissionRecord, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SubmissionRecord{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(submissionrecord.Table, sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(submissionrecord.Table, sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64))
 	)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
@@ -244,7 +244,7 @@ func (_c *SubmissionRecordCreate) createSpec() (*SubmissionRecord, *sqlgraph.Cre
 			Columns: []string{submissionrecord.JudgeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -261,7 +261,7 @@ func (_c *SubmissionRecordCreate) createSpec() (*SubmissionRecord, *sqlgraph.Cre
 			Columns: []string{submissionrecord.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -278,7 +278,7 @@ func (_c *SubmissionRecordCreate) createSpec() (*SubmissionRecord, *sqlgraph.Cre
 			Columns: []string{submissionrecord.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -337,7 +337,7 @@ func (_c *SubmissionRecordCreateBulk) Save(ctx context.Context) ([]*SubmissionRe
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

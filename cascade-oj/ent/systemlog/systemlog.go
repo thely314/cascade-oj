@@ -44,7 +44,7 @@ var (
 	// LogInfoValidator is a validator for the "log_info" field. It is called by the builders before save.
 	LogInfoValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(int) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the SystemLog queries.

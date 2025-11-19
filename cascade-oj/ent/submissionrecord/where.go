@@ -11,62 +11,62 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.SubmissionRecord {
+func ID(id int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.SubmissionRecord {
+func IDEQ(id int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.SubmissionRecord {
+func IDNEQ(id int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.SubmissionRecord {
+func IDIn(ids ...int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.SubmissionRecord {
+func IDNotIn(ids ...int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.SubmissionRecord {
+func IDGT(id int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.SubmissionRecord {
+func IDGTE(id int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.SubmissionRecord {
+func IDLT(id int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.SubmissionRecord {
+func IDLTE(id int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldLTE(FieldID, id))
 }
 
 // JudgeID applies equality check predicate on the "judge_id" field. It's identical to JudgeIDEQ.
-func JudgeID(v int) predicate.SubmissionRecord {
+func JudgeID(v int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldEQ(FieldJudgeID, v))
 }
 
 // ProblemID applies equality check predicate on the "problem_id" field. It's identical to ProblemIDEQ.
-func ProblemID(v int) predicate.SubmissionRecord {
+func ProblemID(v int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldEQ(FieldProblemID, v))
 }
 
 // ProblemSetID applies equality check predicate on the "problem_set_id" field. It's identical to ProblemSetIDEQ.
-func ProblemSetID(v int) predicate.SubmissionRecord {
+func ProblemSetID(v int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldEQ(FieldProblemSetID, v))
 }
 
@@ -81,62 +81,62 @@ func Score(v int) predicate.SubmissionRecord {
 }
 
 // JudgeIDEQ applies the EQ predicate on the "judge_id" field.
-func JudgeIDEQ(v int) predicate.SubmissionRecord {
+func JudgeIDEQ(v int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldEQ(FieldJudgeID, v))
 }
 
 // JudgeIDNEQ applies the NEQ predicate on the "judge_id" field.
-func JudgeIDNEQ(v int) predicate.SubmissionRecord {
+func JudgeIDNEQ(v int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldNEQ(FieldJudgeID, v))
 }
 
 // JudgeIDIn applies the In predicate on the "judge_id" field.
-func JudgeIDIn(vs ...int) predicate.SubmissionRecord {
+func JudgeIDIn(vs ...int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldIn(FieldJudgeID, vs...))
 }
 
 // JudgeIDNotIn applies the NotIn predicate on the "judge_id" field.
-func JudgeIDNotIn(vs ...int) predicate.SubmissionRecord {
+func JudgeIDNotIn(vs ...int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldNotIn(FieldJudgeID, vs...))
 }
 
 // ProblemIDEQ applies the EQ predicate on the "problem_id" field.
-func ProblemIDEQ(v int) predicate.SubmissionRecord {
+func ProblemIDEQ(v int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldEQ(FieldProblemID, v))
 }
 
 // ProblemIDNEQ applies the NEQ predicate on the "problem_id" field.
-func ProblemIDNEQ(v int) predicate.SubmissionRecord {
+func ProblemIDNEQ(v int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldNEQ(FieldProblemID, v))
 }
 
 // ProblemIDIn applies the In predicate on the "problem_id" field.
-func ProblemIDIn(vs ...int) predicate.SubmissionRecord {
+func ProblemIDIn(vs ...int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldIn(FieldProblemID, vs...))
 }
 
 // ProblemIDNotIn applies the NotIn predicate on the "problem_id" field.
-func ProblemIDNotIn(vs ...int) predicate.SubmissionRecord {
+func ProblemIDNotIn(vs ...int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldNotIn(FieldProblemID, vs...))
 }
 
 // ProblemSetIDEQ applies the EQ predicate on the "problem_set_id" field.
-func ProblemSetIDEQ(v int) predicate.SubmissionRecord {
+func ProblemSetIDEQ(v int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldEQ(FieldProblemSetID, v))
 }
 
 // ProblemSetIDNEQ applies the NEQ predicate on the "problem_set_id" field.
-func ProblemSetIDNEQ(v int) predicate.SubmissionRecord {
+func ProblemSetIDNEQ(v int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldNEQ(FieldProblemSetID, v))
 }
 
 // ProblemSetIDIn applies the In predicate on the "problem_set_id" field.
-func ProblemSetIDIn(vs ...int) predicate.SubmissionRecord {
+func ProblemSetIDIn(vs ...int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldIn(FieldProblemSetID, vs...))
 }
 
 // ProblemSetIDNotIn applies the NotIn predicate on the "problem_set_id" field.
-func ProblemSetIDNotIn(vs ...int) predicate.SubmissionRecord {
+func ProblemSetIDNotIn(vs ...int64) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldNotIn(FieldProblemSetID, vs...))
 }
 

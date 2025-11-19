@@ -29,13 +29,13 @@ func (_u *AnnouncementUpdate) Where(ps ...predicate.Announcement) *AnnouncementU
 }
 
 // SetPublisherID sets the "publisher_id" field.
-func (_u *AnnouncementUpdate) SetPublisherID(v int) *AnnouncementUpdate {
+func (_u *AnnouncementUpdate) SetPublisherID(v int64) *AnnouncementUpdate {
 	_u.mutation.SetPublisherID(v)
 	return _u
 }
 
 // SetNillablePublisherID sets the "publisher_id" field if the given value is not nil.
-func (_u *AnnouncementUpdate) SetNillablePublisherID(v *int) *AnnouncementUpdate {
+func (_u *AnnouncementUpdate) SetNillablePublisherID(v *int64) *AnnouncementUpdate {
 	if v != nil {
 		_u.SetPublisherID(*v)
 	}
@@ -140,7 +140,7 @@ func (_u *AnnouncementUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(announcement.Table, announcement.Columns, sqlgraph.NewFieldSpec(announcement.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(announcement.Table, announcement.Columns, sqlgraph.NewFieldSpec(announcement.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -162,7 +162,7 @@ func (_u *AnnouncementUpdate) sqlSave(ctx context.Context) (_node int, err error
 			Columns: []string{announcement.PublisherColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -175,7 +175,7 @@ func (_u *AnnouncementUpdate) sqlSave(ctx context.Context) (_node int, err error
 			Columns: []string{announcement.PublisherColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -204,13 +204,13 @@ type AnnouncementUpdateOne struct {
 }
 
 // SetPublisherID sets the "publisher_id" field.
-func (_u *AnnouncementUpdateOne) SetPublisherID(v int) *AnnouncementUpdateOne {
+func (_u *AnnouncementUpdateOne) SetPublisherID(v int64) *AnnouncementUpdateOne {
 	_u.mutation.SetPublisherID(v)
 	return _u
 }
 
 // SetNillablePublisherID sets the "publisher_id" field if the given value is not nil.
-func (_u *AnnouncementUpdateOne) SetNillablePublisherID(v *int) *AnnouncementUpdateOne {
+func (_u *AnnouncementUpdateOne) SetNillablePublisherID(v *int64) *AnnouncementUpdateOne {
 	if v != nil {
 		_u.SetPublisherID(*v)
 	}
@@ -328,7 +328,7 @@ func (_u *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announceme
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(announcement.Table, announcement.Columns, sqlgraph.NewFieldSpec(announcement.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(announcement.Table, announcement.Columns, sqlgraph.NewFieldSpec(announcement.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Announcement.id" for update`)}
@@ -367,7 +367,7 @@ func (_u *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announceme
 			Columns: []string{announcement.PublisherColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -380,7 +380,7 @@ func (_u *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announceme
 			Columns: []string{announcement.PublisherColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

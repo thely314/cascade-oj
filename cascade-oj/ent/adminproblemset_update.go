@@ -30,13 +30,13 @@ func (_u *AdminProblemSetUpdate) Where(ps ...predicate.AdminProblemSet) *AdminPr
 }
 
 // SetAdminID sets the "admin_id" field.
-func (_u *AdminProblemSetUpdate) SetAdminID(v int) *AdminProblemSetUpdate {
+func (_u *AdminProblemSetUpdate) SetAdminID(v int64) *AdminProblemSetUpdate {
 	_u.mutation.SetAdminID(v)
 	return _u
 }
 
 // SetNillableAdminID sets the "admin_id" field if the given value is not nil.
-func (_u *AdminProblemSetUpdate) SetNillableAdminID(v *int) *AdminProblemSetUpdate {
+func (_u *AdminProblemSetUpdate) SetNillableAdminID(v *int64) *AdminProblemSetUpdate {
 	if v != nil {
 		_u.SetAdminID(*v)
 	}
@@ -44,13 +44,13 @@ func (_u *AdminProblemSetUpdate) SetNillableAdminID(v *int) *AdminProblemSetUpda
 }
 
 // SetProblemSetID sets the "problem_set_id" field.
-func (_u *AdminProblemSetUpdate) SetProblemSetID(v int) *AdminProblemSetUpdate {
+func (_u *AdminProblemSetUpdate) SetProblemSetID(v int64) *AdminProblemSetUpdate {
 	_u.mutation.SetProblemSetID(v)
 	return _u
 }
 
 // SetNillableProblemSetID sets the "problem_set_id" field if the given value is not nil.
-func (_u *AdminProblemSetUpdate) SetNillableProblemSetID(v *int) *AdminProblemSetUpdate {
+func (_u *AdminProblemSetUpdate) SetNillableProblemSetID(v *int64) *AdminProblemSetUpdate {
 	if v != nil {
 		_u.SetProblemSetID(*v)
 	}
@@ -136,7 +136,7 @@ func (_u *AdminProblemSetUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(adminproblemset.Table, adminproblemset.Columns, sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(adminproblemset.Table, adminproblemset.Columns, sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -152,7 +152,7 @@ func (_u *AdminProblemSetUpdate) sqlSave(ctx context.Context) (_node int, err er
 			Columns: []string{adminproblemset.AdminColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -165,7 +165,7 @@ func (_u *AdminProblemSetUpdate) sqlSave(ctx context.Context) (_node int, err er
 			Columns: []string{adminproblemset.AdminColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -181,7 +181,7 @@ func (_u *AdminProblemSetUpdate) sqlSave(ctx context.Context) (_node int, err er
 			Columns: []string{adminproblemset.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -194,7 +194,7 @@ func (_u *AdminProblemSetUpdate) sqlSave(ctx context.Context) (_node int, err er
 			Columns: []string{adminproblemset.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -223,13 +223,13 @@ type AdminProblemSetUpdateOne struct {
 }
 
 // SetAdminID sets the "admin_id" field.
-func (_u *AdminProblemSetUpdateOne) SetAdminID(v int) *AdminProblemSetUpdateOne {
+func (_u *AdminProblemSetUpdateOne) SetAdminID(v int64) *AdminProblemSetUpdateOne {
 	_u.mutation.SetAdminID(v)
 	return _u
 }
 
 // SetNillableAdminID sets the "admin_id" field if the given value is not nil.
-func (_u *AdminProblemSetUpdateOne) SetNillableAdminID(v *int) *AdminProblemSetUpdateOne {
+func (_u *AdminProblemSetUpdateOne) SetNillableAdminID(v *int64) *AdminProblemSetUpdateOne {
 	if v != nil {
 		_u.SetAdminID(*v)
 	}
@@ -237,13 +237,13 @@ func (_u *AdminProblemSetUpdateOne) SetNillableAdminID(v *int) *AdminProblemSetU
 }
 
 // SetProblemSetID sets the "problem_set_id" field.
-func (_u *AdminProblemSetUpdateOne) SetProblemSetID(v int) *AdminProblemSetUpdateOne {
+func (_u *AdminProblemSetUpdateOne) SetProblemSetID(v int64) *AdminProblemSetUpdateOne {
 	_u.mutation.SetProblemSetID(v)
 	return _u
 }
 
 // SetNillableProblemSetID sets the "problem_set_id" field if the given value is not nil.
-func (_u *AdminProblemSetUpdateOne) SetNillableProblemSetID(v *int) *AdminProblemSetUpdateOne {
+func (_u *AdminProblemSetUpdateOne) SetNillableProblemSetID(v *int64) *AdminProblemSetUpdateOne {
 	if v != nil {
 		_u.SetProblemSetID(*v)
 	}
@@ -342,7 +342,7 @@ func (_u *AdminProblemSetUpdateOne) sqlSave(ctx context.Context) (_node *AdminPr
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(adminproblemset.Table, adminproblemset.Columns, sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(adminproblemset.Table, adminproblemset.Columns, sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "AdminProblemSet.id" for update`)}
@@ -375,7 +375,7 @@ func (_u *AdminProblemSetUpdateOne) sqlSave(ctx context.Context) (_node *AdminPr
 			Columns: []string{adminproblemset.AdminColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -388,7 +388,7 @@ func (_u *AdminProblemSetUpdateOne) sqlSave(ctx context.Context) (_node *AdminPr
 			Columns: []string{adminproblemset.AdminColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -404,7 +404,7 @@ func (_u *AdminProblemSetUpdateOne) sqlSave(ctx context.Context) (_node *AdminPr
 			Columns: []string{adminproblemset.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -417,7 +417,7 @@ func (_u *AdminProblemSetUpdateOne) sqlSave(ctx context.Context) (_node *AdminPr
 			Columns: []string{adminproblemset.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

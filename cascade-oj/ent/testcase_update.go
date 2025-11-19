@@ -29,13 +29,13 @@ func (_u *TestCaseUpdate) Where(ps ...predicate.TestCase) *TestCaseUpdate {
 }
 
 // SetProblemID sets the "problem_id" field.
-func (_u *TestCaseUpdate) SetProblemID(v int) *TestCaseUpdate {
+func (_u *TestCaseUpdate) SetProblemID(v int64) *TestCaseUpdate {
 	_u.mutation.SetProblemID(v)
 	return _u
 }
 
 // SetNillableProblemID sets the "problem_id" field if the given value is not nil.
-func (_u *TestCaseUpdate) SetNillableProblemID(v *int) *TestCaseUpdate {
+func (_u *TestCaseUpdate) SetNillableProblemID(v *int64) *TestCaseUpdate {
 	if v != nil {
 		_u.SetProblemID(*v)
 	}
@@ -140,7 +140,7 @@ func (_u *TestCaseUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(testcase.Table, testcase.Columns, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(testcase.Table, testcase.Columns, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -162,7 +162,7 @@ func (_u *TestCaseUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{testcase.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -175,7 +175,7 @@ func (_u *TestCaseUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{testcase.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -204,13 +204,13 @@ type TestCaseUpdateOne struct {
 }
 
 // SetProblemID sets the "problem_id" field.
-func (_u *TestCaseUpdateOne) SetProblemID(v int) *TestCaseUpdateOne {
+func (_u *TestCaseUpdateOne) SetProblemID(v int64) *TestCaseUpdateOne {
 	_u.mutation.SetProblemID(v)
 	return _u
 }
 
 // SetNillableProblemID sets the "problem_id" field if the given value is not nil.
-func (_u *TestCaseUpdateOne) SetNillableProblemID(v *int) *TestCaseUpdateOne {
+func (_u *TestCaseUpdateOne) SetNillableProblemID(v *int64) *TestCaseUpdateOne {
 	if v != nil {
 		_u.SetProblemID(*v)
 	}
@@ -328,7 +328,7 @@ func (_u *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, err 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(testcase.Table, testcase.Columns, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(testcase.Table, testcase.Columns, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TestCase.id" for update`)}
@@ -367,7 +367,7 @@ func (_u *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, err 
 			Columns: []string{testcase.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -380,7 +380,7 @@ func (_u *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, err 
 			Columns: []string{testcase.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

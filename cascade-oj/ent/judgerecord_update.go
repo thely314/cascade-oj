@@ -32,13 +32,13 @@ func (_u *JudgeRecordUpdate) Where(ps ...predicate.JudgeRecord) *JudgeRecordUpda
 }
 
 // SetProblemID sets the "problem_id" field.
-func (_u *JudgeRecordUpdate) SetProblemID(v int) *JudgeRecordUpdate {
+func (_u *JudgeRecordUpdate) SetProblemID(v int64) *JudgeRecordUpdate {
 	_u.mutation.SetProblemID(v)
 	return _u
 }
 
 // SetNillableProblemID sets the "problem_id" field if the given value is not nil.
-func (_u *JudgeRecordUpdate) SetNillableProblemID(v *int) *JudgeRecordUpdate {
+func (_u *JudgeRecordUpdate) SetNillableProblemID(v *int64) *JudgeRecordUpdate {
 	if v != nil {
 		_u.SetProblemID(*v)
 	}
@@ -46,13 +46,13 @@ func (_u *JudgeRecordUpdate) SetNillableProblemID(v *int) *JudgeRecordUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *JudgeRecordUpdate) SetUserID(v int) *JudgeRecordUpdate {
+func (_u *JudgeRecordUpdate) SetUserID(v int64) *JudgeRecordUpdate {
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *JudgeRecordUpdate) SetNillableUserID(v *int) *JudgeRecordUpdate {
+func (_u *JudgeRecordUpdate) SetNillableUserID(v *int64) *JudgeRecordUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -160,14 +160,14 @@ func (_u *JudgeRecordUpdate) SetUser(v *User) *JudgeRecordUpdate {
 }
 
 // AddSubmissionIDs adds the "submissions" edge to the SubmissionRecord entity by IDs.
-func (_u *JudgeRecordUpdate) AddSubmissionIDs(ids ...int) *JudgeRecordUpdate {
+func (_u *JudgeRecordUpdate) AddSubmissionIDs(ids ...int64) *JudgeRecordUpdate {
 	_u.mutation.AddSubmissionIDs(ids...)
 	return _u
 }
 
 // AddSubmissions adds the "submissions" edges to the SubmissionRecord entity.
 func (_u *JudgeRecordUpdate) AddSubmissions(v ...*SubmissionRecord) *JudgeRecordUpdate {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -198,14 +198,14 @@ func (_u *JudgeRecordUpdate) ClearSubmissions() *JudgeRecordUpdate {
 }
 
 // RemoveSubmissionIDs removes the "submissions" edge to SubmissionRecord entities by IDs.
-func (_u *JudgeRecordUpdate) RemoveSubmissionIDs(ids ...int) *JudgeRecordUpdate {
+func (_u *JudgeRecordUpdate) RemoveSubmissionIDs(ids ...int64) *JudgeRecordUpdate {
 	_u.mutation.RemoveSubmissionIDs(ids...)
 	return _u
 }
 
 // RemoveSubmissions removes "submissions" edges to SubmissionRecord entities.
 func (_u *JudgeRecordUpdate) RemoveSubmissions(v ...*SubmissionRecord) *JudgeRecordUpdate {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -284,7 +284,7 @@ func (_u *JudgeRecordUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(judgerecord.Table, judgerecord.Columns, sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(judgerecord.Table, judgerecord.Columns, sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -321,7 +321,7 @@ func (_u *JudgeRecordUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			Columns: []string{judgerecord.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -334,7 +334,7 @@ func (_u *JudgeRecordUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			Columns: []string{judgerecord.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -350,7 +350,7 @@ func (_u *JudgeRecordUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			Columns: []string{judgerecord.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -363,7 +363,7 @@ func (_u *JudgeRecordUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			Columns: []string{judgerecord.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -379,7 +379,7 @@ func (_u *JudgeRecordUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			Columns: []string{judgerecord.SubmissionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -392,7 +392,7 @@ func (_u *JudgeRecordUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			Columns: []string{judgerecord.SubmissionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -408,7 +408,7 @@ func (_u *JudgeRecordUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			Columns: []string{judgerecord.SubmissionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -437,13 +437,13 @@ type JudgeRecordUpdateOne struct {
 }
 
 // SetProblemID sets the "problem_id" field.
-func (_u *JudgeRecordUpdateOne) SetProblemID(v int) *JudgeRecordUpdateOne {
+func (_u *JudgeRecordUpdateOne) SetProblemID(v int64) *JudgeRecordUpdateOne {
 	_u.mutation.SetProblemID(v)
 	return _u
 }
 
 // SetNillableProblemID sets the "problem_id" field if the given value is not nil.
-func (_u *JudgeRecordUpdateOne) SetNillableProblemID(v *int) *JudgeRecordUpdateOne {
+func (_u *JudgeRecordUpdateOne) SetNillableProblemID(v *int64) *JudgeRecordUpdateOne {
 	if v != nil {
 		_u.SetProblemID(*v)
 	}
@@ -451,13 +451,13 @@ func (_u *JudgeRecordUpdateOne) SetNillableProblemID(v *int) *JudgeRecordUpdateO
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *JudgeRecordUpdateOne) SetUserID(v int) *JudgeRecordUpdateOne {
+func (_u *JudgeRecordUpdateOne) SetUserID(v int64) *JudgeRecordUpdateOne {
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *JudgeRecordUpdateOne) SetNillableUserID(v *int) *JudgeRecordUpdateOne {
+func (_u *JudgeRecordUpdateOne) SetNillableUserID(v *int64) *JudgeRecordUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -565,14 +565,14 @@ func (_u *JudgeRecordUpdateOne) SetUser(v *User) *JudgeRecordUpdateOne {
 }
 
 // AddSubmissionIDs adds the "submissions" edge to the SubmissionRecord entity by IDs.
-func (_u *JudgeRecordUpdateOne) AddSubmissionIDs(ids ...int) *JudgeRecordUpdateOne {
+func (_u *JudgeRecordUpdateOne) AddSubmissionIDs(ids ...int64) *JudgeRecordUpdateOne {
 	_u.mutation.AddSubmissionIDs(ids...)
 	return _u
 }
 
 // AddSubmissions adds the "submissions" edges to the SubmissionRecord entity.
 func (_u *JudgeRecordUpdateOne) AddSubmissions(v ...*SubmissionRecord) *JudgeRecordUpdateOne {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -603,14 +603,14 @@ func (_u *JudgeRecordUpdateOne) ClearSubmissions() *JudgeRecordUpdateOne {
 }
 
 // RemoveSubmissionIDs removes the "submissions" edge to SubmissionRecord entities by IDs.
-func (_u *JudgeRecordUpdateOne) RemoveSubmissionIDs(ids ...int) *JudgeRecordUpdateOne {
+func (_u *JudgeRecordUpdateOne) RemoveSubmissionIDs(ids ...int64) *JudgeRecordUpdateOne {
 	_u.mutation.RemoveSubmissionIDs(ids...)
 	return _u
 }
 
 // RemoveSubmissions removes "submissions" edges to SubmissionRecord entities.
 func (_u *JudgeRecordUpdateOne) RemoveSubmissions(v ...*SubmissionRecord) *JudgeRecordUpdateOne {
-	ids := make([]int, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -702,7 +702,7 @@ func (_u *JudgeRecordUpdateOne) sqlSave(ctx context.Context) (_node *JudgeRecord
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(judgerecord.Table, judgerecord.Columns, sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(judgerecord.Table, judgerecord.Columns, sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "JudgeRecord.id" for update`)}
@@ -756,7 +756,7 @@ func (_u *JudgeRecordUpdateOne) sqlSave(ctx context.Context) (_node *JudgeRecord
 			Columns: []string{judgerecord.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -769,7 +769,7 @@ func (_u *JudgeRecordUpdateOne) sqlSave(ctx context.Context) (_node *JudgeRecord
 			Columns: []string{judgerecord.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -785,7 +785,7 @@ func (_u *JudgeRecordUpdateOne) sqlSave(ctx context.Context) (_node *JudgeRecord
 			Columns: []string{judgerecord.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -798,7 +798,7 @@ func (_u *JudgeRecordUpdateOne) sqlSave(ctx context.Context) (_node *JudgeRecord
 			Columns: []string{judgerecord.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -814,7 +814,7 @@ func (_u *JudgeRecordUpdateOne) sqlSave(ctx context.Context) (_node *JudgeRecord
 			Columns: []string{judgerecord.SubmissionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -827,7 +827,7 @@ func (_u *JudgeRecordUpdateOne) sqlSave(ctx context.Context) (_node *JudgeRecord
 			Columns: []string{judgerecord.SubmissionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -843,7 +843,7 @@ func (_u *JudgeRecordUpdateOne) sqlSave(ctx context.Context) (_node *JudgeRecord
 			Columns: []string{judgerecord.SubmissionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
