@@ -17,6 +17,8 @@ kratos version: v2.9
 
 具体操作可使用 `make help` 查看，使用 make 时注意工作目录或显式指定的 Makefile
 
+> 经过测试，很难在 Windows powershell 环境下获取 git-bash 路径并完成传参，所以还是要求开发人员**直接使用 git-bash 等 unix shell 执行 make 操作**
+
 ```bash
 # At cascade-oj/cascade-oj
 make help
