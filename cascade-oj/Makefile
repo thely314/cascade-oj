@@ -5,20 +5,20 @@ SERVICESDIR:=app/services
 SUBDIRS:=public user judge admin
 SUBPROJECTS:=$(addprefix $(SERVICESDIR)/,$(SUBDIRS)) $(GATEWAYDIR)
 
-ifeq ($(GOHOSTOS), windows)
+# ifeq ($(GOHOSTOS), windows)
 # 	# the `find.exe` is different from `find` in bash/shell.
 # 	# to see https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/find.
 # 	# changed to use git-bash.exe to run find cli or other cli friendly, caused of every developer has a Git.
 # 	# Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
-	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
-	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find app -name *.proto -type f -print0 | xargs -0 echo")
-	API_PROTO_FILES=$(shell $(Git_Bash) -c "find api -name *.proto -type f -print0 | xargs -0 echo")
-else
+# 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
+# 	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find app -name *.proto -type f -print0 | xargs -0 echo")
+# 	API_PROTO_FILES=$(shell $(Git_Bash) -c "find api -name *.proto -type f -print0 | xargs -0 echo")
+# else
 # 	# Unix shell
 # 	# if you use Msys2, Cygwin or unix-like terminal in windows, you can use the below code directly.
 	INTERNAL_PROTO_FILES=$(shell find app -name *.proto -type f -print0 | xargs -0 echo)
 	API_PROTO_FILES=$(shell find api -name *.proto -type f -print0 | xargs -0 echo)
-endif
+# endif
 
 .PHONY: init
 # init env
