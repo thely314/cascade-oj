@@ -21,11 +21,11 @@ type Problem func(*sql.Selector)
 // ProblemSet is the predicate function for problemset builders.
 type ProblemSet func(*sql.Selector)
 
-// ProblemSetProblem is the predicate function for problemsetproblem builders.
-type ProblemSetProblem func(*sql.Selector)
+// ProblemSet_Problem is the predicate function for problemset_problem builders.
+type ProblemSet_Problem func(*sql.Selector)
 
-// ProblemSetUser is the predicate function for problemsetuser builders.
-type ProblemSetUser func(*sql.Selector)
+// ProblemSet_User is the predicate function for problemset_user builders.
+type ProblemSet_User func(*sql.Selector)
 
 // SubmissionRecord is the predicate function for submissionrecord builders.
 type SubmissionRecord func(*sql.Selector)

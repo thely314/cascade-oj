@@ -19,13 +19,13 @@ import (
 type SubmissionRecord struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// JudgeID holds the value of the "judge_id" field.
-	JudgeID int `json:"judge_id,omitempty"`
+	JudgeID int64 `json:"judge_id,omitempty"`
 	// ProblemID holds the value of the "problem_id" field.
-	ProblemID int `json:"problem_id,omitempty"`
+	ProblemID int64 `json:"problem_id,omitempty"`
 	// ProblemSetID holds the value of the "problem_set_id" field.
-	ProblemSetID int `json:"problem_set_id,omitempty"`
+	ProblemSetID int64 `json:"problem_set_id,omitempty"`
 	// Result holds the value of the "result" field.
 	Result submissionrecord.Result `json:"result,omitempty"`
 	// SubmissionTime holds the value of the "submission_time" field.
@@ -115,24 +115,24 @@ func (_m *SubmissionRecord) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = int64(value.Int64)
 		case submissionrecord.FieldJudgeID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field judge_id", values[i])
 			} else if value.Valid {
-				_m.JudgeID = int(value.Int64)
+				_m.JudgeID = value.Int64
 			}
 		case submissionrecord.FieldProblemID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field problem_id", values[i])
 			} else if value.Valid {
-				_m.ProblemID = int(value.Int64)
+				_m.ProblemID = value.Int64
 			}
 		case submissionrecord.FieldProblemSetID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field problem_set_id", values[i])
 			} else if value.Valid {
-				_m.ProblemSetID = int(value.Int64)
+				_m.ProblemSetID = value.Int64
 			}
 		case submissionrecord.FieldResult:
 			if value, ok := values[i].(*sql.NullString); !ok {

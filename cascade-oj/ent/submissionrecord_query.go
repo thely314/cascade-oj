@@ -154,8 +154,8 @@ func (_q *SubmissionRecordQuery) FirstX(ctx context.Context) *SubmissionRecord {
 
 // FirstID returns the first SubmissionRecord ID from the query.
 // Returns a *NotFoundError when no SubmissionRecord ID was found.
-func (_q *SubmissionRecordQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (_q *SubmissionRecordQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -167,7 +167,7 @@ func (_q *SubmissionRecordQuery) FirstID(ctx context.Context) (id int, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *SubmissionRecordQuery) FirstIDX(ctx context.Context) int {
+func (_q *SubmissionRecordQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -205,8 +205,8 @@ func (_q *SubmissionRecordQuery) OnlyX(ctx context.Context) *SubmissionRecord {
 // OnlyID is like Only, but returns the only SubmissionRecord ID in the query.
 // Returns a *NotSingularError when more than one SubmissionRecord ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *SubmissionRecordQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (_q *SubmissionRecordQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -222,7 +222,7 @@ func (_q *SubmissionRecordQuery) OnlyID(ctx context.Context) (id int, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *SubmissionRecordQuery) OnlyIDX(ctx context.Context) int {
+func (_q *SubmissionRecordQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -250,7 +250,7 @@ func (_q *SubmissionRecordQuery) AllX(ctx context.Context) []*SubmissionRecord {
 }
 
 // IDs executes the query and returns a list of SubmissionRecord IDs.
-func (_q *SubmissionRecordQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (_q *SubmissionRecordQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -262,7 +262,7 @@ func (_q *SubmissionRecordQuery) IDs(ctx context.Context) (ids []int, err error)
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *SubmissionRecordQuery) IDsX(ctx context.Context) []int {
+func (_q *SubmissionRecordQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -370,7 +370,7 @@ func (_q *SubmissionRecordQuery) WithProblemSet(opts ...func(*ProblemSetQuery)) 
 // Example:
 //
 //	var v []struct {
-//		JudgeID int `json:"judge_id,omitempty"`
+//		JudgeID int64 `json:"judge_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -393,7 +393,7 @@ func (_q *SubmissionRecordQuery) GroupBy(field string, fields ...string) *Submis
 // Example:
 //
 //	var v []struct {
-//		JudgeID int `json:"judge_id,omitempty"`
+//		JudgeID int64 `json:"judge_id,omitempty"`
 //	}
 //
 //	client.SubmissionRecord.Query().
@@ -488,8 +488,8 @@ func (_q *SubmissionRecordQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 }
 
 func (_q *SubmissionRecordQuery) loadJudge(ctx context.Context, query *JudgeRecordQuery, nodes []*SubmissionRecord, init func(*SubmissionRecord), assign func(*SubmissionRecord, *JudgeRecord)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*SubmissionRecord)
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*SubmissionRecord)
 	for i := range nodes {
 		fk := nodes[i].JudgeID
 		if _, ok := nodeids[fk]; !ok {
@@ -517,8 +517,8 @@ func (_q *SubmissionRecordQuery) loadJudge(ctx context.Context, query *JudgeReco
 	return nil
 }
 func (_q *SubmissionRecordQuery) loadProblem(ctx context.Context, query *ProblemQuery, nodes []*SubmissionRecord, init func(*SubmissionRecord), assign func(*SubmissionRecord, *Problem)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*SubmissionRecord)
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*SubmissionRecord)
 	for i := range nodes {
 		fk := nodes[i].ProblemID
 		if _, ok := nodeids[fk]; !ok {
@@ -546,8 +546,8 @@ func (_q *SubmissionRecordQuery) loadProblem(ctx context.Context, query *Problem
 	return nil
 }
 func (_q *SubmissionRecordQuery) loadProblemSet(ctx context.Context, query *ProblemSetQuery, nodes []*SubmissionRecord, init func(*SubmissionRecord), assign func(*SubmissionRecord, *ProblemSet)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*SubmissionRecord)
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*SubmissionRecord)
 	for i := range nodes {
 		fk := nodes[i].ProblemSetID
 		if _, ok := nodeids[fk]; !ok {
@@ -585,7 +585,7 @@ func (_q *SubmissionRecordQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *SubmissionRecordQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(submissionrecord.Table, submissionrecord.Columns, sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(submissionrecord.Table, submissionrecord.Columns, sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

@@ -64,8 +64,8 @@ const (
 	AdminProblemSetsColumn = "admin_id"
 	// ProblemSetUsersTable is the table that holds the problem_set_users relation/edge.
 	ProblemSetUsersTable = "ProblemSet_Users"
-	// ProblemSetUsersInverseTable is the table name for the ProblemSetUser entity.
-	// It exists in this package in order to avoid circular dependency with the "problemsetuser" package.
+	// ProblemSetUsersInverseTable is the table name for the ProblemSet_User entity.
+	// It exists in this package in order to avoid circular dependency with the "problemset_user" package.
 	ProblemSetUsersInverseTable = "ProblemSet_Users"
 	// ProblemSetUsersColumn is the table column denoting the problem_set_users relation/edge.
 	ProblemSetUsersColumn = "user_id"
@@ -98,7 +98,7 @@ var (
 	// PasswordHashValidator is a validator for the "password_hash" field. It is called by the builders before save.
 	PasswordHashValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(int) error
+	IDValidator func(int64) error
 )
 
 // Role defines the type for the "role" enum field.

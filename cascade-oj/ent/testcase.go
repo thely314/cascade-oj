@@ -16,9 +16,9 @@ import (
 type TestCase struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// ProblemID holds the value of the "problem_id" field.
-	ProblemID int `json:"problem_id,omitempty"`
+	ProblemID int64 `json:"problem_id,omitempty"`
 	// Input holds the value of the "input" field.
 	Input string `json:"input,omitempty"`
 	// Output holds the value of the "output" field.
@@ -78,12 +78,12 @@ func (_m *TestCase) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = int64(value.Int64)
 		case testcase.FieldProblemID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field problem_id", values[i])
 			} else if value.Valid {
-				_m.ProblemID = int(value.Int64)
+				_m.ProblemID = value.Int64
 			}
 		case testcase.FieldInput:
 			if value, ok := values[i].(*sql.NullString); !ok {

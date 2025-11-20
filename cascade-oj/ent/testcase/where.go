@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.TestCase {
+func ID(id int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.TestCase {
+func IDEQ(id int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.TestCase {
+func IDNEQ(id int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.TestCase {
+func IDIn(ids ...int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.TestCase {
+func IDNotIn(ids ...int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.TestCase {
+func IDGT(id int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.TestCase {
+func IDGTE(id int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.TestCase {
+func IDLT(id int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.TestCase {
+func IDLTE(id int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldLTE(FieldID, id))
 }
 
 // ProblemID applies equality check predicate on the "problem_id" field. It's identical to ProblemIDEQ.
-func ProblemID(v int) predicate.TestCase {
+func ProblemID(v int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldEQ(FieldProblemID, v))
 }
 
@@ -70,22 +70,22 @@ func Output(v string) predicate.TestCase {
 }
 
 // ProblemIDEQ applies the EQ predicate on the "problem_id" field.
-func ProblemIDEQ(v int) predicate.TestCase {
+func ProblemIDEQ(v int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldEQ(FieldProblemID, v))
 }
 
 // ProblemIDNEQ applies the NEQ predicate on the "problem_id" field.
-func ProblemIDNEQ(v int) predicate.TestCase {
+func ProblemIDNEQ(v int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldNEQ(FieldProblemID, v))
 }
 
 // ProblemIDIn applies the In predicate on the "problem_id" field.
-func ProblemIDIn(vs ...int) predicate.TestCase {
+func ProblemIDIn(vs ...int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldIn(FieldProblemID, vs...))
 }
 
 // ProblemIDNotIn applies the NotIn predicate on the "problem_id" field.
-func ProblemIDNotIn(vs ...int) predicate.TestCase {
+func ProblemIDNotIn(vs ...int64) predicate.TestCase {
 	return predicate.TestCase(sql.FieldNotIn(FieldProblemID, vs...))
 }
 

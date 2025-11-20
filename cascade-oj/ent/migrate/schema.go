@@ -11,9 +11,9 @@ import (
 var (
 	// AdminProblemSetColumns holds the columns for the "Admin_ProblemSet" table.
 	AdminProblemSetColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
-		{Name: "problem_set_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
-		{Name: "admin_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "problem_set_id", Type: field.TypeInt64},
+		{Name: "admin_id", Type: field.TypeInt64},
 	}
 	// AdminProblemSetTable holds the schema information for the "Admin_ProblemSet" table.
 	AdminProblemSetTable = &schema.Table{
@@ -37,10 +37,10 @@ var (
 	}
 	// AnnouncementsColumns holds the columns for the "Announcements" table.
 	AnnouncementsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "title", Type: field.TypeString, Size: 100},
 		{Name: "content", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
-		{Name: "publisher_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "publisher_id", Type: field.TypeInt64},
 	}
 	// AnnouncementsTable holds the schema information for the "Announcements" table.
 	AnnouncementsTable = &schema.Table{
@@ -58,15 +58,15 @@ var (
 	}
 	// JudgeRecordsColumns holds the columns for the "JudgeRecords" table.
 	JudgeRecordsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "judging", "accepted", "wrong_answer", "time_limit_exceeded", "memory_limit_exceeded", "runtime_error", "compilation_error"}, Default: "pending"},
 		{Name: "judge_start_time", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP", SchemaType: map[string]string{"mysql": "datetime"}},
 		{Name: "result", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"mysql": "TEXT"}},
 		{Name: "code", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
 		{Name: "language", Type: field.TypeEnum, Enums: []string{"c", "cpp", "python", "rust"}, Default: "c"},
 		{Name: "judge_type", Type: field.TypeEnum, Enums: []string{"test_case", "custom_test_case"}, Default: "custom_test_case"},
-		{Name: "problem_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
-		{Name: "user_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "problem_id", Type: field.TypeInt64},
+		{Name: "user_id", Type: field.TypeInt64},
 	}
 	// JudgeRecordsTable holds the schema information for the "JudgeRecords" table.
 	JudgeRecordsTable = &schema.Table{
@@ -90,14 +90,14 @@ var (
 	}
 	// ProblemsColumns holds the columns for the "Problems" table.
 	ProblemsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "title", Type: field.TypeString, Size: 100},
 		{Name: "description", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
 		{Name: "problem_type", Type: field.TypeEnum, Enums: []string{"OJ", "other"}, Default: "OJ"},
 		{Name: "time_limit", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
 		{Name: "memory_limit", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
 		{Name: "use_status", Type: field.TypeEnum, Enums: []string{"unavailable", "available", "using"}, Default: "unavailable"},
-		{Name: "creator_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "creator_id", Type: field.TypeInt64},
 	}
 	// ProblemsTable holds the schema information for the "Problems" table.
 	ProblemsTable = &schema.Table{
@@ -115,7 +115,7 @@ var (
 	}
 	// ProblemSetsColumns holds the columns for the "ProblemSets" table.
 	ProblemSetsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "name", Type: field.TypeString, Size: 100},
 		{Name: "description", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"mysql": "TEXT"}},
 		{Name: "start_time", Type: field.TypeTime, SchemaType: map[string]string{"mysql": "datetime"}},
@@ -130,10 +130,10 @@ var (
 	}
 	// ProblemSetProblemsColumns holds the columns for the "ProblemSet_Problems" table.
 	ProblemSetProblemsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "problem_order", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
-		{Name: "problem_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
-		{Name: "problem_set_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "problem_id", Type: field.TypeInt64},
+		{Name: "problem_set_id", Type: field.TypeInt64},
 	}
 	// ProblemSetProblemsTable holds the schema information for the "ProblemSet_Problems" table.
 	ProblemSetProblemsTable = &schema.Table{
@@ -157,10 +157,10 @@ var (
 	}
 	// ProblemSetUsersColumns holds the columns for the "ProblemSet_Users" table.
 	ProblemSetUsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "total_score", Type: field.TypeInt, Nullable: true, Default: 0, SchemaType: map[string]string{"mysql": "INT"}},
-		{Name: "problem_set_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
-		{Name: "user_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "problem_set_id", Type: field.TypeInt64},
+		{Name: "user_id", Type: field.TypeInt64},
 	}
 	// ProblemSetUsersTable holds the schema information for the "ProblemSet_Users" table.
 	ProblemSetUsersTable = &schema.Table{
@@ -184,13 +184,13 @@ var (
 	}
 	// SubmissionRecordsColumns holds the columns for the "SubmissionRecords" table.
 	SubmissionRecordsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "result", Type: field.TypeEnum, Enums: []string{"Pass", "Fail"}},
 		{Name: "submission_time", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP", SchemaType: map[string]string{"mysql": "datetime"}},
 		{Name: "score", Type: field.TypeInt, Default: 0, SchemaType: map[string]string{"mysql": "INT"}},
-		{Name: "judge_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
-		{Name: "problem_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
-		{Name: "problem_set_id", Type: field.TypeInt, Nullable: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "judge_id", Type: field.TypeInt64},
+		{Name: "problem_id", Type: field.TypeInt64},
+		{Name: "problem_set_id", Type: field.TypeInt64, Nullable: true},
 	}
 	// SubmissionRecordsTable holds the schema information for the "SubmissionRecords" table.
 	SubmissionRecordsTable = &schema.Table{
@@ -220,7 +220,7 @@ var (
 	}
 	// LogsColumns holds the columns for the "Logs" table.
 	LogsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "log_time", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP", SchemaType: map[string]string{"mysql": "datetime"}},
 		{Name: "log_info", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
 	}
@@ -232,10 +232,10 @@ var (
 	}
 	// TestCasesColumns holds the columns for the "TestCases" table.
 	TestCasesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "input", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
 		{Name: "output", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
-		{Name: "problem_id", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "problem_id", Type: field.TypeInt64},
 	}
 	// TestCasesTable holds the schema information for the "TestCases" table.
 	TestCasesTable = &schema.Table{
@@ -253,7 +253,7 @@ var (
 	}
 	// UsersColumns holds the columns for the "Users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "INT AUTO_INCREMENT"}},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "username", Type: field.TypeString, Unique: true, Size: 50},
 		{Name: "email", Type: field.TypeString, Unique: true, Size: 100},
 		{Name: "password_hash", Type: field.TypeString, Size: 255},

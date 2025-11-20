@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.ProblemSet {
+func ID(id int64) predicate.ProblemSet {
 	return predicate.ProblemSet(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.ProblemSet {
+func IDEQ(id int64) predicate.ProblemSet {
 	return predicate.ProblemSet(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.ProblemSet {
+func IDNEQ(id int64) predicate.ProblemSet {
 	return predicate.ProblemSet(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.ProblemSet {
+func IDIn(ids ...int64) predicate.ProblemSet {
 	return predicate.ProblemSet(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.ProblemSet {
+func IDNotIn(ids ...int64) predicate.ProblemSet {
 	return predicate.ProblemSet(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.ProblemSet {
+func IDGT(id int64) predicate.ProblemSet {
 	return predicate.ProblemSet(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.ProblemSet {
+func IDGTE(id int64) predicate.ProblemSet {
 	return predicate.ProblemSet(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.ProblemSet {
+func IDLT(id int64) predicate.ProblemSet {
 	return predicate.ProblemSet(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.ProblemSet {
+func IDLTE(id int64) predicate.ProblemSet {
 	return predicate.ProblemSet(sql.FieldLTE(FieldID, id))
 }
 
@@ -373,7 +373,7 @@ func HasProblemSetProblems() predicate.ProblemSet {
 }
 
 // HasProblemSetProblemsWith applies the HasEdge predicate on the "problem_set_problems" edge with a given conditions (other predicates).
-func HasProblemSetProblemsWith(preds ...predicate.ProblemSetProblem) predicate.ProblemSet {
+func HasProblemSetProblemsWith(preds ...predicate.ProblemSet_Problem) predicate.ProblemSet {
 	return predicate.ProblemSet(func(s *sql.Selector) {
 		step := newProblemSetProblemsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
@@ -396,7 +396,7 @@ func HasProblemSetUsers() predicate.ProblemSet {
 }
 
 // HasProblemSetUsersWith applies the HasEdge predicate on the "problem_set_users" edge with a given conditions (other predicates).
-func HasProblemSetUsersWith(preds ...predicate.ProblemSetUser) predicate.ProblemSet {
+func HasProblemSetUsersWith(preds ...predicate.ProblemSet_User) predicate.ProblemSet {
 	return predicate.ProblemSet(func(s *sql.Selector) {
 		step := newProblemSetUsersStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {

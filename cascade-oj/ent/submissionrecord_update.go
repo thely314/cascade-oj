@@ -32,13 +32,13 @@ func (_u *SubmissionRecordUpdate) Where(ps ...predicate.SubmissionRecord) *Submi
 }
 
 // SetJudgeID sets the "judge_id" field.
-func (_u *SubmissionRecordUpdate) SetJudgeID(v int) *SubmissionRecordUpdate {
+func (_u *SubmissionRecordUpdate) SetJudgeID(v int64) *SubmissionRecordUpdate {
 	_u.mutation.SetJudgeID(v)
 	return _u
 }
 
 // SetNillableJudgeID sets the "judge_id" field if the given value is not nil.
-func (_u *SubmissionRecordUpdate) SetNillableJudgeID(v *int) *SubmissionRecordUpdate {
+func (_u *SubmissionRecordUpdate) SetNillableJudgeID(v *int64) *SubmissionRecordUpdate {
 	if v != nil {
 		_u.SetJudgeID(*v)
 	}
@@ -46,13 +46,13 @@ func (_u *SubmissionRecordUpdate) SetNillableJudgeID(v *int) *SubmissionRecordUp
 }
 
 // SetProblemID sets the "problem_id" field.
-func (_u *SubmissionRecordUpdate) SetProblemID(v int) *SubmissionRecordUpdate {
+func (_u *SubmissionRecordUpdate) SetProblemID(v int64) *SubmissionRecordUpdate {
 	_u.mutation.SetProblemID(v)
 	return _u
 }
 
 // SetNillableProblemID sets the "problem_id" field if the given value is not nil.
-func (_u *SubmissionRecordUpdate) SetNillableProblemID(v *int) *SubmissionRecordUpdate {
+func (_u *SubmissionRecordUpdate) SetNillableProblemID(v *int64) *SubmissionRecordUpdate {
 	if v != nil {
 		_u.SetProblemID(*v)
 	}
@@ -60,13 +60,13 @@ func (_u *SubmissionRecordUpdate) SetNillableProblemID(v *int) *SubmissionRecord
 }
 
 // SetProblemSetID sets the "problem_set_id" field.
-func (_u *SubmissionRecordUpdate) SetProblemSetID(v int) *SubmissionRecordUpdate {
+func (_u *SubmissionRecordUpdate) SetProblemSetID(v int64) *SubmissionRecordUpdate {
 	_u.mutation.SetProblemSetID(v)
 	return _u
 }
 
 // SetNillableProblemSetID sets the "problem_set_id" field if the given value is not nil.
-func (_u *SubmissionRecordUpdate) SetNillableProblemSetID(v *int) *SubmissionRecordUpdate {
+func (_u *SubmissionRecordUpdate) SetNillableProblemSetID(v *int64) *SubmissionRecordUpdate {
 	if v != nil {
 		_u.SetProblemSetID(*v)
 	}
@@ -223,7 +223,7 @@ func (_u *SubmissionRecordUpdate) sqlSave(ctx context.Context) (_node int, err e
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(submissionrecord.Table, submissionrecord.Columns, sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(submissionrecord.Table, submissionrecord.Columns, sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -251,7 +251,7 @@ func (_u *SubmissionRecordUpdate) sqlSave(ctx context.Context) (_node int, err e
 			Columns: []string{submissionrecord.JudgeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -264,7 +264,7 @@ func (_u *SubmissionRecordUpdate) sqlSave(ctx context.Context) (_node int, err e
 			Columns: []string{submissionrecord.JudgeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -280,7 +280,7 @@ func (_u *SubmissionRecordUpdate) sqlSave(ctx context.Context) (_node int, err e
 			Columns: []string{submissionrecord.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -293,7 +293,7 @@ func (_u *SubmissionRecordUpdate) sqlSave(ctx context.Context) (_node int, err e
 			Columns: []string{submissionrecord.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -309,7 +309,7 @@ func (_u *SubmissionRecordUpdate) sqlSave(ctx context.Context) (_node int, err e
 			Columns: []string{submissionrecord.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -322,7 +322,7 @@ func (_u *SubmissionRecordUpdate) sqlSave(ctx context.Context) (_node int, err e
 			Columns: []string{submissionrecord.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -351,13 +351,13 @@ type SubmissionRecordUpdateOne struct {
 }
 
 // SetJudgeID sets the "judge_id" field.
-func (_u *SubmissionRecordUpdateOne) SetJudgeID(v int) *SubmissionRecordUpdateOne {
+func (_u *SubmissionRecordUpdateOne) SetJudgeID(v int64) *SubmissionRecordUpdateOne {
 	_u.mutation.SetJudgeID(v)
 	return _u
 }
 
 // SetNillableJudgeID sets the "judge_id" field if the given value is not nil.
-func (_u *SubmissionRecordUpdateOne) SetNillableJudgeID(v *int) *SubmissionRecordUpdateOne {
+func (_u *SubmissionRecordUpdateOne) SetNillableJudgeID(v *int64) *SubmissionRecordUpdateOne {
 	if v != nil {
 		_u.SetJudgeID(*v)
 	}
@@ -365,13 +365,13 @@ func (_u *SubmissionRecordUpdateOne) SetNillableJudgeID(v *int) *SubmissionRecor
 }
 
 // SetProblemID sets the "problem_id" field.
-func (_u *SubmissionRecordUpdateOne) SetProblemID(v int) *SubmissionRecordUpdateOne {
+func (_u *SubmissionRecordUpdateOne) SetProblemID(v int64) *SubmissionRecordUpdateOne {
 	_u.mutation.SetProblemID(v)
 	return _u
 }
 
 // SetNillableProblemID sets the "problem_id" field if the given value is not nil.
-func (_u *SubmissionRecordUpdateOne) SetNillableProblemID(v *int) *SubmissionRecordUpdateOne {
+func (_u *SubmissionRecordUpdateOne) SetNillableProblemID(v *int64) *SubmissionRecordUpdateOne {
 	if v != nil {
 		_u.SetProblemID(*v)
 	}
@@ -379,13 +379,13 @@ func (_u *SubmissionRecordUpdateOne) SetNillableProblemID(v *int) *SubmissionRec
 }
 
 // SetProblemSetID sets the "problem_set_id" field.
-func (_u *SubmissionRecordUpdateOne) SetProblemSetID(v int) *SubmissionRecordUpdateOne {
+func (_u *SubmissionRecordUpdateOne) SetProblemSetID(v int64) *SubmissionRecordUpdateOne {
 	_u.mutation.SetProblemSetID(v)
 	return _u
 }
 
 // SetNillableProblemSetID sets the "problem_set_id" field if the given value is not nil.
-func (_u *SubmissionRecordUpdateOne) SetNillableProblemSetID(v *int) *SubmissionRecordUpdateOne {
+func (_u *SubmissionRecordUpdateOne) SetNillableProblemSetID(v *int64) *SubmissionRecordUpdateOne {
 	if v != nil {
 		_u.SetProblemSetID(*v)
 	}
@@ -555,7 +555,7 @@ func (_u *SubmissionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Submis
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(submissionrecord.Table, submissionrecord.Columns, sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(submissionrecord.Table, submissionrecord.Columns, sqlgraph.NewFieldSpec(submissionrecord.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SubmissionRecord.id" for update`)}
@@ -600,7 +600,7 @@ func (_u *SubmissionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Submis
 			Columns: []string{submissionrecord.JudgeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -613,7 +613,7 @@ func (_u *SubmissionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Submis
 			Columns: []string{submissionrecord.JudgeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -629,7 +629,7 @@ func (_u *SubmissionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Submis
 			Columns: []string{submissionrecord.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -642,7 +642,7 @@ func (_u *SubmissionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Submis
 			Columns: []string{submissionrecord.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -658,7 +658,7 @@ func (_u *SubmissionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Submis
 			Columns: []string{submissionrecord.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -671,7 +671,7 @@ func (_u *SubmissionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Submis
 			Columns: []string{submissionrecord.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

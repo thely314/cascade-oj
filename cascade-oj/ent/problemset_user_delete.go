@@ -4,7 +4,7 @@ package ent
 
 import (
 	"cascade-oj/ent/predicate"
-	"cascade-oj/ent/problemsetuser"
+	"cascade-oj/ent/problemset_user"
 	"context"
 
 	"entgo.io/ent/dialect/sql"
@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ProblemSetUserDelete is the builder for deleting a ProblemSetUser entity.
+// ProblemSetUserDelete is the builder for deleting a ProblemSet_User entity.
 type ProblemSetUserDelete struct {
 	config
 	hooks    []Hook
@@ -20,7 +20,7 @@ type ProblemSetUserDelete struct {
 }
 
 // Where appends a list predicates to the ProblemSetUserDelete builder.
-func (_d *ProblemSetUserDelete) Where(ps ...predicate.ProblemSetUser) *ProblemSetUserDelete {
+func (_d *ProblemSetUserDelete) Where(ps ...predicate.ProblemSet_User) *ProblemSetUserDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
@@ -40,7 +40,7 @@ func (_d *ProblemSetUserDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *ProblemSetUserDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(problemsetuser.Table, sqlgraph.NewFieldSpec(problemsetuser.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(problemset_user.Table, sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,13 +56,13 @@ func (_d *ProblemSetUserDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// ProblemSetUserDeleteOne is the builder for deleting a single ProblemSetUser entity.
+// ProblemSetUserDeleteOne is the builder for deleting a single ProblemSet_User entity.
 type ProblemSetUserDeleteOne struct {
 	_d *ProblemSetUserDelete
 }
 
 // Where appends a list predicates to the ProblemSetUserDelete builder.
-func (_d *ProblemSetUserDeleteOne) Where(ps ...predicate.ProblemSetUser) *ProblemSetUserDeleteOne {
+func (_d *ProblemSetUserDeleteOne) Where(ps ...predicate.ProblemSet_User) *ProblemSetUserDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
@@ -74,7 +74,7 @@ func (_d *ProblemSetUserDeleteOne) Exec(ctx context.Context) error {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{problemsetuser.Label}
+		return &NotFoundError{problemset_user.Label}
 	default:
 		return nil
 	}

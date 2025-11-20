@@ -8,8 +8,8 @@ import (
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemsetproblem"
-	"cascade-oj/ent/problemsetuser"
+	"cascade-oj/ent/problemset_problem"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/systemlog"
 	"cascade-oj/ent/testcase"
@@ -83,17 +83,17 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			adminproblemset.Table:   adminproblemset.ValidColumn,
-			announcement.Table:      announcement.ValidColumn,
-			judgerecord.Table:       judgerecord.ValidColumn,
-			problem.Table:           problem.ValidColumn,
-			problemset.Table:        problemset.ValidColumn,
-			problemsetproblem.Table: problemsetproblem.ValidColumn,
-			problemsetuser.Table:    problemsetuser.ValidColumn,
-			submissionrecord.Table:  submissionrecord.ValidColumn,
-			systemlog.Table:         systemlog.ValidColumn,
-			testcase.Table:          testcase.ValidColumn,
-			user.Table:              user.ValidColumn,
+			adminproblemset.Table:    adminproblemset.ValidColumn,
+			announcement.Table:       announcement.ValidColumn,
+			judgerecord.Table:        judgerecord.ValidColumn,
+			problem.Table:            problem.ValidColumn,
+			problemset.Table:         problemset.ValidColumn,
+			problemset_problem.Table: problemset_problem.ValidColumn,
+			problemset_user.Table:    problemset_user.ValidColumn,
+			submissionrecord.Table:   submissionrecord.ValidColumn,
+			systemlog.Table:          systemlog.ValidColumn,
+			testcase.Table:           testcase.ValidColumn,
+			user.Table:               user.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

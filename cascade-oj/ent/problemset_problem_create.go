@@ -5,7 +5,7 @@ package ent
 import (
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemsetproblem"
+	"cascade-oj/ent/problemset_problem"
 	"context"
 	"errors"
 	"fmt"
@@ -14,7 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ProblemSetProblemCreate is the builder for creating a ProblemSetProblem entity.
+// ProblemSetProblemCreate is the builder for creating a ProblemSet_Problem entity.
 type ProblemSetProblemCreate struct {
 	config
 	mutation *ProblemSetProblemMutation
@@ -22,13 +22,13 @@ type ProblemSetProblemCreate struct {
 }
 
 // SetProblemSetID sets the "problem_set_id" field.
-func (_c *ProblemSetProblemCreate) SetProblemSetID(v int) *ProblemSetProblemCreate {
+func (_c *ProblemSetProblemCreate) SetProblemSetID(v int64) *ProblemSetProblemCreate {
 	_c.mutation.SetProblemSetID(v)
 	return _c
 }
 
 // SetProblemID sets the "problem_id" field.
-func (_c *ProblemSetProblemCreate) SetProblemID(v int) *ProblemSetProblemCreate {
+func (_c *ProblemSetProblemCreate) SetProblemID(v int64) *ProblemSetProblemCreate {
 	_c.mutation.SetProblemID(v)
 	return _c
 }
@@ -40,7 +40,7 @@ func (_c *ProblemSetProblemCreate) SetProblemOrder(v int) *ProblemSetProblemCrea
 }
 
 // SetID sets the "id" field.
-func (_c *ProblemSetProblemCreate) SetID(v int) *ProblemSetProblemCreate {
+func (_c *ProblemSetProblemCreate) SetID(v int64) *ProblemSetProblemCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -60,13 +60,13 @@ func (_c *ProblemSetProblemCreate) Mutation() *ProblemSetProblemMutation {
 	return _c.mutation
 }
 
-// Save creates the ProblemSetProblem in the database.
-func (_c *ProblemSetProblemCreate) Save(ctx context.Context) (*ProblemSetProblem, error) {
+// Save creates the ProblemSet_Problem in the database.
+func (_c *ProblemSetProblemCreate) Save(ctx context.Context) (*ProblemSet_Problem, error) {
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (_c *ProblemSetProblemCreate) SaveX(ctx context.Context) *ProblemSetProblem {
+func (_c *ProblemSetProblemCreate) SaveX(ctx context.Context) *ProblemSet_Problem {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -90,44 +90,44 @@ func (_c *ProblemSetProblemCreate) ExecX(ctx context.Context) {
 // check runs all checks and user-defined validators on the builder.
 func (_c *ProblemSetProblemCreate) check() error {
 	if _, ok := _c.mutation.ProblemSetID(); !ok {
-		return &ValidationError{Name: "problem_set_id", err: errors.New(`ent: missing required field "ProblemSetProblem.problem_set_id"`)}
+		return &ValidationError{Name: "problem_set_id", err: errors.New(`ent: missing required field "ProblemSet_Problem.problem_set_id"`)}
 	}
 	if v, ok := _c.mutation.ProblemSetID(); ok {
-		if err := problemsetproblem.ProblemSetIDValidator(v); err != nil {
-			return &ValidationError{Name: "problem_set_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSetProblem.problem_set_id": %w`, err)}
+		if err := problemset_problem.ProblemSetIDValidator(v); err != nil {
+			return &ValidationError{Name: "problem_set_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSet_Problem.problem_set_id": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.ProblemID(); !ok {
-		return &ValidationError{Name: "problem_id", err: errors.New(`ent: missing required field "ProblemSetProblem.problem_id"`)}
+		return &ValidationError{Name: "problem_id", err: errors.New(`ent: missing required field "ProblemSet_Problem.problem_id"`)}
 	}
 	if v, ok := _c.mutation.ProblemID(); ok {
-		if err := problemsetproblem.ProblemIDValidator(v); err != nil {
-			return &ValidationError{Name: "problem_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSetProblem.problem_id": %w`, err)}
+		if err := problemset_problem.ProblemIDValidator(v); err != nil {
+			return &ValidationError{Name: "problem_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSet_Problem.problem_id": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.ProblemOrder(); !ok {
-		return &ValidationError{Name: "problem_order", err: errors.New(`ent: missing required field "ProblemSetProblem.problem_order"`)}
+		return &ValidationError{Name: "problem_order", err: errors.New(`ent: missing required field "ProblemSet_Problem.problem_order"`)}
 	}
 	if v, ok := _c.mutation.ProblemOrder(); ok {
-		if err := problemsetproblem.ProblemOrderValidator(v); err != nil {
-			return &ValidationError{Name: "problem_order", err: fmt.Errorf(`ent: validator failed for field "ProblemSetProblem.problem_order": %w`, err)}
+		if err := problemset_problem.ProblemOrderValidator(v); err != nil {
+			return &ValidationError{Name: "problem_order", err: fmt.Errorf(`ent: validator failed for field "ProblemSet_Problem.problem_order": %w`, err)}
 		}
 	}
 	if v, ok := _c.mutation.ID(); ok {
-		if err := problemsetproblem.IDValidator(v); err != nil {
-			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "ProblemSetProblem.id": %w`, err)}
+		if err := problemset_problem.IDValidator(v); err != nil {
+			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "ProblemSet_Problem.id": %w`, err)}
 		}
 	}
 	if len(_c.mutation.ProblemSetIDs()) == 0 {
-		return &ValidationError{Name: "problem_set", err: errors.New(`ent: missing required edge "ProblemSetProblem.problem_set"`)}
+		return &ValidationError{Name: "problem_set", err: errors.New(`ent: missing required edge "ProblemSet_Problem.problem_set"`)}
 	}
 	if len(_c.mutation.ProblemIDs()) == 0 {
-		return &ValidationError{Name: "problem", err: errors.New(`ent: missing required edge "ProblemSetProblem.problem"`)}
+		return &ValidationError{Name: "problem", err: errors.New(`ent: missing required edge "ProblemSet_Problem.problem"`)}
 	}
 	return nil
 }
 
-func (_c *ProblemSetProblemCreate) sqlSave(ctx context.Context) (*ProblemSetProblem, error) {
+func (_c *ProblemSetProblemCreate) sqlSave(ctx context.Context) (*ProblemSet_Problem, error) {
 	if err := _c.check(); err != nil {
 		return nil, err
 	}
@@ -140,35 +140,35 @@ func (_c *ProblemSetProblemCreate) sqlSave(ctx context.Context) (*ProblemSetProb
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
 }
 
-func (_c *ProblemSetProblemCreate) createSpec() (*ProblemSetProblem, *sqlgraph.CreateSpec) {
+func (_c *ProblemSetProblemCreate) createSpec() (*ProblemSet_Problem, *sqlgraph.CreateSpec) {
 	var (
-		_node = &ProblemSetProblem{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(problemsetproblem.Table, sqlgraph.NewFieldSpec(problemsetproblem.FieldID, field.TypeInt))
+		_node = &ProblemSet_Problem{config: _c.config}
+		_spec = sqlgraph.NewCreateSpec(problemset_problem.Table, sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64))
 	)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
 	if value, ok := _c.mutation.ProblemOrder(); ok {
-		_spec.SetField(problemsetproblem.FieldProblemOrder, field.TypeInt, value)
+		_spec.SetField(problemset_problem.FieldProblemOrder, field.TypeInt, value)
 		_node.ProblemOrder = value
 	}
 	if nodes := _c.mutation.ProblemSetIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetproblem.ProblemSetTable,
-			Columns: []string{problemsetproblem.ProblemSetColumn},
+			Table:   problemset_problem.ProblemSetTable,
+			Columns: []string{problemset_problem.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -181,11 +181,11 @@ func (_c *ProblemSetProblemCreate) createSpec() (*ProblemSetProblem, *sqlgraph.C
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetproblem.ProblemTable,
-			Columns: []string{problemsetproblem.ProblemColumn},
+			Table:   problemset_problem.ProblemTable,
+			Columns: []string{problemset_problem.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -197,20 +197,20 @@ func (_c *ProblemSetProblemCreate) createSpec() (*ProblemSetProblem, *sqlgraph.C
 	return _node, _spec
 }
 
-// ProblemSetProblemCreateBulk is the builder for creating many ProblemSetProblem entities in bulk.
+// ProblemSetProblemCreateBulk is the builder for creating many ProblemSet_Problem entities in bulk.
 type ProblemSetProblemCreateBulk struct {
 	config
 	err      error
 	builders []*ProblemSetProblemCreate
 }
 
-// Save creates the ProblemSetProblem entities in the database.
-func (_c *ProblemSetProblemCreateBulk) Save(ctx context.Context) ([]*ProblemSetProblem, error) {
+// Save creates the ProblemSet_Problem entities in the database.
+func (_c *ProblemSetProblemCreateBulk) Save(ctx context.Context) ([]*ProblemSet_Problem, error) {
 	if _c.err != nil {
 		return nil, _c.err
 	}
 	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
-	nodes := make([]*ProblemSetProblem, len(_c.builders))
+	nodes := make([]*ProblemSet_Problem, len(_c.builders))
 	mutators := make([]Mutator, len(_c.builders))
 	for i := range _c.builders {
 		func(i int, root context.Context) {
@@ -243,7 +243,7 @@ func (_c *ProblemSetProblemCreateBulk) Save(ctx context.Context) ([]*ProblemSetP
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -263,7 +263,7 @@ func (_c *ProblemSetProblemCreateBulk) Save(ctx context.Context) ([]*ProblemSetP
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_c *ProblemSetProblemCreateBulk) SaveX(ctx context.Context) []*ProblemSetProblem {
+func (_c *ProblemSetProblemCreateBulk) SaveX(ctx context.Context) []*ProblemSet_Problem {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)

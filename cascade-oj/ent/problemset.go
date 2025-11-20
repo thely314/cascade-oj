@@ -16,7 +16,7 @@ import (
 type ProblemSet struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
@@ -40,9 +40,9 @@ type ProblemSetEdges struct {
 	// AdminProblemSets holds the value of the admin_problem_sets edge.
 	AdminProblemSets []*AdminProblemSet `json:"admin_problem_sets,omitempty"`
 	// ProblemSetProblems holds the value of the problem_set_problems edge.
-	ProblemSetProblems []*ProblemSetProblem `json:"problem_set_problems,omitempty"`
+	ProblemSetProblems []*ProblemSet_Problem `json:"problem_set_problems,omitempty"`
 	// ProblemSetUsers holds the value of the problem_set_users edge.
-	ProblemSetUsers []*ProblemSetUser `json:"problem_set_users,omitempty"`
+	ProblemSetUsers []*ProblemSet_User `json:"problem_set_users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [4]bool
@@ -68,7 +68,7 @@ func (e ProblemSetEdges) AdminProblemSetsOrErr() ([]*AdminProblemSet, error) {
 
 // ProblemSetProblemsOrErr returns the ProblemSetProblems value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProblemSetEdges) ProblemSetProblemsOrErr() ([]*ProblemSetProblem, error) {
+func (e ProblemSetEdges) ProblemSetProblemsOrErr() ([]*ProblemSet_Problem, error) {
 	if e.loadedTypes[2] {
 		return e.ProblemSetProblems, nil
 	}
@@ -77,7 +77,7 @@ func (e ProblemSetEdges) ProblemSetProblemsOrErr() ([]*ProblemSetProblem, error)
 
 // ProblemSetUsersOrErr returns the ProblemSetUsers value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProblemSetEdges) ProblemSetUsersOrErr() ([]*ProblemSetUser, error) {
+func (e ProblemSetEdges) ProblemSetUsersOrErr() ([]*ProblemSet_User, error) {
 	if e.loadedTypes[3] {
 		return e.ProblemSetUsers, nil
 	}
@@ -115,7 +115,7 @@ func (_m *ProblemSet) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = int64(value.Int64)
 		case problemset.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])

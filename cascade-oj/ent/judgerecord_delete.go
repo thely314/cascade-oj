@@ -40,7 +40,7 @@ func (_d *JudgeRecordDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *JudgeRecordDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(judgerecord.Table, sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(judgerecord.Table, sqlgraph.NewFieldSpec(judgerecord.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

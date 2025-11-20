@@ -4,7 +4,7 @@ package ent
 
 import (
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemsetuser"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/user"
 	"fmt"
 	"strings"
@@ -13,25 +13,25 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ProblemSetUser is the model entity for the ProblemSetUser schema.
-type ProblemSetUser struct {
+// ProblemSet_User is the model entity for the ProblemSet_User schema.
+type ProblemSet_User struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// UserID holds the value of the "user_id" field.
-	UserID int `json:"user_id,omitempty"`
+	UserID int64 `json:"user_id,omitempty"`
 	// ProblemSetID holds the value of the "problem_set_id" field.
-	ProblemSetID int `json:"problem_set_id,omitempty"`
+	ProblemSetID int64 `json:"problem_set_id,omitempty"`
 	// TotalScore holds the value of the "total_score" field.
 	TotalScore int `json:"total_score,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ProblemSetUserQuery when eager-loading is set.
-	Edges        ProblemSetUserEdges `json:"edges"`
+	// The values are being populated by the ProblemSet_UserQuery when eager-loading is set.
+	Edges        ProblemSet_UserEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// ProblemSetUserEdges holds the relations/edges for other nodes in the graph.
-type ProblemSetUserEdges struct {
+// ProblemSet_UserEdges holds the relations/edges for other nodes in the graph.
+type ProblemSet_UserEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
 	// ProblemSet holds the value of the problem_set edge.
@@ -43,7 +43,7 @@ type ProblemSetUserEdges struct {
 
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ProblemSetUserEdges) UserOrErr() (*User, error) {
+func (e ProblemSet_UserEdges) UserOrErr() (*User, error) {
 	if e.User != nil {
 		return e.User, nil
 	} else if e.loadedTypes[0] {
@@ -54,7 +54,7 @@ func (e ProblemSetUserEdges) UserOrErr() (*User, error) {
 
 // ProblemSetOrErr returns the ProblemSet value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ProblemSetUserEdges) ProblemSetOrErr() (*ProblemSet, error) {
+func (e ProblemSet_UserEdges) ProblemSetOrErr() (*ProblemSet, error) {
 	if e.ProblemSet != nil {
 		return e.ProblemSet, nil
 	} else if e.loadedTypes[1] {
@@ -64,11 +64,11 @@ func (e ProblemSetUserEdges) ProblemSetOrErr() (*ProblemSet, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*ProblemSetUser) scanValues(columns []string) ([]any, error) {
+func (*ProblemSet_User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case problemsetuser.FieldID, problemsetuser.FieldUserID, problemsetuser.FieldProblemSetID, problemsetuser.FieldTotalScore:
+		case problemset_user.FieldID, problemset_user.FieldUserID, problemset_user.FieldProblemSetID, problemset_user.FieldTotalScore:
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -78,32 +78,32 @@ func (*ProblemSetUser) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the ProblemSetUser fields.
-func (_m *ProblemSetUser) assignValues(columns []string, values []any) error {
+// to the ProblemSet_User fields.
+func (_m *ProblemSet_User) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case problemsetuser.FieldID:
+		case problemset_user.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
-		case problemsetuser.FieldUserID:
+			_m.ID = int64(value.Int64)
+		case problemset_user.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				_m.UserID = int(value.Int64)
+				_m.UserID = value.Int64
 			}
-		case problemsetuser.FieldProblemSetID:
+		case problemset_user.FieldProblemSetID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field problem_set_id", values[i])
 			} else if value.Valid {
-				_m.ProblemSetID = int(value.Int64)
+				_m.ProblemSetID = value.Int64
 			}
-		case problemsetuser.FieldTotalScore:
+		case problemset_user.FieldTotalScore:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field total_score", values[i])
 			} else if value.Valid {
@@ -116,44 +116,44 @@ func (_m *ProblemSetUser) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the ProblemSetUser.
+// Value returns the ent.Value that was dynamically selected and assigned to the ProblemSet_User.
 // This includes values selected through modifiers, order, etc.
-func (_m *ProblemSetUser) Value(name string) (ent.Value, error) {
+func (_m *ProblemSet_User) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryUser queries the "user" edge of the ProblemSetUser entity.
-func (_m *ProblemSetUser) QueryUser() *UserQuery {
+// QueryUser queries the "user" edge of the ProblemSet_User entity.
+func (_m *ProblemSet_User) QueryUser() *UserQuery {
 	return NewProblemSetUserClient(_m.config).QueryUser(_m)
 }
 
-// QueryProblemSet queries the "problem_set" edge of the ProblemSetUser entity.
-func (_m *ProblemSetUser) QueryProblemSet() *ProblemSetQuery {
+// QueryProblemSet queries the "problem_set" edge of the ProblemSet_User entity.
+func (_m *ProblemSet_User) QueryProblemSet() *ProblemSetQuery {
 	return NewProblemSetUserClient(_m.config).QueryProblemSet(_m)
 }
 
-// Update returns a builder for updating this ProblemSetUser.
-// Note that you need to call ProblemSetUser.Unwrap() before calling this method if this ProblemSetUser
+// Update returns a builder for updating this ProblemSet_User.
+// Note that you need to call ProblemSet_User.Unwrap() before calling this method if this ProblemSet_User
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *ProblemSetUser) Update() *ProblemSetUserUpdateOne {
+func (_m *ProblemSet_User) Update() *ProblemSetUserUpdateOne {
 	return NewProblemSetUserClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the ProblemSetUser entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the ProblemSet_User entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *ProblemSetUser) Unwrap() *ProblemSetUser {
+func (_m *ProblemSet_User) Unwrap() *ProblemSet_User {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: ProblemSetUser is not a transactional entity")
+		panic("ent: ProblemSet_User is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *ProblemSetUser) String() string {
+func (_m *ProblemSet_User) String() string {
 	var builder strings.Builder
-	builder.WriteString("ProblemSetUser(")
+	builder.WriteString("ProblemSet_User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
@@ -167,5 +167,5 @@ func (_m *ProblemSetUser) String() string {
 	return builder.String()
 }
 
-// ProblemSetUsers is a parsable slice of ProblemSetUser.
-type ProblemSetUsers []*ProblemSetUser
+// ProblemSet_Users is a parsable slice of ProblemSet_User.
+type ProblemSet_Users []*ProblemSet_User

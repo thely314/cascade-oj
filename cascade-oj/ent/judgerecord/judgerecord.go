@@ -87,15 +87,15 @@ func ValidColumn(column string) bool {
 
 var (
 	// ProblemIDValidator is a validator for the "problem_id" field. It is called by the builders before save.
-	ProblemIDValidator func(int) error
+	ProblemIDValidator func(int64) error
 	// UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
-	UserIDValidator func(int) error
+	UserIDValidator func(int64) error
 	// DefaultJudgeStartTime holds the default value on creation for the "judge_start_time" field.
 	DefaultJudgeStartTime time.Time
 	// CodeValidator is a validator for the "code" field. It is called by the builders before save.
 	CodeValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(int) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

@@ -5,7 +5,7 @@ package ent
 import (
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemsetuser"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/user"
 	"context"
 	"fmt"
@@ -17,13 +17,13 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ProblemSetUserQuery is the builder for querying ProblemSetUser entities.
+// ProblemSetUserQuery is the builder for querying ProblemSet_User entities.
 type ProblemSetUserQuery struct {
 	config
 	ctx            *QueryContext
-	order          []problemsetuser.OrderOption
+	order          []problemset_user.OrderOption
 	inters         []Interceptor
-	predicates     []predicate.ProblemSetUser
+	predicates     []predicate.ProblemSet_User
 	withUser       *UserQuery
 	withProblemSet *ProblemSetQuery
 	// intermediate query (i.e. traversal path).
@@ -32,7 +32,7 @@ type ProblemSetUserQuery struct {
 }
 
 // Where adds a new predicate for the ProblemSetUserQuery builder.
-func (_q *ProblemSetUserQuery) Where(ps ...predicate.ProblemSetUser) *ProblemSetUserQuery {
+func (_q *ProblemSetUserQuery) Where(ps ...predicate.ProblemSet_User) *ProblemSetUserQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
@@ -57,7 +57,7 @@ func (_q *ProblemSetUserQuery) Unique(unique bool) *ProblemSetUserQuery {
 }
 
 // Order specifies how the records should be ordered.
-func (_q *ProblemSetUserQuery) Order(o ...problemsetuser.OrderOption) *ProblemSetUserQuery {
+func (_q *ProblemSetUserQuery) Order(o ...problemset_user.OrderOption) *ProblemSetUserQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
@@ -74,9 +74,9 @@ func (_q *ProblemSetUserQuery) QueryUser() *UserQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(problemsetuser.Table, problemsetuser.FieldID, selector),
+			sqlgraph.From(problemset_user.Table, problemset_user.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, problemsetuser.UserTable, problemsetuser.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, problemset_user.UserTable, problemset_user.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -96,9 +96,9 @@ func (_q *ProblemSetUserQuery) QueryProblemSet() *ProblemSetQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(problemsetuser.Table, problemsetuser.FieldID, selector),
+			sqlgraph.From(problemset_user.Table, problemset_user.FieldID, selector),
 			sqlgraph.To(problemset.Table, problemset.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, problemsetuser.ProblemSetTable, problemsetuser.ProblemSetColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, problemset_user.ProblemSetTable, problemset_user.ProblemSetColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -106,21 +106,21 @@ func (_q *ProblemSetUserQuery) QueryProblemSet() *ProblemSetQuery {
 	return query
 }
 
-// First returns the first ProblemSetUser entity from the query.
-// Returns a *NotFoundError when no ProblemSetUser was found.
-func (_q *ProblemSetUserQuery) First(ctx context.Context) (*ProblemSetUser, error) {
+// First returns the first ProblemSet_User entity from the query.
+// Returns a *NotFoundError when no ProblemSet_User was found.
+func (_q *ProblemSetUserQuery) First(ctx context.Context) (*ProblemSet_User, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{problemsetuser.Label}
+		return nil, &NotFoundError{problemset_user.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *ProblemSetUserQuery) FirstX(ctx context.Context) *ProblemSetUser {
+func (_q *ProblemSetUserQuery) FirstX(ctx context.Context) *ProblemSet_User {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -128,22 +128,22 @@ func (_q *ProblemSetUserQuery) FirstX(ctx context.Context) *ProblemSetUser {
 	return node
 }
 
-// FirstID returns the first ProblemSetUser ID from the query.
-// Returns a *NotFoundError when no ProblemSetUser ID was found.
-func (_q *ProblemSetUserQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+// FirstID returns the first ProblemSet_User ID from the query.
+// Returns a *NotFoundError when no ProblemSet_User ID was found.
+func (_q *ProblemSetUserQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{problemsetuser.Label}
+		err = &NotFoundError{problemset_user.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *ProblemSetUserQuery) FirstIDX(ctx context.Context) int {
+func (_q *ProblemSetUserQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -151,10 +151,10 @@ func (_q *ProblemSetUserQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single ProblemSetUser entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one ProblemSetUser entity is found.
-// Returns a *NotFoundError when no ProblemSetUser entities are found.
-func (_q *ProblemSetUserQuery) Only(ctx context.Context) (*ProblemSetUser, error) {
+// Only returns a single ProblemSet_User entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one ProblemSet_User entity is found.
+// Returns a *NotFoundError when no ProblemSet_User entities are found.
+func (_q *ProblemSetUserQuery) Only(ctx context.Context) (*ProblemSet_User, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -163,14 +163,14 @@ func (_q *ProblemSetUserQuery) Only(ctx context.Context) (*ProblemSetUser, error
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{problemsetuser.Label}
+		return nil, &NotFoundError{problemset_user.Label}
 	default:
-		return nil, &NotSingularError{problemsetuser.Label}
+		return nil, &NotSingularError{problemset_user.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *ProblemSetUserQuery) OnlyX(ctx context.Context) *ProblemSetUser {
+func (_q *ProblemSetUserQuery) OnlyX(ctx context.Context) *ProblemSet_User {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -178,11 +178,11 @@ func (_q *ProblemSetUserQuery) OnlyX(ctx context.Context) *ProblemSetUser {
 	return node
 }
 
-// OnlyID is like Only, but returns the only ProblemSetUser ID in the query.
-// Returns a *NotSingularError when more than one ProblemSetUser ID is found.
+// OnlyID is like Only, but returns the only ProblemSet_User ID in the query.
+// Returns a *NotSingularError when more than one ProblemSet_User ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *ProblemSetUserQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (_q *ProblemSetUserQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -190,15 +190,15 @@ func (_q *ProblemSetUserQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{problemsetuser.Label}
+		err = &NotFoundError{problemset_user.Label}
 	default:
-		err = &NotSingularError{problemsetuser.Label}
+		err = &NotSingularError{problemset_user.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *ProblemSetUserQuery) OnlyIDX(ctx context.Context) int {
+func (_q *ProblemSetUserQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -206,18 +206,18 @@ func (_q *ProblemSetUserQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of ProblemSetUsers.
-func (_q *ProblemSetUserQuery) All(ctx context.Context) ([]*ProblemSetUser, error) {
+// All executes the query and returns a list of ProblemSet_Users.
+func (_q *ProblemSetUserQuery) All(ctx context.Context) ([]*ProblemSet_User, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*ProblemSetUser, *ProblemSetUserQuery]()
-	return withInterceptors[[]*ProblemSetUser](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*ProblemSet_User, *ProblemSetUserQuery]()
+	return withInterceptors[[]*ProblemSet_User](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *ProblemSetUserQuery) AllX(ctx context.Context) []*ProblemSetUser {
+func (_q *ProblemSetUserQuery) AllX(ctx context.Context) []*ProblemSet_User {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -225,20 +225,20 @@ func (_q *ProblemSetUserQuery) AllX(ctx context.Context) []*ProblemSetUser {
 	return nodes
 }
 
-// IDs executes the query and returns a list of ProblemSetUser IDs.
-func (_q *ProblemSetUserQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of ProblemSet_User IDs.
+func (_q *ProblemSetUserQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(problemsetuser.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(problemset_user.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *ProblemSetUserQuery) IDsX(ctx context.Context) []int {
+func (_q *ProblemSetUserQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -295,9 +295,9 @@ func (_q *ProblemSetUserQuery) Clone() *ProblemSetUserQuery {
 	return &ProblemSetUserQuery{
 		config:         _q.config,
 		ctx:            _q.ctx.Clone(),
-		order:          append([]problemsetuser.OrderOption{}, _q.order...),
+		order:          append([]problemset_user.OrderOption{}, _q.order...),
 		inters:         append([]Interceptor{}, _q.inters...),
-		predicates:     append([]predicate.ProblemSetUser{}, _q.predicates...),
+		predicates:     append([]predicate.ProblemSet_User{}, _q.predicates...),
 		withUser:       _q.withUser.Clone(),
 		withProblemSet: _q.withProblemSet.Clone(),
 		// clone intermediate query.
@@ -334,19 +334,19 @@ func (_q *ProblemSetUserQuery) WithProblemSet(opts ...func(*ProblemSetQuery)) *P
 // Example:
 //
 //	var v []struct {
-//		UserID int `json:"user_id,omitempty"`
+//		UserID int64 `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ProblemSetUser.Query().
-//		GroupBy(problemsetuser.FieldUserID).
+//		GroupBy(problemset_user.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (_q *ProblemSetUserQuery) GroupBy(field string, fields ...string) *ProblemSetUserGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &ProblemSetUserGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = problemsetuser.Label
+	grbuild.label = problemset_user.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -357,16 +357,16 @@ func (_q *ProblemSetUserQuery) GroupBy(field string, fields ...string) *ProblemS
 // Example:
 //
 //	var v []struct {
-//		UserID int `json:"user_id,omitempty"`
+//		UserID int64 `json:"user_id,omitempty"`
 //	}
 //
 //	client.ProblemSetUser.Query().
-//		Select(problemsetuser.FieldUserID).
+//		Select(problemset_user.FieldUserID).
 //		Scan(ctx, &v)
 func (_q *ProblemSetUserQuery) Select(fields ...string) *ProblemSetUserSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
 	sbuild := &ProblemSetUserSelect{ProblemSetUserQuery: _q}
-	sbuild.label = problemsetuser.Label
+	sbuild.label = problemset_user.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
@@ -388,7 +388,7 @@ func (_q *ProblemSetUserQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !problemsetuser.ValidColumn(f) {
+		if !problemset_user.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -402,9 +402,9 @@ func (_q *ProblemSetUserQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *ProblemSetUserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ProblemSetUser, error) {
+func (_q *ProblemSetUserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ProblemSet_User, error) {
 	var (
-		nodes       = []*ProblemSetUser{}
+		nodes       = []*ProblemSet_User{}
 		_spec       = _q.querySpec()
 		loadedTypes = [2]bool{
 			_q.withUser != nil,
@@ -412,10 +412,10 @@ func (_q *ProblemSetUserQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*ProblemSetUser).scanValues(nil, columns)
+		return (*ProblemSet_User).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &ProblemSetUser{config: _q.config}
+		node := &ProblemSet_User{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -431,22 +431,22 @@ func (_q *ProblemSetUserQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	}
 	if query := _q.withUser; query != nil {
 		if err := _q.loadUser(ctx, query, nodes, nil,
-			func(n *ProblemSetUser, e *User) { n.Edges.User = e }); err != nil {
+			func(n *ProblemSet_User, e *User) { n.Edges.User = e }); err != nil {
 			return nil, err
 		}
 	}
 	if query := _q.withProblemSet; query != nil {
 		if err := _q.loadProblemSet(ctx, query, nodes, nil,
-			func(n *ProblemSetUser, e *ProblemSet) { n.Edges.ProblemSet = e }); err != nil {
+			func(n *ProblemSet_User, e *ProblemSet) { n.Edges.ProblemSet = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (_q *ProblemSetUserQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*ProblemSetUser, init func(*ProblemSetUser), assign func(*ProblemSetUser, *User)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*ProblemSetUser)
+func (_q *ProblemSetUserQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*ProblemSet_User, init func(*ProblemSet_User), assign func(*ProblemSet_User, *User)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*ProblemSet_User)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
@@ -473,9 +473,9 @@ func (_q *ProblemSetUserQuery) loadUser(ctx context.Context, query *UserQuery, n
 	}
 	return nil
 }
-func (_q *ProblemSetUserQuery) loadProblemSet(ctx context.Context, query *ProblemSetQuery, nodes []*ProblemSetUser, init func(*ProblemSetUser), assign func(*ProblemSetUser, *ProblemSet)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*ProblemSetUser)
+func (_q *ProblemSetUserQuery) loadProblemSet(ctx context.Context, query *ProblemSetQuery, nodes []*ProblemSet_User, init func(*ProblemSet_User), assign func(*ProblemSet_User, *ProblemSet)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*ProblemSet_User)
 	for i := range nodes {
 		fk := nodes[i].ProblemSetID
 		if _, ok := nodeids[fk]; !ok {
@@ -513,7 +513,7 @@ func (_q *ProblemSetUserQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *ProblemSetUserQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(problemsetuser.Table, problemsetuser.Columns, sqlgraph.NewFieldSpec(problemsetuser.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(problemset_user.Table, problemset_user.Columns, sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -522,17 +522,17 @@ func (_q *ProblemSetUserQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, problemsetuser.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, problemset_user.FieldID)
 		for i := range fields {
-			if fields[i] != problemsetuser.FieldID {
+			if fields[i] != problemset_user.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
 		if _q.withUser != nil {
-			_spec.Node.AddColumnOnce(problemsetuser.FieldUserID)
+			_spec.Node.AddColumnOnce(problemset_user.FieldUserID)
 		}
 		if _q.withProblemSet != nil {
-			_spec.Node.AddColumnOnce(problemsetuser.FieldProblemSetID)
+			_spec.Node.AddColumnOnce(problemset_user.FieldProblemSetID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {
@@ -560,10 +560,10 @@ func (_q *ProblemSetUserQuery) querySpec() *sqlgraph.QuerySpec {
 
 func (_q *ProblemSetUserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(problemsetuser.Table)
+	t1 := builder.Table(problemset_user.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = problemsetuser.Columns
+		columns = problemset_user.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -590,7 +590,7 @@ func (_q *ProblemSetUserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// ProblemSetUserGroupBy is the group-by builder for ProblemSetUser entities.
+// ProblemSetUserGroupBy is the group-by builder for ProblemSet_User entities.
 type ProblemSetUserGroupBy struct {
 	selector
 	build *ProblemSetUserQuery

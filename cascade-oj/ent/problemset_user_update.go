@@ -5,7 +5,7 @@ package ent
 import (
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemsetuser"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/user"
 	"context"
 	"errors"
@@ -16,7 +16,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ProblemSetUserUpdate is the builder for updating ProblemSetUser entities.
+// ProblemSetUserUpdate is the builder for updating ProblemSet_User entities.
 type ProblemSetUserUpdate struct {
 	config
 	hooks    []Hook
@@ -24,19 +24,19 @@ type ProblemSetUserUpdate struct {
 }
 
 // Where appends a list predicates to the ProblemSetUserUpdate builder.
-func (_u *ProblemSetUserUpdate) Where(ps ...predicate.ProblemSetUser) *ProblemSetUserUpdate {
+func (_u *ProblemSetUserUpdate) Where(ps ...predicate.ProblemSet_User) *ProblemSetUserUpdate {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *ProblemSetUserUpdate) SetUserID(v int) *ProblemSetUserUpdate {
+func (_u *ProblemSetUserUpdate) SetUserID(v int64) *ProblemSetUserUpdate {
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *ProblemSetUserUpdate) SetNillableUserID(v *int) *ProblemSetUserUpdate {
+func (_u *ProblemSetUserUpdate) SetNillableUserID(v *int64) *ProblemSetUserUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -44,13 +44,13 @@ func (_u *ProblemSetUserUpdate) SetNillableUserID(v *int) *ProblemSetUserUpdate 
 }
 
 // SetProblemSetID sets the "problem_set_id" field.
-func (_u *ProblemSetUserUpdate) SetProblemSetID(v int) *ProblemSetUserUpdate {
+func (_u *ProblemSetUserUpdate) SetProblemSetID(v int64) *ProblemSetUserUpdate {
 	_u.mutation.SetProblemSetID(v)
 	return _u
 }
 
 // SetNillableProblemSetID sets the "problem_set_id" field if the given value is not nil.
-func (_u *ProblemSetUserUpdate) SetNillableProblemSetID(v *int) *ProblemSetUserUpdate {
+func (_u *ProblemSetUserUpdate) SetNillableProblemSetID(v *int64) *ProblemSetUserUpdate {
 	if v != nil {
 		_u.SetProblemSetID(*v)
 	}
@@ -141,20 +141,20 @@ func (_u *ProblemSetUserUpdate) ExecX(ctx context.Context) {
 // check runs all checks and user-defined validators on the builder.
 func (_u *ProblemSetUserUpdate) check() error {
 	if v, ok := _u.mutation.UserID(); ok {
-		if err := problemsetuser.UserIDValidator(v); err != nil {
-			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSetUser.user_id": %w`, err)}
+		if err := problemset_user.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSet_User.user_id": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.ProblemSetID(); ok {
-		if err := problemsetuser.ProblemSetIDValidator(v); err != nil {
-			return &ValidationError{Name: "problem_set_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSetUser.problem_set_id": %w`, err)}
+		if err := problemset_user.ProblemSetIDValidator(v); err != nil {
+			return &ValidationError{Name: "problem_set_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSet_User.problem_set_id": %w`, err)}
 		}
 	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "ProblemSetUser.user"`)
+		return errors.New(`ent: clearing a required unique edge "ProblemSet_User.user"`)
 	}
 	if _u.mutation.ProblemSetCleared() && len(_u.mutation.ProblemSetIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "ProblemSetUser.problem_set"`)
+		return errors.New(`ent: clearing a required unique edge "ProblemSet_User.problem_set"`)
 	}
 	return nil
 }
@@ -163,7 +163,7 @@ func (_u *ProblemSetUserUpdate) sqlSave(ctx context.Context) (_node int, err err
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(problemsetuser.Table, problemsetuser.Columns, sqlgraph.NewFieldSpec(problemsetuser.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(problemset_user.Table, problemset_user.Columns, sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -172,23 +172,23 @@ func (_u *ProblemSetUserUpdate) sqlSave(ctx context.Context) (_node int, err err
 		}
 	}
 	if value, ok := _u.mutation.TotalScore(); ok {
-		_spec.SetField(problemsetuser.FieldTotalScore, field.TypeInt, value)
+		_spec.SetField(problemset_user.FieldTotalScore, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.AddedTotalScore(); ok {
-		_spec.AddField(problemsetuser.FieldTotalScore, field.TypeInt, value)
+		_spec.AddField(problemset_user.FieldTotalScore, field.TypeInt, value)
 	}
 	if _u.mutation.TotalScoreCleared() {
-		_spec.ClearField(problemsetuser.FieldTotalScore, field.TypeInt)
+		_spec.ClearField(problemset_user.FieldTotalScore, field.TypeInt)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetuser.UserTable,
-			Columns: []string{problemsetuser.UserColumn},
+			Table:   problemset_user.UserTable,
+			Columns: []string{problemset_user.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -197,11 +197,11 @@ func (_u *ProblemSetUserUpdate) sqlSave(ctx context.Context) (_node int, err err
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetuser.UserTable,
-			Columns: []string{problemsetuser.UserColumn},
+			Table:   problemset_user.UserTable,
+			Columns: []string{problemset_user.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -213,11 +213,11 @@ func (_u *ProblemSetUserUpdate) sqlSave(ctx context.Context) (_node int, err err
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetuser.ProblemSetTable,
-			Columns: []string{problemsetuser.ProblemSetColumn},
+			Table:   problemset_user.ProblemSetTable,
+			Columns: []string{problemset_user.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -226,11 +226,11 @@ func (_u *ProblemSetUserUpdate) sqlSave(ctx context.Context) (_node int, err err
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetuser.ProblemSetTable,
-			Columns: []string{problemsetuser.ProblemSetColumn},
+			Table:   problemset_user.ProblemSetTable,
+			Columns: []string{problemset_user.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -240,7 +240,7 @@ func (_u *ProblemSetUserUpdate) sqlSave(ctx context.Context) (_node int, err err
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{problemsetuser.Label}
+			err = &NotFoundError{problemset_user.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -250,7 +250,7 @@ func (_u *ProblemSetUserUpdate) sqlSave(ctx context.Context) (_node int, err err
 	return _node, nil
 }
 
-// ProblemSetUserUpdateOne is the builder for updating a single ProblemSetUser entity.
+// ProblemSetUserUpdateOne is the builder for updating a single ProblemSet_User entity.
 type ProblemSetUserUpdateOne struct {
 	config
 	fields   []string
@@ -259,13 +259,13 @@ type ProblemSetUserUpdateOne struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *ProblemSetUserUpdateOne) SetUserID(v int) *ProblemSetUserUpdateOne {
+func (_u *ProblemSetUserUpdateOne) SetUserID(v int64) *ProblemSetUserUpdateOne {
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *ProblemSetUserUpdateOne) SetNillableUserID(v *int) *ProblemSetUserUpdateOne {
+func (_u *ProblemSetUserUpdateOne) SetNillableUserID(v *int64) *ProblemSetUserUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -273,13 +273,13 @@ func (_u *ProblemSetUserUpdateOne) SetNillableUserID(v *int) *ProblemSetUserUpda
 }
 
 // SetProblemSetID sets the "problem_set_id" field.
-func (_u *ProblemSetUserUpdateOne) SetProblemSetID(v int) *ProblemSetUserUpdateOne {
+func (_u *ProblemSetUserUpdateOne) SetProblemSetID(v int64) *ProblemSetUserUpdateOne {
 	_u.mutation.SetProblemSetID(v)
 	return _u
 }
 
 // SetNillableProblemSetID sets the "problem_set_id" field if the given value is not nil.
-func (_u *ProblemSetUserUpdateOne) SetNillableProblemSetID(v *int) *ProblemSetUserUpdateOne {
+func (_u *ProblemSetUserUpdateOne) SetNillableProblemSetID(v *int64) *ProblemSetUserUpdateOne {
 	if v != nil {
 		_u.SetProblemSetID(*v)
 	}
@@ -341,7 +341,7 @@ func (_u *ProblemSetUserUpdateOne) ClearProblemSet() *ProblemSetUserUpdateOne {
 }
 
 // Where appends a list predicates to the ProblemSetUserUpdate builder.
-func (_u *ProblemSetUserUpdateOne) Where(ps ...predicate.ProblemSetUser) *ProblemSetUserUpdateOne {
+func (_u *ProblemSetUserUpdateOne) Where(ps ...predicate.ProblemSet_User) *ProblemSetUserUpdateOne {
 	_u.mutation.Where(ps...)
 	return _u
 }
@@ -353,13 +353,13 @@ func (_u *ProblemSetUserUpdateOne) Select(field string, fields ...string) *Probl
 	return _u
 }
 
-// Save executes the query and returns the updated ProblemSetUser entity.
-func (_u *ProblemSetUserUpdateOne) Save(ctx context.Context) (*ProblemSetUser, error) {
+// Save executes the query and returns the updated ProblemSet_User entity.
+func (_u *ProblemSetUserUpdateOne) Save(ctx context.Context) (*ProblemSet_User, error) {
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *ProblemSetUserUpdateOne) SaveX(ctx context.Context) *ProblemSetUser {
+func (_u *ProblemSetUserUpdateOne) SaveX(ctx context.Context) *ProblemSet_User {
 	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -383,42 +383,42 @@ func (_u *ProblemSetUserUpdateOne) ExecX(ctx context.Context) {
 // check runs all checks and user-defined validators on the builder.
 func (_u *ProblemSetUserUpdateOne) check() error {
 	if v, ok := _u.mutation.UserID(); ok {
-		if err := problemsetuser.UserIDValidator(v); err != nil {
-			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSetUser.user_id": %w`, err)}
+		if err := problemset_user.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSet_User.user_id": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.ProblemSetID(); ok {
-		if err := problemsetuser.ProblemSetIDValidator(v); err != nil {
-			return &ValidationError{Name: "problem_set_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSetUser.problem_set_id": %w`, err)}
+		if err := problemset_user.ProblemSetIDValidator(v); err != nil {
+			return &ValidationError{Name: "problem_set_id", err: fmt.Errorf(`ent: validator failed for field "ProblemSet_User.problem_set_id": %w`, err)}
 		}
 	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "ProblemSetUser.user"`)
+		return errors.New(`ent: clearing a required unique edge "ProblemSet_User.user"`)
 	}
 	if _u.mutation.ProblemSetCleared() && len(_u.mutation.ProblemSetIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "ProblemSetUser.problem_set"`)
+		return errors.New(`ent: clearing a required unique edge "ProblemSet_User.problem_set"`)
 	}
 	return nil
 }
 
-func (_u *ProblemSetUserUpdateOne) sqlSave(ctx context.Context) (_node *ProblemSetUser, err error) {
+func (_u *ProblemSetUserUpdateOne) sqlSave(ctx context.Context) (_node *ProblemSet_User, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(problemsetuser.Table, problemsetuser.Columns, sqlgraph.NewFieldSpec(problemsetuser.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(problemset_user.Table, problemset_user.Columns, sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ProblemSetUser.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ProblemSet_User.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, problemsetuser.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, problemset_user.FieldID)
 		for _, f := range fields {
-			if !problemsetuser.ValidColumn(f) {
+			if !problemset_user.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != problemsetuser.FieldID {
+			if f != problemset_user.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -431,23 +431,23 @@ func (_u *ProblemSetUserUpdateOne) sqlSave(ctx context.Context) (_node *ProblemS
 		}
 	}
 	if value, ok := _u.mutation.TotalScore(); ok {
-		_spec.SetField(problemsetuser.FieldTotalScore, field.TypeInt, value)
+		_spec.SetField(problemset_user.FieldTotalScore, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.AddedTotalScore(); ok {
-		_spec.AddField(problemsetuser.FieldTotalScore, field.TypeInt, value)
+		_spec.AddField(problemset_user.FieldTotalScore, field.TypeInt, value)
 	}
 	if _u.mutation.TotalScoreCleared() {
-		_spec.ClearField(problemsetuser.FieldTotalScore, field.TypeInt)
+		_spec.ClearField(problemset_user.FieldTotalScore, field.TypeInt)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetuser.UserTable,
-			Columns: []string{problemsetuser.UserColumn},
+			Table:   problemset_user.UserTable,
+			Columns: []string{problemset_user.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -456,11 +456,11 @@ func (_u *ProblemSetUserUpdateOne) sqlSave(ctx context.Context) (_node *ProblemS
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetuser.UserTable,
-			Columns: []string{problemsetuser.UserColumn},
+			Table:   problemset_user.UserTable,
+			Columns: []string{problemset_user.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -472,11 +472,11 @@ func (_u *ProblemSetUserUpdateOne) sqlSave(ctx context.Context) (_node *ProblemS
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetuser.ProblemSetTable,
-			Columns: []string{problemsetuser.ProblemSetColumn},
+			Table:   problemset_user.ProblemSetTable,
+			Columns: []string{problemset_user.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -485,11 +485,11 @@ func (_u *ProblemSetUserUpdateOne) sqlSave(ctx context.Context) (_node *ProblemS
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   problemsetuser.ProblemSetTable,
-			Columns: []string{problemsetuser.ProblemSetColumn},
+			Table:   problemset_user.ProblemSetTable,
+			Columns: []string{problemset_user.ProblemSetColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -497,12 +497,12 @@ func (_u *ProblemSetUserUpdateOne) sqlSave(ctx context.Context) (_node *ProblemS
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &ProblemSetUser{config: _u.config}
+	_node = &ProblemSet_User{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{problemsetuser.Label}
+			err = &NotFoundError{problemset_user.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

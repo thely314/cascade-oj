@@ -70,8 +70,8 @@ const (
 	SubmissionsColumn = "problem_id"
 	// ProblemSetProblemsTable is the table that holds the problem_set_problems relation/edge.
 	ProblemSetProblemsTable = "ProblemSet_Problems"
-	// ProblemSetProblemsInverseTable is the table name for the ProblemSetProblem entity.
-	// It exists in this package in order to avoid circular dependency with the "problemsetproblem" package.
+	// ProblemSetProblemsInverseTable is the table name for the ProblemSet_Problem entity.
+	// It exists in this package in order to avoid circular dependency with the "problemset_problem" package.
 	ProblemSetProblemsInverseTable = "ProblemSet_Problems"
 	// ProblemSetProblemsColumn is the table column denoting the problem_set_problems relation/edge.
 	ProblemSetProblemsColumn = "problem_id"
@@ -101,7 +101,7 @@ func ValidColumn(column string) bool {
 
 var (
 	// CreatorIDValidator is a validator for the "creator_id" field. It is called by the builders before save.
-	CreatorIDValidator func(int) error
+	CreatorIDValidator func(int64) error
 	// TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	TitleValidator func(string) error
 	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
@@ -111,7 +111,7 @@ var (
 	// MemoryLimitValidator is a validator for the "memory_limit" field. It is called by the builders before save.
 	MemoryLimitValidator func(int) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(int) error
+	IDValidator func(int64) error
 )
 
 // ProblemType defines the type for the "problem_type" enum field.

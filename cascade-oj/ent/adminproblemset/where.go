@@ -10,97 +10,97 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.AdminProblemSet {
+func ID(id int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.AdminProblemSet {
+func IDEQ(id int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.AdminProblemSet {
+func IDNEQ(id int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.AdminProblemSet {
+func IDIn(ids ...int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.AdminProblemSet {
+func IDNotIn(ids ...int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.AdminProblemSet {
+func IDGT(id int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.AdminProblemSet {
+func IDGTE(id int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.AdminProblemSet {
+func IDLT(id int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.AdminProblemSet {
+func IDLTE(id int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldLTE(FieldID, id))
 }
 
 // AdminID applies equality check predicate on the "admin_id" field. It's identical to AdminIDEQ.
-func AdminID(v int) predicate.AdminProblemSet {
+func AdminID(v int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldEQ(FieldAdminID, v))
 }
 
 // ProblemSetID applies equality check predicate on the "problem_set_id" field. It's identical to ProblemSetIDEQ.
-func ProblemSetID(v int) predicate.AdminProblemSet {
+func ProblemSetID(v int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldEQ(FieldProblemSetID, v))
 }
 
 // AdminIDEQ applies the EQ predicate on the "admin_id" field.
-func AdminIDEQ(v int) predicate.AdminProblemSet {
+func AdminIDEQ(v int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldEQ(FieldAdminID, v))
 }
 
 // AdminIDNEQ applies the NEQ predicate on the "admin_id" field.
-func AdminIDNEQ(v int) predicate.AdminProblemSet {
+func AdminIDNEQ(v int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldNEQ(FieldAdminID, v))
 }
 
 // AdminIDIn applies the In predicate on the "admin_id" field.
-func AdminIDIn(vs ...int) predicate.AdminProblemSet {
+func AdminIDIn(vs ...int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldIn(FieldAdminID, vs...))
 }
 
 // AdminIDNotIn applies the NotIn predicate on the "admin_id" field.
-func AdminIDNotIn(vs ...int) predicate.AdminProblemSet {
+func AdminIDNotIn(vs ...int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldNotIn(FieldAdminID, vs...))
 }
 
 // ProblemSetIDEQ applies the EQ predicate on the "problem_set_id" field.
-func ProblemSetIDEQ(v int) predicate.AdminProblemSet {
+func ProblemSetIDEQ(v int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldEQ(FieldProblemSetID, v))
 }
 
 // ProblemSetIDNEQ applies the NEQ predicate on the "problem_set_id" field.
-func ProblemSetIDNEQ(v int) predicate.AdminProblemSet {
+func ProblemSetIDNEQ(v int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldNEQ(FieldProblemSetID, v))
 }
 
 // ProblemSetIDIn applies the In predicate on the "problem_set_id" field.
-func ProblemSetIDIn(vs ...int) predicate.AdminProblemSet {
+func ProblemSetIDIn(vs ...int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldIn(FieldProblemSetID, vs...))
 }
 
 // ProblemSetIDNotIn applies the NotIn predicate on the "problem_set_id" field.
-func ProblemSetIDNotIn(vs ...int) predicate.AdminProblemSet {
+func ProblemSetIDNotIn(vs ...int64) predicate.AdminProblemSet {
 	return predicate.AdminProblemSet(sql.FieldNotIn(FieldProblemSetID, vs...))
 }
 

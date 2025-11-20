@@ -16,9 +16,9 @@ import (
 type Problem struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// CreatorID holds the value of the "creator_id" field.
-	CreatorID int `json:"creator_id,omitempty"`
+	CreatorID int64 `json:"creator_id,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Description holds the value of the "description" field.
@@ -48,7 +48,7 @@ type ProblemEdges struct {
 	// Submissions holds the value of the submissions edge.
 	Submissions []*SubmissionRecord `json:"submissions,omitempty"`
 	// ProblemSetProblems holds the value of the problem_set_problems edge.
-	ProblemSetProblems []*ProblemSetProblem `json:"problem_set_problems,omitempty"`
+	ProblemSetProblems []*ProblemSet_Problem `json:"problem_set_problems,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [5]bool
@@ -94,7 +94,7 @@ func (e ProblemEdges) SubmissionsOrErr() ([]*SubmissionRecord, error) {
 
 // ProblemSetProblemsOrErr returns the ProblemSetProblems value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProblemEdges) ProblemSetProblemsOrErr() ([]*ProblemSetProblem, error) {
+func (e ProblemEdges) ProblemSetProblemsOrErr() ([]*ProblemSet_Problem, error) {
 	if e.loadedTypes[4] {
 		return e.ProblemSetProblems, nil
 	}
@@ -130,12 +130,12 @@ func (_m *Problem) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = int64(value.Int64)
 		case problem.FieldCreatorID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field creator_id", values[i])
 			} else if value.Valid {
-				_m.CreatorID = int(value.Int64)
+				_m.CreatorID = value.Int64
 			}
 		case problem.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {

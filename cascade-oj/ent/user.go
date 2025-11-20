@@ -15,7 +15,7 @@ import (
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// Username holds the value of the "username" field.
 	Username string `json:"username,omitempty"`
 	// Email holds the value of the "email" field.
@@ -41,7 +41,7 @@ type UserEdges struct {
 	// AdminProblemSets holds the value of the admin_problem_sets edge.
 	AdminProblemSets []*AdminProblemSet `json:"admin_problem_sets,omitempty"`
 	// ProblemSetUsers holds the value of the problem_set_users edge.
-	ProblemSetUsers []*ProblemSetUser `json:"problem_set_users,omitempty"`
+	ProblemSetUsers []*ProblemSet_User `json:"problem_set_users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [5]bool
@@ -85,7 +85,7 @@ func (e UserEdges) AdminProblemSetsOrErr() ([]*AdminProblemSet, error) {
 
 // ProblemSetUsersOrErr returns the ProblemSetUsers value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) ProblemSetUsersOrErr() ([]*ProblemSetUser, error) {
+func (e UserEdges) ProblemSetUsersOrErr() ([]*ProblemSet_User, error) {
 	if e.loadedTypes[4] {
 		return e.ProblemSetUsers, nil
 	}
@@ -121,7 +121,7 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = int(value.Int64)
+			_m.ID = int64(value.Int64)
 		case user.FieldUsername:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field username", values[i])

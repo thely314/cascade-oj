@@ -6,8 +6,8 @@ import (
 	"cascade-oj/ent/adminproblemset"
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemsetproblem"
-	"cascade-oj/ent/problemsetuser"
+	"cascade-oj/ent/problemset_problem"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/submissionrecord"
 	"context"
 	"database/sql/driver"
@@ -124,7 +124,7 @@ func (_q *ProblemSetQuery) QueryProblemSetProblems() *ProblemSetProblemQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(problemset.Table, problemset.FieldID, selector),
-			sqlgraph.To(problemsetproblem.Table, problemsetproblem.FieldID),
+			sqlgraph.To(problemset_problem.Table, problemset_problem.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, problemset.ProblemSetProblemsTable, problemset.ProblemSetProblemsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
@@ -146,7 +146,7 @@ func (_q *ProblemSetQuery) QueryProblemSetUsers() *ProblemSetUserQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(problemset.Table, problemset.FieldID, selector),
-			sqlgraph.To(problemsetuser.Table, problemsetuser.FieldID),
+			sqlgraph.To(problemset_user.Table, problemset_user.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, problemset.ProblemSetUsersTable, problemset.ProblemSetUsersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
@@ -179,8 +179,8 @@ func (_q *ProblemSetQuery) FirstX(ctx context.Context) *ProblemSet {
 
 // FirstID returns the first ProblemSet ID from the query.
 // Returns a *NotFoundError when no ProblemSet ID was found.
-func (_q *ProblemSetQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (_q *ProblemSetQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -192,7 +192,7 @@ func (_q *ProblemSetQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *ProblemSetQuery) FirstIDX(ctx context.Context) int {
+func (_q *ProblemSetQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -230,8 +230,8 @@ func (_q *ProblemSetQuery) OnlyX(ctx context.Context) *ProblemSet {
 // OnlyID is like Only, but returns the only ProblemSet ID in the query.
 // Returns a *NotSingularError when more than one ProblemSet ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *ProblemSetQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (_q *ProblemSetQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -247,7 +247,7 @@ func (_q *ProblemSetQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *ProblemSetQuery) OnlyIDX(ctx context.Context) int {
+func (_q *ProblemSetQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -275,7 +275,7 @@ func (_q *ProblemSetQuery) AllX(ctx context.Context) []*ProblemSet {
 }
 
 // IDs executes the query and returns a list of ProblemSet IDs.
-func (_q *ProblemSetQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (_q *ProblemSetQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -287,7 +287,7 @@ func (_q *ProblemSetQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *ProblemSetQuery) IDsX(ctx context.Context) []int {
+func (_q *ProblemSetQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -522,8 +522,8 @@ func (_q *ProblemSetQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*P
 	}
 	if query := _q.withProblemSetProblems; query != nil {
 		if err := _q.loadProblemSetProblems(ctx, query, nodes,
-			func(n *ProblemSet) { n.Edges.ProblemSetProblems = []*ProblemSetProblem{} },
-			func(n *ProblemSet, e *ProblemSetProblem) {
+			func(n *ProblemSet) { n.Edges.ProblemSetProblems = []*ProblemSet_Problem{} },
+			func(n *ProblemSet, e *ProblemSet_Problem) {
 				n.Edges.ProblemSetProblems = append(n.Edges.ProblemSetProblems, e)
 			}); err != nil {
 			return nil, err
@@ -531,8 +531,8 @@ func (_q *ProblemSetQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*P
 	}
 	if query := _q.withProblemSetUsers; query != nil {
 		if err := _q.loadProblemSetUsers(ctx, query, nodes,
-			func(n *ProblemSet) { n.Edges.ProblemSetUsers = []*ProblemSetUser{} },
-			func(n *ProblemSet, e *ProblemSetUser) { n.Edges.ProblemSetUsers = append(n.Edges.ProblemSetUsers, e) }); err != nil {
+			func(n *ProblemSet) { n.Edges.ProblemSetUsers = []*ProblemSet_User{} },
+			func(n *ProblemSet, e *ProblemSet_User) { n.Edges.ProblemSetUsers = append(n.Edges.ProblemSetUsers, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -541,7 +541,7 @@ func (_q *ProblemSetQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*P
 
 func (_q *ProblemSetQuery) loadSubmissions(ctx context.Context, query *SubmissionRecordQuery, nodes []*ProblemSet, init func(*ProblemSet), assign func(*ProblemSet, *SubmissionRecord)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*ProblemSet)
+	nodeids := make(map[int64]*ProblemSet)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -571,7 +571,7 @@ func (_q *ProblemSetQuery) loadSubmissions(ctx context.Context, query *Submissio
 }
 func (_q *ProblemSetQuery) loadAdminProblemSets(ctx context.Context, query *AdminProblemSetQuery, nodes []*ProblemSet, init func(*ProblemSet), assign func(*ProblemSet, *AdminProblemSet)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*ProblemSet)
+	nodeids := make(map[int64]*ProblemSet)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -599,9 +599,9 @@ func (_q *ProblemSetQuery) loadAdminProblemSets(ctx context.Context, query *Admi
 	}
 	return nil
 }
-func (_q *ProblemSetQuery) loadProblemSetProblems(ctx context.Context, query *ProblemSetProblemQuery, nodes []*ProblemSet, init func(*ProblemSet), assign func(*ProblemSet, *ProblemSetProblem)) error {
+func (_q *ProblemSetQuery) loadProblemSetProblems(ctx context.Context, query *ProblemSetProblemQuery, nodes []*ProblemSet, init func(*ProblemSet), assign func(*ProblemSet, *ProblemSet_Problem)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*ProblemSet)
+	nodeids := make(map[int64]*ProblemSet)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -610,9 +610,9 @@ func (_q *ProblemSetQuery) loadProblemSetProblems(ctx context.Context, query *Pr
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(problemsetproblem.FieldProblemSetID)
+		query.ctx.AppendFieldOnce(problemset_problem.FieldProblemSetID)
 	}
-	query.Where(predicate.ProblemSetProblem(func(s *sql.Selector) {
+	query.Where(predicate.ProblemSet_Problem(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(problemset.ProblemSetProblemsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
@@ -629,9 +629,9 @@ func (_q *ProblemSetQuery) loadProblemSetProblems(ctx context.Context, query *Pr
 	}
 	return nil
 }
-func (_q *ProblemSetQuery) loadProblemSetUsers(ctx context.Context, query *ProblemSetUserQuery, nodes []*ProblemSet, init func(*ProblemSet), assign func(*ProblemSet, *ProblemSetUser)) error {
+func (_q *ProblemSetQuery) loadProblemSetUsers(ctx context.Context, query *ProblemSetUserQuery, nodes []*ProblemSet, init func(*ProblemSet), assign func(*ProblemSet, *ProblemSet_User)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*ProblemSet)
+	nodeids := make(map[int64]*ProblemSet)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -640,9 +640,9 @@ func (_q *ProblemSetQuery) loadProblemSetUsers(ctx context.Context, query *Probl
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(problemsetuser.FieldProblemSetID)
+		query.ctx.AppendFieldOnce(problemset_user.FieldProblemSetID)
 	}
-	query.Where(predicate.ProblemSetUser(func(s *sql.Selector) {
+	query.Where(predicate.ProblemSet_User(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(problemset.ProblemSetUsersColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
@@ -670,7 +670,7 @@ func (_q *ProblemSetQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *ProblemSetQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(problemset.Table, problemset.Columns, sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(problemset.Table, problemset.Columns, sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

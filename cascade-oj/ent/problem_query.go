@@ -6,7 +6,7 @@ import (
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemsetproblem"
+	"cascade-oj/ent/problemset_problem"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/testcase"
 	"cascade-oj/ent/user"
@@ -170,7 +170,7 @@ func (_q *ProblemQuery) QueryProblemSetProblems() *ProblemSetProblemQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(problem.Table, problem.FieldID, selector),
-			sqlgraph.To(problemsetproblem.Table, problemsetproblem.FieldID),
+			sqlgraph.To(problemset_problem.Table, problemset_problem.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, problem.ProblemSetProblemsTable, problem.ProblemSetProblemsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
@@ -203,8 +203,8 @@ func (_q *ProblemQuery) FirstX(ctx context.Context) *Problem {
 
 // FirstID returns the first Problem ID from the query.
 // Returns a *NotFoundError when no Problem ID was found.
-func (_q *ProblemQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (_q *ProblemQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -216,7 +216,7 @@ func (_q *ProblemQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *ProblemQuery) FirstIDX(ctx context.Context) int {
+func (_q *ProblemQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -254,8 +254,8 @@ func (_q *ProblemQuery) OnlyX(ctx context.Context) *Problem {
 // OnlyID is like Only, but returns the only Problem ID in the query.
 // Returns a *NotSingularError when more than one Problem ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *ProblemQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (_q *ProblemQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -271,7 +271,7 @@ func (_q *ProblemQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *ProblemQuery) OnlyIDX(ctx context.Context) int {
+func (_q *ProblemQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -299,7 +299,7 @@ func (_q *ProblemQuery) AllX(ctx context.Context) []*Problem {
 }
 
 // IDs executes the query and returns a list of Problem IDs.
-func (_q *ProblemQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (_q *ProblemQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -311,7 +311,7 @@ func (_q *ProblemQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *ProblemQuery) IDsX(ctx context.Context) []int {
+func (_q *ProblemQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -443,7 +443,7 @@ func (_q *ProblemQuery) WithProblemSetProblems(opts ...func(*ProblemSetProblemQu
 // Example:
 //
 //	var v []struct {
-//		CreatorID int `json:"creator_id,omitempty"`
+//		CreatorID int64 `json:"creator_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -466,7 +466,7 @@ func (_q *ProblemQuery) GroupBy(field string, fields ...string) *ProblemGroupBy 
 // Example:
 //
 //	var v []struct {
-//		CreatorID int `json:"creator_id,omitempty"`
+//		CreatorID int64 `json:"creator_id,omitempty"`
 //	}
 //
 //	client.Problem.Query().
@@ -570,8 +570,8 @@ func (_q *ProblemQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prob
 	}
 	if query := _q.withProblemSetProblems; query != nil {
 		if err := _q.loadProblemSetProblems(ctx, query, nodes,
-			func(n *Problem) { n.Edges.ProblemSetProblems = []*ProblemSetProblem{} },
-			func(n *Problem, e *ProblemSetProblem) {
+			func(n *Problem) { n.Edges.ProblemSetProblems = []*ProblemSet_Problem{} },
+			func(n *Problem, e *ProblemSet_Problem) {
 				n.Edges.ProblemSetProblems = append(n.Edges.ProblemSetProblems, e)
 			}); err != nil {
 			return nil, err
@@ -581,8 +581,8 @@ func (_q *ProblemQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prob
 }
 
 func (_q *ProblemQuery) loadCreator(ctx context.Context, query *UserQuery, nodes []*Problem, init func(*Problem), assign func(*Problem, *User)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*Problem)
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*Problem)
 	for i := range nodes {
 		fk := nodes[i].CreatorID
 		if _, ok := nodeids[fk]; !ok {
@@ -611,7 +611,7 @@ func (_q *ProblemQuery) loadCreator(ctx context.Context, query *UserQuery, nodes
 }
 func (_q *ProblemQuery) loadTestCases(ctx context.Context, query *TestCaseQuery, nodes []*Problem, init func(*Problem), assign func(*Problem, *TestCase)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Problem)
+	nodeids := make(map[int64]*Problem)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -641,7 +641,7 @@ func (_q *ProblemQuery) loadTestCases(ctx context.Context, query *TestCaseQuery,
 }
 func (_q *ProblemQuery) loadJudgeRecords(ctx context.Context, query *JudgeRecordQuery, nodes []*Problem, init func(*Problem), assign func(*Problem, *JudgeRecord)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Problem)
+	nodeids := make(map[int64]*Problem)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -671,7 +671,7 @@ func (_q *ProblemQuery) loadJudgeRecords(ctx context.Context, query *JudgeRecord
 }
 func (_q *ProblemQuery) loadSubmissions(ctx context.Context, query *SubmissionRecordQuery, nodes []*Problem, init func(*Problem), assign func(*Problem, *SubmissionRecord)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Problem)
+	nodeids := make(map[int64]*Problem)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -699,9 +699,9 @@ func (_q *ProblemQuery) loadSubmissions(ctx context.Context, query *SubmissionRe
 	}
 	return nil
 }
-func (_q *ProblemQuery) loadProblemSetProblems(ctx context.Context, query *ProblemSetProblemQuery, nodes []*Problem, init func(*Problem), assign func(*Problem, *ProblemSetProblem)) error {
+func (_q *ProblemQuery) loadProblemSetProblems(ctx context.Context, query *ProblemSetProblemQuery, nodes []*Problem, init func(*Problem), assign func(*Problem, *ProblemSet_Problem)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Problem)
+	nodeids := make(map[int64]*Problem)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -710,9 +710,9 @@ func (_q *ProblemQuery) loadProblemSetProblems(ctx context.Context, query *Probl
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(problemsetproblem.FieldProblemID)
+		query.ctx.AppendFieldOnce(problemset_problem.FieldProblemID)
 	}
-	query.Where(predicate.ProblemSetProblem(func(s *sql.Selector) {
+	query.Where(predicate.ProblemSet_Problem(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(problem.ProblemSetProblemsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
@@ -740,7 +740,7 @@ func (_q *ProblemQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *ProblemQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(problem.Table, problem.Columns, sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(problem.Table, problem.Columns, sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

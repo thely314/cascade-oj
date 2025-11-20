@@ -21,7 +21,7 @@ type TestCaseCreate struct {
 }
 
 // SetProblemID sets the "problem_id" field.
-func (_c *TestCaseCreate) SetProblemID(v int) *TestCaseCreate {
+func (_c *TestCaseCreate) SetProblemID(v int64) *TestCaseCreate {
 	_c.mutation.SetProblemID(v)
 	return _c
 }
@@ -39,7 +39,7 @@ func (_c *TestCaseCreate) SetOutput(v string) *TestCaseCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *TestCaseCreate) SetID(v int) *TestCaseCreate {
+func (_c *TestCaseCreate) SetID(v int64) *TestCaseCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -131,7 +131,7 @@ func (_c *TestCaseCreate) sqlSave(ctx context.Context) (*TestCase, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -141,7 +141,7 @@ func (_c *TestCaseCreate) sqlSave(ctx context.Context) (*TestCase, error) {
 func (_c *TestCaseCreate) createSpec() (*TestCase, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TestCase{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(testcase.Table, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(testcase.Table, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
 	)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
@@ -163,7 +163,7 @@ func (_c *TestCaseCreate) createSpec() (*TestCase, *sqlgraph.CreateSpec) {
 			Columns: []string{testcase.ProblemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -221,7 +221,7 @@ func (_c *TestCaseCreateBulk) Save(ctx context.Context) ([]*TestCase, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

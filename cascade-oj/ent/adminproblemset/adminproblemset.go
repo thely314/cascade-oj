@@ -57,11 +57,11 @@ func ValidColumn(column string) bool {
 
 var (
 	// AdminIDValidator is a validator for the "admin_id" field. It is called by the builders before save.
-	AdminIDValidator func(int) error
+	AdminIDValidator func(int64) error
 	// ProblemSetIDValidator is a validator for the "problem_set_id" field. It is called by the builders before save.
-	ProblemSetIDValidator func(int) error
+	ProblemSetIDValidator func(int64) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(int) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the AdminProblemSet queries.
