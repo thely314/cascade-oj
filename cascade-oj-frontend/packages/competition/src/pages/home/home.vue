@@ -1,6 +1,5 @@
 <template>
   <div class="home-container">
-    <NavBar />
     <main class="main-content">
       <h1>欢迎来到CasCade平台</h1>
       <p>这是一个在线判题系统</p>
@@ -22,7 +21,7 @@
   </div>
 </template>
 
-<script setup>
-import NavBar from '../../components/NavBar/NavBar.vue'
+<script setup lang="ts">
+// NavBar is provided globally by App.vue
 </script>
 <style scoped src="./home.css"></style>

@@ -39,7 +39,8 @@
     padding: 5px 10px;
     border-radius: 4px;
     transition: background-color 0.3s, color 0.2s;
-    cursor: default;
+    cursor: pointer;
+    text-decoration: none;
 }
 
 .nav-link:hover {
@@ -52,6 +53,14 @@
     display: flex;
     align-items: center;
     gap: 15px;
+}
+
+/* logo link style (when logo is a router-link) */
+.logo-link {
+    color: #16a34a;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 .login-btn,

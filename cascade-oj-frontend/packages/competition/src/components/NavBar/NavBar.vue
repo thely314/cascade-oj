@@ -3,29 +3,25 @@
     <div class="nav-container">
       <!-- 网站Logo -->
       <div class="nav-logo">
-        <span>CasCade</span>
+        <span class="logo-text">CasCade</span>
       </div>
       
       <!-- 导航菜单 -->
       <ul class="nav-menu">
         <li class="nav-item">
-          <span class="nav-link">题库</span>
+          <router-link class="nav-link" to="/home">主页</router-link>
         </li>
         <li class="nav-item">
-          <span class="nav-link">比赛</span>
+          <router-link class="nav-link" to="/competition">比赛</router-link>
         </li>
         <li class="nav-item">
-          <span class="nav-link">排名</span>
-        </li>
-        <li class="nav-item">
-          <span class="nav-link">讨论</span>
+          <router-link class="nav-link" to="/about">关于我们</router-link>
         </li>
       </ul>
       
       <!-- 用户功能区 -->
       <div class="nav-user">
-        <span class="login-btn">登录</span>
-        <span class="register-btn">注册</span>
+        <router-link class="login-btn" to="/login">登录/注册</router-link>
       </div>
     </div>
   </nav>
