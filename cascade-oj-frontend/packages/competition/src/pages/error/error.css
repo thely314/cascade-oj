@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0d1310;
+    background: #161616;
     /* 与主页保持一致的深色背景 */
     color: #cbd5c0;
     /* 全局文字色 */
@@ -13,6 +13,7 @@
 
 .error-content {
     text-align: center;
+    margin-top: -200px;
     max-width: 880px;
 }
 
@@ -20,14 +21,14 @@
     margin: 0;
     font-size: 6rem;
     line-height: 1;
-    color: #16a34a;
+    color: #1dad80;
     /* 绿色主色 */
     font-weight: 700;
 }
 
 .error-content p {
     margin: 12px 0 0;
-    color: #9ca3af;
+    color: #ced7db;
     /* 次要文字 */
     font-size: 1.25rem;
 }

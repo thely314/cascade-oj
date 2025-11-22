@@ -2,11 +2,7 @@
   <div class="left-section">
     <div class="logo-area">
       <div class="logo">
-        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-          <rect fill="#0066FF" x="10" y="10" width="20" height="20" rx="4"/>
-          <path d="M18 15 L22 20 L18 25" stroke="white" stroke-width="2" fill="none"/>
-          <path d="M22 15 L18 20 L22 25" stroke="white" stroke-width="2" fill="none"/>
-        </svg>
+        <img :src="logo" alt="Cascade logo" class="logo-img" />
       </div>
       <h1>Cascade OJ</h1>
     </div>
@@ -75,15 +71,19 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import logo from '../../../../../../assets/cascade.svg';
+</script>
+
 <style scoped>
 .left-section {
-  flex: 1; /* 让左侧占满屏幕剩余空间（右侧固定宽度），避免左侧过宽 */
+  flex: 1; /* 左侧固定宽度视觉 */
   width: 550px;
   padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: #f5f7fa;
+  background-color: #0c1110; /* 深色背景与主页一致 */
 }
 
 .logo-area {
@@ -95,7 +95,7 @@
 .logo {
   width: 40px;
   height: 40px;
-  background-color: #0066FF;
+  background-color: transparent;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -108,15 +108,22 @@
   height: 24px;
 }
 
+.logo-img {
+  width: 40px;
+  height: 40px;
+  display: block;
+  object-fit: contain;
+}
+
 .logo-area h1 {
   font-size: 28px;
-  color: #0066FF;
+  color: #1dad80;
   margin: 0;
 }
 
 .slogan {
   font-size: 16px;
-  color: #666;
+  color: #9fbebb;
   margin-bottom: 32px;
 }
 
@@ -144,15 +151,15 @@
 }
 
 .feature-icon.blue {
-  background-color: rgba(100, 149, 237, 0.2);
+  background-color: #1dadad;
 }
 
 .feature-icon.green {
-  background-color: rgba(144, 238, 144, 0.2);
+  background-color: #1dad8b;
 }
 
 .feature-icon.purple {
-  background-color: rgba(218, 112, 214, 0.2);
+  background-color: #b06fd3;
 }
 
 .icon {
@@ -162,20 +169,24 @@
 
 .feature-text h3 {
   font-size: 18px;
+  color: #50e0b0e3;
   margin: 0 0 8px 0;
 }
 
 .feature-text p {
   font-size: 14px;
-  color: #666;
+  color: #9fbebb;
   margin: 0;
 }
 
 .stats-card {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255,255,255,0.02);
   border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  width: 100%;
+  max-width: 800px;
+  align-self: flex-start;
 }
 
 .stats-card h3 {
@@ -200,19 +211,19 @@
 }
 
 .number.blue {
-  color: #0066FF;
+  color: #1dadad;
 }
 
 .number.green {
-  color: #228B22;
+  color: #1dad8b;
 }
 
 .number.purple {
-  color: #9932CC;
+  color: #b06fd3;
 }
 
 .label {
   font-size: 14px;
-  color: #666;
+  color: #9fbebb;
 }
 </style>

@@ -18,13 +18,13 @@
 }
 
 .page-title {
-    color: #16a34a;
+    color: #1dad80;
     margin-bottom: 8px;
     font-size: 2rem;
 }
 
 .lead {
-    color: #9ca3af;
+    color: #ced7db;
     margin-bottom: 24px;
     font-size: 1.05rem;
 }
@@ -44,7 +44,7 @@
 }
 
 .card h3 {
-    color: #16a34a;
+    color: #1dad80;
     margin-bottom: 12px;
     font-size: 1.25rem;
 }
@@ -68,7 +68,7 @@
 }
 
 .card a {
-    color: #16a34a;
+    color: #1dad80;
     text-decoration: none;
 }
 

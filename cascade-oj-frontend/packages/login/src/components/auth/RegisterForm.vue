@@ -108,25 +108,30 @@ const handleRegister = () => {
 
 <style scoped>
 .auth-form {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 360px; /* 固定表单宽度 */
+  box-sizing: border-box;
 }
 
 .form-group label {
   display: block;
   font-size: 14px;
   margin-bottom: 8px;
-  color: #333;
+  color: #bababa;
 }
 
 .input-field {
   width: 100%;
   padding: 12px;
-  border: 1px solid #eee;
-  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.773);
+  border-radius: 6px;
   font-size: 14px;
+  background: #0f1716;
+  color: #cbd5c0;
 }
 
 .password-field {
@@ -146,7 +151,7 @@ const handleRegister = () => {
 .toggle-password svg {
   width: 20px;
   height: 20px;
-  color: #999;
+  color: #9fbebb;
 }
 
 .form-check {
@@ -154,14 +159,14 @@ const handleRegister = () => {
 }
 
 .form-check a {
-  color: #0066FF;
+  color: #62b7e8;
   text-decoration: none;
   margin: 0 4px;
 }
 
 .btn-primary {
-  background-color: #388E3C;
-  color: #fff;
+  background-color: #23aa8f;
+  color: #01210f;
   border: none;
   padding: 12px;
   border-radius: 4px;
@@ -171,7 +176,7 @@ const handleRegister = () => {
 }
 
 .btn-primary:hover {
-  background-color: #2E7D32;
+  background-color: #159067;
 }
 
 .or-separator {
@@ -205,10 +210,10 @@ const handleRegister = () => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid #eee;
+  border: 1px solid rgba(255,255,255,0.04);
   padding: 12px;
   border-radius: 4px;
-  background-color: #fff;
+  background-color: #23aa8f;
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -220,10 +225,10 @@ const handleRegister = () => {
 }
 
 .btn-social.google {
-  color: #ea4335;
+  color: #0044ff;
 }
 
 .btn-social.github {
-  color: #333;
+  color: #000000;
 }
 </style>

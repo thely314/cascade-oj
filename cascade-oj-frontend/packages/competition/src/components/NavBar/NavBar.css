@@ -1,5 +1,5 @@
 .navbar {
-    background-color: #000;
+    background-color: #050808;
     /* 顶部栏黑色 */
     color: #cbd5c0;
     /* 全局文字：浅灰，便于黑底阅读 */
@@ -16,11 +16,24 @@
     height: 60px;
 }
 
-.nav-logo span {
-    color: #16a34a;
+.logo-text {
+    color: #16a379;
     /* Logo 使用绿色 */
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.125rem; /* ~18px, slightly smaller than nav height */
+    font-weight: 600;
+    line-height: 1;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-logo svg {
+    width: 44px;
+    height: 44px;
+    display: block;
 }
 
 .nav-menu {
@@ -44,7 +57,7 @@
 }
 
 .nav-link:hover {
-    background-color: rgba(22, 163, 74, 0.08);
+    background-color: rgba(22, 163, 118, 0.08);
     /* 轻微绿色悬浮 */
     color: #e6f7ec;
 }
@@ -58,9 +71,10 @@
 /* logo link style (when logo is a router-link) */
 .logo-link {
     color: #16a34a;
-    font-size: 1.5rem;
-    font-weight: bold;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .login-btn,
@@ -90,4 +104,14 @@
 .register-btn:hover {
     opacity: 0.95;
     transform: translateY(-1px);
+}
+
+/* Hide logo text on very small screens to save space */
+@media (max-width: 480px) {
+    .logo-text {
+        display: none;
+    }
+    .nav-container {
+        padding: 0 12px;
+    }
 }
