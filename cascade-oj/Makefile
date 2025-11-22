@@ -52,6 +52,10 @@ api:
 				echo "Generating API code for auth module..."; \
 				cd api && buf generate -o cascade cascade/public/auth/v1/auth.proto; \
 				;; \
+			user) \
+				echo "Generating API code for user module..."; \
+				cd api && buf generate -o cascade cascade/user/v1/user.proto; \
+				;; \
 			*) \
 				echo "Error: Unknown module '$$MODULE'"; \
 				echo "Available modules: auth"; \

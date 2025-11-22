@@ -1,0 +1,251 @@
+syntax = "proto3";
+package api.cascade.user.v1;
+
+option go_package = "cascade-oj/api/cascade/user/v1;v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "errors/errors.proto";
+
+service User {
+    rpc GetContests(GetContestsRequest) returns (GetContestsReply) {
+        option (google.api.http) = {
+            get: "/user/contests"
+        };
+    };
+    rpc GetSingleContest(GetSingleContestRequest) returns (GetSingleContestReply) {
+        option (google.api.http) = {
+            get: "/user/contest/{contest_id}"
+        };
+    };
+
+    rpc JoinContest(JoinContestRequest) returns (JoinContestReply) {
+        option (google.api.http) = {
+            post: "/user/contest/{contest_id}/join"
+            body: "*"
+        };
+    };
+    rpc QuitContest(QuitContestRequest) returns (QuitContestReply) {
+        option (google.api.http) = {
+            delete: "/user/contest/{contest_id}/join"
+        };
+    };
+    rpc GetProblems(GetProblemsRequest) returns (GetProblemsReply) {
+        option (google.api.http) = {
+            get: "/user/problems/{contest_id}"
+        };
+    };
+    rpc GetSingleProblem(GetSingleProblemRequest) returns (GetSingleProblemReply) {
+        option (google.api.http) = {
+            get: "/user/problem/{problem_id}"
+        };
+    };
+
+    rpc PostSelfTest(SelfTestRequest) returns (SelfTestReply) {
+        option (google.api.http) = {
+            post: "/user/selftests"
+            body: "*"
+        };
+    };
+    rpc PostSubmission(SubmissionRequest) returns (SubmissionReply) {
+        option (google.api.http) = {
+            post: "/user/submissions"
+            body: "*"
+        };
+    };
+    rpc GetSubmissions(GetSubmissionsRequest) returns (GetSubmissionsReply) {
+        option (google.api.http) = {
+            get: "/user/submissions"
+        };
+    };
+    rpc GetSingleSubmission(GetSingleSubmissionRequest) returns (GetSingleSubmissionReply) {
+        option (google.api.http) = {
+            get: "/user/submissions/{submission_id}"
+        };
+    };
+
+    rpc GetRanks(GetRanksRequest) returns (GetRanksReply) {
+        option (google.api.http) = {
+            get: "/user/{contest_id}/ranks"
+        };
+    };
+
+    rpc GetAnnouncements(GetAnnouncementsRequest) returns (GetAnnouncementsReply) {
+        option (google.api.http) = {
+            get: "/user/announcements"
+        };
+    };
+
+    rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoReply) {
+        option (google.api.http) = {
+            get: "/users/{user_id}"
+        };
+    };
+    rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoReply) {
+        option (google.api.http) = {
+            put: "/users/{user_id}"
+            body: "*"
+        };
+    };
+}
+
+message ContestMetadata {
+    int64 id = 1; // Contest ID
+    string title = 2; // Contest Title
+    google.protobuf.Timestamp start_time = 3; // Contest Start Time
+    google.protobuf.Timestamp end_time = 4; // Contest End Time
+    string status = 5; // Contest Status
+}
+message GetContestsRequest {}
+message GetContestsReply {
+    repeated ContestMetadata contests = 1; // List of contests metadata
+}
+
+message GetSingleContestRequest {
+    int64 contest_id = 1; // Contest ID
+}
+message GetSingleContestReply {
+    ContestMetadata metadata = 1; // Contest Metadata
+    string description = 2; // Contest Description
+}
+
+message JoinContestRequest {
+    int64 contest_id = 1; // Contest ID
+    int64 user_id = 2; // User ID
+}
+message JoinContestReply {
+    bool is_join = 1; // Whether the user has joined the contest
+}
+
+message QuitContestRequest {
+    int64 contest_id = 1; // Contest ID
+    int64 user_id = 2; // User ID
+}
+message QuitContestReply {
+    bool is_join = 1; // Whether the user has joined the contest
+}
+
+message ProblemMetadata {
+    int64 id = 1; // Problem ID
+    string title = 2; // Problem Title
+    string problem_type = 3; // Problem Type
+    int32 time_limit_ms = 4; // Time Limit in milliseconds
+    int32 memory_limit_mb = 5; // Memory Limit in megabytes
+}
+message GetProblemsRequest {
+    int64 contest_id = 1; // Contest ID
+}
+message GetProblemsReply {
+    repeated ProblemMetadata problems = 1; // List of problems metadata
+}
+
+message GetSingleProblemRequest {
+    int64 problem_id = 1; // Problem ID
+}
+message GetSingleProblemReply {
+    ProblemMetadata metadata = 1; // Problem Metadata
+    string creator = 2; // Problem Creator
+    string description = 3; // Problem Description
+}
+
+message SelfTestRequest {
+    int64 problem_id = 1; // Problem ID
+    string code = 2; // User Code
+    string language = 3; // Programming Language
+    string self_case = 4; // User testcase
+}
+message SelfTestReply {
+    int64 self_test_id = 1; // Self Test ID, judge ID in ent
+    string status = 2; // Self Test Status
+    string result = 3; // Self Test Result
+}
+
+message SubmissionRequest {
+    int64 problem_id = 1; // Problem ID
+    string code = 2; // User Code
+    string language = 3; // Programming Language
+}
+message SubmissionReply {
+    int64 submission_id = 1; // Submission ID, judge ID in ent
+    string status = 2; // Submission Status
+    string result = 3; // Submission Result
+    int32 score = 4; // Submission Score
+}
+
+message SubmissionMetadata {
+    int64 submission_id = 1; // Submission ID
+    int64 problem_id = 2; // Problem ID
+    int64 user_id = 3; // User ID
+    string status = 4; // Submission Status
+    string result = 5; // Submission Result
+    google.protobuf.Timestamp submit_time = 6; // Submission Time
+    int32 score = 7; // Submission Score
+}
+message GetSubmissionsRequest {
+    int64 problem_id = 1; // Problem ID
+    int64 contest_id = 2; // Contest ID
+    int64 user_id = 3; // User ID
+    int32 page = 4; // Page number
+    int32 page_size = 5; // Page size
+}
+message GetSubmissionsReply {
+    repeated SubmissionMetadata submissions = 1; // List of submissions metadata
+}
+
+message GetSingleSubmissionRequest {
+    int64 submission_id = 1; // Submission ID
+}
+message GetSingleSubmissionReply {
+    SubmissionMetadata metadata = 1; // Submission Metadata
+    string code = 2; // User Code
+    string language = 3; // Programming Language
+}
+
+message GetRanksRequest {
+    int64 contest_id = 1; // Contest ID
+}
+message GetRanksReply {
+    message RankItem {
+        int64 user_id = 1; // User ID
+        string username = 2; // Username
+        int32 rank = 3; // User Rank
+        int32 score = 4; // User Score
+    }
+    repeated RankItem ranks = 1; // List of rank entries
+}
+
+message GetAnnouncementsRequest {}
+message GetAnnouncementsReply {
+    message Announcement {
+        int64 id = 1; // Announcement ID
+        string publisher_name = 2; // Publisher Name
+        string title = 3; // Announcement Title
+        string content = 4; // Announcement Content
+    }
+    repeated Announcement announcements = 1; // List of announcements
+}
+
+message GetUserInfoRequest {
+    int64 user_id = 1; // User ID
+}
+message GetUserInfoReply {
+    int64 user_id = 1; // User ID
+    string username = 2; // Username
+    string email = 3; // Email
+}
+
+message UpdateUserInfoRequest {
+    int64 user_id = 1; // User ID
+    string username = 2; // Username
+    string email = 3; // Email
+}
+message UpdateUserInfoReply {
+    bool is_updated = 1; // Whether the user info is updated
+}
+
+enum ErrorReason {
+	option (errors.default_code) = 500;
+
+	USER_BANNED = 0 [(errors.code) = 401];
+	CONTEST_END = 1 [(errors.code) = 401];
+}
