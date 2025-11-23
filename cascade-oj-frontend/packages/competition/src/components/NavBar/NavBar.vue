@@ -3,7 +3,33 @@
     <div class="nav-container">
       <!-- 网站Logo -->
       <div class="nav-logo">
-        <span class="logo-text">CasCade</span>
+        <router-link class="logo-link" to="/home" aria-label="CasCade Home">
+          <!-- inline cascade svg -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 164 164">
+            <title>CasCade</title>
+            <defs/>
+            <g>
+              <g data-cell-id="0">
+                <g data-cell-id="1">
+                  <g data-cell-id="-t6uBNjXSVFn4JsbTugf-1">
+                    <g transform="translate(0.5,0.5)"/>
+                    <g data-cell-id="-t6uBNjXSVFn4JsbTugf-2">
+                      <g transform="translate(0.5,0.5)">
+                        <path d="M 74 34 L 94 34 Q -26 74 94 114 L 74 114 Q -46 74 74 34 Z" fill="#4bedc4" stroke="none" transform="rotate(-30,54,74)" style="fill: linear-gradient(#4bedc4,#18cb9e);"/>
+                      </g>
+                    </g>
+                    <g data-cell-id="-t6uBNjXSVFn4JsbTugf-3">
+                      <g transform="translate(0.5,0.5)">
+                        <path d="M 128 48 L 148 48 Q 28 88 148 128 L 128 128 Q 8 88 128 48 Z" fill="#4bedc4" stroke="none" transform="rotate(-210,108,88)" style="fill: linear-gradient(#4bedc4,#18cb9e);"/>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </svg>
+          <span class="logo-text">CasCade</span>
+        </router-link>
       </div>
       
       <!-- 导航菜单 -->

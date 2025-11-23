@@ -74,25 +74,30 @@ const handleLogin = () => {
 
 <style scoped>
 .auth-form {
-  width: 360px;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  box-sizing: border-box;
 }
 
 .form-group label {
   display: block;
   font-size: 14px;
   margin-bottom: 8px;
-  color: #333;
+  color: #bababa;
 }
 
 .input-field {
   width: 100%;
   padding: 12px;
-  border: 1px solid #eee;
-  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.773);
+  border-radius: 6px;
   font-size: 14px;
+  background: #0f1716;
+  color: #cbd5c0;
 }
 
 .password-field {
@@ -112,7 +117,7 @@ const handleLogin = () => {
 .toggle-password svg {
   width: 20px;
   height: 20px;
-  color: #999;
+  color: #9fbebb;
 }
 
 .form-actions {
@@ -133,14 +138,14 @@ const handleLogin = () => {
 }
 
 .forgot-link {
-  color: #0066FF;
+  color: #1dad7f;
   text-decoration: none;
   font-size: 14px;
 }
 
 .btn-primary {
-  background-color: #0066FF;
-  color: #fff;
+  background-color: #23aa8f;
+  color: #01210f;
   border: none;
   padding: 12px;
   border-radius: 4px;
@@ -150,12 +155,12 @@ const handleLogin = () => {
 }
 
 .btn-primary:hover {
-  background-color: #0052CC;
+  background-color: #159067;
 }
 
 .or-separator {
   text-align: center;
-  color: #999;
+  color: #999999;
   font-size: 14px;
   margin: 12px 0;
   position: relative;
@@ -168,7 +173,7 @@ const handleLogin = () => {
   top: 50%;
   width: 40%;
   height: 1px;
-  background-color: #eee;
+  background-color: #eeeeee;
 }
 
 .or-separator::before {
@@ -184,10 +189,10 @@ const handleLogin = () => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid #eee;
+  border: 1px solid rgba(255,255,255,0.04);
   padding: 12px;
   border-radius: 4px;
-  background-color: #fff;
+  background-color: #23aa8f;
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -199,10 +204,10 @@ const handleLogin = () => {
 }
 
 .btn-social.google {
-  color: #ea4335;
+  color: #0044ff;
 }
 
 .btn-social.github {
-  color: #333;
+  color: #000000;
 }
 </style>
