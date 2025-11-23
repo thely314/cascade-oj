@@ -8,17 +8,17 @@ import (
 
 type AuthService struct {
 	pb.UnimplementedAuthServiceServer
-	auc *biz.AuthUsecase
+	authUsercase *biz.AuthUsecase
 }
 
 func NewAuthService(auc *biz.AuthUsecase) *AuthService {
 	return &AuthService{
-		auc: auc,
+		authUsercase: auc,
 	}
 }
 
 func (as *AuthService) Signup(ctx context.Context, req *pb.SignupRequest) (*pb.SignupReply, error) {
-	err := as.auc.Signup(ctx, req.Username, req.Email, req.Password)
+	err := as.authUsercase.Signup(ctx, req.Username, req.Email, req.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (as *AuthService) Signup(ctx context.Context, req *pb.SignupRequest) (*pb.S
 }
 
 func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply, error) {
-	jwtToken, err := as.auc.Login(ctx, req.UsernameOrEmail, req.Password)
+	jwtToken, err := as.authUsercase.Login(ctx, req.UsernameOrEmail, req.Password)
 	if err != nil {
 		return nil, err
 	}

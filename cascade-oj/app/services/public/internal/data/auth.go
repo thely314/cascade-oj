@@ -10,14 +10,14 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-type AuthEntry struct {
+type authRepo struct {
 	// Data is ent.Client
 	data *Data
 	log  *log.Helper
 }
 
-func (entry *AuthEntry) GetProblemSets(ctx context.Context) ([]int64, error) {
-	// get problem sets from database
+// get problem sets from database
+func (entry *authRepo) GetProblemSets(ctx context.Context) ([]int64, error) {
 	problemSets, err := entry.data.db.ProblemSet.Query().Select(problemset.FieldID).All(ctx)
 	if err != nil {
 		return nil, err
@@ -29,8 +29,14 @@ func (entry *AuthEntry) GetProblemSets(ctx context.Context) ([]int64, error) {
 	return idList, nil
 }
 
-func (entry *AuthEntry) FindUserByNameOrEmail(ctx context.Context, usernameOrEmail string) (*biz.User, error) {
-	// find user from database
+// find user from database
+//
+// params:
+//   - usernameOrEmail: username or email of the user
+//
+// returns:
+// - *biz.User: user model
+func (entry *authRepo) FindUserByNameOrEmail(ctx context.Context, usernameOrEmail string) (*biz.User, error) {
 	userResult, err := entry.data.db.User.Query().
 		Select(user.FieldID, user.FieldUsername, user.FieldEmail, user.FieldPasswordHash, user.FieldRole).
 		Where(
@@ -53,8 +59,8 @@ func (entry *AuthEntry) FindUserByNameOrEmail(ctx context.Context, usernameOrEma
 	}, nil
 }
 
-func NewAuthEntry(data *Data, logger log.Logger) biz.AuthEntry {
-	return &AuthEntry{
+func NewAuthRepo(data *Data, logger log.Logger) biz.AuthRepo {
+	return &authRepo{
 		data: data,
 		log:  log.NewHelper(logger),
 	}
