@@ -31,6 +31,7 @@ type MyCustomClaims struct {
 // AuthRepo is a entry of searching user.
 type AuthRepo interface {
 	FindUserByNameOrEmail(context.Context, string) (*User, error)
+	SignUpAtDatabase(context.Context, string, string, string) error
 }
 
 type JwtConfig struct {
@@ -74,6 +75,10 @@ func (authUsecase *AuthUsecase) Signup(ctx context.Context, username string, ema
 	userWithSameEmail, err := authUsecase.authRepo.FindUserByNameOrEmail(ctx, email)
 	if err == nil && userWithSameEmail != nil {
 		return errors.New("email already registered")
+	}
+	err = authUsecase.authRepo.SignUpAtDatabase(ctx, username, email, password)
+	if err != nil {
+		return errors.New("failed to create user")
 	}
 	return nil
 }

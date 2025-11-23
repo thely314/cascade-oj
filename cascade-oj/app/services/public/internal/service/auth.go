@@ -17,8 +17,8 @@ func NewAuthService(auc *biz.AuthUsecase) *AuthService {
 	}
 }
 
-func (as *AuthService) Signup(ctx context.Context, req *pb.SignupRequest) (*pb.SignupReply, error) {
-	err := as.authUsercase.Signup(ctx, req.Username, req.Email, req.Password)
+func (authService *AuthService) Signup(ctx context.Context, req *pb.SignupRequest) (*pb.SignupReply, error) {
+	err := authService.authUsercase.Signup(ctx, req.Username, req.Email, req.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -28,8 +28,8 @@ func (as *AuthService) Signup(ctx context.Context, req *pb.SignupRequest) (*pb.S
 	}, nil
 }
 
-func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply, error) {
-	jwtToken, err := as.authUsercase.Login(ctx, req.UsernameOrEmail, req.Password)
+func (authService *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply, error) {
+	jwtToken, err := authService.authUsercase.Login(ctx, req.UsernameOrEmail, req.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 	}, nil
 }
 
-func (as *AuthService) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutReply, error) {
+func (authService *AuthService) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutReply, error) {
 	// No server-side logout implementation needed for JWT
 	return &pb.LogoutReply{
 		Success: true,
