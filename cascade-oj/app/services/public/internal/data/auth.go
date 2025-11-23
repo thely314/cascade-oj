@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"cascade-oj/app/services/public/internal/biz"
-	"cascade-oj/ent/problemset"
 	"cascade-oj/ent/user"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -16,28 +15,16 @@ type authRepo struct {
 	log  *log.Helper
 }
 
-// get problem sets from database
-func (entry *authRepo) GetProblemSets(ctx context.Context) ([]int64, error) {
-	problemSets, err := entry.data.db.ProblemSet.Query().Select(problemset.FieldID).All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	var idList []int64
-	for _, ps := range problemSets {
-		idList = append(idList, ps.ID)
-	}
-	return idList, nil
-}
-
 // find user from database
 //
 // params:
 //   - usernameOrEmail: username or email of the user
 //
 // returns:
-// - *biz.User: user model
-func (entry *authRepo) FindUserByNameOrEmail(ctx context.Context, usernameOrEmail string) (*biz.User, error) {
-	userResult, err := entry.data.db.User.Query().
+//   - *biz.User: user model
+//   - error: nil if success
+func (repo *authRepo) FindUserByNameOrEmail(ctx context.Context, usernameOrEmail string) (*biz.User, error) {
+	userResult, err := repo.data.db.User.Query().
 		Select(user.FieldID, user.FieldUsername, user.FieldEmail, user.FieldPasswordHash, user.FieldRole).
 		Where(
 			user.Or(
@@ -47,7 +34,7 @@ func (entry *authRepo) FindUserByNameOrEmail(ctx context.Context, usernameOrEmai
 		).
 		Only(ctx)
 	if err != nil {
-		entry.log.Errorf("failed to find user by name or email: %v", err)
+		repo.log.Errorf("failed to find user by name or email: %v", err)
 		return nil, err
 	}
 	return &biz.User{
@@ -57,6 +44,29 @@ func (entry *authRepo) FindUserByNameOrEmail(ctx context.Context, usernameOrEmai
 		PasswordHash: userResult.PasswordHash,
 		Role:         userResult.Role,
 	}, nil
+}
+
+// SignUpAtDatabase creates a new user in the database
+//
+// params:
+//   - username: username of the new user
+//   - email: email of the new user
+//   - password: password of the new user
+//
+// returns:
+//   - error: nil if success
+func (repo *authRepo) SignUpAtDatabase(ctx context.Context, username, email, password string) error {
+	_, err := repo.data.db.User.Create().
+		SetUsername(username).
+		SetEmail(email).
+		SetPasswordHash(password). // In production, hash the password before storing
+		SetRole(user.RoleCompetitor).
+		Save(ctx)
+	if err != nil {
+		repo.log.Errorf("failed to create new user: %v", err)
+		return err
+	}
+	return nil
 }
 
 func NewAuthRepo(data *Data, logger log.Logger) biz.AuthRepo {
