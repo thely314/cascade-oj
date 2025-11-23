@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  gateway:
+    build:
+      context: ./
+      dockerfile: app/gateway/Dockerfile
+      args: 
+        VERSION : 0.1.0
+    image: cascade-oj/gateway:latest
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config/gateway:/data/conf
+
+  public:
+    build:
+      context: ./
+      dockerfile: app/services/public/Dockerfile
+      args: 
+        VERSION : 0.1.0
+    image: cascade-oj/public:latest
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - "8100:8000"
+    volumes:
+      - ./config/public:/data/conf
+
+networks:
+  default:
+    driver: bridge
