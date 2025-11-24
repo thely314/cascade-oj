@@ -9,19 +9,19 @@ import "errors/errors.proto";
 service AuthService {
     rpc Login(LoginRequest) returns (LoginReply) {
         option (google.api.http) = {
-            post: "/login"
+            post: "public/login"
             body: "*"
         };
     }
     rpc Logout(LogoutRequest) returns (LogoutReply) {
         option (google.api.http) = {
-            post: "/logout"
+            post: "public/logout"
             body: "*"
         };
     }
     rpc Signup(SignupRequest) returns (SignupReply) {
         option (google.api.http) = {
-            post: "/signup"
+            post: "public/signup"
             body: "*"
         };
     }

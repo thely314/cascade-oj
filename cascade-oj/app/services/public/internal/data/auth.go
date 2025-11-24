@@ -5,6 +5,7 @@ import (
 
 	"cascade-oj/app/services/public/internal/biz"
 	"cascade-oj/ent/user"
+	"cascade-oj/pkg/util"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -18,6 +19,7 @@ type authRepo struct {
 // find user from database
 //
 // params:
+//   - ctx: context.Context
 //   - usernameOrEmail: username or email of the user
 //
 // returns:
@@ -49,6 +51,7 @@ func (repo *authRepo) FindUserByNameOrEmail(ctx context.Context, usernameOrEmail
 // SignUpAtDatabase creates a new user in the database
 //
 // params:
+//   - ctx: context.Context
 //   - username: username of the new user
 //   - email: email of the new user
 //   - password: password of the new user
@@ -56,10 +59,15 @@ func (repo *authRepo) FindUserByNameOrEmail(ctx context.Context, usernameOrEmail
 // returns:
 //   - error: nil if success
 func (repo *authRepo) SignUpAtDatabase(ctx context.Context, username, email, password string) error {
-	_, err := repo.data.db.User.Create().
+	bcryptPassword, err := util.GenerateHashPassword(password)
+	if err != nil {
+		repo.log.Errorf("failed to hash password: %v", err)
+		return err
+	}
+	_, err = repo.data.db.User.Create().
 		SetUsername(username).
 		SetEmail(email).
-		SetPasswordHash(password). // In production, hash the password before storing
+		SetPasswordHash(bcryptPassword). // In production, hash the password before storing
 		SetRole(user.RoleCompetitor).
 		Save(ctx)
 	if err != nil {
