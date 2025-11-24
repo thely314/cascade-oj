@@ -10,7 +10,7 @@ services:
     image: cascade-oj/gateway:latest
     restart: unless-stopped
     depends_on:
-      - mysql
+      - cascade_mysql
     ports:
       - "8000:8000"
     volumes:
@@ -25,7 +25,7 @@ services:
     image: cascade-oj/public:latest
     restart: unless-stopped
     depends_on:
-      - mysql
+      - cascade_mysql
     ports:
       - "8100:8000"
     volumes:
