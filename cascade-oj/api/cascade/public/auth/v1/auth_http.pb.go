@@ -31,9 +31,9 @@ type AuthServiceHTTPServer interface {
 
 func RegisterAuthServiceHTTPServer(s *http.Server, srv AuthServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/login", _AuthService_Login0_HTTP_Handler(srv))
-	r.POST("/logout", _AuthService_Logout0_HTTP_Handler(srv))
-	r.POST("/signup", _AuthService_Signup0_HTTP_Handler(srv))
+	r.POST("public/login", _AuthService_Login0_HTTP_Handler(srv))
+	r.POST("public/logout", _AuthService_Logout0_HTTP_Handler(srv))
+	r.POST("public/signup", _AuthService_Signup0_HTTP_Handler(srv))
 }
 
 func _AuthService_Login0_HTTP_Handler(srv AuthServiceHTTPServer) func(ctx http.Context) error {
@@ -118,7 +118,7 @@ func NewAuthServiceHTTPClient(client *http.Client) AuthServiceHTTPClient {
 
 func (c *AuthServiceHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts ...http.CallOption) (*LoginReply, error) {
 	var out LoginReply
-	pattern := "/login"
+	pattern := "public/login"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAuthServiceLogin))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -131,7 +131,7 @@ func (c *AuthServiceHTTPClientImpl) Login(ctx context.Context, in *LoginRequest,
 
 func (c *AuthServiceHTTPClientImpl) Logout(ctx context.Context, in *LogoutRequest, opts ...http.CallOption) (*LogoutReply, error) {
 	var out LogoutReply
-	pattern := "/logout"
+	pattern := "public/logout"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAuthServiceLogout))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -144,7 +144,7 @@ func (c *AuthServiceHTTPClientImpl) Logout(ctx context.Context, in *LogoutReques
 
 func (c *AuthServiceHTTPClientImpl) Signup(ctx context.Context, in *SignupRequest, opts ...http.CallOption) (*SignupReply, error) {
 	var out SignupReply
-	pattern := "/signup"
+	pattern := "public/signup"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAuthServiceSignup))
 	opts = append(opts, http.PathTemplate(pattern))
