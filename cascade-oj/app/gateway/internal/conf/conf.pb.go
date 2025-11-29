@@ -195,13 +195,14 @@ func (x *Client) GetGrpc() *Client_GRPC {
 }
 
 type Data struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Mq            string                 `protobuf:"bytes,1,opt,name=mq,proto3" json:"mq,omitempty"`
-	Port          int32                  `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
-	Secret        string                 `protobuf:"bytes,3,opt,name=secret,proto3" json:"secret,omitempty"`
-	Ipv4Prefix    int32                  `protobuf:"varint,4,opt,name=ipv4_prefix,json=ipv4Prefix,proto3" json:"ipv4_prefix,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Mq             string                 `protobuf:"bytes,1,opt,name=mq,proto3" json:"mq,omitempty"`
+	Ipv4Prefix     int32                  `protobuf:"varint,2,opt,name=ipv4_prefix,json=ipv4Prefix,proto3" json:"ipv4_prefix,omitempty"`
+	Port           int64                  `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty"`
+	ApiKey         string                 `protobuf:"bytes,4,opt,name=api_key,json=apiKey,proto3" json:"api_key,omitempty"`
+	EndpointPreset string                 `protobuf:"bytes,5,opt,name=endpoint_preset,json=endpointPreset,proto3" json:"endpoint_preset,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Data) Reset() {
@@ -241,25 +242,32 @@ func (x *Data) GetMq() string {
 	return ""
 }
 
-func (x *Data) GetPort() int32 {
+func (x *Data) GetIpv4Prefix() int32 {
+	if x != nil {
+		return x.Ipv4Prefix
+	}
+	return 0
+}
+
+func (x *Data) GetPort() int64 {
 	if x != nil {
 		return x.Port
 	}
 	return 0
 }
 
-func (x *Data) GetSecret() string {
+func (x *Data) GetApiKey() string {
 	if x != nil {
-		return x.Secret
+		return x.ApiKey
 	}
 	return ""
 }
 
-func (x *Data) GetIpv4Prefix() int32 {
+func (x *Data) GetEndpointPreset() string {
 	if x != nil {
-		return x.Ipv4Prefix
+		return x.EndpointPreset
 	}
-	return 0
+	return ""
 }
 
 type Server_HTTP struct {
@@ -526,13 +534,14 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\x04GRPC\x12\x12\n" +
 	"\x04addr\x18\x01 \x01(\tR\x04addr\x123\n" +
 	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\atimeout\x12\x1a\n" +
-	"\bendpoint\x18\x03 \x01(\tR\bendpoint\"c\n" +
+	"\bendpoint\x18\x03 \x01(\tR\bendpoint\"\x8d\x01\n" +
 	"\x04Data\x12\x0e\n" +
-	"\x02mq\x18\x01 \x01(\tR\x02mq\x12\x12\n" +
-	"\x04port\x18\x02 \x01(\x05R\x04port\x12\x16\n" +
-	"\x06secret\x18\x03 \x01(\tR\x06secret\x12\x1f\n" +
-	"\vipv4_prefix\x18\x04 \x01(\x05R\n" +
-	"ipv4PrefixB\fZ\n" +
+	"\x02mq\x18\x01 \x01(\tR\x02mq\x12\x1f\n" +
+	"\vipv4_prefix\x18\x02 \x01(\x05R\n" +
+	"ipv4Prefix\x12\x12\n" +
+	"\x04port\x18\x03 \x01(\x03R\x04port\x12\x17\n" +
+	"\aapi_key\x18\x04 \x01(\tR\x06apiKey\x12'\n" +
+	"\x0fendpoint_preset\x18\x05 \x01(\tR\x0eendpointPresetB\fZ\n" +
 	"/conf;confb\x06proto3"
 
 var (

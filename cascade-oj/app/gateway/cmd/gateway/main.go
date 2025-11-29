@@ -4,14 +4,13 @@ import (
 	"flag"
 	"os"
 
-	// "cascade-oj/app/gateway/internal/conf"
+	"cascade-oj/app/gateway/internal/conf"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
-
-	// "github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
@@ -48,15 +47,15 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	// logger := log.With(log.NewStdLogger(os.Stdout),
-	// 	"ts", log.DefaultTimestamp,
-	// 	"caller", log.DefaultCaller,
-	// 	"service.id", id,
-	// 	"service.name", Name,
-	// 	"service.version", Version,
-	// 	"trace.id", tracing.TraceID(),
-	// 	"span.id", tracing.SpanID(),
-	// )
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -68,19 +67,19 @@ func main() {
 		panic(err)
 	}
 
-	// var bc conf.Bootstrap
-	// if err := c.Scan(&bc); err != nil {
-	// 	panic(err)
-	// }
+	var bc conf.Bootstrap
+	if err := c.Scan(&bc); err != nil {
+		panic(err)
+	}
 
-	// app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Jwt, logger)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer cleanup()
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Client, logger)
+	if err != nil {
+		panic(err)
+	}
+	defer cleanup()
 
-	// // start and wait for stop signal
-	// if err := app.Run(); err != nil {
-	// 	panic(err)
-	// }
+	// start and wait for stop signal
+	if err := app.Run(); err != nil {
+		panic(err)
+	}
 }
