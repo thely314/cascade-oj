@@ -1,0 +1,10 @@
+# 配置protoc生成规则
+version: v2
+
+managed:
+  enabled: true
+
+plugins:
+  # generate OpenAPI (uses protoc-gen-openapi)
+  - local: protoc-gen-openapi
+    out: ../tmp_openapi
