@@ -54,7 +54,6 @@ func NewJudgeUsecase(repo JudgeRepo, logger log.Logger) *JudgeUsecase {
 }
 
 func (judgeUsecase *JudgeUsecase) CreateSelfTest(ctx context.Context, selfTest *SelfTest) (string, error) {
-	// TODO: Implementation of CreateSelfTest
 	selfTestID, err := judgeUsecase.repo.CreateSelfTest(ctx, selfTest)
 	if err != nil {
 		return "", err
@@ -63,7 +62,6 @@ func (judgeUsecase *JudgeUsecase) CreateSelfTest(ctx context.Context, selfTest *
 }
 
 func (judgeUsecase *JudgeUsecase) CreateSubmission(ctx context.Context, submission *Submission) (string, error) {
-	// TODO: Implementation of CreateSubmission
 	submissionID, err := judgeUsecase.repo.CreateSubmission(ctx, submission)
 	if err != nil {
 		return "", err
