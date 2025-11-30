@@ -51,5 +51,5 @@ dist-ssr
 .idea/
 
 # database
-data/
+cascade-oj/data/
 /*.sql

@@ -1,0 +1,722 @@
+openapi: 3.0.3
+info:
+  title: AuthService API
+  version: 0.0.1
+tags:
+  - name: AuthService
+  - name: User
+paths:
+  public/login:
+    post:
+      tags:
+        - AuthService
+      operationId: AuthService_Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  public/logout:
+    post:
+      tags:
+        - AuthService
+      operationId: AuthService_Logout
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  public/signup:
+    post:
+      tags:
+        - AuthService
+      operationId: AuthService_Signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /user/announcements:
+    get:
+      tags:
+        - User
+      operationId: User_GetAnnouncements
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAnnouncementsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/user/contest/{contestId}':
+    get:
+      tags:
+        - User
+      operationId: User_GetSingleContest
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSingleContestReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/user/contest/{contestId}/join':
+    post:
+      tags:
+        - User
+      operationId: User_JoinContest
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinContestRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinContestReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    delete:
+      tags:
+        - User
+      operationId: User_QuitContest
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuitContestReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /user/contests:
+    get:
+      tags:
+        - User
+      operationId: User_GetContests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetContestsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/user/problem/{problemId}':
+    get:
+      tags:
+        - User
+      operationId: User_GetSingleProblem
+      parameters:
+        - name: problemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSingleProblemReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/user/problems/{contestId}':
+    get:
+      tags:
+        - User
+      operationId: User_GetProblems
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProblemsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /user/selftests:
+    post:
+      tags:
+        - User
+      operationId: User_PostSelfTest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelfTestRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelfTestReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /user/submissions:
+    get:
+      tags:
+        - User
+      operationId: User_GetSubmissions
+      parameters:
+        - name: problemId
+          in: query
+          schema:
+            type: string
+        - name: contestId
+          in: query
+          schema:
+            type: string
+        - name: userId
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSubmissionsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    post:
+      tags:
+        - User
+      operationId: User_PostSubmission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/user/submissions/{submissionId}':
+    get:
+      tags:
+        - User
+      operationId: User_GetSingleSubmission
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSingleSubmissionReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/user/{contestId}/ranks':
+    get:
+      tags:
+        - User
+      operationId: User_GetRanks
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRanksReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/users/{userId}':
+    get:
+      tags:
+        - User
+      operationId: User_GetUserInfo
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserInfoReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    put:
+      tags:
+        - User
+      operationId: User_UpdateUserInfo
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserInfoRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUserInfoReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+components:
+  schemas:
+    GoogleProtobufAny:
+      type: object
+      properties:
+        '@type':
+          type: string
+          description: The type of the serialized message.
+      additionalProperties: true
+      description: >-
+        Contains an arbitrary serialized message along with a @type that
+        describes the type of the serialized message.
+    LoginReply:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        token:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        usernameOrEmail:
+          type: string
+        password:
+          type: string
+    LogoutReply:
+      type: object
+      properties:
+        success:
+          type: boolean
+    LogoutRequest:
+      type: object
+      properties: {}
+    SignupReply:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    SignupRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    Status:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: >-
+            The status code, which should be an enum value of
+            [google.rpc.Code][google.rpc.Code].
+          format: int32
+        message:
+          type: string
+          description: >-
+            A developer-facing error message, which should be in English. Any
+            user-facing error message should be localized and sent in the
+            [google.rpc.Status.details][google.rpc.Status.details] field, or
+            localized by the client.
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/GoogleProtobufAny'
+          description: >-
+            A list of messages that carry the error details.  There is a common
+            set of message types for APIs to use.
+      description: >-
+        The `Status` type defines a logical error model that is suitable for
+        different programming environments, including REST APIs and RPC APIs. It
+        is used by [gRPC](https://github.com/grpc). Each `Status` message
+        contains three pieces of data: error code, error message, and error
+        details. You can find out more about this error model and how to work
+        with it in the [API Design
+        Guide](https://cloud.google.com/apis/design/errors).
+    ContestMetadata:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+    GetAnnouncementsReply:
+      type: object
+      properties:
+        announcements:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetAnnouncementsReply_Announcement'
+    GetAnnouncementsReply_Announcement:
+      type: object
+      properties:
+        id:
+          type: string
+        publisherName:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+    GetContestsReply:
+      type: object
+      properties:
+        contests:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContestMetadata'
+    GetProblemsReply:
+      type: object
+      properties:
+        problems:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemMetadata'
+    GetRanksReply:
+      type: object
+      properties:
+        ranks:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetRanksReply_RankItem'
+    GetRanksReply_RankItem:
+      type: object
+      properties:
+        userId:
+          type: string
+        username:
+          type: string
+        rank:
+          type: integer
+          format: int32
+        score:
+          type: integer
+          format: int32
+    GetSingleContestReply:
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/ContestMetadata'
+        description:
+          type: string
+    GetSingleProblemReply:
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/ProblemMetadata'
+        creator:
+          type: string
+        description:
+          type: string
+    GetSingleSubmissionReply:
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/SubmissionMetadata'
+        code:
+          type: string
+        language:
+          type: string
+    GetSubmissionsReply:
+      type: object
+      properties:
+        submissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubmissionMetadata'
+    GetUserInfoReply:
+      type: object
+      properties:
+        userId:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+    JoinContestReply:
+      type: object
+      properties:
+        isJoin:
+          type: boolean
+    JoinContestRequest:
+      type: object
+      properties:
+        contestId:
+          type: string
+        userId:
+          type: string
+    ProblemMetadata:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        problemType:
+          type: string
+        timeLimitMs:
+          type: integer
+          format: int32
+        memoryLimitMb:
+          type: integer
+          format: int32
+    QuitContestReply:
+      type: object
+      properties:
+        isJoin:
+          type: boolean
+    SelfTestReply:
+      type: object
+      properties:
+        uuid:
+          type: string
+    SelfTestRequest:
+      type: object
+      properties:
+        problemId:
+          type: string
+        code:
+          type: string
+        language:
+          type: string
+        selfCase:
+          type: string
+    SubmissionMetadata:
+      type: object
+      properties:
+        submissionId:
+          type: string
+        problemId:
+          type: string
+        userId:
+          type: string
+        status:
+          type: string
+        result:
+          type: string
+        submitTime:
+          type: string
+          format: date-time
+        score:
+          type: integer
+          format: int32
+    SubmissionReply:
+      type: object
+      properties:
+        uuid:
+          type: string
+    SubmissionRequest:
+      type: object
+      properties:
+        problemId:
+          type: string
+        code:
+          type: string
+        language:
+          type: string
+    UpdateUserInfoReply:
+      type: object
+      properties:
+        isUpdated:
+          type: boolean
+    UpdateUserInfoRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        username:
+          type: string
+        email:
+          type: string

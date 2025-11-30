@@ -24,7 +24,8 @@ type User struct {
 }
 
 type MyCustomClaims struct {
-	UserID int64 `json:"user_id"`
+	UserID int64     `json:"user_id"`
+	Role   user.Role `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -98,23 +99,24 @@ func (authUsecase *AuthUsecase) Login(ctx context.Context, usernameOrEmail strin
 	return jwt, nil
 }
 
-func (auc *AuthUsecase) generateJWT(user *User) (string, error) {
+func (authUsecase *AuthUsecase) generateJWT(user *User) (string, error) {
 	// 设置 JWT 声明
 	registeredClaims := jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(auc.jwtConf.expiration)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(authUsecase.jwtConf.expiration)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
-		Issuer:    auc.jwtConf.issuer,
+		Issuer:    authUsecase.jwtConf.issuer,
 		Subject:   user.Username,
 		ID:        strconv.FormatInt(user.ID, 10),
 	}
 	claims := MyCustomClaims{
 		UserID:           user.ID,
+		Role:             user.Role,
 		RegisteredClaims: registeredClaims,
 	}
 	// HS256 签名
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte(auc.jwtConf.secret))
+	signedToken, err := token.SignedString([]byte(authUsecase.jwtConf.secret))
 	if err != nil {
 		return "", err
 	}

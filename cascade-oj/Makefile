@@ -113,6 +113,13 @@ generate:
 	go get github.com/google/wire/cmd/wire@latest
 	go generate ./...
 
+.PHONY: openapi
+# generate openapi spec from api
+# make this target at cascade-oj/cascade-oj directory
+openapi:
+	@echo "Generating OpenAPI spec into ./openapi using per-module generation and bundling"
+	@./generate_and_bundle_openapi.sh
+
 # show help
 help:
 	@echo 'Usage:'

@@ -12,7 +12,7 @@ services:
     depends_on:
       - cascade_mysql
     ports:
-      - "8000:8000"
+      - "8080:8080"
     volumes:
       - ./config/gateway:/data/conf
 
