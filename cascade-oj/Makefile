@@ -135,6 +135,7 @@ help:
 	@printf "\033[36m%-20s\033[0m %s\n" "wire" "generate wire code";
 	@printf "\033[36m%-20s\033[0m %s\n" "build" "build all sub projects";
 	@printf "\033[36m%-20s\033[0m %s\n" "generate" "go mod tidy && go generate";
+	@printf "\033[36m%-20s\033[0m %s\n" "openapi" "generate openapi spec from apis";
 	@echo ''
 	@echo 'Sub projects:'
 	@for dir in $(SUBPROJECTS); do  \
