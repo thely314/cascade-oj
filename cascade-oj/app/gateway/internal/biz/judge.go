@@ -9,7 +9,7 @@ import (
 
 // self test model
 type SelfTest struct {
-	ID       string
+	UUID     string
 	UserID   int64
 	Code     string
 	Language string
@@ -20,7 +20,7 @@ type SelfTest struct {
 
 // submission model
 type Submission struct {
-	ID         string
+	UUID       string
 	UserID     int64
 	ProblemID  int64
 	Code       string
@@ -33,7 +33,7 @@ type Submission struct {
 }
 
 type SubmissionMetadata struct {
-	SubmissionID int64
+	SubmissionID string
 	ProblemID    int64
 	UserID       int64
 	Status       string

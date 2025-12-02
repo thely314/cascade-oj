@@ -18,7 +18,7 @@ type judgeRepo struct {
 }
 
 type selfTestDTO struct {
-	ID       string `json:"id,omitempty"`
+	UUID     string `json:"id,omitempty"`
 	UserID   int64  `json:"user_id,omitempty"`
 	Code     string `json:"code,omitempty"`
 	Language string `json:"language,omitempty"`
@@ -27,7 +27,7 @@ type selfTestDTO struct {
 }
 
 type submissionDTO struct {
-	ID         string    `json:"id,omitempty"`
+	UUID       string    `json:"id,omitempty"`
 	UserID     int64     `json:"user_id,omitempty"`
 	ProblemID  int64     `json:"problem_id,omitempty"`
 	Code       string    `json:"code,omitempty"`
@@ -55,7 +55,7 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 		return "", err
 	}
 	sDTO := &selfTestDTO{
-		ID:       selfTest.ID,
+		UUID:     selfTest.UUID,
 		UserID:   selfTest.UserID,
 		Code:     selfTest.Code,
 		Language: selfTest.Language,
@@ -82,7 +82,7 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 		return "", err
 	}
 	// update cache if needed
-	return selfTest.ID, nil
+	return selfTest.UUID, nil
 }
 
 // create submission record
@@ -100,7 +100,7 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 		return "", err
 	}
 	sDTO := &submissionDTO{
-		ID:         submission.ID,
+		UUID:       submission.UUID,
 		UserID:     submission.UserID,
 		ProblemID:  submission.ProblemID,
 		Code:       submission.Code,
@@ -132,7 +132,7 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 		return "", err
 	}
 	// update cache if needed
-	return submission.ID, nil
+	return submission.UUID, nil
 }
 
 func (repo *judgeRepo) GetSubmissions(ctx context.Context, userID int64, problemID int64) ([]*biz.SubmissionMetadata, error) {
@@ -146,7 +146,7 @@ func (repo *judgeRepo) GetSubmissions(ctx context.Context, userID int64, problem
 	var res []*biz.SubmissionMetadata
 	for _, v := range submissions.Submissions {
 		res = append(res, &biz.SubmissionMetadata{
-			SubmissionID: v.SubmissionId,
+			SubmissionID: v.SubmissionUuid,
 			ProblemID:    v.ProblemId,
 			UserID:       v.UserId,
 			Status:       v.Status,
@@ -165,7 +165,7 @@ func (repo *judgeRepo) GetSingleSubmission(ctx context.Context, submissionID str
 		return nil, err
 	}
 	var res = &biz.Submission{
-		ID:         submissionID,
+		UUID:       submissionID,
 		UserID:     submission.Metadata.UserId,
 		ProblemID:  submission.Metadata.ProblemId,
 		Code:       submission.Code,

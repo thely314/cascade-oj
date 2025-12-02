@@ -13,9 +13,8 @@ import (
 )
 
 func (gatewayService *GatewayService) PostSelfTest(ctx context.Context, req *pb.SelfTestRequest) (*pb.SelfTestReply, error) {
-	id := uuid.New().String()
 	selfTestID, err := gatewayService.judgeUsecase.CreateSelfTest(ctx, &biz.SelfTest{
-		ID:       id,
+		UUID:     uuid.New().String(),
 		UserID:   ctx.Value("userInfo").(auth.Claims).UserID,
 		Code:     req.Code,
 		Language: req.Language,
@@ -32,7 +31,7 @@ func (gatewayService *GatewayService) PostSelfTest(ctx context.Context, req *pb.
 
 func (gatewayService *GatewayService) PostSubmission(ctx context.Context, req *pb.SubmissionRequest) (*pb.SubmissionReply, error) {
 	submissionID, err := gatewayService.judgeUsecase.CreateSubmission(ctx, &biz.Submission{
-		ID:         uuid.New().String(),
+		UUID:       uuid.New().String(),
 		UserID:     ctx.Value("userInfo").(auth.Claims).UserID,
 		ProblemID:  req.ProblemId,
 		Code:       req.Code,
@@ -60,13 +59,13 @@ func (gatewayService *GatewayService) GetSubmissions(ctx context.Context, req *p
 	res := &pb.GetSubmissionsReply{}
 	for _, v := range submissions {
 		res.Submissions = append(res.Submissions, &pb.SubmissionMetadata{
-			SubmissionId: 0,
-			ProblemId:    v.ProblemID,
-			UserId:       v.UserID,
-			Status:       v.Status,
-			Result:       "<result>",
-			SubmitTime:   timestamppb.New(v.SubmitTime),
-			Score:        int32(v.Score),
+			SubmissionUuid: v.SubmissionID,
+			ProblemId:      v.ProblemID,
+			UserId:         v.UserID,
+			Status:         v.Status,
+			Result:         "<result>",
+			SubmitTime:     timestamppb.New(v.SubmitTime),
+			Score:          int32(v.Score),
 		})
 	}
 	return res, nil
@@ -81,12 +80,12 @@ func (gatewayService *GatewayService) GetSingleSubmission(ctx context.Context, r
 	return &pb.GetSingleSubmissionReply{
 		Metadata: &pb.SubmissionMetadata{
 			// TODO refactor the proto to uuid
-			// SubmissionId: submission.ID,
-			ProblemId:  submission.ProblemID,
-			UserId:     submission.UserID,
-			Status:     submission.Status,
-			SubmitTime: timestamppb.New(submission.CreateTime),
-			Score:      int32(submission.Score),
+			SubmissionUuid: submission.UUID,
+			ProblemId:      submission.ProblemID,
+			UserId:         submission.UserID,
+			Status:         submission.Status,
+			SubmitTime:     timestamppb.New(submission.CreateTime),
+			Score:          int32(submission.Score),
 		},
 		Code:     submission.Code,
 		Language: submission.Language,
