@@ -2117,7 +2117,7 @@ func (m *SubmissionMetadata) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for SubmissionId
+	// no validation rules for SubmissionUuid
 
 	// no validation rules for ProblemId
 
@@ -2644,6 +2644,10 @@ func (m *GetSingleSubmissionReply) validate(all bool) error {
 	// no validation rules for Code
 
 	// no validation rules for Language
+
+	// no validation rules for TimeCost
+
+	// no validation rules for MemoryCost
 
 	if len(errors) > 0 {
 		return GetSingleSubmissionReplyMultiError(errors)
