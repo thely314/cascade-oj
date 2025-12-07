@@ -394,11 +394,11 @@ const file_public_auth_v1_auth_proto_rawDesc = "" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage*-\n" +
 	"\vErrorReason\x12\x18\n" +
-	"\x0eNOT_REGISTERED\x10\x00\x1a\x04\xa8E\x91\x03\x1a\x04\xa0E\xf4\x032\xdf\x02\n" +
-	"\vAuthService\x12l\n" +
-	"\x05Login\x12(.api.cascade.public.auth.v1.LoginRequest\x1a&.api.cascade.public.auth.v1.LoginReply\"\x11\x82\xd3\xe4\x93\x02\v:\x01*\"\x06/login\x12p\n" +
-	"\x06Logout\x12).api.cascade.public.auth.v1.LogoutRequest\x1a'.api.cascade.public.auth.v1.LogoutReply\"\x12\x82\xd3\xe4\x93\x02\f:\x01*\"\a/logout\x12p\n" +
-	"\x06Signup\x12).api.cascade.public.auth.v1.SignupRequest\x1a'.api.cascade.public.auth.v1.SignupReply\"\x12\x82\xd3\xe4\x93\x02\f:\x01*\"\a/signupB\xe4\x01\n" +
+	"\x0eNOT_REGISTERED\x10\x00\x1a\x04\xa8E\x91\x03\x1a\x04\xa0E\xf4\x032\xf1\x02\n" +
+	"\vAuthService\x12r\n" +
+	"\x05Login\x12(.api.cascade.public.auth.v1.LoginRequest\x1a&.api.cascade.public.auth.v1.LoginReply\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\fpublic/login\x12v\n" +
+	"\x06Logout\x12).api.cascade.public.auth.v1.LogoutRequest\x1a'.api.cascade.public.auth.v1.LogoutReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\rpublic/logout\x12v\n" +
+	"\x06Signup\x12).api.cascade.public.auth.v1.SignupRequest\x1a'.api.cascade.public.auth.v1.SignupReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\rpublic/signupB\xe4\x01\n" +
 	"\x1ecom.api.cascade.public.auth.v1B\tAuthProtoP\x01Z(cascade-oj/api/cascade/public/auth/v1;v1\xa2\x02\x04ACPA\xaa\x02\x1aApi.Cascade.Public.Auth.V1\xca\x02\x1bApi\\Cascade\\Public_\\Auth\\V1\xe2\x02'Api\\Cascade\\Public_\\Auth\\V1\\GPBMetadata\xea\x02\x1eApi::Cascade::Public::Auth::V1b\x06proto3"
 
 var (

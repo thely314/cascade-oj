@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    {
+      "inputFile": "./tmp_openapi/cascade_public/openapi.bundled.yaml"
+    },
+    {
+      "inputFile": "./tmp_openapi/cascade_user/openapi.bundled.yaml"
+    }
+  ],
+  "output": "./openapi.yaml"
+}

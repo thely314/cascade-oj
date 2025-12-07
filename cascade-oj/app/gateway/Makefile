@@ -1,21 +1,21 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
-VERSION=$(shell git describe --tags --always)
+VERSION_FLAG?=0.0.0
 
-ifeq ($(GOHOSTOS), windows)
+# ifeq ($(GOHOSTOS), windows)
 # 	# the `find.exe` is different from `find` in bash/shell.
 # 	# to see https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/find.
 # 	# changed to use git-bash.exe to run find cli or other cli friendly, caused of every developer has a Git.
 # 	# Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
-	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
-	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find internal -name *.proto -type f -print0 | xargs -0 echo")
-	WIRE_DIR=$(shell $(Git_Bash) -c "find . -name wire.go -type f -exec dirname {} \; | xargs -0 echo")
-else
+# 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
+# 	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find internal -name *.proto -type f -print0 | xargs -0 echo")
+# 	WIRE_DIR=$(shell $(Git_Bash) -c "find . -name wire.go -type f -exec dirname {} \; | xargs -0 echo")
+# else
 # 	# Unix shell
 # 	# if you use Msys2, Cygwin or unix-like terminal in windows, you can use the below code directly.
 	INTERNAL_PROTO_FILES=$(shell find internal -name *.proto -type f -print0 | xargs -0 echo)
 	WIRE_DIR=$(shell find . -name wire.go -type f -exec dirname {} \; | xargs -0 echo)
-endif
+# endif
 
 .PHONY: init
 # init env
@@ -50,7 +50,7 @@ api:
 .PHONY: build
 # build
 build:
-	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION_FLAG)" -o ./bin/ ./...
 
 .PHONY: wire
 # generate wire code

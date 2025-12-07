@@ -20,6 +20,7 @@ func GenerateHashPassword(password string) (string, error) {
 }
 
 // use CompareHashAndPassword to verify password
+//
 // params:
 //   - password: the MD5 hashed password to verify
 //   - stored: the stored hashed password (bcrypt hashed MD5 password)

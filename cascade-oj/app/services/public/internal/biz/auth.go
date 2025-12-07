@@ -24,13 +24,15 @@ type User struct {
 }
 
 type MyCustomClaims struct {
-	UserID int64 `json:"user_id"`
+	UserID int64     `json:"user_id"`
+	Role   user.Role `json:"role"`
 	jwt.RegisteredClaims
 }
 
-// AuthEntry is a entry of searching user.
-type AuthEntry interface {
+// AuthRepo is a entry of searching user.
+type AuthRepo interface {
 	FindUserByNameOrEmail(context.Context, string) (*User, error)
+	SignUpAtDatabase(context.Context, string, string, string) error
 }
 
 type JwtConfig struct {
@@ -39,77 +41,82 @@ type JwtConfig struct {
 	issuer     string
 }
 
-// AuthUsecase is a Greeter usecase.
+// AuthUsecase is a Auth usecase.
 type AuthUsecase struct {
-	entry   AuthEntry
-	log     *log.Helper
-	jwtConf JwtConfig
+	authRepo AuthRepo
+	log      *log.Helper
+	jwtConf  JwtConfig
 }
 
-func NewAuthUsecase(entry AuthEntry, logger log.Logger, con *conf.Jwt) *AuthUsecase {
-	var exp int32 = 24 // default 24 hours
-	if con.Expiration != 0 {
-		exp = con.Expiration
+func NewAuthUsecase(repo AuthRepo, logger log.Logger, jwtConfig *conf.Jwt) *AuthUsecase {
+	var expiryTime int32 = 24 // default 24 hours
+	if jwtConfig.Expiration != 0 {
+		expiryTime = jwtConfig.Expiration
 	}
 	var issuer string = "cascade-oj"
-	if con.Issuer != "" {
-		issuer = con.Issuer
+	if jwtConfig.Issuer != "" {
+		issuer = jwtConfig.Issuer
 	}
 	return &AuthUsecase{
-		entry: entry,
-		log:   log.NewHelper(logger),
+		authRepo: repo,
+		log:      log.NewHelper(logger),
 		jwtConf: JwtConfig{
-			secret:     con.Secret,
-			expiration: time.Duration(exp) * time.Hour,
+			secret:     jwtConfig.Secret,
+			expiration: time.Duration(expiryTime) * time.Hour,
 			issuer:     issuer,
 		},
 	}
 }
 
-func (auc *AuthUsecase) Signup(ctx context.Context, username string, email string, password string) error {
-	userWithSameName, err := auc.entry.FindUserByNameOrEmail(ctx, username)
+func (authUsecase *AuthUsecase) Signup(ctx context.Context, username string, email string, password string) error {
+	userWithSameName, err := authUsecase.authRepo.FindUserByNameOrEmail(ctx, username)
 	if err == nil && userWithSameName != nil {
 		return errors.New("username already exists")
 	}
-	userWithSameEmail, err := auc.entry.FindUserByNameOrEmail(ctx, email)
+	userWithSameEmail, err := authUsecase.authRepo.FindUserByNameOrEmail(ctx, email)
 	if err == nil && userWithSameEmail != nil {
 		return errors.New("email already registered")
+	}
+	err = authUsecase.authRepo.SignUpAtDatabase(ctx, username, email, password)
+	if err != nil {
+		return errors.New("failed to create user")
 	}
 	return nil
 }
 
-func (auc *AuthUsecase) Login(ctx context.Context, usernameOrEmail string, password string) (string, error) {
-	user, err := auc.entry.FindUserByNameOrEmail(ctx, usernameOrEmail)
+func (authUsecase *AuthUsecase) Login(ctx context.Context, usernameOrEmail string, password string) (string, error) {
+	user, err := authUsecase.authRepo.FindUserByNameOrEmail(ctx, usernameOrEmail)
 	if err != nil {
 		return "", errors.New("username/email or password incorrect")
 	}
 	if !util.VerifyPassword(password, user.PasswordHash) {
 		return "", errors.New("username/email or password incorrect")
 	}
-	jwt, err := auc.generateJWT(user)
+	jwt, err := authUsecase.generateJWT(user)
 	if err != nil {
 		return "", err
 	}
 	return jwt, nil
 }
 
-func (auc *AuthUsecase) generateJWT(user *User) (string, error) {
+func (authUsecase *AuthUsecase) generateJWT(user *User) (string, error) {
 	// 设置 JWT 声明
 	registeredClaims := jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(auc.jwtConf.expiration)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(authUsecase.jwtConf.expiration)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
-		Issuer:    auc.jwtConf.issuer,
+		Issuer:    authUsecase.jwtConf.issuer,
 		Subject:   user.Username,
 		ID:        strconv.FormatInt(user.ID, 10),
 	}
 	claims := MyCustomClaims{
 		UserID:           user.ID,
+		Role:             user.Role,
 		RegisteredClaims: registeredClaims,
 	}
 	// HS256 签名
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte(auc.jwtConf.secret))
+	signedToken, err := token.SignedString([]byte(authUsecase.jwtConf.secret))
 	if err != nil {
 		return "", err
 	}

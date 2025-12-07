@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  mysql:
+  cascade_mysql:
     image: mysql:8.4
     restart: always
     ports:
@@ -14,5 +14,4 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
       - ./data/mysql_conf:/etc/mysql/mysql.conf.d
-    network_mode: bridge
     container_name: cascade_oj_mysql

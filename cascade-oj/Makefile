@@ -4,6 +4,7 @@ GATEWAYDIR:=app/gateway
 SERVICESDIR:=app/services
 SUBDIRS:=public user judge admin
 SUBPROJECTS:=$(addprefix $(SERVICESDIR)/,$(SUBDIRS)) $(GATEWAYDIR)
+export VERSION:="0.1.0"
 
 # ifeq ($(GOHOSTOS), windows)
 # 	# the `find.exe` is different from `find` in bash/shell.
@@ -98,12 +99,26 @@ wire:
 		$(MAKE) -C $$dir wire; \
 	done
 
+.PHONY: build
+# build all sub projects
+build:
+	@for dir in $(SUBPROJECTS); do  \
+		$(MAKE) -C $$dir build; \
+	done
+
 .PHONY: generate
 # generate
 generate:
 	go mod tidy
 	go get github.com/google/wire/cmd/wire@latest
 	go generate ./...
+
+.PHONY: openapi
+# generate openapi spec from api
+# make this target at cascade-oj/cascade-oj directory
+openapi:
+	@echo "Generating OpenAPI spec into ./openapi using per-module generation and bundling"
+	@./generate_and_bundle_openapi.sh
 
 # show help
 help:
@@ -118,6 +133,7 @@ help:
 	@printf "\033[36m%-20s\033[0m %s\n" "ent" "generate ent schema";
 	@printf "\033[36m%-20s\033[0m %s\n" "db-init" "initialize database, docker-compose service needed";
 	@printf "\033[36m%-20s\033[0m %s\n" "wire" "generate wire code";
+	@printf "\033[36m%-20s\033[0m %s\n" "build" "build all sub projects";
 	@printf "\033[36m%-20s\033[0m %s\n" "generate" "go mod tidy && go generate";
 	@echo ''
 	@echo 'Sub projects:'
