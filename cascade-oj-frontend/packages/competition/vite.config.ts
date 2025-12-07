@@ -27,7 +27,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080', // 🔴 这里填你队友后端的真实地址 (IP+端口)
+        // TODO nginx docker 代理
+        target: 'http://localhost:8080', // 这里填你队友后端的真实地址 (IP+端口)
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, '') // 如果后端接口不带 /api 前缀，就把这就行取消注释
       }

@@ -9,19 +9,18 @@ import Contest from '../pages/contest/contest.vue'
 import Login from '../../../login/src/views/AuthPage.vue'
 
 const routes = [
-    { path: '/', redirect: '/problem/:id' },
+    { path: '/', redirect: '/home' },
     { path: '/home', name: 'Home', component: Home },
     { path: '/competition', name: 'ContestsList', component: ContestsList },
     { path: '/competition/:id', name: 'Contest', component: Contest },
     { path: '/about', name: 'About', component: About },
     { path: '/login', name: 'Login', component: Login, meta: { hideNav: true } },
-    { path: '/:pathMatch(.*)*', name: 'NotFound', component: ErrorPage },
-    // 示例路由添加
     {
-        path: '/problem/:id', // 假设通过ID访问题目
+        path: '/problem/:id', // 提取 id 作为 API 参数
         name: 'ProblemDetail',
         component: () => import('../pages/problem/ProblemDetail.vue')
-    }
+    },
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: ErrorPage }
 ]
 
 const router = createRouter({
