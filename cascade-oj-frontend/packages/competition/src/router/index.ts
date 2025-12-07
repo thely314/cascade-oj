@@ -7,11 +7,17 @@ import ErrorPage from '../pages/error/error.vue'
 import Login from '../../../login/src/views/AuthPage.vue'
 
 const routes = [
-    { path: '/', redirect: '/home' },
+    { path: '/', redirect: '/problem/:id' },
     { path: '/home', name: 'Home', component: Home },
     { path: '/about', name: 'About', component: About },
     { path: '/login', name: 'Login', component: Login, meta: { hideNav: true } },
-    { path: '/:pathMatch(.*)*', name: 'NotFound', component: ErrorPage }
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: ErrorPage },
+    // 示例路由添加
+    {
+        path: '/problem/:id', // 假设通过ID访问题目
+        name: 'ProblemDetail',
+        component: () => import('../pages/problem/ProblemDetail.vue')
+    }
 ]
 
 const router = createRouter({
