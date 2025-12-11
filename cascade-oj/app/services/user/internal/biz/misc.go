@@ -14,9 +14,10 @@ type Rank struct {
 }
 
 type Announcement struct {
-	ID      int64
-	Title   string
-	Content string
+	ID             int64
+	Publisher_name string
+	Title          string
+	Content        string
 }
 
 type UserInfo struct {

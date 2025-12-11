@@ -52,9 +52,10 @@ func (repo *miscRepo) GetAnnouncements(ctx context.Context) ([]*biz.Announcement
 	var res []*biz.Announcement
 	for _, announcement := range announcements {
 		res = append(res, &biz.Announcement{
-			ID:      announcement.ID,
-			Title:   announcement.Title,
-			Content: announcement.Content,
+			ID:             announcement.ID,
+			Publisher_name: announcement.Edges.Publisher.Username,
+			Title:          announcement.Title,
+			Content:        announcement.Content,
 		})
 	}
 	return res, nil

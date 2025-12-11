@@ -33,8 +33,10 @@ func (userService *UserService) GetAnnouncements(ctx context.Context, req *pb.Ge
 	var replyAnnouncements []*pb.GetAnnouncementsReply_Announcement
 	for _, announcement := range ret {
 		replyAnnouncement := &pb.GetAnnouncementsReply_Announcement{
-			Id:    announcement.ID,
-			Title: announcement.Title,
+			Id:            announcement.ID,
+			PublisherName: announcement.Publisher_name,
+			Title:         announcement.Title,
+			Content:       announcement.Content,
 		}
 		replyAnnouncements = append(replyAnnouncements, replyAnnouncement)
 	}
