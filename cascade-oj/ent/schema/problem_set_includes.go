@@ -8,11 +8,11 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-type ProblemSet_Problem struct {
+type ProblemSet_Includes struct {
 	ent.Schema
 }
 
-func (ProblemSet_Problem) Fields() []ent.Field {
+func (ProblemSet_Includes) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("id").
 			Positive().
@@ -25,23 +25,23 @@ func (ProblemSet_Problem) Fields() []ent.Field {
 	}
 }
 
-func (ProblemSet_Problem) Annotations() []schema.Annotation {
+func (ProblemSet_Includes) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "ProblemSet_Problems"},
+		entsql.Annotation{Table: "ProblemSet_Includes"},
 	}
 }
 
-func (ProblemSet_Problem) Edges() []ent.Edge {
+func (ProblemSet_Includes) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("problem_set", ProblemSet.Type).
 			Field("problem_set_id").
-			Ref("problem_set_problems").
+			Ref("problem_set_includes").
 			Unique().
 			Required(),
 
 		edge.From("problem", Problem.Type).
 			Field("problem_id").
-			Ref("problem_set_problems").
+			Ref("problem_set_includes").
 			Unique().
 			Required(),
 	}

@@ -79,20 +79,6 @@ func (_u *SubmissionRecordUpdate) ClearProblemSetID() *SubmissionRecordUpdate {
 	return _u
 }
 
-// SetResult sets the "result" field.
-func (_u *SubmissionRecordUpdate) SetResult(v submissionrecord.Result) *SubmissionRecordUpdate {
-	_u.mutation.SetResult(v)
-	return _u
-}
-
-// SetNillableResult sets the "result" field if the given value is not nil.
-func (_u *SubmissionRecordUpdate) SetNillableResult(v *submissionrecord.Result) *SubmissionRecordUpdate {
-	if v != nil {
-		_u.SetResult(*v)
-	}
-	return _u
-}
-
 // SetSubmissionTime sets the "submission_time" field.
 func (_u *SubmissionRecordUpdate) SetSubmissionTime(v time.Time) *SubmissionRecordUpdate {
 	_u.mutation.SetSubmissionTime(v)
@@ -205,11 +191,6 @@ func (_u *SubmissionRecordUpdate) check() error {
 			return &ValidationError{Name: "problem_id", err: fmt.Errorf(`ent: validator failed for field "SubmissionRecord.problem_id": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Result(); ok {
-		if err := submissionrecord.ResultValidator(v); err != nil {
-			return &ValidationError{Name: "result", err: fmt.Errorf(`ent: validator failed for field "SubmissionRecord.result": %w`, err)}
-		}
-	}
 	if _u.mutation.JudgeCleared() && len(_u.mutation.JudgeIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "SubmissionRecord.judge"`)
 	}
@@ -230,9 +211,6 @@ func (_u *SubmissionRecordUpdate) sqlSave(ctx context.Context) (_node int, err e
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Result(); ok {
-		_spec.SetField(submissionrecord.FieldResult, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.SubmissionTime(); ok {
 		_spec.SetField(submissionrecord.FieldSubmissionTime, field.TypeTime, value)
@@ -398,20 +376,6 @@ func (_u *SubmissionRecordUpdateOne) ClearProblemSetID() *SubmissionRecordUpdate
 	return _u
 }
 
-// SetResult sets the "result" field.
-func (_u *SubmissionRecordUpdateOne) SetResult(v submissionrecord.Result) *SubmissionRecordUpdateOne {
-	_u.mutation.SetResult(v)
-	return _u
-}
-
-// SetNillableResult sets the "result" field if the given value is not nil.
-func (_u *SubmissionRecordUpdateOne) SetNillableResult(v *submissionrecord.Result) *SubmissionRecordUpdateOne {
-	if v != nil {
-		_u.SetResult(*v)
-	}
-	return _u
-}
-
 // SetSubmissionTime sets the "submission_time" field.
 func (_u *SubmissionRecordUpdateOne) SetSubmissionTime(v time.Time) *SubmissionRecordUpdateOne {
 	_u.mutation.SetSubmissionTime(v)
@@ -537,11 +501,6 @@ func (_u *SubmissionRecordUpdateOne) check() error {
 			return &ValidationError{Name: "problem_id", err: fmt.Errorf(`ent: validator failed for field "SubmissionRecord.problem_id": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.Result(); ok {
-		if err := submissionrecord.ResultValidator(v); err != nil {
-			return &ValidationError{Name: "result", err: fmt.Errorf(`ent: validator failed for field "SubmissionRecord.result": %w`, err)}
-		}
-	}
 	if _u.mutation.JudgeCleared() && len(_u.mutation.JudgeIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "SubmissionRecord.judge"`)
 	}
@@ -579,9 +538,6 @@ func (_u *SubmissionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Submis
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := _u.mutation.Result(); ok {
-		_spec.SetField(submissionrecord.FieldResult, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.SubmissionTime(); ok {
 		_spec.SetField(submissionrecord.FieldSubmissionTime, field.TypeTime, value)

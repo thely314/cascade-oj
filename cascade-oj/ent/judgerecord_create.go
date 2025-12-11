@@ -35,14 +35,20 @@ func (_c *JudgeRecordCreate) SetUserID(v int64) *JudgeRecordCreate {
 	return _c
 }
 
+// SetUUID sets the "uuid" field.
+func (_c *JudgeRecordCreate) SetUUID(v string) *JudgeRecordCreate {
+	_c.mutation.SetUUID(v)
+	return _c
+}
+
 // SetStatus sets the "status" field.
-func (_c *JudgeRecordCreate) SetStatus(v judgerecord.Status) *JudgeRecordCreate {
+func (_c *JudgeRecordCreate) SetStatus(v int16) *JudgeRecordCreate {
 	_c.mutation.SetStatus(v)
 	return _c
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (_c *JudgeRecordCreate) SetNillableStatus(v *judgerecord.Status) *JudgeRecordCreate {
+func (_c *JudgeRecordCreate) SetNillableStatus(v *int16) *JudgeRecordCreate {
 	if v != nil {
 		_c.SetStatus(*v)
 	}
@@ -63,17 +69,15 @@ func (_c *JudgeRecordCreate) SetNillableJudgeStartTime(v *time.Time) *JudgeRecor
 	return _c
 }
 
-// SetResult sets the "result" field.
-func (_c *JudgeRecordCreate) SetResult(v string) *JudgeRecordCreate {
-	_c.mutation.SetResult(v)
+// SetTimeCostMs sets the "time_cost_ms" field.
+func (_c *JudgeRecordCreate) SetTimeCostMs(v uint64) *JudgeRecordCreate {
+	_c.mutation.SetTimeCostMs(v)
 	return _c
 }
 
-// SetNillableResult sets the "result" field if the given value is not nil.
-func (_c *JudgeRecordCreate) SetNillableResult(v *string) *JudgeRecordCreate {
-	if v != nil {
-		_c.SetResult(*v)
-	}
+// SetMemoryCostKB sets the "memory_cost_kb" field.
+func (_c *JudgeRecordCreate) SetMemoryCostKB(v uint64) *JudgeRecordCreate {
+	_c.mutation.SetMemoryCostKB(v)
 	return _c
 }
 
@@ -84,13 +88,13 @@ func (_c *JudgeRecordCreate) SetCode(v string) *JudgeRecordCreate {
 }
 
 // SetLanguage sets the "language" field.
-func (_c *JudgeRecordCreate) SetLanguage(v judgerecord.Language) *JudgeRecordCreate {
+func (_c *JudgeRecordCreate) SetLanguage(v string) *JudgeRecordCreate {
 	_c.mutation.SetLanguage(v)
 	return _c
 }
 
 // SetNillableLanguage sets the "language" field if the given value is not nil.
-func (_c *JudgeRecordCreate) SetNillableLanguage(v *judgerecord.Language) *JudgeRecordCreate {
+func (_c *JudgeRecordCreate) SetNillableLanguage(v *string) *JudgeRecordCreate {
 	if v != nil {
 		_c.SetLanguage(*v)
 	}
@@ -213,16 +217,20 @@ func (_c *JudgeRecordCreate) check() error {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.user_id": %w`, err)}
 		}
 	}
+	if _, ok := _c.mutation.UUID(); !ok {
+		return &ValidationError{Name: "uuid", err: errors.New(`ent: missing required field "JudgeRecord.uuid"`)}
+	}
 	if _, ok := _c.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "JudgeRecord.status"`)}
 	}
-	if v, ok := _c.mutation.Status(); ok {
-		if err := judgerecord.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.status": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.JudgeStartTime(); !ok {
 		return &ValidationError{Name: "judge_start_time", err: errors.New(`ent: missing required field "JudgeRecord.judge_start_time"`)}
+	}
+	if _, ok := _c.mutation.TimeCostMs(); !ok {
+		return &ValidationError{Name: "time_cost_ms", err: errors.New(`ent: missing required field "JudgeRecord.time_cost_ms"`)}
+	}
+	if _, ok := _c.mutation.MemoryCostKB(); !ok {
+		return &ValidationError{Name: "memory_cost_kb", err: errors.New(`ent: missing required field "JudgeRecord.memory_cost_kb"`)}
 	}
 	if _, ok := _c.mutation.Code(); !ok {
 		return &ValidationError{Name: "code", err: errors.New(`ent: missing required field "JudgeRecord.code"`)}
@@ -234,11 +242,6 @@ func (_c *JudgeRecordCreate) check() error {
 	}
 	if _, ok := _c.mutation.Language(); !ok {
 		return &ValidationError{Name: "language", err: errors.New(`ent: missing required field "JudgeRecord.language"`)}
-	}
-	if v, ok := _c.mutation.Language(); ok {
-		if err := judgerecord.LanguageValidator(v); err != nil {
-			return &ValidationError{Name: "language", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.language": %w`, err)}
-		}
 	}
 	if _, ok := _c.mutation.JudgeType(); !ok {
 		return &ValidationError{Name: "judge_type", err: errors.New(`ent: missing required field "JudgeRecord.judge_type"`)}
@@ -291,24 +294,32 @@ func (_c *JudgeRecordCreate) createSpec() (*JudgeRecord, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := _c.mutation.UUID(); ok {
+		_spec.SetField(judgerecord.FieldUUID, field.TypeString, value)
+		_node.UUID = value
+	}
 	if value, ok := _c.mutation.Status(); ok {
-		_spec.SetField(judgerecord.FieldStatus, field.TypeEnum, value)
+		_spec.SetField(judgerecord.FieldStatus, field.TypeInt16, value)
 		_node.Status = value
 	}
 	if value, ok := _c.mutation.JudgeStartTime(); ok {
 		_spec.SetField(judgerecord.FieldJudgeStartTime, field.TypeTime, value)
 		_node.JudgeStartTime = value
 	}
-	if value, ok := _c.mutation.Result(); ok {
-		_spec.SetField(judgerecord.FieldResult, field.TypeString, value)
-		_node.Result = value
+	if value, ok := _c.mutation.TimeCostMs(); ok {
+		_spec.SetField(judgerecord.FieldTimeCostMs, field.TypeUint64, value)
+		_node.TimeCostMs = value
+	}
+	if value, ok := _c.mutation.MemoryCostKB(); ok {
+		_spec.SetField(judgerecord.FieldMemoryCostKB, field.TypeUint64, value)
+		_node.MemoryCostKB = value
 	}
 	if value, ok := _c.mutation.Code(); ok {
 		_spec.SetField(judgerecord.FieldCode, field.TypeString, value)
 		_node.Code = value
 	}
 	if value, ok := _c.mutation.Language(); ok {
-		_spec.SetField(judgerecord.FieldLanguage, field.TypeEnum, value)
+		_spec.SetField(judgerecord.FieldLanguage, field.TypeString, value)
 		_node.Language = value
 	}
 	if value, ok := _c.mutation.JudgeType(); ok {

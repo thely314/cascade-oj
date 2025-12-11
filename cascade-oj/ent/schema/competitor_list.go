@@ -8,38 +8,39 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-type AdminProblemSet struct {
+type Competitor_List struct {
 	ent.Schema
 }
 
-func (AdminProblemSet) Fields() []ent.Field {
+func (Competitor_List) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("id").
 			Positive().
 			Unique().
 			Immutable(),
-		field.Int64("admin_id").Positive(),
+		field.Int64("user_id").Positive(),
 		field.Int64("problem_set_id").Positive(),
+		field.Int("total_score").Default(0).SchemaType(map[string]string{"mysql": "INT"}).Optional(),
 	}
 }
 
-func (AdminProblemSet) Annotations() []schema.Annotation {
+func (Competitor_List) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entsql.Annotation{Table: "Admin_ProblemSet"},
+		entsql.Annotation{Table: "Competitor_List"},
 	}
 }
 
-func (AdminProblemSet) Edges() []ent.Edge {
+func (Competitor_List) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("admin", User.Type).
-			Field("admin_id").
-			Ref("admin_problem_sets").
+		edge.From("user", User.Type).
+			Field("user_id").
+			Ref("competitor_list").
 			Unique().
 			Required(),
 
 		edge.From("problem_set", ProblemSet.Type).
 			Field("problem_set_id").
-			Ref("admin_problem_sets").
+			Ref("competitor_list").
 			Unique().
 			Required(),
 	}

@@ -9,32 +9,6 @@ import (
 )
 
 var (
-	// AdminProblemSetColumns holds the columns for the "Admin_ProblemSet" table.
-	AdminProblemSetColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "problem_set_id", Type: field.TypeInt64},
-		{Name: "admin_id", Type: field.TypeInt64},
-	}
-	// AdminProblemSetTable holds the schema information for the "Admin_ProblemSet" table.
-	AdminProblemSetTable = &schema.Table{
-		Name:       "Admin_ProblemSet",
-		Columns:    AdminProblemSetColumns,
-		PrimaryKey: []*schema.Column{AdminProblemSetColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "Admin_ProblemSet_ProblemSets_admin_problem_sets",
-				Columns:    []*schema.Column{AdminProblemSetColumns[1]},
-				RefColumns: []*schema.Column{ProblemSetsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "Admin_ProblemSet_Users_admin_problem_sets",
-				Columns:    []*schema.Column{AdminProblemSetColumns[2]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// AnnouncementsColumns holds the columns for the "Announcements" table.
 	AnnouncementsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -56,33 +30,101 @@ var (
 			},
 		},
 	}
-	// JudgeRecordsColumns holds the columns for the "JudgeRecords" table.
+	// CaseGroupResultsColumns holds the columns for the "CaseGroup_Results" table.
+	CaseGroupResultsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "status", Type: field.TypeInt16, Default: 0},
+		{Name: "total_time_cost_ms", Type: field.TypeUint64},
+		{Name: "max_memory_cost_kb", Type: field.TypeUint64},
+		{Name: "score", Type: field.TypeInt, Default: 0, SchemaType: map[string]string{"mysql": "INT"}},
+	}
+	// CaseGroupResultsTable holds the schema information for the "CaseGroup_Results" table.
+	CaseGroupResultsTable = &schema.Table{
+		Name:       "CaseGroup_Results",
+		Columns:    CaseGroupResultsColumns,
+		PrimaryKey: []*schema.Column{CaseGroupResultsColumns[0]},
+	}
+	// CaseResultsColumns holds the columns for the "Case_Results" table.
+	CaseResultsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "status", Type: field.TypeInt16, Default: 0},
+		{Name: "time_cost_ms", Type: field.TypeUint64},
+		{Name: "memory_cost_kb", Type: field.TypeUint64},
+		{Name: "stdout", Type: field.TypeString, Default: ""},
+		{Name: "stderr", Type: field.TypeString, Default: ""},
+		{Name: "score", Type: field.TypeInt, Default: 0, SchemaType: map[string]string{"mysql": "INT"}},
+		{Name: "case_group_result_id", Type: field.TypeInt64},
+	}
+	// CaseResultsTable holds the schema information for the "Case_Results" table.
+	CaseResultsTable = &schema.Table{
+		Name:       "Case_Results",
+		Columns:    CaseResultsColumns,
+		PrimaryKey: []*schema.Column{CaseResultsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "Case_Results_CaseGroup_Results_case_results",
+				Columns:    []*schema.Column{CaseResultsColumns[7]},
+				RefColumns: []*schema.Column{CaseGroupResultsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// CompetitorListColumns holds the columns for the "Competitor_List" table.
+	CompetitorListColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "total_score", Type: field.TypeInt, Nullable: true, Default: 0, SchemaType: map[string]string{"mysql": "INT"}},
+		{Name: "problem_set_id", Type: field.TypeInt64},
+		{Name: "user_id", Type: field.TypeInt64},
+	}
+	// CompetitorListTable holds the schema information for the "Competitor_List" table.
+	CompetitorListTable = &schema.Table{
+		Name:       "Competitor_List",
+		Columns:    CompetitorListColumns,
+		PrimaryKey: []*schema.Column{CompetitorListColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "Competitor_List_ProblemSets_competitor_list",
+				Columns:    []*schema.Column{CompetitorListColumns[2]},
+				RefColumns: []*schema.Column{ProblemSetsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "Competitor_List_Users_competitor_list",
+				Columns:    []*schema.Column{CompetitorListColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// JudgeRecordsColumns holds the columns for the "Judge_Records" table.
 	JudgeRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "judging", "accepted", "wrong_answer", "time_limit_exceeded", "memory_limit_exceeded", "runtime_error", "compilation_error"}, Default: "pending"},
+		{Name: "uuid", Type: field.TypeString, Unique: true},
+		{Name: "status", Type: field.TypeInt16, Default: 0},
 		{Name: "judge_start_time", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP", SchemaType: map[string]string{"mysql": "datetime"}},
-		{Name: "result", Type: field.TypeString, Nullable: true, SchemaType: map[string]string{"mysql": "TEXT"}},
+		{Name: "time_cost_ms", Type: field.TypeUint64},
+		{Name: "memory_cost_kb", Type: field.TypeUint64},
 		{Name: "code", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
-		{Name: "language", Type: field.TypeEnum, Enums: []string{"c", "cpp", "python", "rust"}, Default: "c"},
-		{Name: "judge_type", Type: field.TypeEnum, Enums: []string{"test_case", "custom_test_case"}, Default: "custom_test_case"},
+		{Name: "language", Type: field.TypeString, Default: "c"},
+		{Name: "judge_type", Type: field.TypeEnum, Enums: []string{"test_case", "self_test_case"}, Default: "self_test_case"},
 		{Name: "problem_id", Type: field.TypeInt64},
 		{Name: "user_id", Type: field.TypeInt64},
 	}
-	// JudgeRecordsTable holds the schema information for the "JudgeRecords" table.
+	// JudgeRecordsTable holds the schema information for the "Judge_Records" table.
 	JudgeRecordsTable = &schema.Table{
-		Name:       "JudgeRecords",
+		Name:       "Judge_Records",
 		Columns:    JudgeRecordsColumns,
 		PrimaryKey: []*schema.Column{JudgeRecordsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "JudgeRecords_Problems_judge_records",
-				Columns:    []*schema.Column{JudgeRecordsColumns[7]},
+				Symbol:     "Judge_Records_Problems_judge_records",
+				Columns:    []*schema.Column{JudgeRecordsColumns[9]},
 				RefColumns: []*schema.Column{ProblemsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "JudgeRecords_Users_judge_records",
-				Columns:    []*schema.Column{JudgeRecordsColumns[8]},
+				Symbol:     "Judge_Records_Users_judge_records",
+				Columns:    []*schema.Column{JudgeRecordsColumns[10]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -93,10 +135,12 @@ var (
 		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "title", Type: field.TypeString, Size: 100},
 		{Name: "description", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
-		{Name: "problem_type", Type: field.TypeEnum, Enums: []string{"OJ", "other"}, Default: "OJ"},
-		{Name: "time_limit", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
-		{Name: "memory_limit", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
+		{Name: "case_version", Type: field.TypeInt16, Default: 1},
+		{Name: "time_limit_ms", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
+		{Name: "memory_limit_kb", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
 		{Name: "use_status", Type: field.TypeEnum, Enums: []string{"unavailable", "available", "using"}, Default: "unavailable"},
+		{Name: "case_group_result_problem", Type: field.TypeInt64, Nullable: true},
+		{Name: "judge_config_id", Type: field.TypeInt64},
 		{Name: "creator_id", Type: field.TypeInt64},
 	}
 	// ProblemsTable holds the schema information for the "Problems" table.
@@ -106,12 +150,39 @@ var (
 		PrimaryKey: []*schema.Column{ProblemsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "Problems_Users_problems",
+				Symbol:     "Problems_CaseGroup_Results_problem",
 				Columns:    []*schema.Column{ProblemsColumns[7]},
+				RefColumns: []*schema.Column{CaseGroupResultsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "Problems_Problem_JudgeConfigs_judge_config",
+				Columns:    []*schema.Column{ProblemsColumns[8]},
+				RefColumns: []*schema.Column{ProblemJudgeConfigsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "Problems_Users_problems",
+				Columns:    []*schema.Column{ProblemsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
+	}
+	// ProblemJudgeConfigsColumns holds the columns for the "Problem_JudgeConfigs" table.
+	ProblemJudgeConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "config_name", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString, Default: ""},
+		{Name: "submission_queue_name", Type: field.TypeString, Default: "submission_queue"},
+		{Name: "self_test_queue_name", Type: field.TypeString, Default: "self_test_queue"},
+		{Name: "judge_engine", Type: field.TypeString, Default: "default"},
+	}
+	// ProblemJudgeConfigsTable holds the schema information for the "Problem_JudgeConfigs" table.
+	ProblemJudgeConfigsTable = &schema.Table{
+		Name:       "Problem_JudgeConfigs",
+		Columns:    ProblemJudgeConfigsColumns,
+		PrimaryKey: []*schema.Column{ProblemJudgeConfigsColumns[0]},
 	}
 	// ProblemSetsColumns holds the columns for the "ProblemSets" table.
 	ProblemSetsColumns = []*schema.Column{
@@ -128,56 +199,55 @@ var (
 		Columns:    ProblemSetsColumns,
 		PrimaryKey: []*schema.Column{ProblemSetsColumns[0]},
 	}
-	// ProblemSetProblemsColumns holds the columns for the "ProblemSet_Problems" table.
-	ProblemSetProblemsColumns = []*schema.Column{
+	// ProblemSetManagersColumns holds the columns for the "ProblemSet_Managers" table.
+	ProblemSetManagersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "problem_set_id", Type: field.TypeInt64},
+		{Name: "admin_id", Type: field.TypeInt64},
+	}
+	// ProblemSetManagersTable holds the schema information for the "ProblemSet_Managers" table.
+	ProblemSetManagersTable = &schema.Table{
+		Name:       "ProblemSet_Managers",
+		Columns:    ProblemSetManagersColumns,
+		PrimaryKey: []*schema.Column{ProblemSetManagersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "ProblemSet_Managers_ProblemSets_problem_set_manager",
+				Columns:    []*schema.Column{ProblemSetManagersColumns[1]},
+				RefColumns: []*schema.Column{ProblemSetsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "ProblemSet_Managers_Users_problem_set_manager",
+				Columns:    []*schema.Column{ProblemSetManagersColumns[2]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// ProblemSetIncludesColumns holds the columns for the "ProblemSet_Includes" table.
+	ProblemSetIncludesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "problem_order", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
 		{Name: "problem_id", Type: field.TypeInt64},
 		{Name: "problem_set_id", Type: field.TypeInt64},
 	}
-	// ProblemSetProblemsTable holds the schema information for the "ProblemSet_Problems" table.
-	ProblemSetProblemsTable = &schema.Table{
-		Name:       "ProblemSet_Problems",
-		Columns:    ProblemSetProblemsColumns,
-		PrimaryKey: []*schema.Column{ProblemSetProblemsColumns[0]},
+	// ProblemSetIncludesTable holds the schema information for the "ProblemSet_Includes" table.
+	ProblemSetIncludesTable = &schema.Table{
+		Name:       "ProblemSet_Includes",
+		Columns:    ProblemSetIncludesColumns,
+		PrimaryKey: []*schema.Column{ProblemSetIncludesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "ProblemSet_Problems_Problems_problem_set_problems",
-				Columns:    []*schema.Column{ProblemSetProblemsColumns[2]},
+				Symbol:     "ProblemSet_Includes_Problems_problem_set_includes",
+				Columns:    []*schema.Column{ProblemSetIncludesColumns[2]},
 				RefColumns: []*schema.Column{ProblemsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "ProblemSet_Problems_ProblemSets_problem_set_problems",
-				Columns:    []*schema.Column{ProblemSetProblemsColumns[3]},
+				Symbol:     "ProblemSet_Includes_ProblemSets_problem_set_includes",
+				Columns:    []*schema.Column{ProblemSetIncludesColumns[3]},
 				RefColumns: []*schema.Column{ProblemSetsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// ProblemSetUsersColumns holds the columns for the "ProblemSet_Users" table.
-	ProblemSetUsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "total_score", Type: field.TypeInt, Nullable: true, Default: 0, SchemaType: map[string]string{"mysql": "INT"}},
-		{Name: "problem_set_id", Type: field.TypeInt64},
-		{Name: "user_id", Type: field.TypeInt64},
-	}
-	// ProblemSetUsersTable holds the schema information for the "ProblemSet_Users" table.
-	ProblemSetUsersTable = &schema.Table{
-		Name:       "ProblemSet_Users",
-		Columns:    ProblemSetUsersColumns,
-		PrimaryKey: []*schema.Column{ProblemSetUsersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "ProblemSet_Users_ProblemSets_problem_set_users",
-				Columns:    []*schema.Column{ProblemSetUsersColumns[2]},
-				RefColumns: []*schema.Column{ProblemSetsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "ProblemSet_Users_Users_problem_set_users",
-				Columns:    []*schema.Column{ProblemSetUsersColumns[3]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -185,7 +255,6 @@ var (
 	// SubmissionRecordsColumns holds the columns for the "SubmissionRecords" table.
 	SubmissionRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "result", Type: field.TypeEnum, Enums: []string{"Pass", "Fail"}},
 		{Name: "submission_time", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP", SchemaType: map[string]string{"mysql": "datetime"}},
 		{Name: "score", Type: field.TypeInt, Default: 0, SchemaType: map[string]string{"mysql": "INT"}},
 		{Name: "judge_id", Type: field.TypeInt64},
@@ -199,20 +268,20 @@ var (
 		PrimaryKey: []*schema.Column{SubmissionRecordsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "SubmissionRecords_JudgeRecords_submissions",
-				Columns:    []*schema.Column{SubmissionRecordsColumns[4]},
+				Symbol:     "SubmissionRecords_Judge_Records_submissions",
+				Columns:    []*schema.Column{SubmissionRecordsColumns[3]},
 				RefColumns: []*schema.Column{JudgeRecordsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "SubmissionRecords_Problems_submissions",
-				Columns:    []*schema.Column{SubmissionRecordsColumns[5]},
+				Columns:    []*schema.Column{SubmissionRecordsColumns[4]},
 				RefColumns: []*schema.Column{ProblemsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "SubmissionRecords_ProblemSets_submissions",
-				Columns:    []*schema.Column{SubmissionRecordsColumns[6]},
+				Columns:    []*schema.Column{SubmissionRecordsColumns[5]},
 				RefColumns: []*schema.Column{ProblemSetsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -230,27 +299,6 @@ var (
 		Columns:    LogsColumns,
 		PrimaryKey: []*schema.Column{LogsColumns[0]},
 	}
-	// TestCasesColumns holds the columns for the "TestCases" table.
-	TestCasesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "input", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
-		{Name: "output", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
-		{Name: "problem_id", Type: field.TypeInt64},
-	}
-	// TestCasesTable holds the schema information for the "TestCases" table.
-	TestCasesTable = &schema.Table{
-		Name:       "TestCases",
-		Columns:    TestCasesColumns,
-		PrimaryKey: []*schema.Column{TestCasesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "TestCases_Problems_test_cases",
-				Columns:    []*schema.Column{TestCasesColumns[3]},
-				RefColumns: []*schema.Column{ProblemsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// UsersColumns holds the columns for the "Users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -267,51 +315,65 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		AdminProblemSetTable,
 		AnnouncementsTable,
+		CaseGroupResultsTable,
+		CaseResultsTable,
+		CompetitorListTable,
 		JudgeRecordsTable,
 		ProblemsTable,
+		ProblemJudgeConfigsTable,
 		ProblemSetsTable,
-		ProblemSetProblemsTable,
-		ProblemSetUsersTable,
+		ProblemSetManagersTable,
+		ProblemSetIncludesTable,
 		SubmissionRecordsTable,
 		LogsTable,
-		TestCasesTable,
 		UsersTable,
 	}
 )
 
 func init() {
-	AdminProblemSetTable.ForeignKeys[0].RefTable = ProblemSetsTable
-	AdminProblemSetTable.ForeignKeys[1].RefTable = UsersTable
-	AdminProblemSetTable.Annotation = &entsql.Annotation{
-		Table: "Admin_ProblemSet",
-	}
 	AnnouncementsTable.ForeignKeys[0].RefTable = UsersTable
 	AnnouncementsTable.Annotation = &entsql.Annotation{
 		Table: "Announcements",
 	}
+	CaseGroupResultsTable.Annotation = &entsql.Annotation{
+		Table: "CaseGroup_Results",
+	}
+	CaseResultsTable.ForeignKeys[0].RefTable = CaseGroupResultsTable
+	CaseResultsTable.Annotation = &entsql.Annotation{
+		Table: "Case_Results",
+	}
+	CompetitorListTable.ForeignKeys[0].RefTable = ProblemSetsTable
+	CompetitorListTable.ForeignKeys[1].RefTable = UsersTable
+	CompetitorListTable.Annotation = &entsql.Annotation{
+		Table: "Competitor_List",
+	}
 	JudgeRecordsTable.ForeignKeys[0].RefTable = ProblemsTable
 	JudgeRecordsTable.ForeignKeys[1].RefTable = UsersTable
 	JudgeRecordsTable.Annotation = &entsql.Annotation{
-		Table: "JudgeRecords",
+		Table: "Judge_Records",
 	}
-	ProblemsTable.ForeignKeys[0].RefTable = UsersTable
+	ProblemsTable.ForeignKeys[0].RefTable = CaseGroupResultsTable
+	ProblemsTable.ForeignKeys[1].RefTable = ProblemJudgeConfigsTable
+	ProblemsTable.ForeignKeys[2].RefTable = UsersTable
 	ProblemsTable.Annotation = &entsql.Annotation{
 		Table: "Problems",
+	}
+	ProblemJudgeConfigsTable.Annotation = &entsql.Annotation{
+		Table: "Problem_JudgeConfigs",
 	}
 	ProblemSetsTable.Annotation = &entsql.Annotation{
 		Table: "ProblemSets",
 	}
-	ProblemSetProblemsTable.ForeignKeys[0].RefTable = ProblemsTable
-	ProblemSetProblemsTable.ForeignKeys[1].RefTable = ProblemSetsTable
-	ProblemSetProblemsTable.Annotation = &entsql.Annotation{
-		Table: "ProblemSet_Problems",
+	ProblemSetManagersTable.ForeignKeys[0].RefTable = ProblemSetsTable
+	ProblemSetManagersTable.ForeignKeys[1].RefTable = UsersTable
+	ProblemSetManagersTable.Annotation = &entsql.Annotation{
+		Table: "ProblemSet_Managers",
 	}
-	ProblemSetUsersTable.ForeignKeys[0].RefTable = ProblemSetsTable
-	ProblemSetUsersTable.ForeignKeys[1].RefTable = UsersTable
-	ProblemSetUsersTable.Annotation = &entsql.Annotation{
-		Table: "ProblemSet_Users",
+	ProblemSetIncludesTable.ForeignKeys[0].RefTable = ProblemsTable
+	ProblemSetIncludesTable.ForeignKeys[1].RefTable = ProblemSetsTable
+	ProblemSetIncludesTable.Annotation = &entsql.Annotation{
+		Table: "ProblemSet_Includes",
 	}
 	SubmissionRecordsTable.ForeignKeys[0].RefTable = JudgeRecordsTable
 	SubmissionRecordsTable.ForeignKeys[1].RefTable = ProblemsTable
@@ -321,10 +383,6 @@ func init() {
 	}
 	LogsTable.Annotation = &entsql.Annotation{
 		Table: "Logs",
-	}
-	TestCasesTable.ForeignKeys[0].RefTable = ProblemsTable
-	TestCasesTable.Annotation = &entsql.Annotation{
-		Table: "TestCases",
 	}
 	UsersTable.Annotation = &entsql.Annotation{
 		Table: "Users",

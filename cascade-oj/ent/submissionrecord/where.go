@@ -150,26 +150,6 @@ func ProblemSetIDNotNil() predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldNotNull(FieldProblemSetID))
 }
 
-// ResultEQ applies the EQ predicate on the "result" field.
-func ResultEQ(v Result) predicate.SubmissionRecord {
-	return predicate.SubmissionRecord(sql.FieldEQ(FieldResult, v))
-}
-
-// ResultNEQ applies the NEQ predicate on the "result" field.
-func ResultNEQ(v Result) predicate.SubmissionRecord {
-	return predicate.SubmissionRecord(sql.FieldNEQ(FieldResult, v))
-}
-
-// ResultIn applies the In predicate on the "result" field.
-func ResultIn(vs ...Result) predicate.SubmissionRecord {
-	return predicate.SubmissionRecord(sql.FieldIn(FieldResult, vs...))
-}
-
-// ResultNotIn applies the NotIn predicate on the "result" field.
-func ResultNotIn(vs ...Result) predicate.SubmissionRecord {
-	return predicate.SubmissionRecord(sql.FieldNotIn(FieldResult, vs...))
-}
-
 // SubmissionTimeEQ applies the EQ predicate on the "submission_time" field.
 func SubmissionTimeEQ(v time.Time) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.FieldEQ(FieldSubmissionTime, v))

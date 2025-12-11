@@ -3,7 +3,6 @@
 package submissionrecord
 
 import (
-	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -21,8 +20,6 @@ const (
 	FieldProblemID = "problem_id"
 	// FieldProblemSetID holds the string denoting the problem_set_id field in the database.
 	FieldProblemSetID = "problem_set_id"
-	// FieldResult holds the string denoting the result field in the database.
-	FieldResult = "result"
 	// FieldSubmissionTime holds the string denoting the submission_time field in the database.
 	FieldSubmissionTime = "submission_time"
 	// FieldScore holds the string denoting the score field in the database.
@@ -39,7 +36,7 @@ const (
 	JudgeTable = "SubmissionRecords"
 	// JudgeInverseTable is the table name for the JudgeRecord entity.
 	// It exists in this package in order to avoid circular dependency with the "judgerecord" package.
-	JudgeInverseTable = "JudgeRecords"
+	JudgeInverseTable = "Judge_Records"
 	// JudgeColumn is the table column denoting the judge relation/edge.
 	JudgeColumn = "judge_id"
 	// ProblemTable is the table that holds the problem relation/edge.
@@ -64,7 +61,6 @@ var Columns = []string{
 	FieldJudgeID,
 	FieldProblemID,
 	FieldProblemSetID,
-	FieldResult,
 	FieldSubmissionTime,
 	FieldScore,
 }
@@ -92,29 +88,6 @@ var (
 	IDValidator func(int64) error
 )
 
-// Result defines the type for the "result" enum field.
-type Result string
-
-// Result values.
-const (
-	ResultPass Result = "Pass"
-	ResultFail Result = "Fail"
-)
-
-func (r Result) String() string {
-	return string(r)
-}
-
-// ResultValidator is a validator for the "result" field enum values. It is called by the builders before save.
-func ResultValidator(r Result) error {
-	switch r {
-	case ResultPass, ResultFail:
-		return nil
-	default:
-		return fmt.Errorf("submissionrecord: invalid enum value for result field: %q", r)
-	}
-}
-
 // OrderOption defines the ordering options for the SubmissionRecord queries.
 type OrderOption func(*sql.Selector)
 
@@ -136,11 +109,6 @@ func ByProblemID(opts ...sql.OrderTermOption) OrderOption {
 // ByProblemSetID orders the results by the problem_set_id field.
 func ByProblemSetID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldProblemSetID, opts...).ToFunc()
-}
-
-// ByResult orders the results by the result field.
-func ByResult(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldResult, opts...).ToFunc()
 }
 
 // BySubmissionTime orders the results by the submission_time field.

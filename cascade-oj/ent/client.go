@@ -11,16 +11,18 @@ import (
 
 	"cascade-oj/ent/migrate"
 
-	"cascade-oj/ent/adminproblemset"
 	"cascade-oj/ent/announcement"
+	"cascade-oj/ent/casegroupresult"
+	"cascade-oj/ent/caseresult"
+	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
+	"cascade-oj/ent/problemjudgeconfig"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemset_problem"
-	"cascade-oj/ent/problemset_user"
+	"cascade-oj/ent/problemset_includes"
+	"cascade-oj/ent/problemsetmanager"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/systemlog"
-	"cascade-oj/ent/testcase"
 	"cascade-oj/ent/user"
 
 	"entgo.io/ent"
@@ -34,26 +36,30 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// AdminProblemSet is the client for interacting with the AdminProblemSet builders.
-	AdminProblemSet *AdminProblemSetClient
 	// Announcement is the client for interacting with the Announcement builders.
 	Announcement *AnnouncementClient
+	// CaseGroupResult is the client for interacting with the CaseGroupResult builders.
+	CaseGroupResult *CaseGroupResultClient
+	// CaseResult is the client for interacting with the CaseResult builders.
+	CaseResult *CaseResultClient
+	// Competitor_List is the client for interacting with the Competitor_List builders.
+	Competitor_List *CompetitorListClient
 	// JudgeRecord is the client for interacting with the JudgeRecord builders.
 	JudgeRecord *JudgeRecordClient
 	// Problem is the client for interacting with the Problem builders.
 	Problem *ProblemClient
+	// ProblemJudgeConfig is the client for interacting with the ProblemJudgeConfig builders.
+	ProblemJudgeConfig *ProblemJudgeConfigClient
 	// ProblemSet is the client for interacting with the ProblemSet builders.
 	ProblemSet *ProblemSetClient
-	// ProblemSet_Problem is the client for interacting with the ProblemSet_Problem builders.
-	ProblemSet_Problem *ProblemSetProblemClient
-	// ProblemSet_User is the client for interacting with the ProblemSet_User builders.
-	ProblemSet_User *ProblemSetUserClient
+	// ProblemSetManager is the client for interacting with the ProblemSetManager builders.
+	ProblemSetManager *ProblemSetManagerClient
+	// ProblemSet_Includes is the client for interacting with the ProblemSet_Includes builders.
+	ProblemSet_Includes *ProblemSetIncludesClient
 	// SubmissionRecord is the client for interacting with the SubmissionRecord builders.
 	SubmissionRecord *SubmissionRecordClient
 	// SystemLog is the client for interacting with the SystemLog builders.
 	SystemLog *SystemLogClient
-	// TestCase is the client for interacting with the TestCase builders.
-	TestCase *TestCaseClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -67,16 +73,18 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.AdminProblemSet = NewAdminProblemSetClient(c.config)
 	c.Announcement = NewAnnouncementClient(c.config)
+	c.CaseGroupResult = NewCaseGroupResultClient(c.config)
+	c.CaseResult = NewCaseResultClient(c.config)
+	c.Competitor_List = NewCompetitorListClient(c.config)
 	c.JudgeRecord = NewJudgeRecordClient(c.config)
 	c.Problem = NewProblemClient(c.config)
+	c.ProblemJudgeConfig = NewProblemJudgeConfigClient(c.config)
 	c.ProblemSet = NewProblemSetClient(c.config)
-	c.ProblemSet_Problem = NewProblemSetProblemClient(c.config)
-	c.ProblemSet_User = NewProblemSetUserClient(c.config)
+	c.ProblemSetManager = NewProblemSetManagerClient(c.config)
+	c.ProblemSet_Includes = NewProblemSetIncludesClient(c.config)
 	c.SubmissionRecord = NewSubmissionRecordClient(c.config)
 	c.SystemLog = NewSystemLogClient(c.config)
-	c.TestCase = NewTestCaseClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -168,19 +176,21 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                ctx,
-		config:             cfg,
-		AdminProblemSet:    NewAdminProblemSetClient(cfg),
-		Announcement:       NewAnnouncementClient(cfg),
-		JudgeRecord:        NewJudgeRecordClient(cfg),
-		Problem:            NewProblemClient(cfg),
-		ProblemSet:         NewProblemSetClient(cfg),
-		ProblemSet_Problem: NewProblemSetProblemClient(cfg),
-		ProblemSet_User:    NewProblemSetUserClient(cfg),
-		SubmissionRecord:   NewSubmissionRecordClient(cfg),
-		SystemLog:          NewSystemLogClient(cfg),
-		TestCase:           NewTestCaseClient(cfg),
-		User:               NewUserClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		Announcement:        NewAnnouncementClient(cfg),
+		CaseGroupResult:     NewCaseGroupResultClient(cfg),
+		CaseResult:          NewCaseResultClient(cfg),
+		Competitor_List:     NewCompetitorListClient(cfg),
+		JudgeRecord:         NewJudgeRecordClient(cfg),
+		Problem:             NewProblemClient(cfg),
+		ProblemJudgeConfig:  NewProblemJudgeConfigClient(cfg),
+		ProblemSet:          NewProblemSetClient(cfg),
+		ProblemSetManager:   NewProblemSetManagerClient(cfg),
+		ProblemSet_Includes: NewProblemSetIncludesClient(cfg),
+		SubmissionRecord:    NewSubmissionRecordClient(cfg),
+		SystemLog:           NewSystemLogClient(cfg),
+		User:                NewUserClient(cfg),
 	}, nil
 }
 
@@ -198,26 +208,28 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                ctx,
-		config:             cfg,
-		AdminProblemSet:    NewAdminProblemSetClient(cfg),
-		Announcement:       NewAnnouncementClient(cfg),
-		JudgeRecord:        NewJudgeRecordClient(cfg),
-		Problem:            NewProblemClient(cfg),
-		ProblemSet:         NewProblemSetClient(cfg),
-		ProblemSet_Problem: NewProblemSetProblemClient(cfg),
-		ProblemSet_User:    NewProblemSetUserClient(cfg),
-		SubmissionRecord:   NewSubmissionRecordClient(cfg),
-		SystemLog:          NewSystemLogClient(cfg),
-		TestCase:           NewTestCaseClient(cfg),
-		User:               NewUserClient(cfg),
+		ctx:                 ctx,
+		config:              cfg,
+		Announcement:        NewAnnouncementClient(cfg),
+		CaseGroupResult:     NewCaseGroupResultClient(cfg),
+		CaseResult:          NewCaseResultClient(cfg),
+		Competitor_List:     NewCompetitorListClient(cfg),
+		JudgeRecord:         NewJudgeRecordClient(cfg),
+		Problem:             NewProblemClient(cfg),
+		ProblemJudgeConfig:  NewProblemJudgeConfigClient(cfg),
+		ProblemSet:          NewProblemSetClient(cfg),
+		ProblemSetManager:   NewProblemSetManagerClient(cfg),
+		ProblemSet_Includes: NewProblemSetIncludesClient(cfg),
+		SubmissionRecord:    NewSubmissionRecordClient(cfg),
+		SystemLog:           NewSystemLogClient(cfg),
+		User:                NewUserClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		AdminProblemSet.
+//		Announcement.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -240,9 +252,10 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.AdminProblemSet, c.Announcement, c.JudgeRecord, c.Problem, c.ProblemSet,
-		c.ProblemSet_Problem, c.ProblemSet_User, c.SubmissionRecord, c.SystemLog,
-		c.TestCase, c.User,
+		c.Announcement, c.CaseGroupResult, c.CaseResult, c.Competitor_List,
+		c.JudgeRecord, c.Problem, c.ProblemJudgeConfig, c.ProblemSet,
+		c.ProblemSetManager, c.ProblemSet_Includes, c.SubmissionRecord, c.SystemLog,
+		c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -252,9 +265,10 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.AdminProblemSet, c.Announcement, c.JudgeRecord, c.Problem, c.ProblemSet,
-		c.ProblemSet_Problem, c.ProblemSet_User, c.SubmissionRecord, c.SystemLog,
-		c.TestCase, c.User,
+		c.Announcement, c.CaseGroupResult, c.CaseResult, c.Competitor_List,
+		c.JudgeRecord, c.Problem, c.ProblemJudgeConfig, c.ProblemSet,
+		c.ProblemSetManager, c.ProblemSet_Includes, c.SubmissionRecord, c.SystemLog,
+		c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -263,195 +277,34 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
-	case *AdminProblemSetMutation:
-		return c.AdminProblemSet.mutate(ctx, m)
 	case *AnnouncementMutation:
 		return c.Announcement.mutate(ctx, m)
+	case *CaseGroupResultMutation:
+		return c.CaseGroupResult.mutate(ctx, m)
+	case *CaseResultMutation:
+		return c.CaseResult.mutate(ctx, m)
+	case *CompetitorListMutation:
+		return c.Competitor_List.mutate(ctx, m)
 	case *JudgeRecordMutation:
 		return c.JudgeRecord.mutate(ctx, m)
 	case *ProblemMutation:
 		return c.Problem.mutate(ctx, m)
+	case *ProblemJudgeConfigMutation:
+		return c.ProblemJudgeConfig.mutate(ctx, m)
 	case *ProblemSetMutation:
 		return c.ProblemSet.mutate(ctx, m)
-	case *ProblemSetProblemMutation:
-		return c.ProblemSet_Problem.mutate(ctx, m)
-	case *ProblemSetUserMutation:
-		return c.ProblemSet_User.mutate(ctx, m)
+	case *ProblemSetManagerMutation:
+		return c.ProblemSetManager.mutate(ctx, m)
+	case *ProblemSetIncludesMutation:
+		return c.ProblemSet_Includes.mutate(ctx, m)
 	case *SubmissionRecordMutation:
 		return c.SubmissionRecord.mutate(ctx, m)
 	case *SystemLogMutation:
 		return c.SystemLog.mutate(ctx, m)
-	case *TestCaseMutation:
-		return c.TestCase.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
-	}
-}
-
-// AdminProblemSetClient is a client for the AdminProblemSet schema.
-type AdminProblemSetClient struct {
-	config
-}
-
-// NewAdminProblemSetClient returns a client for the AdminProblemSet from the given config.
-func NewAdminProblemSetClient(c config) *AdminProblemSetClient {
-	return &AdminProblemSetClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `adminproblemset.Hooks(f(g(h())))`.
-func (c *AdminProblemSetClient) Use(hooks ...Hook) {
-	c.hooks.AdminProblemSet = append(c.hooks.AdminProblemSet, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `adminproblemset.Intercept(f(g(h())))`.
-func (c *AdminProblemSetClient) Intercept(interceptors ...Interceptor) {
-	c.inters.AdminProblemSet = append(c.inters.AdminProblemSet, interceptors...)
-}
-
-// Create returns a builder for creating a AdminProblemSet entity.
-func (c *AdminProblemSetClient) Create() *AdminProblemSetCreate {
-	mutation := newAdminProblemSetMutation(c.config, OpCreate)
-	return &AdminProblemSetCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of AdminProblemSet entities.
-func (c *AdminProblemSetClient) CreateBulk(builders ...*AdminProblemSetCreate) *AdminProblemSetCreateBulk {
-	return &AdminProblemSetCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *AdminProblemSetClient) MapCreateBulk(slice any, setFunc func(*AdminProblemSetCreate, int)) *AdminProblemSetCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &AdminProblemSetCreateBulk{err: fmt.Errorf("calling to AdminProblemSetClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*AdminProblemSetCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &AdminProblemSetCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for AdminProblemSet.
-func (c *AdminProblemSetClient) Update() *AdminProblemSetUpdate {
-	mutation := newAdminProblemSetMutation(c.config, OpUpdate)
-	return &AdminProblemSetUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *AdminProblemSetClient) UpdateOne(_m *AdminProblemSet) *AdminProblemSetUpdateOne {
-	mutation := newAdminProblemSetMutation(c.config, OpUpdateOne, withAdminProblemSet(_m))
-	return &AdminProblemSetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *AdminProblemSetClient) UpdateOneID(id int64) *AdminProblemSetUpdateOne {
-	mutation := newAdminProblemSetMutation(c.config, OpUpdateOne, withAdminProblemSetID(id))
-	return &AdminProblemSetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for AdminProblemSet.
-func (c *AdminProblemSetClient) Delete() *AdminProblemSetDelete {
-	mutation := newAdminProblemSetMutation(c.config, OpDelete)
-	return &AdminProblemSetDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *AdminProblemSetClient) DeleteOne(_m *AdminProblemSet) *AdminProblemSetDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AdminProblemSetClient) DeleteOneID(id int64) *AdminProblemSetDeleteOne {
-	builder := c.Delete().Where(adminproblemset.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &AdminProblemSetDeleteOne{builder}
-}
-
-// Query returns a query builder for AdminProblemSet.
-func (c *AdminProblemSetClient) Query() *AdminProblemSetQuery {
-	return &AdminProblemSetQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeAdminProblemSet},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a AdminProblemSet entity by its id.
-func (c *AdminProblemSetClient) Get(ctx context.Context, id int64) (*AdminProblemSet, error) {
-	return c.Query().Where(adminproblemset.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *AdminProblemSetClient) GetX(ctx context.Context, id int64) *AdminProblemSet {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryAdmin queries the admin edge of a AdminProblemSet.
-func (c *AdminProblemSetClient) QueryAdmin(_m *AdminProblemSet) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(adminproblemset.Table, adminproblemset.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, adminproblemset.AdminTable, adminproblemset.AdminColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryProblemSet queries the problem_set edge of a AdminProblemSet.
-func (c *AdminProblemSetClient) QueryProblemSet(_m *AdminProblemSet) *ProblemSetQuery {
-	query := (&ProblemSetClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(adminproblemset.Table, adminproblemset.FieldID, id),
-			sqlgraph.To(problemset.Table, problemset.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, adminproblemset.ProblemSetTable, adminproblemset.ProblemSetColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *AdminProblemSetClient) Hooks() []Hook {
-	return c.hooks.AdminProblemSet
-}
-
-// Interceptors returns the client interceptors.
-func (c *AdminProblemSetClient) Interceptors() []Interceptor {
-	return c.inters.AdminProblemSet
-}
-
-func (c *AdminProblemSetClient) mutate(ctx context.Context, m *AdminProblemSetMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&AdminProblemSetCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&AdminProblemSetUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&AdminProblemSetUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&AdminProblemSetDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown AdminProblemSet mutation op: %q", m.Op())
 	}
 }
 
@@ -601,6 +454,485 @@ func (c *AnnouncementClient) mutate(ctx context.Context, m *AnnouncementMutation
 		return (&AnnouncementDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Announcement mutation op: %q", m.Op())
+	}
+}
+
+// CaseGroupResultClient is a client for the CaseGroupResult schema.
+type CaseGroupResultClient struct {
+	config
+}
+
+// NewCaseGroupResultClient returns a client for the CaseGroupResult from the given config.
+func NewCaseGroupResultClient(c config) *CaseGroupResultClient {
+	return &CaseGroupResultClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `casegroupresult.Hooks(f(g(h())))`.
+func (c *CaseGroupResultClient) Use(hooks ...Hook) {
+	c.hooks.CaseGroupResult = append(c.hooks.CaseGroupResult, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `casegroupresult.Intercept(f(g(h())))`.
+func (c *CaseGroupResultClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CaseGroupResult = append(c.inters.CaseGroupResult, interceptors...)
+}
+
+// Create returns a builder for creating a CaseGroupResult entity.
+func (c *CaseGroupResultClient) Create() *CaseGroupResultCreate {
+	mutation := newCaseGroupResultMutation(c.config, OpCreate)
+	return &CaseGroupResultCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CaseGroupResult entities.
+func (c *CaseGroupResultClient) CreateBulk(builders ...*CaseGroupResultCreate) *CaseGroupResultCreateBulk {
+	return &CaseGroupResultCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CaseGroupResultClient) MapCreateBulk(slice any, setFunc func(*CaseGroupResultCreate, int)) *CaseGroupResultCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CaseGroupResultCreateBulk{err: fmt.Errorf("calling to CaseGroupResultClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CaseGroupResultCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CaseGroupResultCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CaseGroupResult.
+func (c *CaseGroupResultClient) Update() *CaseGroupResultUpdate {
+	mutation := newCaseGroupResultMutation(c.config, OpUpdate)
+	return &CaseGroupResultUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CaseGroupResultClient) UpdateOne(_m *CaseGroupResult) *CaseGroupResultUpdateOne {
+	mutation := newCaseGroupResultMutation(c.config, OpUpdateOne, withCaseGroupResult(_m))
+	return &CaseGroupResultUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CaseGroupResultClient) UpdateOneID(id int64) *CaseGroupResultUpdateOne {
+	mutation := newCaseGroupResultMutation(c.config, OpUpdateOne, withCaseGroupResultID(id))
+	return &CaseGroupResultUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CaseGroupResult.
+func (c *CaseGroupResultClient) Delete() *CaseGroupResultDelete {
+	mutation := newCaseGroupResultMutation(c.config, OpDelete)
+	return &CaseGroupResultDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CaseGroupResultClient) DeleteOne(_m *CaseGroupResult) *CaseGroupResultDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CaseGroupResultClient) DeleteOneID(id int64) *CaseGroupResultDeleteOne {
+	builder := c.Delete().Where(casegroupresult.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CaseGroupResultDeleteOne{builder}
+}
+
+// Query returns a query builder for CaseGroupResult.
+func (c *CaseGroupResultClient) Query() *CaseGroupResultQuery {
+	return &CaseGroupResultQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCaseGroupResult},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CaseGroupResult entity by its id.
+func (c *CaseGroupResultClient) Get(ctx context.Context, id int64) (*CaseGroupResult, error) {
+	return c.Query().Where(casegroupresult.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CaseGroupResultClient) GetX(ctx context.Context, id int64) *CaseGroupResult {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProblem queries the problem edge of a CaseGroupResult.
+func (c *CaseGroupResultClient) QueryProblem(_m *CaseGroupResult) *ProblemQuery {
+	query := (&ProblemClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(casegroupresult.Table, casegroupresult.FieldID, id),
+			sqlgraph.To(problem.Table, problem.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, casegroupresult.ProblemTable, casegroupresult.ProblemColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCaseResults queries the case_results edge of a CaseGroupResult.
+func (c *CaseGroupResultClient) QueryCaseResults(_m *CaseGroupResult) *CaseResultQuery {
+	query := (&CaseResultClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(casegroupresult.Table, casegroupresult.FieldID, id),
+			sqlgraph.To(caseresult.Table, caseresult.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, casegroupresult.CaseResultsTable, casegroupresult.CaseResultsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CaseGroupResultClient) Hooks() []Hook {
+	return c.hooks.CaseGroupResult
+}
+
+// Interceptors returns the client interceptors.
+func (c *CaseGroupResultClient) Interceptors() []Interceptor {
+	return c.inters.CaseGroupResult
+}
+
+func (c *CaseGroupResultClient) mutate(ctx context.Context, m *CaseGroupResultMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CaseGroupResultCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CaseGroupResultUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CaseGroupResultUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CaseGroupResultDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CaseGroupResult mutation op: %q", m.Op())
+	}
+}
+
+// CaseResultClient is a client for the CaseResult schema.
+type CaseResultClient struct {
+	config
+}
+
+// NewCaseResultClient returns a client for the CaseResult from the given config.
+func NewCaseResultClient(c config) *CaseResultClient {
+	return &CaseResultClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `caseresult.Hooks(f(g(h())))`.
+func (c *CaseResultClient) Use(hooks ...Hook) {
+	c.hooks.CaseResult = append(c.hooks.CaseResult, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `caseresult.Intercept(f(g(h())))`.
+func (c *CaseResultClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CaseResult = append(c.inters.CaseResult, interceptors...)
+}
+
+// Create returns a builder for creating a CaseResult entity.
+func (c *CaseResultClient) Create() *CaseResultCreate {
+	mutation := newCaseResultMutation(c.config, OpCreate)
+	return &CaseResultCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CaseResult entities.
+func (c *CaseResultClient) CreateBulk(builders ...*CaseResultCreate) *CaseResultCreateBulk {
+	return &CaseResultCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CaseResultClient) MapCreateBulk(slice any, setFunc func(*CaseResultCreate, int)) *CaseResultCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CaseResultCreateBulk{err: fmt.Errorf("calling to CaseResultClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CaseResultCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CaseResultCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CaseResult.
+func (c *CaseResultClient) Update() *CaseResultUpdate {
+	mutation := newCaseResultMutation(c.config, OpUpdate)
+	return &CaseResultUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CaseResultClient) UpdateOne(_m *CaseResult) *CaseResultUpdateOne {
+	mutation := newCaseResultMutation(c.config, OpUpdateOne, withCaseResult(_m))
+	return &CaseResultUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CaseResultClient) UpdateOneID(id int64) *CaseResultUpdateOne {
+	mutation := newCaseResultMutation(c.config, OpUpdateOne, withCaseResultID(id))
+	return &CaseResultUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CaseResult.
+func (c *CaseResultClient) Delete() *CaseResultDelete {
+	mutation := newCaseResultMutation(c.config, OpDelete)
+	return &CaseResultDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CaseResultClient) DeleteOne(_m *CaseResult) *CaseResultDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CaseResultClient) DeleteOneID(id int64) *CaseResultDeleteOne {
+	builder := c.Delete().Where(caseresult.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CaseResultDeleteOne{builder}
+}
+
+// Query returns a query builder for CaseResult.
+func (c *CaseResultClient) Query() *CaseResultQuery {
+	return &CaseResultQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCaseResult},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CaseResult entity by its id.
+func (c *CaseResultClient) Get(ctx context.Context, id int64) (*CaseResult, error) {
+	return c.Query().Where(caseresult.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CaseResultClient) GetX(ctx context.Context, id int64) *CaseResult {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryCaseGroupResult queries the case_group_result edge of a CaseResult.
+func (c *CaseResultClient) QueryCaseGroupResult(_m *CaseResult) *CaseGroupResultQuery {
+	query := (&CaseGroupResultClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(caseresult.Table, caseresult.FieldID, id),
+			sqlgraph.To(casegroupresult.Table, casegroupresult.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, caseresult.CaseGroupResultTable, caseresult.CaseGroupResultColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CaseResultClient) Hooks() []Hook {
+	return c.hooks.CaseResult
+}
+
+// Interceptors returns the client interceptors.
+func (c *CaseResultClient) Interceptors() []Interceptor {
+	return c.inters.CaseResult
+}
+
+func (c *CaseResultClient) mutate(ctx context.Context, m *CaseResultMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CaseResultCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CaseResultUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CaseResultUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CaseResultDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CaseResult mutation op: %q", m.Op())
+	}
+}
+
+// CompetitorListClient is a client for the Competitor_List schema.
+type CompetitorListClient struct {
+	config
+}
+
+// NewCompetitorListClient returns a client for the Competitor_List from the given config.
+func NewCompetitorListClient(c config) *CompetitorListClient {
+	return &CompetitorListClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `competitor_list.Hooks(f(g(h())))`.
+func (c *CompetitorListClient) Use(hooks ...Hook) {
+	c.hooks.Competitor_List = append(c.hooks.Competitor_List, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `competitor_list.Intercept(f(g(h())))`.
+func (c *CompetitorListClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Competitor_List = append(c.inters.Competitor_List, interceptors...)
+}
+
+// Create returns a builder for creating a Competitor_List entity.
+func (c *CompetitorListClient) Create() *CompetitorListCreate {
+	mutation := newCompetitorListMutation(c.config, OpCreate)
+	return &CompetitorListCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Competitor_List entities.
+func (c *CompetitorListClient) CreateBulk(builders ...*CompetitorListCreate) *CompetitorListCreateBulk {
+	return &CompetitorListCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CompetitorListClient) MapCreateBulk(slice any, setFunc func(*CompetitorListCreate, int)) *CompetitorListCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CompetitorListCreateBulk{err: fmt.Errorf("calling to CompetitorListClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CompetitorListCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CompetitorListCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Competitor_List.
+func (c *CompetitorListClient) Update() *CompetitorListUpdate {
+	mutation := newCompetitorListMutation(c.config, OpUpdate)
+	return &CompetitorListUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CompetitorListClient) UpdateOne(_m *Competitor_List) *CompetitorListUpdateOne {
+	mutation := newCompetitorListMutation(c.config, OpUpdateOne, withCompetitor_List(_m))
+	return &CompetitorListUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CompetitorListClient) UpdateOneID(id int64) *CompetitorListUpdateOne {
+	mutation := newCompetitorListMutation(c.config, OpUpdateOne, withCompetitor_ListID(id))
+	return &CompetitorListUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Competitor_List.
+func (c *CompetitorListClient) Delete() *CompetitorListDelete {
+	mutation := newCompetitorListMutation(c.config, OpDelete)
+	return &CompetitorListDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CompetitorListClient) DeleteOne(_m *Competitor_List) *CompetitorListDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CompetitorListClient) DeleteOneID(id int64) *CompetitorListDeleteOne {
+	builder := c.Delete().Where(competitor_list.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CompetitorListDeleteOne{builder}
+}
+
+// Query returns a query builder for Competitor_List.
+func (c *CompetitorListClient) Query() *CompetitorListQuery {
+	return &CompetitorListQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCompetitorList},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Competitor_List entity by its id.
+func (c *CompetitorListClient) Get(ctx context.Context, id int64) (*Competitor_List, error) {
+	return c.Query().Where(competitor_list.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CompetitorListClient) GetX(ctx context.Context, id int64) *Competitor_List {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a Competitor_List.
+func (c *CompetitorListClient) QueryUser(_m *Competitor_List) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(competitor_list.Table, competitor_list.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, competitor_list.UserTable, competitor_list.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProblemSet queries the problem_set edge of a Competitor_List.
+func (c *CompetitorListClient) QueryProblemSet(_m *Competitor_List) *ProblemSetQuery {
+	query := (&ProblemSetClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(competitor_list.Table, competitor_list.FieldID, id),
+			sqlgraph.To(problemset.Table, problemset.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, competitor_list.ProblemSetTable, competitor_list.ProblemSetColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CompetitorListClient) Hooks() []Hook {
+	return c.hooks.Competitor_List
+}
+
+// Interceptors returns the client interceptors.
+func (c *CompetitorListClient) Interceptors() []Interceptor {
+	return c.inters.Competitor_List
+}
+
+func (c *CompetitorListClient) mutate(ctx context.Context, m *CompetitorListMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CompetitorListCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CompetitorListUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CompetitorListUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CompetitorListDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Competitor_List mutation op: %q", m.Op())
 	}
 }
 
@@ -909,15 +1241,15 @@ func (c *ProblemClient) QueryCreator(_m *Problem) *UserQuery {
 	return query
 }
 
-// QueryTestCases queries the test_cases edge of a Problem.
-func (c *ProblemClient) QueryTestCases(_m *Problem) *TestCaseQuery {
-	query := (&TestCaseClient{config: c.config}).Query()
+// QueryJudgeConfig queries the judge_config edge of a Problem.
+func (c *ProblemClient) QueryJudgeConfig(_m *Problem) *ProblemJudgeConfigQuery {
+	query := (&ProblemJudgeConfigClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(problem.Table, problem.FieldID, id),
-			sqlgraph.To(testcase.Table, testcase.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, problem.TestCasesTable, problem.TestCasesColumn),
+			sqlgraph.To(problemjudgeconfig.Table, problemjudgeconfig.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, problem.JudgeConfigTable, problem.JudgeConfigColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -957,15 +1289,15 @@ func (c *ProblemClient) QuerySubmissions(_m *Problem) *SubmissionRecordQuery {
 	return query
 }
 
-// QueryProblemSetProblems queries the problem_set_problems edge of a Problem.
-func (c *ProblemClient) QueryProblemSetProblems(_m *Problem) *ProblemSetProblemQuery {
-	query := (&ProblemSetProblemClient{config: c.config}).Query()
+// QueryProblemSetIncludes queries the problem_set_includes edge of a Problem.
+func (c *ProblemClient) QueryProblemSetIncludes(_m *Problem) *ProblemSetIncludesQuery {
+	query := (&ProblemSetIncludesClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(problem.Table, problem.FieldID, id),
-			sqlgraph.To(problemset_problem.Table, problemset_problem.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, problem.ProblemSetProblemsTable, problem.ProblemSetProblemsColumn),
+			sqlgraph.To(problemset_includes.Table, problemset_includes.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, problem.ProblemSetIncludesTable, problem.ProblemSetIncludesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -995,6 +1327,155 @@ func (c *ProblemClient) mutate(ctx context.Context, m *ProblemMutation) (Value, 
 		return (&ProblemDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Problem mutation op: %q", m.Op())
+	}
+}
+
+// ProblemJudgeConfigClient is a client for the ProblemJudgeConfig schema.
+type ProblemJudgeConfigClient struct {
+	config
+}
+
+// NewProblemJudgeConfigClient returns a client for the ProblemJudgeConfig from the given config.
+func NewProblemJudgeConfigClient(c config) *ProblemJudgeConfigClient {
+	return &ProblemJudgeConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `problemjudgeconfig.Hooks(f(g(h())))`.
+func (c *ProblemJudgeConfigClient) Use(hooks ...Hook) {
+	c.hooks.ProblemJudgeConfig = append(c.hooks.ProblemJudgeConfig, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `problemjudgeconfig.Intercept(f(g(h())))`.
+func (c *ProblemJudgeConfigClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProblemJudgeConfig = append(c.inters.ProblemJudgeConfig, interceptors...)
+}
+
+// Create returns a builder for creating a ProblemJudgeConfig entity.
+func (c *ProblemJudgeConfigClient) Create() *ProblemJudgeConfigCreate {
+	mutation := newProblemJudgeConfigMutation(c.config, OpCreate)
+	return &ProblemJudgeConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProblemJudgeConfig entities.
+func (c *ProblemJudgeConfigClient) CreateBulk(builders ...*ProblemJudgeConfigCreate) *ProblemJudgeConfigCreateBulk {
+	return &ProblemJudgeConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProblemJudgeConfigClient) MapCreateBulk(slice any, setFunc func(*ProblemJudgeConfigCreate, int)) *ProblemJudgeConfigCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProblemJudgeConfigCreateBulk{err: fmt.Errorf("calling to ProblemJudgeConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProblemJudgeConfigCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProblemJudgeConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProblemJudgeConfig.
+func (c *ProblemJudgeConfigClient) Update() *ProblemJudgeConfigUpdate {
+	mutation := newProblemJudgeConfigMutation(c.config, OpUpdate)
+	return &ProblemJudgeConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProblemJudgeConfigClient) UpdateOne(_m *ProblemJudgeConfig) *ProblemJudgeConfigUpdateOne {
+	mutation := newProblemJudgeConfigMutation(c.config, OpUpdateOne, withProblemJudgeConfig(_m))
+	return &ProblemJudgeConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProblemJudgeConfigClient) UpdateOneID(id int64) *ProblemJudgeConfigUpdateOne {
+	mutation := newProblemJudgeConfigMutation(c.config, OpUpdateOne, withProblemJudgeConfigID(id))
+	return &ProblemJudgeConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProblemJudgeConfig.
+func (c *ProblemJudgeConfigClient) Delete() *ProblemJudgeConfigDelete {
+	mutation := newProblemJudgeConfigMutation(c.config, OpDelete)
+	return &ProblemJudgeConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProblemJudgeConfigClient) DeleteOne(_m *ProblemJudgeConfig) *ProblemJudgeConfigDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProblemJudgeConfigClient) DeleteOneID(id int64) *ProblemJudgeConfigDeleteOne {
+	builder := c.Delete().Where(problemjudgeconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProblemJudgeConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for ProblemJudgeConfig.
+func (c *ProblemJudgeConfigClient) Query() *ProblemJudgeConfigQuery {
+	return &ProblemJudgeConfigQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProblemJudgeConfig},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProblemJudgeConfig entity by its id.
+func (c *ProblemJudgeConfigClient) Get(ctx context.Context, id int64) (*ProblemJudgeConfig, error) {
+	return c.Query().Where(problemjudgeconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProblemJudgeConfigClient) GetX(ctx context.Context, id int64) *ProblemJudgeConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryJudgeConfig queries the judge_config edge of a ProblemJudgeConfig.
+func (c *ProblemJudgeConfigClient) QueryJudgeConfig(_m *ProblemJudgeConfig) *ProblemQuery {
+	query := (&ProblemClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(problemjudgeconfig.Table, problemjudgeconfig.FieldID, id),
+			sqlgraph.To(problem.Table, problem.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, problemjudgeconfig.JudgeConfigTable, problemjudgeconfig.JudgeConfigColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProblemJudgeConfigClient) Hooks() []Hook {
+	return c.hooks.ProblemJudgeConfig
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProblemJudgeConfigClient) Interceptors() []Interceptor {
+	return c.inters.ProblemJudgeConfig
+}
+
+func (c *ProblemJudgeConfigClient) mutate(ctx context.Context, m *ProblemJudgeConfigMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProblemJudgeConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProblemJudgeConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProblemJudgeConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProblemJudgeConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ProblemJudgeConfig mutation op: %q", m.Op())
 	}
 }
 
@@ -1122,15 +1603,15 @@ func (c *ProblemSetClient) QuerySubmissions(_m *ProblemSet) *SubmissionRecordQue
 	return query
 }
 
-// QueryAdminProblemSets queries the admin_problem_sets edge of a ProblemSet.
-func (c *ProblemSetClient) QueryAdminProblemSets(_m *ProblemSet) *AdminProblemSetQuery {
-	query := (&AdminProblemSetClient{config: c.config}).Query()
+// QueryProblemSetManager queries the problem_set_manager edge of a ProblemSet.
+func (c *ProblemSetClient) QueryProblemSetManager(_m *ProblemSet) *ProblemSetManagerQuery {
+	query := (&ProblemSetManagerClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(problemset.Table, problemset.FieldID, id),
-			sqlgraph.To(adminproblemset.Table, adminproblemset.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, problemset.AdminProblemSetsTable, problemset.AdminProblemSetsColumn),
+			sqlgraph.To(problemsetmanager.Table, problemsetmanager.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, problemset.ProblemSetManagerTable, problemset.ProblemSetManagerColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1138,15 +1619,15 @@ func (c *ProblemSetClient) QueryAdminProblemSets(_m *ProblemSet) *AdminProblemSe
 	return query
 }
 
-// QueryProblemSetProblems queries the problem_set_problems edge of a ProblemSet.
-func (c *ProblemSetClient) QueryProblemSetProblems(_m *ProblemSet) *ProblemSetProblemQuery {
-	query := (&ProblemSetProblemClient{config: c.config}).Query()
+// QueryProblemSetIncludes queries the problem_set_includes edge of a ProblemSet.
+func (c *ProblemSetClient) QueryProblemSetIncludes(_m *ProblemSet) *ProblemSetIncludesQuery {
+	query := (&ProblemSetIncludesClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(problemset.Table, problemset.FieldID, id),
-			sqlgraph.To(problemset_problem.Table, problemset_problem.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, problemset.ProblemSetProblemsTable, problemset.ProblemSetProblemsColumn),
+			sqlgraph.To(problemset_includes.Table, problemset_includes.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, problemset.ProblemSetIncludesTable, problemset.ProblemSetIncludesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1154,15 +1635,15 @@ func (c *ProblemSetClient) QueryProblemSetProblems(_m *ProblemSet) *ProblemSetPr
 	return query
 }
 
-// QueryProblemSetUsers queries the problem_set_users edge of a ProblemSet.
-func (c *ProblemSetClient) QueryProblemSetUsers(_m *ProblemSet) *ProblemSetUserQuery {
-	query := (&ProblemSetUserClient{config: c.config}).Query()
+// QueryCompetitorList queries the competitor_list edge of a ProblemSet.
+func (c *ProblemSetClient) QueryCompetitorList(_m *ProblemSet) *CompetitorListQuery {
+	query := (&CompetitorListClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(problemset.Table, problemset.FieldID, id),
-			sqlgraph.To(problemset_user.Table, problemset_user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, problemset.ProblemSetUsersTable, problemset.ProblemSetUsersColumn),
+			sqlgraph.To(competitor_list.Table, competitor_list.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, problemset.CompetitorListTable, problemset.CompetitorListColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1195,107 +1676,107 @@ func (c *ProblemSetClient) mutate(ctx context.Context, m *ProblemSetMutation) (V
 	}
 }
 
-// ProblemSetProblemClient is a client for the ProblemSet_Problem schema.
-type ProblemSetProblemClient struct {
+// ProblemSetManagerClient is a client for the ProblemSetManager schema.
+type ProblemSetManagerClient struct {
 	config
 }
 
-// NewProblemSetProblemClient returns a client for the ProblemSet_Problem from the given config.
-func NewProblemSetProblemClient(c config) *ProblemSetProblemClient {
-	return &ProblemSetProblemClient{config: c}
+// NewProblemSetManagerClient returns a client for the ProblemSetManager from the given config.
+func NewProblemSetManagerClient(c config) *ProblemSetManagerClient {
+	return &ProblemSetManagerClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `problemset_problem.Hooks(f(g(h())))`.
-func (c *ProblemSetProblemClient) Use(hooks ...Hook) {
-	c.hooks.ProblemSet_Problem = append(c.hooks.ProblemSet_Problem, hooks...)
+// A call to `Use(f, g, h)` equals to `problemsetmanager.Hooks(f(g(h())))`.
+func (c *ProblemSetManagerClient) Use(hooks ...Hook) {
+	c.hooks.ProblemSetManager = append(c.hooks.ProblemSetManager, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `problemset_problem.Intercept(f(g(h())))`.
-func (c *ProblemSetProblemClient) Intercept(interceptors ...Interceptor) {
-	c.inters.ProblemSet_Problem = append(c.inters.ProblemSet_Problem, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `problemsetmanager.Intercept(f(g(h())))`.
+func (c *ProblemSetManagerClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProblemSetManager = append(c.inters.ProblemSetManager, interceptors...)
 }
 
-// Create returns a builder for creating a ProblemSet_Problem entity.
-func (c *ProblemSetProblemClient) Create() *ProblemSetProblemCreate {
-	mutation := newProblemSetProblemMutation(c.config, OpCreate)
-	return &ProblemSetProblemCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a ProblemSetManager entity.
+func (c *ProblemSetManagerClient) Create() *ProblemSetManagerCreate {
+	mutation := newProblemSetManagerMutation(c.config, OpCreate)
+	return &ProblemSetManagerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of ProblemSet_Problem entities.
-func (c *ProblemSetProblemClient) CreateBulk(builders ...*ProblemSetProblemCreate) *ProblemSetProblemCreateBulk {
-	return &ProblemSetProblemCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of ProblemSetManager entities.
+func (c *ProblemSetManagerClient) CreateBulk(builders ...*ProblemSetManagerCreate) *ProblemSetManagerCreateBulk {
+	return &ProblemSetManagerCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *ProblemSetProblemClient) MapCreateBulk(slice any, setFunc func(*ProblemSetProblemCreate, int)) *ProblemSetProblemCreateBulk {
+func (c *ProblemSetManagerClient) MapCreateBulk(slice any, setFunc func(*ProblemSetManagerCreate, int)) *ProblemSetManagerCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &ProblemSetProblemCreateBulk{err: fmt.Errorf("calling to ProblemSetProblemClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &ProblemSetManagerCreateBulk{err: fmt.Errorf("calling to ProblemSetManagerClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*ProblemSetProblemCreate, rv.Len())
+	builders := make([]*ProblemSetManagerCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &ProblemSetProblemCreateBulk{config: c.config, builders: builders}
+	return &ProblemSetManagerCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for ProblemSet_Problem.
-func (c *ProblemSetProblemClient) Update() *ProblemSetProblemUpdate {
-	mutation := newProblemSetProblemMutation(c.config, OpUpdate)
-	return &ProblemSetProblemUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for ProblemSetManager.
+func (c *ProblemSetManagerClient) Update() *ProblemSetManagerUpdate {
+	mutation := newProblemSetManagerMutation(c.config, OpUpdate)
+	return &ProblemSetManagerUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ProblemSetProblemClient) UpdateOne(_m *ProblemSet_Problem) *ProblemSetProblemUpdateOne {
-	mutation := newProblemSetProblemMutation(c.config, OpUpdateOne, withProblemSet_Problem(_m))
-	return &ProblemSetProblemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ProblemSetManagerClient) UpdateOne(_m *ProblemSetManager) *ProblemSetManagerUpdateOne {
+	mutation := newProblemSetManagerMutation(c.config, OpUpdateOne, withProblemSetManager(_m))
+	return &ProblemSetManagerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ProblemSetProblemClient) UpdateOneID(id int64) *ProblemSetProblemUpdateOne {
-	mutation := newProblemSetProblemMutation(c.config, OpUpdateOne, withProblemSet_ProblemID(id))
-	return &ProblemSetProblemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *ProblemSetManagerClient) UpdateOneID(id int64) *ProblemSetManagerUpdateOne {
+	mutation := newProblemSetManagerMutation(c.config, OpUpdateOne, withProblemSetManagerID(id))
+	return &ProblemSetManagerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for ProblemSet_Problem.
-func (c *ProblemSetProblemClient) Delete() *ProblemSetProblemDelete {
-	mutation := newProblemSetProblemMutation(c.config, OpDelete)
-	return &ProblemSetProblemDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for ProblemSetManager.
+func (c *ProblemSetManagerClient) Delete() *ProblemSetManagerDelete {
+	mutation := newProblemSetManagerMutation(c.config, OpDelete)
+	return &ProblemSetManagerDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ProblemSetProblemClient) DeleteOne(_m *ProblemSet_Problem) *ProblemSetProblemDeleteOne {
+func (c *ProblemSetManagerClient) DeleteOne(_m *ProblemSetManager) *ProblemSetManagerDeleteOne {
 	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ProblemSetProblemClient) DeleteOneID(id int64) *ProblemSetProblemDeleteOne {
-	builder := c.Delete().Where(problemset_problem.ID(id))
+func (c *ProblemSetManagerClient) DeleteOneID(id int64) *ProblemSetManagerDeleteOne {
+	builder := c.Delete().Where(problemsetmanager.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &ProblemSetProblemDeleteOne{builder}
+	return &ProblemSetManagerDeleteOne{builder}
 }
 
-// Query returns a query builder for ProblemSet_Problem.
-func (c *ProblemSetProblemClient) Query() *ProblemSetProblemQuery {
-	return &ProblemSetProblemQuery{
+// Query returns a query builder for ProblemSetManager.
+func (c *ProblemSetManagerClient) Query() *ProblemSetManagerQuery {
+	return &ProblemSetManagerQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeProblemSetProblem},
+		ctx:    &QueryContext{Type: TypeProblemSetManager},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a ProblemSet_Problem entity by its id.
-func (c *ProblemSetProblemClient) Get(ctx context.Context, id int64) (*ProblemSet_Problem, error) {
-	return c.Query().Where(problemset_problem.ID(id)).Only(ctx)
+// Get returns a ProblemSetManager entity by its id.
+func (c *ProblemSetManagerClient) Get(ctx context.Context, id int64) (*ProblemSetManager, error) {
+	return c.Query().Where(problemsetmanager.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ProblemSetProblemClient) GetX(ctx context.Context, id int64) *ProblemSet_Problem {
+func (c *ProblemSetManagerClient) GetX(ctx context.Context, id int64) *ProblemSetManager {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1303,180 +1784,15 @@ func (c *ProblemSetProblemClient) GetX(ctx context.Context, id int64) *ProblemSe
 	return obj
 }
 
-// QueryProblemSet queries the problem_set edge of a ProblemSet_Problem.
-func (c *ProblemSetProblemClient) QueryProblemSet(_m *ProblemSet_Problem) *ProblemSetQuery {
-	query := (&ProblemSetClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(problemset_problem.Table, problemset_problem.FieldID, id),
-			sqlgraph.To(problemset.Table, problemset.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, problemset_problem.ProblemSetTable, problemset_problem.ProblemSetColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryProblem queries the problem edge of a ProblemSet_Problem.
-func (c *ProblemSetProblemClient) QueryProblem(_m *ProblemSet_Problem) *ProblemQuery {
-	query := (&ProblemClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(problemset_problem.Table, problemset_problem.FieldID, id),
-			sqlgraph.To(problem.Table, problem.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, problemset_problem.ProblemTable, problemset_problem.ProblemColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *ProblemSetProblemClient) Hooks() []Hook {
-	return c.hooks.ProblemSet_Problem
-}
-
-// Interceptors returns the client interceptors.
-func (c *ProblemSetProblemClient) Interceptors() []Interceptor {
-	return c.inters.ProblemSet_Problem
-}
-
-func (c *ProblemSetProblemClient) mutate(ctx context.Context, m *ProblemSetProblemMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&ProblemSetProblemCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&ProblemSetProblemUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&ProblemSetProblemUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&ProblemSetProblemDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown ProblemSet_Problem mutation op: %q", m.Op())
-	}
-}
-
-// ProblemSetUserClient is a client for the ProblemSet_User schema.
-type ProblemSetUserClient struct {
-	config
-}
-
-// NewProblemSetUserClient returns a client for the ProblemSet_User from the given config.
-func NewProblemSetUserClient(c config) *ProblemSetUserClient {
-	return &ProblemSetUserClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `problemset_user.Hooks(f(g(h())))`.
-func (c *ProblemSetUserClient) Use(hooks ...Hook) {
-	c.hooks.ProblemSet_User = append(c.hooks.ProblemSet_User, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `problemset_user.Intercept(f(g(h())))`.
-func (c *ProblemSetUserClient) Intercept(interceptors ...Interceptor) {
-	c.inters.ProblemSet_User = append(c.inters.ProblemSet_User, interceptors...)
-}
-
-// Create returns a builder for creating a ProblemSet_User entity.
-func (c *ProblemSetUserClient) Create() *ProblemSetUserCreate {
-	mutation := newProblemSetUserMutation(c.config, OpCreate)
-	return &ProblemSetUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of ProblemSet_User entities.
-func (c *ProblemSetUserClient) CreateBulk(builders ...*ProblemSetUserCreate) *ProblemSetUserCreateBulk {
-	return &ProblemSetUserCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *ProblemSetUserClient) MapCreateBulk(slice any, setFunc func(*ProblemSetUserCreate, int)) *ProblemSetUserCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &ProblemSetUserCreateBulk{err: fmt.Errorf("calling to ProblemSetUserClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*ProblemSetUserCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &ProblemSetUserCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ProblemSet_User.
-func (c *ProblemSetUserClient) Update() *ProblemSetUserUpdate {
-	mutation := newProblemSetUserMutation(c.config, OpUpdate)
-	return &ProblemSetUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ProblemSetUserClient) UpdateOne(_m *ProblemSet_User) *ProblemSetUserUpdateOne {
-	mutation := newProblemSetUserMutation(c.config, OpUpdateOne, withProblemSet_User(_m))
-	return &ProblemSetUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ProblemSetUserClient) UpdateOneID(id int64) *ProblemSetUserUpdateOne {
-	mutation := newProblemSetUserMutation(c.config, OpUpdateOne, withProblemSet_UserID(id))
-	return &ProblemSetUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ProblemSet_User.
-func (c *ProblemSetUserClient) Delete() *ProblemSetUserDelete {
-	mutation := newProblemSetUserMutation(c.config, OpDelete)
-	return &ProblemSetUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *ProblemSetUserClient) DeleteOne(_m *ProblemSet_User) *ProblemSetUserDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ProblemSetUserClient) DeleteOneID(id int64) *ProblemSetUserDeleteOne {
-	builder := c.Delete().Where(problemset_user.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ProblemSetUserDeleteOne{builder}
-}
-
-// Query returns a query builder for ProblemSet_User.
-func (c *ProblemSetUserClient) Query() *ProblemSetUserQuery {
-	return &ProblemSetUserQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeProblemSetUser},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a ProblemSet_User entity by its id.
-func (c *ProblemSetUserClient) Get(ctx context.Context, id int64) (*ProblemSet_User, error) {
-	return c.Query().Where(problemset_user.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ProblemSetUserClient) GetX(ctx context.Context, id int64) *ProblemSet_User {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryUser queries the user edge of a ProblemSet_User.
-func (c *ProblemSetUserClient) QueryUser(_m *ProblemSet_User) *UserQuery {
+// QueryAdmin queries the admin edge of a ProblemSetManager.
+func (c *ProblemSetManagerClient) QueryAdmin(_m *ProblemSetManager) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(problemset_user.Table, problemset_user.FieldID, id),
+			sqlgraph.From(problemsetmanager.Table, problemsetmanager.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, problemset_user.UserTable, problemset_user.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, problemsetmanager.AdminTable, problemsetmanager.AdminColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1484,15 +1800,15 @@ func (c *ProblemSetUserClient) QueryUser(_m *ProblemSet_User) *UserQuery {
 	return query
 }
 
-// QueryProblemSet queries the problem_set edge of a ProblemSet_User.
-func (c *ProblemSetUserClient) QueryProblemSet(_m *ProblemSet_User) *ProblemSetQuery {
+// QueryProblemSet queries the problem_set edge of a ProblemSetManager.
+func (c *ProblemSetManagerClient) QueryProblemSet(_m *ProblemSetManager) *ProblemSetQuery {
 	query := (&ProblemSetClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(problemset_user.Table, problemset_user.FieldID, id),
+			sqlgraph.From(problemsetmanager.Table, problemsetmanager.FieldID, id),
 			sqlgraph.To(problemset.Table, problemset.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, problemset_user.ProblemSetTable, problemset_user.ProblemSetColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, problemsetmanager.ProblemSetTable, problemsetmanager.ProblemSetColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1501,27 +1817,192 @@ func (c *ProblemSetUserClient) QueryProblemSet(_m *ProblemSet_User) *ProblemSetQ
 }
 
 // Hooks returns the client hooks.
-func (c *ProblemSetUserClient) Hooks() []Hook {
-	return c.hooks.ProblemSet_User
+func (c *ProblemSetManagerClient) Hooks() []Hook {
+	return c.hooks.ProblemSetManager
 }
 
 // Interceptors returns the client interceptors.
-func (c *ProblemSetUserClient) Interceptors() []Interceptor {
-	return c.inters.ProblemSet_User
+func (c *ProblemSetManagerClient) Interceptors() []Interceptor {
+	return c.inters.ProblemSetManager
 }
 
-func (c *ProblemSetUserClient) mutate(ctx context.Context, m *ProblemSetUserMutation) (Value, error) {
+func (c *ProblemSetManagerClient) mutate(ctx context.Context, m *ProblemSetManagerMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&ProblemSetUserCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&ProblemSetManagerCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&ProblemSetUserUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&ProblemSetManagerUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&ProblemSetUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&ProblemSetManagerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&ProblemSetUserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&ProblemSetManagerDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown ProblemSet_User mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown ProblemSetManager mutation op: %q", m.Op())
+	}
+}
+
+// ProblemSetIncludesClient is a client for the ProblemSet_Includes schema.
+type ProblemSetIncludesClient struct {
+	config
+}
+
+// NewProblemSetIncludesClient returns a client for the ProblemSet_Includes from the given config.
+func NewProblemSetIncludesClient(c config) *ProblemSetIncludesClient {
+	return &ProblemSetIncludesClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `problemset_includes.Hooks(f(g(h())))`.
+func (c *ProblemSetIncludesClient) Use(hooks ...Hook) {
+	c.hooks.ProblemSet_Includes = append(c.hooks.ProblemSet_Includes, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `problemset_includes.Intercept(f(g(h())))`.
+func (c *ProblemSetIncludesClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProblemSet_Includes = append(c.inters.ProblemSet_Includes, interceptors...)
+}
+
+// Create returns a builder for creating a ProblemSet_Includes entity.
+func (c *ProblemSetIncludesClient) Create() *ProblemSetIncludesCreate {
+	mutation := newProblemSetIncludesMutation(c.config, OpCreate)
+	return &ProblemSetIncludesCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProblemSet_Includes entities.
+func (c *ProblemSetIncludesClient) CreateBulk(builders ...*ProblemSetIncludesCreate) *ProblemSetIncludesCreateBulk {
+	return &ProblemSetIncludesCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProblemSetIncludesClient) MapCreateBulk(slice any, setFunc func(*ProblemSetIncludesCreate, int)) *ProblemSetIncludesCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProblemSetIncludesCreateBulk{err: fmt.Errorf("calling to ProblemSetIncludesClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProblemSetIncludesCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProblemSetIncludesCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProblemSet_Includes.
+func (c *ProblemSetIncludesClient) Update() *ProblemSetIncludesUpdate {
+	mutation := newProblemSetIncludesMutation(c.config, OpUpdate)
+	return &ProblemSetIncludesUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProblemSetIncludesClient) UpdateOne(_m *ProblemSet_Includes) *ProblemSetIncludesUpdateOne {
+	mutation := newProblemSetIncludesMutation(c.config, OpUpdateOne, withProblemSet_Includes(_m))
+	return &ProblemSetIncludesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProblemSetIncludesClient) UpdateOneID(id int64) *ProblemSetIncludesUpdateOne {
+	mutation := newProblemSetIncludesMutation(c.config, OpUpdateOne, withProblemSet_IncludesID(id))
+	return &ProblemSetIncludesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProblemSet_Includes.
+func (c *ProblemSetIncludesClient) Delete() *ProblemSetIncludesDelete {
+	mutation := newProblemSetIncludesMutation(c.config, OpDelete)
+	return &ProblemSetIncludesDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProblemSetIncludesClient) DeleteOne(_m *ProblemSet_Includes) *ProblemSetIncludesDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProblemSetIncludesClient) DeleteOneID(id int64) *ProblemSetIncludesDeleteOne {
+	builder := c.Delete().Where(problemset_includes.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProblemSetIncludesDeleteOne{builder}
+}
+
+// Query returns a query builder for ProblemSet_Includes.
+func (c *ProblemSetIncludesClient) Query() *ProblemSetIncludesQuery {
+	return &ProblemSetIncludesQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProblemSetIncludes},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProblemSet_Includes entity by its id.
+func (c *ProblemSetIncludesClient) Get(ctx context.Context, id int64) (*ProblemSet_Includes, error) {
+	return c.Query().Where(problemset_includes.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProblemSetIncludesClient) GetX(ctx context.Context, id int64) *ProblemSet_Includes {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProblemSet queries the problem_set edge of a ProblemSet_Includes.
+func (c *ProblemSetIncludesClient) QueryProblemSet(_m *ProblemSet_Includes) *ProblemSetQuery {
+	query := (&ProblemSetClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(problemset_includes.Table, problemset_includes.FieldID, id),
+			sqlgraph.To(problemset.Table, problemset.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, problemset_includes.ProblemSetTable, problemset_includes.ProblemSetColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProblem queries the problem edge of a ProblemSet_Includes.
+func (c *ProblemSetIncludesClient) QueryProblem(_m *ProblemSet_Includes) *ProblemQuery {
+	query := (&ProblemClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(problemset_includes.Table, problemset_includes.FieldID, id),
+			sqlgraph.To(problem.Table, problem.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, problemset_includes.ProblemTable, problemset_includes.ProblemColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProblemSetIncludesClient) Hooks() []Hook {
+	return c.hooks.ProblemSet_Includes
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProblemSetIncludesClient) Interceptors() []Interceptor {
+	return c.inters.ProblemSet_Includes
+}
+
+func (c *ProblemSetIncludesClient) mutate(ctx context.Context, m *ProblemSetIncludesMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProblemSetIncludesCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProblemSetIncludesUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProblemSetIncludesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProblemSetIncludesDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ProblemSet_Includes mutation op: %q", m.Op())
 	}
 }
 
@@ -1839,155 +2320,6 @@ func (c *SystemLogClient) mutate(ctx context.Context, m *SystemLogMutation) (Val
 	}
 }
 
-// TestCaseClient is a client for the TestCase schema.
-type TestCaseClient struct {
-	config
-}
-
-// NewTestCaseClient returns a client for the TestCase from the given config.
-func NewTestCaseClient(c config) *TestCaseClient {
-	return &TestCaseClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `testcase.Hooks(f(g(h())))`.
-func (c *TestCaseClient) Use(hooks ...Hook) {
-	c.hooks.TestCase = append(c.hooks.TestCase, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `testcase.Intercept(f(g(h())))`.
-func (c *TestCaseClient) Intercept(interceptors ...Interceptor) {
-	c.inters.TestCase = append(c.inters.TestCase, interceptors...)
-}
-
-// Create returns a builder for creating a TestCase entity.
-func (c *TestCaseClient) Create() *TestCaseCreate {
-	mutation := newTestCaseMutation(c.config, OpCreate)
-	return &TestCaseCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of TestCase entities.
-func (c *TestCaseClient) CreateBulk(builders ...*TestCaseCreate) *TestCaseCreateBulk {
-	return &TestCaseCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *TestCaseClient) MapCreateBulk(slice any, setFunc func(*TestCaseCreate, int)) *TestCaseCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &TestCaseCreateBulk{err: fmt.Errorf("calling to TestCaseClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*TestCaseCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &TestCaseCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for TestCase.
-func (c *TestCaseClient) Update() *TestCaseUpdate {
-	mutation := newTestCaseMutation(c.config, OpUpdate)
-	return &TestCaseUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *TestCaseClient) UpdateOne(_m *TestCase) *TestCaseUpdateOne {
-	mutation := newTestCaseMutation(c.config, OpUpdateOne, withTestCase(_m))
-	return &TestCaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *TestCaseClient) UpdateOneID(id int64) *TestCaseUpdateOne {
-	mutation := newTestCaseMutation(c.config, OpUpdateOne, withTestCaseID(id))
-	return &TestCaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for TestCase.
-func (c *TestCaseClient) Delete() *TestCaseDelete {
-	mutation := newTestCaseMutation(c.config, OpDelete)
-	return &TestCaseDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *TestCaseClient) DeleteOne(_m *TestCase) *TestCaseDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TestCaseClient) DeleteOneID(id int64) *TestCaseDeleteOne {
-	builder := c.Delete().Where(testcase.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &TestCaseDeleteOne{builder}
-}
-
-// Query returns a query builder for TestCase.
-func (c *TestCaseClient) Query() *TestCaseQuery {
-	return &TestCaseQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeTestCase},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a TestCase entity by its id.
-func (c *TestCaseClient) Get(ctx context.Context, id int64) (*TestCase, error) {
-	return c.Query().Where(testcase.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *TestCaseClient) GetX(ctx context.Context, id int64) *TestCase {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryProblem queries the problem edge of a TestCase.
-func (c *TestCaseClient) QueryProblem(_m *TestCase) *ProblemQuery {
-	query := (&ProblemClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(testcase.Table, testcase.FieldID, id),
-			sqlgraph.To(problem.Table, problem.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, testcase.ProblemTable, testcase.ProblemColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *TestCaseClient) Hooks() []Hook {
-	return c.hooks.TestCase
-}
-
-// Interceptors returns the client interceptors.
-func (c *TestCaseClient) Interceptors() []Interceptor {
-	return c.inters.TestCase
-}
-
-func (c *TestCaseClient) mutate(ctx context.Context, m *TestCaseMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&TestCaseCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&TestCaseUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&TestCaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&TestCaseDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown TestCase mutation op: %q", m.Op())
-	}
-}
-
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -2144,15 +2476,15 @@ func (c *UserClient) QueryAnnouncements(_m *User) *AnnouncementQuery {
 	return query
 }
 
-// QueryAdminProblemSets queries the admin_problem_sets edge of a User.
-func (c *UserClient) QueryAdminProblemSets(_m *User) *AdminProblemSetQuery {
-	query := (&AdminProblemSetClient{config: c.config}).Query()
+// QueryProblemSetManager queries the problem_set_manager edge of a User.
+func (c *UserClient) QueryProblemSetManager(_m *User) *ProblemSetManagerQuery {
+	query := (&ProblemSetManagerClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(adminproblemset.Table, adminproblemset.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.AdminProblemSetsTable, user.AdminProblemSetsColumn),
+			sqlgraph.To(problemsetmanager.Table, problemsetmanager.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProblemSetManagerTable, user.ProblemSetManagerColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -2160,15 +2492,15 @@ func (c *UserClient) QueryAdminProblemSets(_m *User) *AdminProblemSetQuery {
 	return query
 }
 
-// QueryProblemSetUsers queries the problem_set_users edge of a User.
-func (c *UserClient) QueryProblemSetUsers(_m *User) *ProblemSetUserQuery {
-	query := (&ProblemSetUserClient{config: c.config}).Query()
+// QueryCompetitorList queries the competitor_list edge of a User.
+func (c *UserClient) QueryCompetitorList(_m *User) *CompetitorListQuery {
+	query := (&CompetitorListClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(problemset_user.Table, problemset_user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ProblemSetUsersTable, user.ProblemSetUsersColumn),
+			sqlgraph.To(competitor_list.Table, competitor_list.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CompetitorListTable, user.CompetitorListColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -2204,13 +2536,13 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		AdminProblemSet, Announcement, JudgeRecord, Problem, ProblemSet,
-		ProblemSet_Problem, ProblemSet_User, SubmissionRecord, SystemLog, TestCase,
-		User []ent.Hook
+		Announcement, CaseGroupResult, CaseResult, Competitor_List, JudgeRecord,
+		Problem, ProblemJudgeConfig, ProblemSet, ProblemSetManager,
+		ProblemSet_Includes, SubmissionRecord, SystemLog, User []ent.Hook
 	}
 	inters struct {
-		AdminProblemSet, Announcement, JudgeRecord, Problem, ProblemSet,
-		ProblemSet_Problem, ProblemSet_User, SubmissionRecord, SystemLog, TestCase,
-		User []ent.Interceptor
+		Announcement, CaseGroupResult, CaseResult, Competitor_List, JudgeRecord,
+		Problem, ProblemJudgeConfig, ProblemSet, ProblemSetManager,
+		ProblemSet_Includes, SubmissionRecord, SystemLog, User []ent.Interceptor
 	}
 )

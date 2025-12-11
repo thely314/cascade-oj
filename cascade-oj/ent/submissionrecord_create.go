@@ -49,12 +49,6 @@ func (_c *SubmissionRecordCreate) SetNillableProblemSetID(v *int64) *SubmissionR
 	return _c
 }
 
-// SetResult sets the "result" field.
-func (_c *SubmissionRecordCreate) SetResult(v submissionrecord.Result) *SubmissionRecordCreate {
-	_c.mutation.SetResult(v)
-	return _c
-}
-
 // SetSubmissionTime sets the "submission_time" field.
 func (_c *SubmissionRecordCreate) SetSubmissionTime(v time.Time) *SubmissionRecordCreate {
 	_c.mutation.SetSubmissionTime(v)
@@ -167,14 +161,6 @@ func (_c *SubmissionRecordCreate) check() error {
 			return &ValidationError{Name: "problem_id", err: fmt.Errorf(`ent: validator failed for field "SubmissionRecord.problem_id": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.Result(); !ok {
-		return &ValidationError{Name: "result", err: errors.New(`ent: missing required field "SubmissionRecord.result"`)}
-	}
-	if v, ok := _c.mutation.Result(); ok {
-		if err := submissionrecord.ResultValidator(v); err != nil {
-			return &ValidationError{Name: "result", err: fmt.Errorf(`ent: validator failed for field "SubmissionRecord.result": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.SubmissionTime(); !ok {
 		return &ValidationError{Name: "submission_time", err: errors.New(`ent: missing required field "SubmissionRecord.submission_time"`)}
 	}
@@ -223,10 +209,6 @@ func (_c *SubmissionRecordCreate) createSpec() (*SubmissionRecord, *sqlgraph.Cre
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
-	}
-	if value, ok := _c.mutation.Result(); ok {
-		_spec.SetField(submissionrecord.FieldResult, field.TypeEnum, value)
-		_node.Result = value
 	}
 	if value, ok := _c.mutation.SubmissionTime(); ok {
 		_spec.SetField(submissionrecord.FieldSubmissionTime, field.TypeTime, value)
