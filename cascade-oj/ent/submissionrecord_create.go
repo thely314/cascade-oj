@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"cascade-oj/ent/casegroupresult"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset"
@@ -96,6 +97,21 @@ func (_c *SubmissionRecordCreate) SetProblem(v *Problem) *SubmissionRecordCreate
 // SetProblemSet sets the "problem_set" edge to the ProblemSet entity.
 func (_c *SubmissionRecordCreate) SetProblemSet(v *ProblemSet) *SubmissionRecordCreate {
 	return _c.SetProblemSetID(v.ID)
+}
+
+// AddCaseGroupResultIDs adds the "case_group_results" edge to the CaseGroupResult entity by IDs.
+func (_c *SubmissionRecordCreate) AddCaseGroupResultIDs(ids ...int64) *SubmissionRecordCreate {
+	_c.mutation.AddCaseGroupResultIDs(ids...)
+	return _c
+}
+
+// AddCaseGroupResults adds the "case_group_results" edges to the CaseGroupResult entity.
+func (_c *SubmissionRecordCreate) AddCaseGroupResults(v ...*CaseGroupResult) *SubmissionRecordCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddCaseGroupResultIDs(ids...)
 }
 
 // Mutation returns the SubmissionRecordMutation object of the builder.
@@ -267,6 +283,22 @@ func (_c *SubmissionRecordCreate) createSpec() (*SubmissionRecord, *sqlgraph.Cre
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.ProblemSetID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.CaseGroupResultsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   submissionrecord.CaseGroupResultsTable,
+			Columns: []string{submissionrecord.CaseGroupResultsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(casegroupresult.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -37,12 +37,21 @@ var (
 		{Name: "total_time_cost_ms", Type: field.TypeUint64},
 		{Name: "max_memory_cost_kb", Type: field.TypeUint64},
 		{Name: "score", Type: field.TypeInt, Default: 0, SchemaType: map[string]string{"mysql": "INT"}},
+		{Name: "submission_id", Type: field.TypeInt64},
 	}
 	// CaseGroupResultsTable holds the schema information for the "CaseGroup_Results" table.
 	CaseGroupResultsTable = &schema.Table{
 		Name:       "CaseGroup_Results",
 		Columns:    CaseGroupResultsColumns,
 		PrimaryKey: []*schema.Column{CaseGroupResultsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "CaseGroup_Results_SubmissionRecords_case_group_results",
+				Columns:    []*schema.Column{CaseGroupResultsColumns[5]},
+				RefColumns: []*schema.Column{SubmissionRecordsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// CaseResultsColumns holds the columns for the "Case_Results" table.
 	CaseResultsColumns = []*schema.Column{
@@ -336,6 +345,7 @@ func init() {
 	AnnouncementsTable.Annotation = &entsql.Annotation{
 		Table: "Announcements",
 	}
+	CaseGroupResultsTable.ForeignKeys[0].RefTable = SubmissionRecordsTable
 	CaseGroupResultsTable.Annotation = &entsql.Annotation{
 		Table: "CaseGroup_Results",
 	}

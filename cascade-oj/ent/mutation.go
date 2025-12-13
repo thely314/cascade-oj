@@ -551,27 +551,29 @@ func (m *AnnouncementMutation) ResetEdge(name string) error {
 // CaseGroupResultMutation represents an operation that mutates the CaseGroupResult nodes in the graph.
 type CaseGroupResultMutation struct {
 	config
-	op                    Op
-	typ                   string
-	id                    *int64
-	status                *int16
-	addstatus             *int16
-	total_time_cost_ms    *uint64
-	addtotal_time_cost_ms *int64
-	max_memory_cost_kb    *uint64
-	addmax_memory_cost_kb *int64
-	score                 *int
-	addscore              *int
-	clearedFields         map[string]struct{}
-	problem               map[int64]struct{}
-	removedproblem        map[int64]struct{}
-	clearedproblem        bool
-	case_results          map[int64]struct{}
-	removedcase_results   map[int64]struct{}
-	clearedcase_results   bool
-	done                  bool
-	oldValue              func(context.Context) (*CaseGroupResult, error)
-	predicates            []predicate.CaseGroupResult
+	op                       Op
+	typ                      string
+	id                       *int64
+	status                   *int16
+	addstatus                *int16
+	total_time_cost_ms       *uint64
+	addtotal_time_cost_ms    *int64
+	max_memory_cost_kb       *uint64
+	addmax_memory_cost_kb    *int64
+	score                    *int
+	addscore                 *int
+	clearedFields            map[string]struct{}
+	problem                  map[int64]struct{}
+	removedproblem           map[int64]struct{}
+	clearedproblem           bool
+	case_results             map[int64]struct{}
+	removedcase_results      map[int64]struct{}
+	clearedcase_results      bool
+	submission_record        *int64
+	clearedsubmission_record bool
+	done                     bool
+	oldValue                 func(context.Context) (*CaseGroupResult, error)
+	predicates               []predicate.CaseGroupResult
 }
 
 var _ ent.Mutation = (*CaseGroupResultMutation)(nil)
@@ -676,6 +678,42 @@ func (m *CaseGroupResultMutation) IDs(ctx context.Context) ([]int64, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetSubmissionID sets the "submission_id" field.
+func (m *CaseGroupResultMutation) SetSubmissionID(i int64) {
+	m.submission_record = &i
+}
+
+// SubmissionID returns the value of the "submission_id" field in the mutation.
+func (m *CaseGroupResultMutation) SubmissionID() (r int64, exists bool) {
+	v := m.submission_record
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubmissionID returns the old "submission_id" field's value of the CaseGroupResult entity.
+// If the CaseGroupResult object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CaseGroupResultMutation) OldSubmissionID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSubmissionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSubmissionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubmissionID: %w", err)
+	}
+	return oldValue.SubmissionID, nil
+}
+
+// ResetSubmissionID resets all changes to the "submission_id" field.
+func (m *CaseGroupResultMutation) ResetSubmissionID() {
+	m.submission_record = nil
 }
 
 // SetStatus sets the "status" field.
@@ -1010,6 +1048,46 @@ func (m *CaseGroupResultMutation) ResetCaseResults() {
 	m.removedcase_results = nil
 }
 
+// SetSubmissionRecordID sets the "submission_record" edge to the SubmissionRecord entity by id.
+func (m *CaseGroupResultMutation) SetSubmissionRecordID(id int64) {
+	m.submission_record = &id
+}
+
+// ClearSubmissionRecord clears the "submission_record" edge to the SubmissionRecord entity.
+func (m *CaseGroupResultMutation) ClearSubmissionRecord() {
+	m.clearedsubmission_record = true
+	m.clearedFields[casegroupresult.FieldSubmissionID] = struct{}{}
+}
+
+// SubmissionRecordCleared reports if the "submission_record" edge to the SubmissionRecord entity was cleared.
+func (m *CaseGroupResultMutation) SubmissionRecordCleared() bool {
+	return m.clearedsubmission_record
+}
+
+// SubmissionRecordID returns the "submission_record" edge ID in the mutation.
+func (m *CaseGroupResultMutation) SubmissionRecordID() (id int64, exists bool) {
+	if m.submission_record != nil {
+		return *m.submission_record, true
+	}
+	return
+}
+
+// SubmissionRecordIDs returns the "submission_record" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// SubmissionRecordID instead. It exists only for internal usage by the builders.
+func (m *CaseGroupResultMutation) SubmissionRecordIDs() (ids []int64) {
+	if id := m.submission_record; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSubmissionRecord resets all changes to the "submission_record" edge.
+func (m *CaseGroupResultMutation) ResetSubmissionRecord() {
+	m.submission_record = nil
+	m.clearedsubmission_record = false
+}
+
 // Where appends a list predicates to the CaseGroupResultMutation builder.
 func (m *CaseGroupResultMutation) Where(ps ...predicate.CaseGroupResult) {
 	m.predicates = append(m.predicates, ps...)
@@ -1044,7 +1122,10 @@ func (m *CaseGroupResultMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CaseGroupResultMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
+	if m.submission_record != nil {
+		fields = append(fields, casegroupresult.FieldSubmissionID)
+	}
 	if m.status != nil {
 		fields = append(fields, casegroupresult.FieldStatus)
 	}
@@ -1065,6 +1146,8 @@ func (m *CaseGroupResultMutation) Fields() []string {
 // schema.
 func (m *CaseGroupResultMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case casegroupresult.FieldSubmissionID:
+		return m.SubmissionID()
 	case casegroupresult.FieldStatus:
 		return m.Status()
 	case casegroupresult.FieldTotalTimeCostMs:
@@ -1082,6 +1165,8 @@ func (m *CaseGroupResultMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *CaseGroupResultMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case casegroupresult.FieldSubmissionID:
+		return m.OldSubmissionID(ctx)
 	case casegroupresult.FieldStatus:
 		return m.OldStatus(ctx)
 	case casegroupresult.FieldTotalTimeCostMs:
@@ -1099,6 +1184,13 @@ func (m *CaseGroupResultMutation) OldField(ctx context.Context, name string) (en
 // type.
 func (m *CaseGroupResultMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case casegroupresult.FieldSubmissionID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubmissionID(v)
+		return nil
 	case casegroupresult.FieldStatus:
 		v, ok := value.(int16)
 		if !ok {
@@ -1227,6 +1319,9 @@ func (m *CaseGroupResultMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *CaseGroupResultMutation) ResetField(name string) error {
 	switch name {
+	case casegroupresult.FieldSubmissionID:
+		m.ResetSubmissionID()
+		return nil
 	case casegroupresult.FieldStatus:
 		m.ResetStatus()
 		return nil
@@ -1245,12 +1340,15 @@ func (m *CaseGroupResultMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CaseGroupResultMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.problem != nil {
 		edges = append(edges, casegroupresult.EdgeProblem)
 	}
 	if m.case_results != nil {
 		edges = append(edges, casegroupresult.EdgeCaseResults)
+	}
+	if m.submission_record != nil {
+		edges = append(edges, casegroupresult.EdgeSubmissionRecord)
 	}
 	return edges
 }
@@ -1271,13 +1369,17 @@ func (m *CaseGroupResultMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case casegroupresult.EdgeSubmissionRecord:
+		if id := m.submission_record; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CaseGroupResultMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedproblem != nil {
 		edges = append(edges, casegroupresult.EdgeProblem)
 	}
@@ -1309,12 +1411,15 @@ func (m *CaseGroupResultMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CaseGroupResultMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedproblem {
 		edges = append(edges, casegroupresult.EdgeProblem)
 	}
 	if m.clearedcase_results {
 		edges = append(edges, casegroupresult.EdgeCaseResults)
+	}
+	if m.clearedsubmission_record {
+		edges = append(edges, casegroupresult.EdgeSubmissionRecord)
 	}
 	return edges
 }
@@ -1327,6 +1432,8 @@ func (m *CaseGroupResultMutation) EdgeCleared(name string) bool {
 		return m.clearedproblem
 	case casegroupresult.EdgeCaseResults:
 		return m.clearedcase_results
+	case casegroupresult.EdgeSubmissionRecord:
+		return m.clearedsubmission_record
 	}
 	return false
 }
@@ -1335,6 +1442,9 @@ func (m *CaseGroupResultMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *CaseGroupResultMutation) ClearEdge(name string) error {
 	switch name {
+	case casegroupresult.EdgeSubmissionRecord:
+		m.ClearSubmissionRecord()
+		return nil
 	}
 	return fmt.Errorf("unknown CaseGroupResult unique edge %s", name)
 }
@@ -1348,6 +1458,9 @@ func (m *CaseGroupResultMutation) ResetEdge(name string) error {
 		return nil
 	case casegroupresult.EdgeCaseResults:
 		m.ResetCaseResults()
+		return nil
+	case casegroupresult.EdgeSubmissionRecord:
+		m.ResetSubmissionRecord()
 		return nil
 	}
 	return fmt.Errorf("unknown CaseGroupResult edge %s", name)
@@ -7686,22 +7799,25 @@ func (m *ProblemSetIncludesMutation) ResetEdge(name string) error {
 // SubmissionRecordMutation represents an operation that mutates the SubmissionRecord nodes in the graph.
 type SubmissionRecordMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *int64
-	submission_time    *time.Time
-	score              *int
-	addscore           *int
-	clearedFields      map[string]struct{}
-	judge              *int64
-	clearedjudge       bool
-	problem            *int64
-	clearedproblem     bool
-	problem_set        *int64
-	clearedproblem_set bool
-	done               bool
-	oldValue           func(context.Context) (*SubmissionRecord, error)
-	predicates         []predicate.SubmissionRecord
+	op                        Op
+	typ                       string
+	id                        *int64
+	submission_time           *time.Time
+	score                     *int
+	addscore                  *int
+	clearedFields             map[string]struct{}
+	judge                     *int64
+	clearedjudge              bool
+	problem                   *int64
+	clearedproblem            bool
+	problem_set               *int64
+	clearedproblem_set        bool
+	case_group_results        map[int64]struct{}
+	removedcase_group_results map[int64]struct{}
+	clearedcase_group_results bool
+	done                      bool
+	oldValue                  func(context.Context) (*SubmissionRecord, error)
+	predicates                []predicate.SubmissionRecord
 }
 
 var _ ent.Mutation = (*SubmissionRecordMutation)(nil)
@@ -8102,6 +8218,60 @@ func (m *SubmissionRecordMutation) ResetProblemSet() {
 	m.clearedproblem_set = false
 }
 
+// AddCaseGroupResultIDs adds the "case_group_results" edge to the CaseGroupResult entity by ids.
+func (m *SubmissionRecordMutation) AddCaseGroupResultIDs(ids ...int64) {
+	if m.case_group_results == nil {
+		m.case_group_results = make(map[int64]struct{})
+	}
+	for i := range ids {
+		m.case_group_results[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCaseGroupResults clears the "case_group_results" edge to the CaseGroupResult entity.
+func (m *SubmissionRecordMutation) ClearCaseGroupResults() {
+	m.clearedcase_group_results = true
+}
+
+// CaseGroupResultsCleared reports if the "case_group_results" edge to the CaseGroupResult entity was cleared.
+func (m *SubmissionRecordMutation) CaseGroupResultsCleared() bool {
+	return m.clearedcase_group_results
+}
+
+// RemoveCaseGroupResultIDs removes the "case_group_results" edge to the CaseGroupResult entity by IDs.
+func (m *SubmissionRecordMutation) RemoveCaseGroupResultIDs(ids ...int64) {
+	if m.removedcase_group_results == nil {
+		m.removedcase_group_results = make(map[int64]struct{})
+	}
+	for i := range ids {
+		delete(m.case_group_results, ids[i])
+		m.removedcase_group_results[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCaseGroupResults returns the removed IDs of the "case_group_results" edge to the CaseGroupResult entity.
+func (m *SubmissionRecordMutation) RemovedCaseGroupResultsIDs() (ids []int64) {
+	for id := range m.removedcase_group_results {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CaseGroupResultsIDs returns the "case_group_results" edge IDs in the mutation.
+func (m *SubmissionRecordMutation) CaseGroupResultsIDs() (ids []int64) {
+	for id := range m.case_group_results {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCaseGroupResults resets all changes to the "case_group_results" edge.
+func (m *SubmissionRecordMutation) ResetCaseGroupResults() {
+	m.case_group_results = nil
+	m.clearedcase_group_results = false
+	m.removedcase_group_results = nil
+}
+
 // Where appends a list predicates to the SubmissionRecordMutation builder.
 func (m *SubmissionRecordMutation) Where(ps ...predicate.SubmissionRecord) {
 	m.predicates = append(m.predicates, ps...)
@@ -8327,7 +8497,7 @@ func (m *SubmissionRecordMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SubmissionRecordMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.judge != nil {
 		edges = append(edges, submissionrecord.EdgeJudge)
 	}
@@ -8336,6 +8506,9 @@ func (m *SubmissionRecordMutation) AddedEdges() []string {
 	}
 	if m.problem_set != nil {
 		edges = append(edges, submissionrecord.EdgeProblemSet)
+	}
+	if m.case_group_results != nil {
+		edges = append(edges, submissionrecord.EdgeCaseGroupResults)
 	}
 	return edges
 }
@@ -8356,25 +8529,42 @@ func (m *SubmissionRecordMutation) AddedIDs(name string) []ent.Value {
 		if id := m.problem_set; id != nil {
 			return []ent.Value{*id}
 		}
+	case submissionrecord.EdgeCaseGroupResults:
+		ids := make([]ent.Value, 0, len(m.case_group_results))
+		for id := range m.case_group_results {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SubmissionRecordMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.removedcase_group_results != nil {
+		edges = append(edges, submissionrecord.EdgeCaseGroupResults)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *SubmissionRecordMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case submissionrecord.EdgeCaseGroupResults:
+		ids := make([]ent.Value, 0, len(m.removedcase_group_results))
+		for id := range m.removedcase_group_results {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SubmissionRecordMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedjudge {
 		edges = append(edges, submissionrecord.EdgeJudge)
 	}
@@ -8383,6 +8573,9 @@ func (m *SubmissionRecordMutation) ClearedEdges() []string {
 	}
 	if m.clearedproblem_set {
 		edges = append(edges, submissionrecord.EdgeProblemSet)
+	}
+	if m.clearedcase_group_results {
+		edges = append(edges, submissionrecord.EdgeCaseGroupResults)
 	}
 	return edges
 }
@@ -8397,6 +8590,8 @@ func (m *SubmissionRecordMutation) EdgeCleared(name string) bool {
 		return m.clearedproblem
 	case submissionrecord.EdgeProblemSet:
 		return m.clearedproblem_set
+	case submissionrecord.EdgeCaseGroupResults:
+		return m.clearedcase_group_results
 	}
 	return false
 }
@@ -8430,6 +8625,9 @@ func (m *SubmissionRecordMutation) ResetEdge(name string) error {
 		return nil
 	case submissionrecord.EdgeProblemSet:
 		m.ResetProblemSet()
+		return nil
+	case submissionrecord.EdgeCaseGroupResults:
+		m.ResetCaseGroupResults()
 		return nil
 	}
 	return fmt.Errorf("unknown SubmissionRecord edge %s", name)

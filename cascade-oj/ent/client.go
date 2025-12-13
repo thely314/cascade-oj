@@ -597,6 +597,22 @@ func (c *CaseGroupResultClient) QueryCaseResults(_m *CaseGroupResult) *CaseResul
 	return query
 }
 
+// QuerySubmissionRecord queries the submission_record edge of a CaseGroupResult.
+func (c *CaseGroupResultClient) QuerySubmissionRecord(_m *CaseGroupResult) *SubmissionRecordQuery {
+	query := (&SubmissionRecordClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(casegroupresult.Table, casegroupresult.FieldID, id),
+			sqlgraph.To(submissionrecord.Table, submissionrecord.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, casegroupresult.SubmissionRecordTable, casegroupresult.SubmissionRecordColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CaseGroupResultClient) Hooks() []Hook {
 	return c.hooks.CaseGroupResult
@@ -2155,6 +2171,22 @@ func (c *SubmissionRecordClient) QueryProblemSet(_m *SubmissionRecord) *ProblemS
 			sqlgraph.From(submissionrecord.Table, submissionrecord.FieldID, id),
 			sqlgraph.To(problemset.Table, problemset.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, submissionrecord.ProblemSetTable, submissionrecord.ProblemSetColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCaseGroupResults queries the case_group_results edge of a SubmissionRecord.
+func (c *SubmissionRecordClient) QueryCaseGroupResults(_m *SubmissionRecord) *CaseGroupResultQuery {
+	query := (&CaseGroupResultClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(submissionrecord.Table, submissionrecord.FieldID, id),
+			sqlgraph.To(casegroupresult.Table, casegroupresult.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, submissionrecord.CaseGroupResultsTable, submissionrecord.CaseGroupResultsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"cascade-oj/ent/casegroupresult"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problem"
@@ -129,6 +130,21 @@ func (_u *SubmissionRecordUpdate) SetProblemSet(v *ProblemSet) *SubmissionRecord
 	return _u.SetProblemSetID(v.ID)
 }
 
+// AddCaseGroupResultIDs adds the "case_group_results" edge to the CaseGroupResult entity by IDs.
+func (_u *SubmissionRecordUpdate) AddCaseGroupResultIDs(ids ...int64) *SubmissionRecordUpdate {
+	_u.mutation.AddCaseGroupResultIDs(ids...)
+	return _u
+}
+
+// AddCaseGroupResults adds the "case_group_results" edges to the CaseGroupResult entity.
+func (_u *SubmissionRecordUpdate) AddCaseGroupResults(v ...*CaseGroupResult) *SubmissionRecordUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCaseGroupResultIDs(ids...)
+}
+
 // Mutation returns the SubmissionRecordMutation object of the builder.
 func (_u *SubmissionRecordUpdate) Mutation() *SubmissionRecordMutation {
 	return _u.mutation
@@ -150,6 +166,27 @@ func (_u *SubmissionRecordUpdate) ClearProblem() *SubmissionRecordUpdate {
 func (_u *SubmissionRecordUpdate) ClearProblemSet() *SubmissionRecordUpdate {
 	_u.mutation.ClearProblemSet()
 	return _u
+}
+
+// ClearCaseGroupResults clears all "case_group_results" edges to the CaseGroupResult entity.
+func (_u *SubmissionRecordUpdate) ClearCaseGroupResults() *SubmissionRecordUpdate {
+	_u.mutation.ClearCaseGroupResults()
+	return _u
+}
+
+// RemoveCaseGroupResultIDs removes the "case_group_results" edge to CaseGroupResult entities by IDs.
+func (_u *SubmissionRecordUpdate) RemoveCaseGroupResultIDs(ids ...int64) *SubmissionRecordUpdate {
+	_u.mutation.RemoveCaseGroupResultIDs(ids...)
+	return _u
+}
+
+// RemoveCaseGroupResults removes "case_group_results" edges to CaseGroupResult entities.
+func (_u *SubmissionRecordUpdate) RemoveCaseGroupResults(v ...*CaseGroupResult) *SubmissionRecordUpdate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCaseGroupResultIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -308,6 +345,51 @@ func (_u *SubmissionRecordUpdate) sqlSave(ctx context.Context) (_node int, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.CaseGroupResultsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   submissionrecord.CaseGroupResultsTable,
+			Columns: []string{submissionrecord.CaseGroupResultsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(casegroupresult.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedCaseGroupResultsIDs(); len(nodes) > 0 && !_u.mutation.CaseGroupResultsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   submissionrecord.CaseGroupResultsTable,
+			Columns: []string{submissionrecord.CaseGroupResultsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(casegroupresult.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CaseGroupResultsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   submissionrecord.CaseGroupResultsTable,
+			Columns: []string{submissionrecord.CaseGroupResultsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(casegroupresult.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{submissionrecord.Label}
@@ -426,6 +508,21 @@ func (_u *SubmissionRecordUpdateOne) SetProblemSet(v *ProblemSet) *SubmissionRec
 	return _u.SetProblemSetID(v.ID)
 }
 
+// AddCaseGroupResultIDs adds the "case_group_results" edge to the CaseGroupResult entity by IDs.
+func (_u *SubmissionRecordUpdateOne) AddCaseGroupResultIDs(ids ...int64) *SubmissionRecordUpdateOne {
+	_u.mutation.AddCaseGroupResultIDs(ids...)
+	return _u
+}
+
+// AddCaseGroupResults adds the "case_group_results" edges to the CaseGroupResult entity.
+func (_u *SubmissionRecordUpdateOne) AddCaseGroupResults(v ...*CaseGroupResult) *SubmissionRecordUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCaseGroupResultIDs(ids...)
+}
+
 // Mutation returns the SubmissionRecordMutation object of the builder.
 func (_u *SubmissionRecordUpdateOne) Mutation() *SubmissionRecordMutation {
 	return _u.mutation
@@ -447,6 +544,27 @@ func (_u *SubmissionRecordUpdateOne) ClearProblem() *SubmissionRecordUpdateOne {
 func (_u *SubmissionRecordUpdateOne) ClearProblemSet() *SubmissionRecordUpdateOne {
 	_u.mutation.ClearProblemSet()
 	return _u
+}
+
+// ClearCaseGroupResults clears all "case_group_results" edges to the CaseGroupResult entity.
+func (_u *SubmissionRecordUpdateOne) ClearCaseGroupResults() *SubmissionRecordUpdateOne {
+	_u.mutation.ClearCaseGroupResults()
+	return _u
+}
+
+// RemoveCaseGroupResultIDs removes the "case_group_results" edge to CaseGroupResult entities by IDs.
+func (_u *SubmissionRecordUpdateOne) RemoveCaseGroupResultIDs(ids ...int64) *SubmissionRecordUpdateOne {
+	_u.mutation.RemoveCaseGroupResultIDs(ids...)
+	return _u
+}
+
+// RemoveCaseGroupResults removes "case_group_results" edges to CaseGroupResult entities.
+func (_u *SubmissionRecordUpdateOne) RemoveCaseGroupResults(v ...*CaseGroupResult) *SubmissionRecordUpdateOne {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCaseGroupResultIDs(ids...)
 }
 
 // Where appends a list predicates to the SubmissionRecordUpdate builder.
@@ -628,6 +746,51 @@ func (_u *SubmissionRecordUpdateOne) sqlSave(ctx context.Context) (_node *Submis
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(problemset.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CaseGroupResultsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   submissionrecord.CaseGroupResultsTable,
+			Columns: []string{submissionrecord.CaseGroupResultsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(casegroupresult.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedCaseGroupResultsIDs(); len(nodes) > 0 && !_u.mutation.CaseGroupResultsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   submissionrecord.CaseGroupResultsTable,
+			Columns: []string{submissionrecord.CaseGroupResultsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(casegroupresult.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CaseGroupResultsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   submissionrecord.CaseGroupResultsTable,
+			Columns: []string{submissionrecord.CaseGroupResultsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(casegroupresult.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

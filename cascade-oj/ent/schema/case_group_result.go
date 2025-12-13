@@ -23,6 +23,7 @@ func (CaseGroupResult) Fields() []ent.Field {
 		// 	"pending", "judging", "accepted", "wrong_answer",
 		// 	"time_limit_exceeded", "memory_limit_exceeded", "runtime_error", "compilation_error", "system_error",
 		// ).Default("pending"),
+		field.Int64("submission_id"),
 		field.Int16("status").Default(0),
 		field.Uint64("total_time_cost_ms"),
 		field.Uint64("max_memory_cost_kb"),
@@ -41,5 +42,10 @@ func (CaseGroupResult) Edges() []ent.Edge {
 		edge.To("problem", Problem.Type),
 		edge.To("case_results", CaseResult.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.From("submission_record", SubmissionRecord.Type).
+			Ref("case_group_results").
+			Field("submission_id").
+			Unique().
+			Required(),
 	}
 }

@@ -20,7 +20,6 @@ func NewGatewayService(judgeUsecase *biz.JudgeUsecase) *GatewayService {
 }
 
 func (gatewayService *GatewayService) PostSelfTest(ctx context.Context, req *pb.SelfTestRequest) (*pb.SelfTestReply, error) {
-	// TODO: Implementation of PostSelfTest
 	id := uuid.New().String()
 	selfTestID, err := gatewayService.judgeUsecase.CreateSelfTest(ctx, &biz.SelfTest{
 		ID:       id,
@@ -39,7 +38,6 @@ func (gatewayService *GatewayService) PostSelfTest(ctx context.Context, req *pb.
 }
 
 func (gatewayService *GatewayService) PostSubmission(ctx context.Context, req *pb.SubmissionRequest) (*pb.SubmissionReply, error) {
-	// TODO: Implementation of PostSubmission
 	submissionID, err := gatewayService.judgeUsecase.CreateSubmission(ctx, &biz.Submission{
 		ID:         uuid.New().String(),
 		UserID:     0, // TODO: get from context

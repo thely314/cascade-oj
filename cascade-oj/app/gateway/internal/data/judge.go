@@ -6,6 +6,7 @@ import (
 
 	// pb "cascade-oj/api/cascade/user/v1"
 	"cascade-oj/app/gateway/internal/biz"
+	"cascade-oj/pkg/mq"
 
 	"github.com/go-kratos/kratos/v2/log"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -41,14 +42,14 @@ type submissionDTO struct {
 
 // create self test record
 func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTest) (string, error) {
-	// store into mq
+	// TODO store into mq
 	q, err := repo.data.mq_channel.QueueDeclare(
-		"self_test_queue", // name
-		false,             // durable
-		false,             // delete when unused
-		false,             // exclusive
-		false,             // no-wait
-		nil,               // arguments
+		mq.GojudgeSelfTestQueueName, // name
+		false,                       // durable
+		false,                       // delete when unused
+		false,                       // exclusive
+		false,                       // no-wait
+		nil,                         // arguments
 	)
 	if err != nil {
 		return "", err
@@ -80,20 +81,20 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 	if err != nil {
 		return "", err
 	}
-	// update cache if needed
+	// judge microservice is responsible for updating cache
 	return selfTest.ID, nil
 }
 
 // create submission record
 func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Submission) (string, error) {
-	// store into mq
+	// TODO store into mq
 	q, err := repo.data.mq_channel.QueueDeclare(
-		"submission_queue", // name
-		false,              // durable
-		false,              // delete when unused
-		false,              // exclusive
-		false,              // no-wait
-		nil,                // arguments
+		mq.GojudgeSubmissionQueueName, // name
+		false,                         // durable
+		false,                         // delete when unused
+		false,                         // exclusive
+		false,                         // no-wait
+		nil,                           // arguments
 	)
 	if err != nil {
 		return "", err
@@ -130,7 +131,7 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 	if err != nil {
 		return "", err
 	}
-	// update cache if needed
+	// judge microservice is responsible for updating cache
 	return submission.ID, nil
 }
 

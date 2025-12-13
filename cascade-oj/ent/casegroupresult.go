@@ -4,6 +4,7 @@ package ent
 
 import (
 	"cascade-oj/ent/casegroupresult"
+	"cascade-oj/ent/submissionrecord"
 	"fmt"
 	"strings"
 
@@ -16,6 +17,8 @@ type CaseGroupResult struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int64 `json:"id,omitempty"`
+	// SubmissionID holds the value of the "submission_id" field.
+	SubmissionID int64 `json:"submission_id,omitempty"`
 	// Status holds the value of the "status" field.
 	Status int16 `json:"status,omitempty"`
 	// TotalTimeCostMs holds the value of the "total_time_cost_ms" field.
@@ -36,9 +39,11 @@ type CaseGroupResultEdges struct {
 	Problem []*Problem `json:"problem,omitempty"`
 	// CaseResults holds the value of the case_results edge.
 	CaseResults []*CaseResult `json:"case_results,omitempty"`
+	// SubmissionRecord holds the value of the submission_record edge.
+	SubmissionRecord *SubmissionRecord `json:"submission_record,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // ProblemOrErr returns the Problem value or an error if the edge
@@ -59,12 +64,23 @@ func (e CaseGroupResultEdges) CaseResultsOrErr() ([]*CaseResult, error) {
 	return nil, &NotLoadedError{edge: "case_results"}
 }
 
+// SubmissionRecordOrErr returns the SubmissionRecord value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CaseGroupResultEdges) SubmissionRecordOrErr() (*SubmissionRecord, error) {
+	if e.SubmissionRecord != nil {
+		return e.SubmissionRecord, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: submissionrecord.Label}
+	}
+	return nil, &NotLoadedError{edge: "submission_record"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*CaseGroupResult) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case casegroupresult.FieldID, casegroupresult.FieldStatus, casegroupresult.FieldTotalTimeCostMs, casegroupresult.FieldMaxMemoryCostKB, casegroupresult.FieldScore:
+		case casegroupresult.FieldID, casegroupresult.FieldSubmissionID, casegroupresult.FieldStatus, casegroupresult.FieldTotalTimeCostMs, casegroupresult.FieldMaxMemoryCostKB, casegroupresult.FieldScore:
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -87,6 +103,12 @@ func (_m *CaseGroupResult) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int64(value.Int64)
+		case casegroupresult.FieldSubmissionID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field submission_id", values[i])
+			} else if value.Valid {
+				_m.SubmissionID = value.Int64
+			}
 		case casegroupresult.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
@@ -134,6 +156,11 @@ func (_m *CaseGroupResult) QueryCaseResults() *CaseResultQuery {
 	return NewCaseGroupResultClient(_m.config).QueryCaseResults(_m)
 }
 
+// QuerySubmissionRecord queries the "submission_record" edge of the CaseGroupResult entity.
+func (_m *CaseGroupResult) QuerySubmissionRecord() *SubmissionRecordQuery {
+	return NewCaseGroupResultClient(_m.config).QuerySubmissionRecord(_m)
+}
+
 // Update returns a builder for updating this CaseGroupResult.
 // Note that you need to call CaseGroupResult.Unwrap() before calling this method if this CaseGroupResult
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -157,6 +184,9 @@ func (_m *CaseGroupResult) String() string {
 	var builder strings.Builder
 	builder.WriteString("CaseGroupResult(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("submission_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.SubmissionID))
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status))
 	builder.WriteString(", ")

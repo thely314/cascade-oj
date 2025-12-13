@@ -12,6 +12,8 @@ const (
 	Label = "case_group_result"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldSubmissionID holds the string denoting the submission_id field in the database.
+	FieldSubmissionID = "submission_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldTotalTimeCostMs holds the string denoting the total_time_cost_ms field in the database.
@@ -24,6 +26,8 @@ const (
 	EdgeProblem = "problem"
 	// EdgeCaseResults holds the string denoting the case_results edge name in mutations.
 	EdgeCaseResults = "case_results"
+	// EdgeSubmissionRecord holds the string denoting the submission_record edge name in mutations.
+	EdgeSubmissionRecord = "submission_record"
 	// Table holds the table name of the casegroupresult in the database.
 	Table = "CaseGroup_Results"
 	// ProblemTable is the table that holds the problem relation/edge.
@@ -40,11 +44,19 @@ const (
 	CaseResultsInverseTable = "Case_Results"
 	// CaseResultsColumn is the table column denoting the case_results relation/edge.
 	CaseResultsColumn = "case_group_result_id"
+	// SubmissionRecordTable is the table that holds the submission_record relation/edge.
+	SubmissionRecordTable = "CaseGroup_Results"
+	// SubmissionRecordInverseTable is the table name for the SubmissionRecord entity.
+	// It exists in this package in order to avoid circular dependency with the "submissionrecord" package.
+	SubmissionRecordInverseTable = "SubmissionRecords"
+	// SubmissionRecordColumn is the table column denoting the submission_record relation/edge.
+	SubmissionRecordColumn = "submission_id"
 )
 
 // Columns holds all SQL columns for casegroupresult fields.
 var Columns = []string{
 	FieldID,
+	FieldSubmissionID,
 	FieldStatus,
 	FieldTotalTimeCostMs,
 	FieldMaxMemoryCostKB,
@@ -76,6 +88,11 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// BySubmissionID orders the results by the submission_id field.
+func BySubmissionID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSubmissionID, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.
@@ -125,6 +142,13 @@ func ByCaseResults(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newCaseResultsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// BySubmissionRecordField orders the results by submission_record field.
+func BySubmissionRecordField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSubmissionRecordStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newProblemStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -137,5 +161,12 @@ func newCaseResultsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CaseResultsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, CaseResultsTable, CaseResultsColumn),
+	)
+}
+func newSubmissionRecordStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SubmissionRecordInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, SubmissionRecordTable, SubmissionRecordColumn),
 	)
 }

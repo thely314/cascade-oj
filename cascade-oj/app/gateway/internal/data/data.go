@@ -21,13 +21,12 @@ var ProviderSet = wire.NewSet(NewData, NewJudgeRepo, NewGrpcUserClient)
 
 // Data
 type Data struct {
-	// TODO wrapped database client
 	cache          *Cache
 	mq_channel     *amqp.Channel
 	grpcUserClient pb.UserClient
 }
 
-// Cache store maps
+// TODO Cache store maps in memory
 type Cache struct {
 	token string
 }

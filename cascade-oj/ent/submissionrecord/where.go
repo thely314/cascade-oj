@@ -299,6 +299,29 @@ func HasProblemSetWith(preds ...predicate.ProblemSet) predicate.SubmissionRecord
 	})
 }
 
+// HasCaseGroupResults applies the HasEdge predicate on the "case_group_results" edge.
+func HasCaseGroupResults() predicate.SubmissionRecord {
+	return predicate.SubmissionRecord(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CaseGroupResultsTable, CaseGroupResultsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCaseGroupResultsWith applies the HasEdge predicate on the "case_group_results" edge with a given conditions (other predicates).
+func HasCaseGroupResultsWith(preds ...predicate.CaseGroupResult) predicate.SubmissionRecord {
+	return predicate.SubmissionRecord(func(s *sql.Selector) {
+		step := newCaseGroupResultsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.SubmissionRecord) predicate.SubmissionRecord {
 	return predicate.SubmissionRecord(sql.AndPredicates(predicates...))

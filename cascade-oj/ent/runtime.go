@@ -59,11 +59,11 @@ func init() {
 	casegroupresultFields := schema.CaseGroupResult{}.Fields()
 	_ = casegroupresultFields
 	// casegroupresultDescStatus is the schema descriptor for status field.
-	casegroupresultDescStatus := casegroupresultFields[1].Descriptor()
+	casegroupresultDescStatus := casegroupresultFields[2].Descriptor()
 	// casegroupresult.DefaultStatus holds the default value on creation for the status field.
 	casegroupresult.DefaultStatus = casegroupresultDescStatus.Default.(int16)
 	// casegroupresultDescScore is the schema descriptor for score field.
-	casegroupresultDescScore := casegroupresultFields[4].Descriptor()
+	casegroupresultDescScore := casegroupresultFields[5].Descriptor()
 	// casegroupresult.DefaultScore holds the default value on creation for the score field.
 	casegroupresult.DefaultScore = casegroupresultDescScore.Default.(int)
 	// casegroupresultDescID is the schema descriptor for id field.

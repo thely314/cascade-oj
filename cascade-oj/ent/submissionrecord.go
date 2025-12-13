@@ -44,9 +44,11 @@ type SubmissionRecordEdges struct {
 	Problem *Problem `json:"problem,omitempty"`
 	// ProblemSet holds the value of the problem_set edge.
 	ProblemSet *ProblemSet `json:"problem_set,omitempty"`
+	// CaseGroupResults holds the value of the case_group_results edge.
+	CaseGroupResults []*CaseGroupResult `json:"case_group_results,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // JudgeOrErr returns the Judge value or an error if the edge
@@ -80,6 +82,15 @@ func (e SubmissionRecordEdges) ProblemSetOrErr() (*ProblemSet, error) {
 		return nil, &NotFoundError{label: problemset.Label}
 	}
 	return nil, &NotLoadedError{edge: "problem_set"}
+}
+
+// CaseGroupResultsOrErr returns the CaseGroupResults value or an error if the edge
+// was not loaded in eager-loading.
+func (e SubmissionRecordEdges) CaseGroupResultsOrErr() ([]*CaseGroupResult, error) {
+	if e.loadedTypes[3] {
+		return e.CaseGroupResults, nil
+	}
+	return nil, &NotLoadedError{edge: "case_group_results"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -168,6 +179,11 @@ func (_m *SubmissionRecord) QueryProblem() *ProblemQuery {
 // QueryProblemSet queries the "problem_set" edge of the SubmissionRecord entity.
 func (_m *SubmissionRecord) QueryProblemSet() *ProblemSetQuery {
 	return NewSubmissionRecordClient(_m.config).QueryProblemSet(_m)
+}
+
+// QueryCaseGroupResults queries the "case_group_results" edge of the SubmissionRecord entity.
+func (_m *SubmissionRecord) QueryCaseGroupResults() *CaseGroupResultQuery {
+	return NewSubmissionRecordClient(_m.config).QueryCaseGroupResults(_m)
 }
 
 // Update returns a builder for updating this SubmissionRecord.

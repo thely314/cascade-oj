@@ -61,5 +61,6 @@ func (SubmissionRecord) Edges() []ent.Edge {
 			Field("problem_set_id").
 			Ref("submissions").
 			Unique(),
+		edge.To("case_group_results", CaseGroupResult.Type),
 	}
 }

@@ -30,6 +30,8 @@ const (
 	EdgeProblem = "problem"
 	// EdgeProblemSet holds the string denoting the problem_set edge name in mutations.
 	EdgeProblemSet = "problem_set"
+	// EdgeCaseGroupResults holds the string denoting the case_group_results edge name in mutations.
+	EdgeCaseGroupResults = "case_group_results"
 	// Table holds the table name of the submissionrecord in the database.
 	Table = "SubmissionRecords"
 	// JudgeTable is the table that holds the judge relation/edge.
@@ -53,6 +55,13 @@ const (
 	ProblemSetInverseTable = "ProblemSets"
 	// ProblemSetColumn is the table column denoting the problem_set relation/edge.
 	ProblemSetColumn = "problem_set_id"
+	// CaseGroupResultsTable is the table that holds the case_group_results relation/edge.
+	CaseGroupResultsTable = "CaseGroup_Results"
+	// CaseGroupResultsInverseTable is the table name for the CaseGroupResult entity.
+	// It exists in this package in order to avoid circular dependency with the "casegroupresult" package.
+	CaseGroupResultsInverseTable = "CaseGroup_Results"
+	// CaseGroupResultsColumn is the table column denoting the case_group_results relation/edge.
+	CaseGroupResultsColumn = "submission_id"
 )
 
 // Columns holds all SQL columns for submissionrecord fields.
@@ -141,6 +150,20 @@ func ByProblemSetField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newProblemSetStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByCaseGroupResultsCount orders the results by case_group_results count.
+func ByCaseGroupResultsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newCaseGroupResultsStep(), opts...)
+	}
+}
+
+// ByCaseGroupResults orders the results by case_group_results terms.
+func ByCaseGroupResults(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCaseGroupResultsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newJudgeStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -160,5 +183,12 @@ func newProblemSetStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProblemSetInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, ProblemSetTable, ProblemSetColumn),
+	)
+}
+func newCaseGroupResultsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CaseGroupResultsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CaseGroupResultsTable, CaseGroupResultsColumn),
 	)
 }

@@ -54,6 +54,11 @@ func IDLTE(id int64) predicate.CaseGroupResult {
 	return predicate.CaseGroupResult(sql.FieldLTE(FieldID, id))
 }
 
+// SubmissionID applies equality check predicate on the "submission_id" field. It's identical to SubmissionIDEQ.
+func SubmissionID(v int64) predicate.CaseGroupResult {
+	return predicate.CaseGroupResult(sql.FieldEQ(FieldSubmissionID, v))
+}
+
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
 func Status(v int16) predicate.CaseGroupResult {
 	return predicate.CaseGroupResult(sql.FieldEQ(FieldStatus, v))
@@ -72,6 +77,26 @@ func MaxMemoryCostKB(v uint64) predicate.CaseGroupResult {
 // Score applies equality check predicate on the "score" field. It's identical to ScoreEQ.
 func Score(v int) predicate.CaseGroupResult {
 	return predicate.CaseGroupResult(sql.FieldEQ(FieldScore, v))
+}
+
+// SubmissionIDEQ applies the EQ predicate on the "submission_id" field.
+func SubmissionIDEQ(v int64) predicate.CaseGroupResult {
+	return predicate.CaseGroupResult(sql.FieldEQ(FieldSubmissionID, v))
+}
+
+// SubmissionIDNEQ applies the NEQ predicate on the "submission_id" field.
+func SubmissionIDNEQ(v int64) predicate.CaseGroupResult {
+	return predicate.CaseGroupResult(sql.FieldNEQ(FieldSubmissionID, v))
+}
+
+// SubmissionIDIn applies the In predicate on the "submission_id" field.
+func SubmissionIDIn(vs ...int64) predicate.CaseGroupResult {
+	return predicate.CaseGroupResult(sql.FieldIn(FieldSubmissionID, vs...))
+}
+
+// SubmissionIDNotIn applies the NotIn predicate on the "submission_id" field.
+func SubmissionIDNotIn(vs ...int64) predicate.CaseGroupResult {
+	return predicate.CaseGroupResult(sql.FieldNotIn(FieldSubmissionID, vs...))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
@@ -272,6 +297,29 @@ func HasCaseResults() predicate.CaseGroupResult {
 func HasCaseResultsWith(preds ...predicate.CaseResult) predicate.CaseGroupResult {
 	return predicate.CaseGroupResult(func(s *sql.Selector) {
 		step := newCaseResultsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSubmissionRecord applies the HasEdge predicate on the "submission_record" edge.
+func HasSubmissionRecord() predicate.CaseGroupResult {
+	return predicate.CaseGroupResult(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, SubmissionRecordTable, SubmissionRecordColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSubmissionRecordWith applies the HasEdge predicate on the "submission_record" edge with a given conditions (other predicates).
+func HasSubmissionRecordWith(preds ...predicate.SubmissionRecord) predicate.CaseGroupResult {
+	return predicate.CaseGroupResult(func(s *sql.Selector) {
+		step := newSubmissionRecordStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
