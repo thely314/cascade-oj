@@ -15,12 +15,18 @@ type UserService struct {
 	registerUsecase *biz.RegisterUsecase
 	contestUseCase  *biz.ContestUsecase
 	problemUseCase  *biz.ProblemUsecase
+  miscUsecase     *biz.MiscUsecase
 }
 
-func NewUserService(registerUsecase *biz.RegisterUsecase, contestUseCase *biz.ContestUsecase, problemUseCase *biz.ProblemUsecase) *UserService {
+func NewUserService(
+  registerUsecase *biz.RegisterUsecase, 
+  contestUseCase *biz.ContestUsecase,
+  problemUseCase *biz.ProblemUsecase,
+  miscUsecase *biz.MiscUsecase
+) *UserService {
 	return &UserService{
 		registerUsecase: registerUsecase,
 		contestUseCase:  contestUseCase,
 		problemUseCase:  problemUseCase,
-	}
+    miscUsecase:     miscUsecase,
 }
