@@ -36,7 +36,7 @@ export interface ProblemSimple {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // 开关：是否使用模拟数据
-const IS_MOCK = true; 
+const IS_MOCK = false;
 
 // --- 3. API 方法 ---
 
