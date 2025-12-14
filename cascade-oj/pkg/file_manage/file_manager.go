@@ -50,11 +50,11 @@ func (fileManager *JudgeConfigManager) GetJudgeConfig(problemId int64) (*JudgeCo
 
 func (fileManager *JudgeConfigManager) GetCase(problemId int64, inputFileLocation string, ansFileLocation string) (in []byte, ans []byte, err error) {
 	baseLocation := fileManager.configLocation + "/" + strconv.FormatInt(problemId, 10) + "/testcase/"
-	in, err = os.ReadFile(baseLocation + "/" + inputFileLocation)
+	in, err = os.ReadFile(baseLocation + inputFileLocation)
 	if err != nil {
 		return nil, nil, err
 	}
-	ans, err = os.ReadFile(baseLocation + "/" + ansFileLocation)
+	ans, err = os.ReadFile(baseLocation + ansFileLocation)
 	if err != nil {
 		return nil, nil, err
 	}
