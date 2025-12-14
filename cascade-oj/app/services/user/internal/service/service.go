@@ -15,20 +15,22 @@ type UserService struct {
 	registerUsecase *biz.RegisterUsecase
 	contestUseCase  *biz.ContestUsecase
 	problemUseCase  *biz.ProblemUsecase
-  miscUsecase     *biz.MiscUsecase
-  judgeUsecase    *biz.JudgeUsecase
+	miscUsecase     *biz.MiscUsecase
+	judgeUsecase    *biz.JudgeUsecase
 }
 
 func NewUserService(
-  registerUsecase *biz.RegisterUsecase, 
-  contestUseCase *biz.ContestUsecase,
-  problemUseCase *biz.ProblemUsecase,
-  miscUsecase *biz.MiscUsecase
+	registerUsecase *biz.RegisterUsecase,
+	contestUseCase *biz.ContestUsecase,
+	problemUseCase *biz.ProblemUsecase,
+	miscUsecase *biz.MiscUsecase,
+	judgeUsecase *biz.JudgeUsecase,
 ) *UserService {
 	return &UserService{
 		registerUsecase: registerUsecase,
 		contestUseCase:  contestUseCase,
 		problemUseCase:  problemUseCase,
-    miscUsecase:     miscUsecase,
-	judgeUsecase:    judgeUsecase,
+		miscUsecase:     miscUsecase,
+		judgeUsecase:    judgeUsecase,
+	}
 }

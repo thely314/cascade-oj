@@ -8,7 +8,8 @@ import (
 	pb "cascade-oj/api/cascade/user/v1"
 	"cascade-oj/app/services/user/internal/biz"
 	"cascade-oj/pkg/middleware/auth"
-	"cascade-oj/pkg/util"
+
+	//TODO: need Crlf2lf in "cascade-oj/pkg/util"
 
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -38,7 +39,7 @@ func (s *UserService) PostSubmission(ctx context.Context, req *pb.SubmissionRequ
 		UUID:        id,
 		UserID:      userID,
 		ProblemID:   req.ProblemId,
-		Code:        util.Crlf2lf(req.Code),
+		Code:        req.Code, // TODO: need Crlf2lf to achieve util.Crlf2lf(req.Code),
 		Language:    req.Language,
 		Status:      "",
 		Score:       0,
@@ -68,9 +69,9 @@ func (s *UserService) PostSelfTest(ctx context.Context, req *pb.SelfTestRequest)
 		UUID:      id,
 		UserID:    userID,
 		ProblemID: req.ProblemId,
-		Code:      util.Crlf2lf(req.Code),
+		Code:      req.Code, // TODO: need Crlf2lf to achieve util.Crlf2lf(req.Code),
 		Language:  req.Language,
-		Input:     util.Crlf2lf(req.SelfCase),
+		Input:     req.SelfCase, // TODO: need Crlf2lf to achieve util.Crlf2lf(req.SelfCase),
 	})
 	if err != nil {
 		return nil, err
