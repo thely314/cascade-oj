@@ -170,11 +170,11 @@ message SubmissionReply {
 }
 
 message SubmissionMetadata {
-    int64 submission_id = 1; // Submission ID
+    string submission_uuid = 1; // Submission UUID
     int64 problem_id = 2; // Problem ID
     int64 user_id = 3; // User ID
     string status = 4; // Submission Status
-    string result = 5; // Submission Result
+    string result = 5 [deprecated = true]; // deprecate Submission Result
     google.protobuf.Timestamp submit_time = 6; // Submission Time
     int32 score = 7; // Submission Score
 }
@@ -196,6 +196,8 @@ message GetSingleSubmissionReply {
     SubmissionMetadata metadata = 1; // Submission Metadata
     string code = 2; // User Code
     string language = 3; // Programming Language
+    int32 time_cost = 4; // Time Cost
+    int32 memory_cost = 5; // Memory Cost
 }
 
 message GetRanksRequest {

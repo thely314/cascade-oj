@@ -609,6 +609,12 @@ components:
           type: string
         language:
           type: string
+        timeCost:
+          type: integer
+          format: int32
+        memoryCost:
+          type: integer
+          format: int32
     GetSubmissionsReply:
       type: object
       properties:
@@ -676,7 +682,7 @@ components:
     SubmissionMetadata:
       type: object
       properties:
-        submissionId:
+        submissionUuid:
           type: string
         problemId:
           type: string

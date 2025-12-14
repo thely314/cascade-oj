@@ -15,6 +15,11 @@ const routes = [
     { path: '/competition/:id', name: 'Contest', component: Contest },
     { path: '/about', name: 'About', component: About },
     { path: '/login', name: 'Login', component: Login, meta: { hideNav: true } },
+    {
+        path: '/problem/:id', // 提取 id 作为 API 参数
+        name: 'ProblemDetail',
+        component: () => import('../pages/problem/ProblemDetail.vue')
+    },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: ErrorPage }
 ]
 
