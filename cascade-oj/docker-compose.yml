@@ -11,6 +11,7 @@ services:
     restart: unless-stopped
     depends_on:
       - cascade_mysql
+      - cascade_rabbitmq
     ports:
       - "8080:8080"
     volumes:
@@ -30,6 +31,55 @@ services:
       - "8100:8000"
     volumes:
       - ./config/public:/data/conf
+
+  user:
+    build:
+      context: ./
+      dockerfile: app/services/user/Dockerfile
+      args: 
+        VERSION : 0.1.0
+    image: cascade-oj/user:latest
+    restart: unless-stopped
+    depends_on:
+      - cascade_mysql
+      - cascade_rabbitmq
+      - cascade_redis
+    ports:
+      - "8200:8000"
+    volumes:
+      - ./config/user:/data/conf
+    
+  judge:
+    build:
+      context: ./
+      dockerfile: app/services/judge/Dockerfile
+      args: 
+        VERSION : 0.1.0
+    image: cascade-oj/judge:latest
+    restart: unless-stopped
+    depends_on:
+      - cascade_mysql
+      - cascade_rabbitmq
+    ports:
+      - "8300:8000"
+    volumes:
+      - ./config/judge:/data/conf
+
+  admin:
+    build:
+      context: ./
+      dockerfile: app/services/admin/Dockerfile
+      args: 
+        VERSION : 0.1.0
+    image: cascade-oj/admin:latest
+    restart: unless-stopped
+    depends_on:
+      - cascade_mysql
+      - cascade_rabbitmq
+    ports:
+      - "8400:8000"
+    volumes:
+      - ./config/admin:/data/conf
 
 networks:
   default:

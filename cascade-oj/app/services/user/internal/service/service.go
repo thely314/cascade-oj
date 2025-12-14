@@ -13,12 +13,22 @@ var ProviderSet = wire.NewSet(NewUserService)
 type UserService struct {
 	pb.UnimplementedUserServer
 	registerUsecase *biz.RegisterUsecase
-	judgeUsecase    *biz.JudgeUsecase
+	contestUseCase  *biz.ContestUsecase
+	problemUseCase  *biz.ProblemUsecase
+  miscUsecase     *biz.MiscUsecase
+  judgeUsecase    *biz.JudgeUsecase
 }
 
-func NewUserService(registerUsecase *biz.RegisterUsecase, judgeUsecase *biz.JudgeUsecase) *UserService {
+func NewUserService(
+  registerUsecase *biz.RegisterUsecase, 
+  contestUseCase *biz.ContestUsecase,
+  problemUseCase *biz.ProblemUsecase,
+  miscUsecase *biz.MiscUsecase
+) *UserService {
 	return &UserService{
 		registerUsecase: registerUsecase,
-		judgeUsecase:    judgeUsecase,
-	}
+		contestUseCase:  contestUseCase,
+		problemUseCase:  problemUseCase,
+    miscUsecase:     miscUsecase,
+	judgeUsecase:    judgeUsecase,
 }
