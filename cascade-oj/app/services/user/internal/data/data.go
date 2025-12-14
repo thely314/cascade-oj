@@ -17,14 +17,17 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(NewData, NewRegisterRepo)
 
 type Data struct {
-	db    *ent.Client
-	redis *redis.Client
+	db         *ent.Client
+	redis      *redis.Client
+	mq_channel *amqp.Channel
 }
 
 func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
