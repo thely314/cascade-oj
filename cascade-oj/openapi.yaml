@@ -610,9 +610,11 @@ components:
         language:
           type: string
         timeCost:
-          type: string
+          type: integer
+          format: int32
         memoryCost:
-          type: string
+          type: integer
+          format: int32
     GetSubmissionsReply:
       type: object
       properties:

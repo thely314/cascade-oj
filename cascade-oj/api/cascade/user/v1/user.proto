@@ -196,8 +196,8 @@ message GetSingleSubmissionReply {
     SubmissionMetadata metadata = 1; // Submission Metadata
     string code = 2; // User Code
     string language = 3; // Programming Language
-    string time_cost = 4; // Time Cost
-    string memory_cost = 5; // Memory Cost
+    int32 time_cost = 4; // Time Cost
+    int32 memory_cost = 5; // Memory Cost
 }
 
 message GetRanksRequest {

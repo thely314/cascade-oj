@@ -63,7 +63,6 @@ func (gatewayService *GatewayService) GetSubmissions(ctx context.Context, req *p
 			ProblemId:      v.ProblemID,
 			UserId:         v.UserID,
 			Status:         v.Status,
-			Result:         "<result>",
 			SubmitTime:     timestamppb.New(v.SubmitTime),
 			Score:          int32(v.Score),
 		})
@@ -79,7 +78,6 @@ func (gatewayService *GatewayService) GetSingleSubmission(ctx context.Context, r
 	}
 	return &pb.GetSingleSubmissionReply{
 		Metadata: &pb.SubmissionMetadata{
-			// TODO refactor the proto to uuid
 			SubmissionUuid: submission.UUID,
 			ProblemId:      submission.ProblemID,
 			UserId:         submission.UserID,

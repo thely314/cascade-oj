@@ -39,9 +39,9 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("announcements", Announcement.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
-		edge.To("admin_problem_sets", AdminProblemSet.Type).
+		edge.To("problem_set_manager", ProblemSetManager.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
-		edge.To("problem_set_users", ProblemSet_User.Type).
+		edge.To("competitor_list", Competitor_List.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

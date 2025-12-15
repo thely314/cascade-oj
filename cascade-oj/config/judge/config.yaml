@@ -1,0 +1,73 @@
+server:
+  mq: amqp://cascade:123456@mq:5672
+data:
+  database:
+    driver: mysql
+    source: cascade_oj:123456@tcp(cascade_mysql:3306)/cascade_oj_db?charset=utf8&parseTime=True&loc=Local
+  redis:
+    addr: rd:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+    db: 0
+  case_location:
+    problem_cases_location: /cases
+  judge_config:
+    endpoint: localhost:5051
+    language:
+      enable:
+        - c
+        - c++11
+        - c++11(O2)
+        - c++14
+        - c++14(O2)
+        - c++17
+        - c++17(O2)
+      env:
+        default:
+          - PATH=/usr/bin:/bin
+      compile:
+        c: /usr/bin/gcc -Wall --std=c99 -o foo foo.c -lm
+        c++11: /usr/bin/g++ -Wall -std=c++11 -o foo foo.cc -lm -I/include
+        c++11(O2): /usr/bin/g++ -Wall -std=c++11 -o foo foo.cc -lm -O2 -I/include
+        c++14: /usr/bin/g++ -Wall -std=c++14 -o foo foo.cc -lm -I/include
+        c++14(O2): /usr/bin/g++ -Wall -std=c++14 -o foo foo.cc -lm -O2 -I/include
+        c++17: /usr/bin/g++ -Wall -std=c++17 -o foo foo.cc -lm -I/include
+        c++17(O2): /usr/bin/g++ -Wall -std=c++17 -o foo foo.cc -lm -O2 -I/include
+      run:
+        default: foo
+      source:
+        default: foo
+        c: foo.c
+        c++11: foo.cc
+        c++11(O2): foo.cc
+        c++14: foo.cc
+        c++14(O2): foo.cc
+        c++17: foo.cc
+        c++17(O2): foo.cc
+      target:
+        default: foo
+        c: foo
+        c++11: foo
+        c++11(O2): foo
+        c++14: foo
+        c++14(O2): foo
+        c++17: foo
+        c++17(O2): foo
+      exec_config:
+        default:
+          compile:
+            proc_limit: 16
+            cpu_time_limit: 1000
+            cpu_rate_limit: 1000
+            clock_time_limit: 1000
+            memory_limit: 32
+            stdout_max_size: 2048
+            stderr_max_size: 2048
+          run:
+            proc_limit: 16
+            cpu_time_limit: 1000
+            cpu_rate_limit: 1000
+            clock_time_limit: 1000
+            memory_limit: 32
+            stdout_max_size: 2048
+            stderr_max_size: 2048

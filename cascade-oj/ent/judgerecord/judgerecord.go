@@ -19,12 +19,16 @@ const (
 	FieldProblemID = "problem_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldUUID holds the string denoting the uuid field in the database.
+	FieldUUID = "uuid"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldJudgeStartTime holds the string denoting the judge_start_time field in the database.
 	FieldJudgeStartTime = "judge_start_time"
-	// FieldResult holds the string denoting the result field in the database.
-	FieldResult = "result"
+	// FieldTimeCostMs holds the string denoting the time_cost_ms field in the database.
+	FieldTimeCostMs = "time_cost_ms"
+	// FieldMemoryCostKB holds the string denoting the memory_cost_kb field in the database.
+	FieldMemoryCostKB = "memory_cost_kb"
 	// FieldCode holds the string denoting the code field in the database.
 	FieldCode = "code"
 	// FieldLanguage holds the string denoting the language field in the database.
@@ -38,16 +42,16 @@ const (
 	// EdgeSubmissions holds the string denoting the submissions edge name in mutations.
 	EdgeSubmissions = "submissions"
 	// Table holds the table name of the judgerecord in the database.
-	Table = "JudgeRecords"
+	Table = "Judge_Records"
 	// ProblemTable is the table that holds the problem relation/edge.
-	ProblemTable = "JudgeRecords"
+	ProblemTable = "Judge_Records"
 	// ProblemInverseTable is the table name for the Problem entity.
 	// It exists in this package in order to avoid circular dependency with the "problem" package.
 	ProblemInverseTable = "Problems"
 	// ProblemColumn is the table column denoting the problem relation/edge.
 	ProblemColumn = "problem_id"
 	// UserTable is the table that holds the user relation/edge.
-	UserTable = "JudgeRecords"
+	UserTable = "Judge_Records"
 	// UserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "Users"
@@ -67,9 +71,11 @@ var Columns = []string{
 	FieldID,
 	FieldProblemID,
 	FieldUserID,
+	FieldUUID,
 	FieldStatus,
 	FieldJudgeStartTime,
-	FieldResult,
+	FieldTimeCostMs,
+	FieldMemoryCostKB,
 	FieldCode,
 	FieldLanguage,
 	FieldJudgeType,
@@ -90,84 +96,28 @@ var (
 	ProblemIDValidator func(int64) error
 	// UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	UserIDValidator func(int64) error
+	// DefaultStatus holds the default value on creation for the "status" field.
+	DefaultStatus int16
 	// DefaultJudgeStartTime holds the default value on creation for the "judge_start_time" field.
 	DefaultJudgeStartTime time.Time
 	// CodeValidator is a validator for the "code" field. It is called by the builders before save.
 	CodeValidator func(string) error
+	// DefaultLanguage holds the default value on creation for the "language" field.
+	DefaultLanguage string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(int64) error
 )
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusPending is the default value of the Status enum.
-const DefaultStatus = StatusPending
-
-// Status values.
-const (
-	StatusPending             Status = "pending"
-	StatusJudging             Status = "judging"
-	StatusAccepted            Status = "accepted"
-	StatusWrongAnswer         Status = "wrong_answer"
-	StatusTimeLimitExceeded   Status = "time_limit_exceeded"
-	StatusMemoryLimitExceeded Status = "memory_limit_exceeded"
-	StatusRuntimeError        Status = "runtime_error"
-	StatusCompilationError    Status = "compilation_error"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
-
-// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
-	switch s {
-	case StatusPending, StatusJudging, StatusAccepted, StatusWrongAnswer, StatusTimeLimitExceeded, StatusMemoryLimitExceeded, StatusRuntimeError, StatusCompilationError:
-		return nil
-	default:
-		return fmt.Errorf("judgerecord: invalid enum value for status field: %q", s)
-	}
-}
-
-// Language defines the type for the "language" enum field.
-type Language string
-
-// LanguageC is the default value of the Language enum.
-const DefaultLanguage = LanguageC
-
-// Language values.
-const (
-	LanguageC      Language = "c"
-	LanguageCpp    Language = "cpp"
-	LanguagePython Language = "python"
-	LanguageRust   Language = "rust"
-)
-
-func (l Language) String() string {
-	return string(l)
-}
-
-// LanguageValidator is a validator for the "language" field enum values. It is called by the builders before save.
-func LanguageValidator(l Language) error {
-	switch l {
-	case LanguageC, LanguageCpp, LanguagePython, LanguageRust:
-		return nil
-	default:
-		return fmt.Errorf("judgerecord: invalid enum value for language field: %q", l)
-	}
-}
-
 // JudgeType defines the type for the "judge_type" enum field.
 type JudgeType string
 
-// JudgeTypeCustomTestCase is the default value of the JudgeType enum.
-const DefaultJudgeType = JudgeTypeCustomTestCase
+// JudgeTypeSelfTestCase is the default value of the JudgeType enum.
+const DefaultJudgeType = JudgeTypeSelfTestCase
 
 // JudgeType values.
 const (
-	JudgeTypeTestCase       JudgeType = "test_case"
-	JudgeTypeCustomTestCase JudgeType = "custom_test_case"
+	JudgeTypeTestCase     JudgeType = "test_case"
+	JudgeTypeSelfTestCase JudgeType = "self_test_case"
 )
 
 func (jt JudgeType) String() string {
@@ -177,7 +127,7 @@ func (jt JudgeType) String() string {
 // JudgeTypeValidator is a validator for the "judge_type" field enum values. It is called by the builders before save.
 func JudgeTypeValidator(jt JudgeType) error {
 	switch jt {
-	case JudgeTypeTestCase, JudgeTypeCustomTestCase:
+	case JudgeTypeTestCase, JudgeTypeSelfTestCase:
 		return nil
 	default:
 		return fmt.Errorf("judgerecord: invalid enum value for judge_type field: %q", jt)
@@ -202,6 +152,11 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
+// ByUUID orders the results by the uuid field.
+func ByUUID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUUID, opts...).ToFunc()
+}
+
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
@@ -212,9 +167,14 @@ func ByJudgeStartTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldJudgeStartTime, opts...).ToFunc()
 }
 
-// ByResult orders the results by the result field.
-func ByResult(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldResult, opts...).ToFunc()
+// ByTimeCostMs orders the results by the time_cost_ms field.
+func ByTimeCostMs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimeCostMs, opts...).ToFunc()
+}
+
+// ByMemoryCostKB orders the results by the memory_cost_kb field.
+func ByMemoryCostKB(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMemoryCostKB, opts...).ToFunc()
 }
 
 // ByCode orders the results by the code field.
