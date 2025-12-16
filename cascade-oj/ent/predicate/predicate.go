@@ -6,11 +6,17 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// AdminProblemSet is the predicate function for adminproblemset builders.
-type AdminProblemSet func(*sql.Selector)
-
 // Announcement is the predicate function for announcement builders.
 type Announcement func(*sql.Selector)
+
+// CaseGroupResult is the predicate function for casegroupresult builders.
+type CaseGroupResult func(*sql.Selector)
+
+// CaseResult is the predicate function for caseresult builders.
+type CaseResult func(*sql.Selector)
+
+// Competitor_List is the predicate function for competitor_list builders.
+type Competitor_List func(*sql.Selector)
 
 // JudgeRecord is the predicate function for judgerecord builders.
 type JudgeRecord func(*sql.Selector)
@@ -18,23 +24,23 @@ type JudgeRecord func(*sql.Selector)
 // Problem is the predicate function for problem builders.
 type Problem func(*sql.Selector)
 
+// ProblemJudgeConfig is the predicate function for problemjudgeconfig builders.
+type ProblemJudgeConfig func(*sql.Selector)
+
 // ProblemSet is the predicate function for problemset builders.
 type ProblemSet func(*sql.Selector)
 
-// ProblemSet_Problem is the predicate function for problemset_problem builders.
-type ProblemSet_Problem func(*sql.Selector)
+// ProblemSetManager is the predicate function for problemsetmanager builders.
+type ProblemSetManager func(*sql.Selector)
 
-// ProblemSet_User is the predicate function for problemset_user builders.
-type ProblemSet_User func(*sql.Selector)
+// ProblemSet_Includes is the predicate function for problemset_includes builders.
+type ProblemSet_Includes func(*sql.Selector)
 
 // SubmissionRecord is the predicate function for submissionrecord builders.
 type SubmissionRecord func(*sql.Selector)
 
 // SystemLog is the predicate function for systemlog builders.
 type SystemLog func(*sql.Selector)
-
-// TestCase is the predicate function for testcase builders.
-type TestCase func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

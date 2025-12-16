@@ -26,12 +26,12 @@ const (
 	FieldStatus = "status"
 	// EdgeSubmissions holds the string denoting the submissions edge name in mutations.
 	EdgeSubmissions = "submissions"
-	// EdgeAdminProblemSets holds the string denoting the admin_problem_sets edge name in mutations.
-	EdgeAdminProblemSets = "admin_problem_sets"
-	// EdgeProblemSetProblems holds the string denoting the problem_set_problems edge name in mutations.
-	EdgeProblemSetProblems = "problem_set_problems"
-	// EdgeProblemSetUsers holds the string denoting the problem_set_users edge name in mutations.
-	EdgeProblemSetUsers = "problem_set_users"
+	// EdgeProblemSetManager holds the string denoting the problem_set_manager edge name in mutations.
+	EdgeProblemSetManager = "problem_set_manager"
+	// EdgeProblemSetIncludes holds the string denoting the problem_set_includes edge name in mutations.
+	EdgeProblemSetIncludes = "problem_set_includes"
+	// EdgeCompetitorList holds the string denoting the competitor_list edge name in mutations.
+	EdgeCompetitorList = "competitor_list"
 	// Table holds the table name of the problemset in the database.
 	Table = "ProblemSets"
 	// SubmissionsTable is the table that holds the submissions relation/edge.
@@ -41,27 +41,27 @@ const (
 	SubmissionsInverseTable = "SubmissionRecords"
 	// SubmissionsColumn is the table column denoting the submissions relation/edge.
 	SubmissionsColumn = "problem_set_id"
-	// AdminProblemSetsTable is the table that holds the admin_problem_sets relation/edge.
-	AdminProblemSetsTable = "Admin_ProblemSet"
-	// AdminProblemSetsInverseTable is the table name for the AdminProblemSet entity.
-	// It exists in this package in order to avoid circular dependency with the "adminproblemset" package.
-	AdminProblemSetsInverseTable = "Admin_ProblemSet"
-	// AdminProblemSetsColumn is the table column denoting the admin_problem_sets relation/edge.
-	AdminProblemSetsColumn = "problem_set_id"
-	// ProblemSetProblemsTable is the table that holds the problem_set_problems relation/edge.
-	ProblemSetProblemsTable = "ProblemSet_Problems"
-	// ProblemSetProblemsInverseTable is the table name for the ProblemSet_Problem entity.
-	// It exists in this package in order to avoid circular dependency with the "problemset_problem" package.
-	ProblemSetProblemsInverseTable = "ProblemSet_Problems"
-	// ProblemSetProblemsColumn is the table column denoting the problem_set_problems relation/edge.
-	ProblemSetProblemsColumn = "problem_set_id"
-	// ProblemSetUsersTable is the table that holds the problem_set_users relation/edge.
-	ProblemSetUsersTable = "ProblemSet_Users"
-	// ProblemSetUsersInverseTable is the table name for the ProblemSet_User entity.
-	// It exists in this package in order to avoid circular dependency with the "problemset_user" package.
-	ProblemSetUsersInverseTable = "ProblemSet_Users"
-	// ProblemSetUsersColumn is the table column denoting the problem_set_users relation/edge.
-	ProblemSetUsersColumn = "problem_set_id"
+	// ProblemSetManagerTable is the table that holds the problem_set_manager relation/edge.
+	ProblemSetManagerTable = "ProblemSet_Managers"
+	// ProblemSetManagerInverseTable is the table name for the ProblemSetManager entity.
+	// It exists in this package in order to avoid circular dependency with the "problemsetmanager" package.
+	ProblemSetManagerInverseTable = "ProblemSet_Managers"
+	// ProblemSetManagerColumn is the table column denoting the problem_set_manager relation/edge.
+	ProblemSetManagerColumn = "problem_set_id"
+	// ProblemSetIncludesTable is the table that holds the problem_set_includes relation/edge.
+	ProblemSetIncludesTable = "ProblemSet_Includes"
+	// ProblemSetIncludesInverseTable is the table name for the ProblemSet_Includes entity.
+	// It exists in this package in order to avoid circular dependency with the "problemset_includes" package.
+	ProblemSetIncludesInverseTable = "ProblemSet_Includes"
+	// ProblemSetIncludesColumn is the table column denoting the problem_set_includes relation/edge.
+	ProblemSetIncludesColumn = "problem_set_id"
+	// CompetitorListTable is the table that holds the competitor_list relation/edge.
+	CompetitorListTable = "Competitor_List"
+	// CompetitorListInverseTable is the table name for the Competitor_List entity.
+	// It exists in this package in order to avoid circular dependency with the "competitor_list" package.
+	CompetitorListInverseTable = "Competitor_List"
+	// CompetitorListColumn is the table column denoting the competitor_list relation/edge.
+	CompetitorListColumn = "problem_set_id"
 )
 
 // Columns holds all SQL columns for problemset fields.
@@ -165,45 +165,45 @@ func BySubmissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByAdminProblemSetsCount orders the results by admin_problem_sets count.
-func ByAdminProblemSetsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByProblemSetManagerCount orders the results by problem_set_manager count.
+func ByProblemSetManagerCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newAdminProblemSetsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newProblemSetManagerStep(), opts...)
 	}
 }
 
-// ByAdminProblemSets orders the results by admin_problem_sets terms.
-func ByAdminProblemSets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByProblemSetManager orders the results by problem_set_manager terms.
+func ByProblemSetManager(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAdminProblemSetsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newProblemSetManagerStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
-// ByProblemSetProblemsCount orders the results by problem_set_problems count.
-func ByProblemSetProblemsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByProblemSetIncludesCount orders the results by problem_set_includes count.
+func ByProblemSetIncludesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newProblemSetProblemsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newProblemSetIncludesStep(), opts...)
 	}
 }
 
-// ByProblemSetProblems orders the results by problem_set_problems terms.
-func ByProblemSetProblems(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByProblemSetIncludes orders the results by problem_set_includes terms.
+func ByProblemSetIncludes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newProblemSetProblemsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newProblemSetIncludesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
-// ByProblemSetUsersCount orders the results by problem_set_users count.
-func ByProblemSetUsersCount(opts ...sql.OrderTermOption) OrderOption {
+// ByCompetitorListCount orders the results by competitor_list count.
+func ByCompetitorListCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newProblemSetUsersStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newCompetitorListStep(), opts...)
 	}
 }
 
-// ByProblemSetUsers orders the results by problem_set_users terms.
-func ByProblemSetUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByCompetitorList orders the results by competitor_list terms.
+func ByCompetitorList(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newProblemSetUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newCompetitorListStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newSubmissionsStep() *sqlgraph.Step {
@@ -213,24 +213,24 @@ func newSubmissionsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, SubmissionsTable, SubmissionsColumn),
 	)
 }
-func newAdminProblemSetsStep() *sqlgraph.Step {
+func newProblemSetManagerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(AdminProblemSetsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, AdminProblemSetsTable, AdminProblemSetsColumn),
+		sqlgraph.To(ProblemSetManagerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetManagerTable, ProblemSetManagerColumn),
 	)
 }
-func newProblemSetProblemsStep() *sqlgraph.Step {
+func newProblemSetIncludesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ProblemSetProblemsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetProblemsTable, ProblemSetProblemsColumn),
+		sqlgraph.To(ProblemSetIncludesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetIncludesTable, ProblemSetIncludesColumn),
 	)
 }
-func newProblemSetUsersStep() *sqlgraph.Step {
+func newCompetitorListStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ProblemSetUsersInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetUsersTable, ProblemSetUsersColumn),
+		sqlgraph.To(CompetitorListInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, CompetitorListTable, CompetitorListColumn),
 	)
 }

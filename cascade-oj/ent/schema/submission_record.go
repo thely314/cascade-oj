@@ -11,6 +11,9 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
+// submission record links judge record with problem and problem set
+//
+// for formal submissions
 type SubmissionRecord struct {
 	ent.Schema
 }
@@ -24,7 +27,6 @@ func (SubmissionRecord) Fields() []ent.Field {
 		field.Int64("judge_id").Positive(),
 		field.Int64("problem_id").Positive(),
 		field.Int64("problem_set_id").Optional(),
-		field.Enum("result").Values("Pass", "Fail"),
 		field.Time("submission_time").Default(time.Now()).SchemaType(map[string]string{
 			dialect.MySQL: "datetime",
 		}).
@@ -59,5 +61,6 @@ func (SubmissionRecord) Edges() []ent.Edge {
 			Field("problem_set_id").
 			Ref("submissions").
 			Unique(),
+		edge.To("case_group_results", CaseGroupResult.Type),
 	}
 }

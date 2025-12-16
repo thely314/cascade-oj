@@ -5,6 +5,7 @@ info:
 tags:
   - name: AuthService
   - name: User
+  - name: Admin
 paths:
   public/login:
     post:
@@ -96,7 +97,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
-  '/user/contest/{contestId}':
+  /user/contests:
+    get:
+      tags:
+        - User
+      operationId: User_GetContests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetContestsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/user/contests/{contestId}':
     get:
       tags:
         - User
@@ -120,7 +139,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
-  '/user/contest/{contestId}/join':
+  '/user/contests/{contestId}/join':
     post:
       tags:
         - User
@@ -177,48 +196,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
-  /user/contests:
-    get:
-      tags:
-        - User
-      operationId: User_GetContests
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetContestsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/user/problem/{problemId}':
-    get:
-      tags:
-        - User
-      operationId: User_GetSingleProblem
-      parameters:
-        - name: problemId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSingleProblemReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
   '/user/problems/{contestId}':
     get:
       tags:
@@ -243,6 +220,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
+  '/user/problems/{problemId}':
+    get:
+      tags:
+        - User
+      operationId: User_GetSingleProblem
+      parameters:
+        - name: problemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSingleProblemReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
   /user/selftests:
     post:
       tags:
@@ -261,6 +262,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SelfTestReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/user/selftests/{selftestUuid}':
+    get:
+      tags:
+        - User
+      operationId: User_GetSelfTestResult
+      parameters:
+        - name: selftestUuid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSelfTestResultReply'
         default:
           description: Default error response
           content:
@@ -316,7 +341,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubmissionRequest'
+              $ref: '#/components/schemas/PostSubmissionRequest'
         required: true
       responses:
         '200':
@@ -324,20 +349,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubmissionReply'
+                $ref: '#/components/schemas/PostSubmissionReply'
         default:
           description: Default error response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
-  '/user/submissions/{submissionId}':
+  '/user/submissions/{submissionUuid}':
     get:
       tags:
         - User
       operationId: User_GetSingleSubmission
       parameters:
-        - name: submissionId
+        - name: submissionUuid
           in: path
           required: true
           schema:
@@ -426,6 +451,623 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UpdateUserInfoReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /admin/announcements:
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetAnnouncements
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAnnouncementsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    post:
+      tags:
+        - Admin
+      operationId: Admin_PostAnnouncement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostAnnouncementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostAnnouncementReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/announcements/{announcementId}':
+    put:
+      tags:
+        - Admin
+      operationId: Admin_PutAnnouncement
+      parameters:
+        - name: announcementId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutAnnouncementRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutAnnouncementReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    delete:
+      tags:
+        - Admin
+      operationId: Admin_DeleteAnnouncement
+      parameters:
+        - name: announcementId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAnnouncementReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /admin/contests:
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetContests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetContestsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    post:
+      tags:
+        - Admin
+      operationId: Admin_PostContest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostContestRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostContestReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/contests/{contestId}':
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetSingleContest
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSingleContestReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    put:
+      tags:
+        - Admin
+      operationId: Admin_PutContest
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutContestRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutContestReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    delete:
+      tags:
+        - Admin
+      operationId: Admin_DeleteContest
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteContestReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/contests/{contestId}/statistics':
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetContestStatistics
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetContestStatisticsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /admin/logs:
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetLogs
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLogsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /admin/problems:
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetProblems
+      parameters:
+        - name: contestId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProblemsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    post:
+      tags:
+        - Admin
+      operationId: Admin_PostProblem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostProblemRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostProblemReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/problems/{problemId}':
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetSingleProblem
+      parameters:
+        - name: problemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSingleProblemReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    put:
+      tags:
+        - Admin
+      operationId: Admin_PutProblem
+      parameters:
+        - name: problemId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutProblemRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutProblemReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    delete:
+      tags:
+        - Admin
+      operationId: Admin_DeleteProblem
+      parameters:
+        - name: problemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteProblemReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/problems/{problemId}/publish':
+    post:
+      tags:
+        - Admin
+      operationId: Admin_PublishProblem
+      parameters:
+        - name: problemId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishProblemRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishProblemReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /admin/submissions:
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetSubmissions
+      parameters:
+        - name: problemId
+          in: query
+          schema:
+            type: string
+        - name: contestId
+          in: query
+          schema:
+            type: string
+        - name: userId
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSubmissionsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/submissions/{submissionUuid}':
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetSingleSubmission
+      parameters:
+        - name: submissionUuid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSingleSubmissionReply1'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/submissions/{submissionUuid}/rejudge':
+    post:
+      tags:
+        - Admin
+      operationId: Admin_RejudgeSubmission
+      parameters:
+        - name: submissionUuid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RejudgeSubmissionRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RejudgeSubmissionReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /admin/users:
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetUsers
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUsersReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/users/{userId}':
+    put:
+      tags:
+        - Admin
+      operationId: Admin_UpdateUserInfo
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserInfoRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUserInfoReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    delete:
+      tags:
+        - Admin
+      operationId: Admin_DeleteUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteUserReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/{contestId}/ranks':
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetRanks
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRanksReply'
         default:
           description: Default error response
           content:
@@ -584,6 +1226,21 @@ components:
         score:
           type: integer
           format: int32
+    GetSelfTestResultReply:
+      type: object
+      properties:
+        isCompiled:
+          type: boolean
+        stdout:
+          type: string
+        stderr:
+          type: string
+        timeCost:
+          type: integer
+          format: int32
+        memoryCost:
+          type: integer
+          format: int32
     GetSingleContestReply:
       type: object
       properties:
@@ -609,6 +1266,12 @@ components:
           type: string
         language:
           type: string
+        timeCost:
+          type: integer
+          format: int32
+        memoryCost:
+          type: integer
+          format: int32
     GetSubmissionsReply:
       type: object
       properties:
@@ -637,14 +1300,26 @@ components:
           type: string
         userId:
           type: string
+    PostSubmissionReply:
+      type: object
+      properties:
+        uuid:
+          type: string
+    PostSubmissionRequest:
+      type: object
+      properties:
+        problemId:
+          type: string
+        code:
+          type: string
+        language:
+          type: string
     ProblemMetadata:
       type: object
       properties:
         id:
           type: string
         title:
-          type: string
-        problemType:
           type: string
         timeLimitMs:
           type: integer
@@ -671,12 +1346,12 @@ components:
           type: string
         language:
           type: string
-        selfCase:
+        input:
           type: string
     SubmissionMetadata:
       type: object
       properties:
-        submissionId:
+        submissionUuid:
           type: string
         problemId:
           type: string
@@ -684,34 +1359,238 @@ components:
           type: string
         status:
           type: string
-        result:
-          type: string
         submitTime:
           type: string
           format: date-time
         score:
           type: integer
           format: int32
-    SubmissionReply:
-      type: object
-      properties:
-        uuid:
-          type: string
-    SubmissionRequest:
-      type: object
-      properties:
-        problemId:
-          type: string
-        code:
-          type: string
-        language:
-          type: string
     UpdateUserInfoReply:
       type: object
       properties:
         isUpdated:
           type: boolean
     UpdateUserInfoRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+    CaseMetadata:
+      type: object
+      properties:
+        score:
+          type: integer
+          format: int32
+        status:
+          type: string
+        timeCost:
+          type: integer
+          format: int32
+        memoryCost:
+          type: integer
+          format: int32
+    DeleteAnnouncementReply:
+      type: object
+      properties:
+        isDeleted:
+          type: boolean
+    DeleteContestReply:
+      type: object
+      properties:
+        isDeleted:
+          type: boolean
+    DeleteProblemReply:
+      type: object
+      properties:
+        isDeleted:
+          type: boolean
+    DeleteUserReply:
+      type: object
+      properties:
+        isDeleted:
+          type: boolean
+    GetContestStatisticsReply:
+      type: object
+      properties:
+        statisticsJson:
+          type: string
+          description: TODO
+    GetLogsReply:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetLogsReply_LogEntry'
+    GetLogsReply_LogEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    GetSingleSubmissionReply1:
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/SubmissionMetadata'
+        code:
+          type: string
+        language:
+          type: string
+        timeCost:
+          type: integer
+          format: int32
+        memoryCost:
+          type: integer
+          format: int32
+        caseResults:
+          $ref: '#/components/schemas/GetSingleSubmissionReply_CaseResults'
+    GetSingleSubmissionReply_CaseResults:
+      type: object
+      properties:
+        cases:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseMetadata'
+    GetUsersReply:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserInfo'
+    PostAnnouncementReply:
+      type: object
+      properties:
+        announcementId:
+          type: string
+    PostAnnouncementRequest:
+      type: object
+      properties:
+        publisherName:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+    PostContestReply:
+      type: object
+      properties:
+        contestId:
+          type: string
+    PostContestRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        problems:
+          $ref: '#/components/schemas/PostContestRequest_ProblemList'
+    PostContestRequest_ProblemList:
+      type: object
+      properties:
+        problemIds:
+          type: array
+          items:
+            type: string
+    PostProblemReply:
+      type: object
+      properties:
+        problemId:
+          type: string
+    PostProblemRequest:
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/ProblemMetadata'
+        creator:
+          type: string
+        description:
+          type: string
+    PublishProblemReply:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+    PublishProblemRequest:
+      type: object
+      properties:
+        problemId:
+          type: string
+    PutAnnouncementReply:
+      type: object
+      properties:
+        isUpdated:
+          type: boolean
+    PutAnnouncementRequest:
+      type: object
+      properties:
+        announcementId:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+    PutContestReply:
+      type: object
+      properties:
+        isUpdated:
+          type: boolean
+    PutContestRequest:
+      type: object
+      properties:
+        contestId:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+    PutProblemReply:
+      type: object
+      properties:
+        isUpdated:
+          type: boolean
+    PutProblemRequest:
+      type: object
+      properties:
+        problemId:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ProblemMetadata'
+        description:
+          type: string
+    RejudgeSubmissionReply:
+      type: object
+      properties:
+        newSubmissionUuid:
+          type: string
+    RejudgeSubmissionRequest:
+      type: object
+      properties:
+        submissionUuid:
+          type: string
+    UserInfo:
       type: object
       properties:
         userId:

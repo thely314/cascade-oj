@@ -26,8 +26,6 @@ type SubmissionRecord struct {
 	ProblemID int64 `json:"problem_id,omitempty"`
 	// ProblemSetID holds the value of the "problem_set_id" field.
 	ProblemSetID int64 `json:"problem_set_id,omitempty"`
-	// Result holds the value of the "result" field.
-	Result submissionrecord.Result `json:"result,omitempty"`
 	// SubmissionTime holds the value of the "submission_time" field.
 	SubmissionTime time.Time `json:"submission_time,omitempty"`
 	// Score holds the value of the "score" field.
@@ -46,9 +44,11 @@ type SubmissionRecordEdges struct {
 	Problem *Problem `json:"problem,omitempty"`
 	// ProblemSet holds the value of the problem_set edge.
 	ProblemSet *ProblemSet `json:"problem_set,omitempty"`
+	// CaseGroupResults holds the value of the case_group_results edge.
+	CaseGroupResults []*CaseGroupResult `json:"case_group_results,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // JudgeOrErr returns the Judge value or an error if the edge
@@ -84,6 +84,15 @@ func (e SubmissionRecordEdges) ProblemSetOrErr() (*ProblemSet, error) {
 	return nil, &NotLoadedError{edge: "problem_set"}
 }
 
+// CaseGroupResultsOrErr returns the CaseGroupResults value or an error if the edge
+// was not loaded in eager-loading.
+func (e SubmissionRecordEdges) CaseGroupResultsOrErr() ([]*CaseGroupResult, error) {
+	if e.loadedTypes[3] {
+		return e.CaseGroupResults, nil
+	}
+	return nil, &NotLoadedError{edge: "case_group_results"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*SubmissionRecord) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -91,8 +100,6 @@ func (*SubmissionRecord) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case submissionrecord.FieldID, submissionrecord.FieldJudgeID, submissionrecord.FieldProblemID, submissionrecord.FieldProblemSetID, submissionrecord.FieldScore:
 			values[i] = new(sql.NullInt64)
-		case submissionrecord.FieldResult:
-			values[i] = new(sql.NullString)
 		case submissionrecord.FieldSubmissionTime:
 			values[i] = new(sql.NullTime)
 		default:
@@ -134,12 +141,6 @@ func (_m *SubmissionRecord) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.ProblemSetID = value.Int64
 			}
-		case submissionrecord.FieldResult:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field result", values[i])
-			} else if value.Valid {
-				_m.Result = submissionrecord.Result(value.String)
-			}
 		case submissionrecord.FieldSubmissionTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field submission_time", values[i])
@@ -180,6 +181,11 @@ func (_m *SubmissionRecord) QueryProblemSet() *ProblemSetQuery {
 	return NewSubmissionRecordClient(_m.config).QueryProblemSet(_m)
 }
 
+// QueryCaseGroupResults queries the "case_group_results" edge of the SubmissionRecord entity.
+func (_m *SubmissionRecord) QueryCaseGroupResults() *CaseGroupResultQuery {
+	return NewSubmissionRecordClient(_m.config).QueryCaseGroupResults(_m)
+}
+
 // Update returns a builder for updating this SubmissionRecord.
 // Note that you need to call SubmissionRecord.Unwrap() before calling this method if this SubmissionRecord
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -211,9 +217,6 @@ func (_m *SubmissionRecord) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("problem_set_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ProblemSetID))
-	builder.WriteString(", ")
-	builder.WriteString("result=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Result))
 	builder.WriteString(", ")
 	builder.WriteString("submission_time=")
 	builder.WriteString(_m.SubmissionTime.Format(time.ANSIC))
