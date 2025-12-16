@@ -1,0 +1,43 @@
+.sidebar {
+    width: 240px;
+    padding: 24px 16px;
+    border-right: 1px solid #1a221d;
+    background: #0b0f0d;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #cbd5c0;
+}
+
+.brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: #16a379;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-item {
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: #cbd5c0;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav-item:hover {
+    background: rgba(22, 163, 118, 0.12);
+    color: #e6f7ec;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.nav-item.active {
+    background: linear-gradient(135deg, #16a34a, #1dad80);
+    color: #04130a;
+    box-shadow: 0 8px 16px rgba(22, 163, 118, 0.28);
+}
