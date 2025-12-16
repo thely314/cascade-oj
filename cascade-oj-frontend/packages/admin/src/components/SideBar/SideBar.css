@@ -1,30 +1,33 @@
 .sidebar {
     width: 240px;
-    padding: 24px 16px;
+    padding: 28px 18px;
     border-right: 1px solid #1a221d;
     background: #0b0f0d;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
     font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     color: #cbd5c0;
 }
 
 .brand {
-    font-size: 20px;
+    font-size: 32px;
     font-weight: 700;
     color: #16a379;
+    margin-top: 10px;
+    margin-bottom: 14px;
 }
 
 .nav {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
 }
 
 .nav-item {
-    padding: 10px 12px;
-    border-radius: 10px;
+    font-size: 24px;
+    padding: 12px 14px;
+    border-radius: 12px;
     color: #cbd5c0;
     text-decoration: none;
     transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;

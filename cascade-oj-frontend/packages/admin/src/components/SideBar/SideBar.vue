@@ -17,16 +17,16 @@ const activePath = computed(() => route.path)
 
 <template>
   <aside class="sideBar">
-    <div class="brand">Cascade Admin</div>
+    <div class="brand"></div>
     <nav class="nav">
       <RouterLink
-        v-for="item in menuItems"
-        :key="item.label"
-        class="nav-item"
-        :to="item.to"
-        :class="{ active: activePath.value === item.to }"
+      v-for="item in menuItems"
+      :key="item.label"
+      class="nav-item"
+      :to="item.to"
+      :class="{ active: activePath === item.to }"
       >
-        {{ item.label }}
+      {{ item.label }}
       </RouterLink>
     </nav>
   </aside>

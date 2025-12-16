@@ -50,8 +50,8 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 16px;
+    padding: 20px;
 }
-
 
 .stat-card {
     padding: 16px;
@@ -59,6 +59,16 @@
     background: #141816;
     border: 1px solid rgba(22, 163, 118, 0.12);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.32);
+}
+
+.row-center-align {
+    display: flex;
+    align-items: center;
+    margin-left: 5%;
+    gap: 8px;
+    color: #72c7ac;
+    font-size: 28px;
+    font-weight: 600;
 }
 
 .stat-label {

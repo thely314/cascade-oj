@@ -1,9 +1,10 @@
 <script setup>
+
 const stats = [
-	{ label: 'Active Users', value: '1,248' },
-	{ label: 'Problems', value: '362' },
-	{ label: 'Submissions Today', value: '5,421' },
-	{ label: 'Pending Reviews', value: '18' },
+	{ label: '正在进行', value: '1,248' },
+	{ label: '已结束', value: '362' },
+	{ label: '题库题目数', value: '362' },
+	{ label: '总提交数', value: '5,421' },
 ]
 
 const recent = [
@@ -23,10 +24,27 @@ const recent = [
 			<button class="primary">New Announcement</button>
 		</header>
 
-		<section class="stat-grid">
-			<article v-for="item in stats" :key="item.label" class="stat-card">
-				<p class="stat-label">{{ item.label }}</p>
-				<p class="stat-value">{{ item.value }}</p>
+		<section class="stat-card">
+			<p class="row-center-align">比赛</p>
+			<article class="stat-grid">
+				<article class="stat-card">
+					<p class="stat-label">{{ stats[0].label }}</p>
+					<p class="stat-value">{{ stats[0].value }}</p>
+				</article>
+				<article class="stat-card">
+					<p class="stat-label">{{ stats[1].label }}</p>
+					<p class="stat-value">{{ stats[1].value }}</p>
+				</article>
+			</article>
+			<article class="stat-grid">
+				<article class="stat-card">
+					<p class="stat-label">{{ stats[2].label }}</p>
+					<p class="stat-value">{{ stats[2].value }}</p>
+				</article>
+				<article class="stat-card">
+					<p class="stat-label">{{ stats[3].label }}</p>
+					<p class="stat-value">{{ stats[3].value }}</p>
+				</article>
 			</article>
 		</section>
 
