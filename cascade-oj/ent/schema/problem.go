@@ -26,16 +26,17 @@ func (Problem) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				"mysql": "TEXT",
 			}).NotEmpty(),
-		field.Int64("judge_config_id"),
-		field.Int16("case_version").Default(1),
-		field.Int("time_limit_ms").
+		field.Enum("problem_type").
+			Values("OJ", "other").
+			Default("OJ"),
+		field.Int("time_limit").
 			Positive().SchemaType(map[string]string{
 			"mysql": "INT",
-		}).Comment("milliseconds"),
-		field.Int("memory_limit_kb").
+		}),
+		field.Int("memory_limit").
 			Positive().SchemaType(map[string]string{
 			"mysql": "INT",
-		}).Comment("kilobytes"),
+		}),
 		field.Enum("use_status").
 			Values("unavailable", "available", "using").
 			Default("unavailable"),
@@ -55,16 +56,13 @@ func (Problem) Edges() []ent.Edge {
 			Ref("problems").
 			Unique().
 			Required(),
-		edge.From("judge_config", ProblemJudgeConfig.Type).
-			Field("judge_config_id").
-			Ref("judge_config").
-			Unique().
-			Required(),
+		edge.To("test_cases", TestCase.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("judge_records", JudgeRecord.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("submissions", SubmissionRecord.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
-		edge.To("problem_set_includes", ProblemSet_Includes.Type).
+		edge.To("problem_set_problems", ProblemSet_Problem.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

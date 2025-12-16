@@ -32,7 +32,7 @@ SERVICES=()
 
 # 预设的有效服务列表（与 docker-compose.yml 中的 services 保持一致）
 # 如果未来有更多服务，请同步更新此处或改为动态解析 compose 文件
-PRESET_SERVICES=("gateway" "public")
+PRESET_SERVICES=("gateway" "public" "user" "judge" "admin")
 
 is_valid_service() {
 	local svc="$1"

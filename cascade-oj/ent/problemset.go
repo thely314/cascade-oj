@@ -37,12 +37,12 @@ type ProblemSet struct {
 type ProblemSetEdges struct {
 	// Submissions holds the value of the submissions edge.
 	Submissions []*SubmissionRecord `json:"submissions,omitempty"`
-	// ProblemSetManager holds the value of the problem_set_manager edge.
-	ProblemSetManager []*ProblemSetManager `json:"problem_set_manager,omitempty"`
-	// ProblemSetIncludes holds the value of the problem_set_includes edge.
-	ProblemSetIncludes []*ProblemSet_Includes `json:"problem_set_includes,omitempty"`
-	// CompetitorList holds the value of the competitor_list edge.
-	CompetitorList []*Competitor_List `json:"competitor_list,omitempty"`
+	// AdminProblemSets holds the value of the admin_problem_sets edge.
+	AdminProblemSets []*AdminProblemSet `json:"admin_problem_sets,omitempty"`
+	// ProblemSetProblems holds the value of the problem_set_problems edge.
+	ProblemSetProblems []*ProblemSet_Problem `json:"problem_set_problems,omitempty"`
+	// ProblemSetUsers holds the value of the problem_set_users edge.
+	ProblemSetUsers []*ProblemSet_User `json:"problem_set_users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [4]bool
@@ -57,31 +57,31 @@ func (e ProblemSetEdges) SubmissionsOrErr() ([]*SubmissionRecord, error) {
 	return nil, &NotLoadedError{edge: "submissions"}
 }
 
-// ProblemSetManagerOrErr returns the ProblemSetManager value or an error if the edge
+// AdminProblemSetsOrErr returns the AdminProblemSets value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProblemSetEdges) ProblemSetManagerOrErr() ([]*ProblemSetManager, error) {
+func (e ProblemSetEdges) AdminProblemSetsOrErr() ([]*AdminProblemSet, error) {
 	if e.loadedTypes[1] {
-		return e.ProblemSetManager, nil
+		return e.AdminProblemSets, nil
 	}
-	return nil, &NotLoadedError{edge: "problem_set_manager"}
+	return nil, &NotLoadedError{edge: "admin_problem_sets"}
 }
 
-// ProblemSetIncludesOrErr returns the ProblemSetIncludes value or an error if the edge
+// ProblemSetProblemsOrErr returns the ProblemSetProblems value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProblemSetEdges) ProblemSetIncludesOrErr() ([]*ProblemSet_Includes, error) {
+func (e ProblemSetEdges) ProblemSetProblemsOrErr() ([]*ProblemSet_Problem, error) {
 	if e.loadedTypes[2] {
-		return e.ProblemSetIncludes, nil
+		return e.ProblemSetProblems, nil
 	}
-	return nil, &NotLoadedError{edge: "problem_set_includes"}
+	return nil, &NotLoadedError{edge: "problem_set_problems"}
 }
 
-// CompetitorListOrErr returns the CompetitorList value or an error if the edge
+// ProblemSetUsersOrErr returns the ProblemSetUsers value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProblemSetEdges) CompetitorListOrErr() ([]*Competitor_List, error) {
+func (e ProblemSetEdges) ProblemSetUsersOrErr() ([]*ProblemSet_User, error) {
 	if e.loadedTypes[3] {
-		return e.CompetitorList, nil
+		return e.ProblemSetUsers, nil
 	}
-	return nil, &NotLoadedError{edge: "competitor_list"}
+	return nil, &NotLoadedError{edge: "problem_set_users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -164,19 +164,19 @@ func (_m *ProblemSet) QuerySubmissions() *SubmissionRecordQuery {
 	return NewProblemSetClient(_m.config).QuerySubmissions(_m)
 }
 
-// QueryProblemSetManager queries the "problem_set_manager" edge of the ProblemSet entity.
-func (_m *ProblemSet) QueryProblemSetManager() *ProblemSetManagerQuery {
-	return NewProblemSetClient(_m.config).QueryProblemSetManager(_m)
+// QueryAdminProblemSets queries the "admin_problem_sets" edge of the ProblemSet entity.
+func (_m *ProblemSet) QueryAdminProblemSets() *AdminProblemSetQuery {
+	return NewProblemSetClient(_m.config).QueryAdminProblemSets(_m)
 }
 
-// QueryProblemSetIncludes queries the "problem_set_includes" edge of the ProblemSet entity.
-func (_m *ProblemSet) QueryProblemSetIncludes() *ProblemSetIncludesQuery {
-	return NewProblemSetClient(_m.config).QueryProblemSetIncludes(_m)
+// QueryProblemSetProblems queries the "problem_set_problems" edge of the ProblemSet entity.
+func (_m *ProblemSet) QueryProblemSetProblems() *ProblemSetProblemQuery {
+	return NewProblemSetClient(_m.config).QueryProblemSetProblems(_m)
 }
 
-// QueryCompetitorList queries the "competitor_list" edge of the ProblemSet entity.
-func (_m *ProblemSet) QueryCompetitorList() *CompetitorListQuery {
-	return NewProblemSetClient(_m.config).QueryCompetitorList(_m)
+// QueryProblemSetUsers queries the "problem_set_users" edge of the ProblemSet entity.
+func (_m *ProblemSet) QueryProblemSetUsers() *ProblemSetUserQuery {
+	return NewProblemSetClient(_m.config).QueryProblemSetUsers(_m)
 }
 
 // Update returns a builder for updating this ProblemSet.

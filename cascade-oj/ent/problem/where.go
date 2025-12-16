@@ -69,24 +69,14 @@ func Description(v string) predicate.Problem {
 	return predicate.Problem(sql.FieldEQ(FieldDescription, v))
 }
 
-// JudgeConfigID applies equality check predicate on the "judge_config_id" field. It's identical to JudgeConfigIDEQ.
-func JudgeConfigID(v int64) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldJudgeConfigID, v))
+// TimeLimit applies equality check predicate on the "time_limit" field. It's identical to TimeLimitEQ.
+func TimeLimit(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldEQ(FieldTimeLimit, v))
 }
 
-// CaseVersion applies equality check predicate on the "case_version" field. It's identical to CaseVersionEQ.
-func CaseVersion(v int16) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldCaseVersion, v))
-}
-
-// TimeLimitMs applies equality check predicate on the "time_limit_ms" field. It's identical to TimeLimitMsEQ.
-func TimeLimitMs(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldTimeLimitMs, v))
-}
-
-// MemoryLimitKB applies equality check predicate on the "memory_limit_kb" field. It's identical to MemoryLimitKBEQ.
-func MemoryLimitKB(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldMemoryLimitKB, v))
+// MemoryLimit applies equality check predicate on the "memory_limit" field. It's identical to MemoryLimitEQ.
+func MemoryLimit(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldEQ(FieldMemoryLimit, v))
 }
 
 // CreatorIDEQ applies the EQ predicate on the "creator_id" field.
@@ -239,144 +229,104 @@ func DescriptionContainsFold(v string) predicate.Problem {
 	return predicate.Problem(sql.FieldContainsFold(FieldDescription, v))
 }
 
-// JudgeConfigIDEQ applies the EQ predicate on the "judge_config_id" field.
-func JudgeConfigIDEQ(v int64) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldJudgeConfigID, v))
+// ProblemTypeEQ applies the EQ predicate on the "problem_type" field.
+func ProblemTypeEQ(v ProblemType) predicate.Problem {
+	return predicate.Problem(sql.FieldEQ(FieldProblemType, v))
 }
 
-// JudgeConfigIDNEQ applies the NEQ predicate on the "judge_config_id" field.
-func JudgeConfigIDNEQ(v int64) predicate.Problem {
-	return predicate.Problem(sql.FieldNEQ(FieldJudgeConfigID, v))
+// ProblemTypeNEQ applies the NEQ predicate on the "problem_type" field.
+func ProblemTypeNEQ(v ProblemType) predicate.Problem {
+	return predicate.Problem(sql.FieldNEQ(FieldProblemType, v))
 }
 
-// JudgeConfigIDIn applies the In predicate on the "judge_config_id" field.
-func JudgeConfigIDIn(vs ...int64) predicate.Problem {
-	return predicate.Problem(sql.FieldIn(FieldJudgeConfigID, vs...))
+// ProblemTypeIn applies the In predicate on the "problem_type" field.
+func ProblemTypeIn(vs ...ProblemType) predicate.Problem {
+	return predicate.Problem(sql.FieldIn(FieldProblemType, vs...))
 }
 
-// JudgeConfigIDNotIn applies the NotIn predicate on the "judge_config_id" field.
-func JudgeConfigIDNotIn(vs ...int64) predicate.Problem {
-	return predicate.Problem(sql.FieldNotIn(FieldJudgeConfigID, vs...))
+// ProblemTypeNotIn applies the NotIn predicate on the "problem_type" field.
+func ProblemTypeNotIn(vs ...ProblemType) predicate.Problem {
+	return predicate.Problem(sql.FieldNotIn(FieldProblemType, vs...))
 }
 
-// CaseVersionEQ applies the EQ predicate on the "case_version" field.
-func CaseVersionEQ(v int16) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldCaseVersion, v))
+// TimeLimitEQ applies the EQ predicate on the "time_limit" field.
+func TimeLimitEQ(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldEQ(FieldTimeLimit, v))
 }
 
-// CaseVersionNEQ applies the NEQ predicate on the "case_version" field.
-func CaseVersionNEQ(v int16) predicate.Problem {
-	return predicate.Problem(sql.FieldNEQ(FieldCaseVersion, v))
+// TimeLimitNEQ applies the NEQ predicate on the "time_limit" field.
+func TimeLimitNEQ(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldNEQ(FieldTimeLimit, v))
 }
 
-// CaseVersionIn applies the In predicate on the "case_version" field.
-func CaseVersionIn(vs ...int16) predicate.Problem {
-	return predicate.Problem(sql.FieldIn(FieldCaseVersion, vs...))
+// TimeLimitIn applies the In predicate on the "time_limit" field.
+func TimeLimitIn(vs ...int) predicate.Problem {
+	return predicate.Problem(sql.FieldIn(FieldTimeLimit, vs...))
 }
 
-// CaseVersionNotIn applies the NotIn predicate on the "case_version" field.
-func CaseVersionNotIn(vs ...int16) predicate.Problem {
-	return predicate.Problem(sql.FieldNotIn(FieldCaseVersion, vs...))
+// TimeLimitNotIn applies the NotIn predicate on the "time_limit" field.
+func TimeLimitNotIn(vs ...int) predicate.Problem {
+	return predicate.Problem(sql.FieldNotIn(FieldTimeLimit, vs...))
 }
 
-// CaseVersionGT applies the GT predicate on the "case_version" field.
-func CaseVersionGT(v int16) predicate.Problem {
-	return predicate.Problem(sql.FieldGT(FieldCaseVersion, v))
+// TimeLimitGT applies the GT predicate on the "time_limit" field.
+func TimeLimitGT(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldGT(FieldTimeLimit, v))
 }
 
-// CaseVersionGTE applies the GTE predicate on the "case_version" field.
-func CaseVersionGTE(v int16) predicate.Problem {
-	return predicate.Problem(sql.FieldGTE(FieldCaseVersion, v))
+// TimeLimitGTE applies the GTE predicate on the "time_limit" field.
+func TimeLimitGTE(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldGTE(FieldTimeLimit, v))
 }
 
-// CaseVersionLT applies the LT predicate on the "case_version" field.
-func CaseVersionLT(v int16) predicate.Problem {
-	return predicate.Problem(sql.FieldLT(FieldCaseVersion, v))
+// TimeLimitLT applies the LT predicate on the "time_limit" field.
+func TimeLimitLT(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldLT(FieldTimeLimit, v))
 }
 
-// CaseVersionLTE applies the LTE predicate on the "case_version" field.
-func CaseVersionLTE(v int16) predicate.Problem {
-	return predicate.Problem(sql.FieldLTE(FieldCaseVersion, v))
+// TimeLimitLTE applies the LTE predicate on the "time_limit" field.
+func TimeLimitLTE(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldLTE(FieldTimeLimit, v))
 }
 
-// TimeLimitMsEQ applies the EQ predicate on the "time_limit_ms" field.
-func TimeLimitMsEQ(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldTimeLimitMs, v))
+// MemoryLimitEQ applies the EQ predicate on the "memory_limit" field.
+func MemoryLimitEQ(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldEQ(FieldMemoryLimit, v))
 }
 
-// TimeLimitMsNEQ applies the NEQ predicate on the "time_limit_ms" field.
-func TimeLimitMsNEQ(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldNEQ(FieldTimeLimitMs, v))
+// MemoryLimitNEQ applies the NEQ predicate on the "memory_limit" field.
+func MemoryLimitNEQ(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldNEQ(FieldMemoryLimit, v))
 }
 
-// TimeLimitMsIn applies the In predicate on the "time_limit_ms" field.
-func TimeLimitMsIn(vs ...int) predicate.Problem {
-	return predicate.Problem(sql.FieldIn(FieldTimeLimitMs, vs...))
+// MemoryLimitIn applies the In predicate on the "memory_limit" field.
+func MemoryLimitIn(vs ...int) predicate.Problem {
+	return predicate.Problem(sql.FieldIn(FieldMemoryLimit, vs...))
 }
 
-// TimeLimitMsNotIn applies the NotIn predicate on the "time_limit_ms" field.
-func TimeLimitMsNotIn(vs ...int) predicate.Problem {
-	return predicate.Problem(sql.FieldNotIn(FieldTimeLimitMs, vs...))
+// MemoryLimitNotIn applies the NotIn predicate on the "memory_limit" field.
+func MemoryLimitNotIn(vs ...int) predicate.Problem {
+	return predicate.Problem(sql.FieldNotIn(FieldMemoryLimit, vs...))
 }
 
-// TimeLimitMsGT applies the GT predicate on the "time_limit_ms" field.
-func TimeLimitMsGT(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldGT(FieldTimeLimitMs, v))
+// MemoryLimitGT applies the GT predicate on the "memory_limit" field.
+func MemoryLimitGT(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldGT(FieldMemoryLimit, v))
 }
 
-// TimeLimitMsGTE applies the GTE predicate on the "time_limit_ms" field.
-func TimeLimitMsGTE(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldGTE(FieldTimeLimitMs, v))
+// MemoryLimitGTE applies the GTE predicate on the "memory_limit" field.
+func MemoryLimitGTE(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldGTE(FieldMemoryLimit, v))
 }
 
-// TimeLimitMsLT applies the LT predicate on the "time_limit_ms" field.
-func TimeLimitMsLT(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldLT(FieldTimeLimitMs, v))
+// MemoryLimitLT applies the LT predicate on the "memory_limit" field.
+func MemoryLimitLT(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldLT(FieldMemoryLimit, v))
 }
 
-// TimeLimitMsLTE applies the LTE predicate on the "time_limit_ms" field.
-func TimeLimitMsLTE(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldLTE(FieldTimeLimitMs, v))
-}
-
-// MemoryLimitKBEQ applies the EQ predicate on the "memory_limit_kb" field.
-func MemoryLimitKBEQ(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldMemoryLimitKB, v))
-}
-
-// MemoryLimitKBNEQ applies the NEQ predicate on the "memory_limit_kb" field.
-func MemoryLimitKBNEQ(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldNEQ(FieldMemoryLimitKB, v))
-}
-
-// MemoryLimitKBIn applies the In predicate on the "memory_limit_kb" field.
-func MemoryLimitKBIn(vs ...int) predicate.Problem {
-	return predicate.Problem(sql.FieldIn(FieldMemoryLimitKB, vs...))
-}
-
-// MemoryLimitKBNotIn applies the NotIn predicate on the "memory_limit_kb" field.
-func MemoryLimitKBNotIn(vs ...int) predicate.Problem {
-	return predicate.Problem(sql.FieldNotIn(FieldMemoryLimitKB, vs...))
-}
-
-// MemoryLimitKBGT applies the GT predicate on the "memory_limit_kb" field.
-func MemoryLimitKBGT(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldGT(FieldMemoryLimitKB, v))
-}
-
-// MemoryLimitKBGTE applies the GTE predicate on the "memory_limit_kb" field.
-func MemoryLimitKBGTE(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldGTE(FieldMemoryLimitKB, v))
-}
-
-// MemoryLimitKBLT applies the LT predicate on the "memory_limit_kb" field.
-func MemoryLimitKBLT(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldLT(FieldMemoryLimitKB, v))
-}
-
-// MemoryLimitKBLTE applies the LTE predicate on the "memory_limit_kb" field.
-func MemoryLimitKBLTE(v int) predicate.Problem {
-	return predicate.Problem(sql.FieldLTE(FieldMemoryLimitKB, v))
+// MemoryLimitLTE applies the LTE predicate on the "memory_limit" field.
+func MemoryLimitLTE(v int) predicate.Problem {
+	return predicate.Problem(sql.FieldLTE(FieldMemoryLimit, v))
 }
 
 // UseStatusEQ applies the EQ predicate on the "use_status" field.
@@ -422,21 +372,21 @@ func HasCreatorWith(preds ...predicate.User) predicate.Problem {
 	})
 }
 
-// HasJudgeConfig applies the HasEdge predicate on the "judge_config" edge.
-func HasJudgeConfig() predicate.Problem {
+// HasTestCases applies the HasEdge predicate on the "test_cases" edge.
+func HasTestCases() predicate.Problem {
 	return predicate.Problem(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, JudgeConfigTable, JudgeConfigColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, TestCasesTable, TestCasesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasJudgeConfigWith applies the HasEdge predicate on the "judge_config" edge with a given conditions (other predicates).
-func HasJudgeConfigWith(preds ...predicate.ProblemJudgeConfig) predicate.Problem {
+// HasTestCasesWith applies the HasEdge predicate on the "test_cases" edge with a given conditions (other predicates).
+func HasTestCasesWith(preds ...predicate.TestCase) predicate.Problem {
 	return predicate.Problem(func(s *sql.Selector) {
-		step := newJudgeConfigStep()
+		step := newTestCasesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -491,21 +441,21 @@ func HasSubmissionsWith(preds ...predicate.SubmissionRecord) predicate.Problem {
 	})
 }
 
-// HasProblemSetIncludes applies the HasEdge predicate on the "problem_set_includes" edge.
-func HasProblemSetIncludes() predicate.Problem {
+// HasProblemSetProblems applies the HasEdge predicate on the "problem_set_problems" edge.
+func HasProblemSetProblems() predicate.Problem {
 	return predicate.Problem(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetIncludesTable, ProblemSetIncludesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetProblemsTable, ProblemSetProblemsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasProblemSetIncludesWith applies the HasEdge predicate on the "problem_set_includes" edge with a given conditions (other predicates).
-func HasProblemSetIncludesWith(preds ...predicate.ProblemSet_Includes) predicate.Problem {
+// HasProblemSetProblemsWith applies the HasEdge predicate on the "problem_set_problems" edge with a given conditions (other predicates).
+func HasProblemSetProblemsWith(preds ...predicate.ProblemSet_Problem) predicate.Problem {
 	return predicate.Problem(func(s *sql.Selector) {
-		step := newProblemSetIncludesStep()
+		step := newProblemSetProblemsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -3,19 +3,17 @@
 package ent
 
 import (
+	"cascade-oj/ent/adminproblemset"
 	"cascade-oj/ent/announcement"
-	"cascade-oj/ent/casegroupresult"
-	"cascade-oj/ent/caseresult"
-	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemjudgeconfig"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemset_includes"
-	"cascade-oj/ent/problemsetmanager"
+	"cascade-oj/ent/problemset_problem"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/schema"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/systemlog"
+	"cascade-oj/ent/testcase"
 	"cascade-oj/ent/user"
 	"time"
 )
@@ -24,6 +22,20 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	adminproblemsetFields := schema.AdminProblemSet{}.Fields()
+	_ = adminproblemsetFields
+	// adminproblemsetDescAdminID is the schema descriptor for admin_id field.
+	adminproblemsetDescAdminID := adminproblemsetFields[1].Descriptor()
+	// adminproblemset.AdminIDValidator is a validator for the "admin_id" field. It is called by the builders before save.
+	adminproblemset.AdminIDValidator = adminproblemsetDescAdminID.Validators[0].(func(int64) error)
+	// adminproblemsetDescProblemSetID is the schema descriptor for problem_set_id field.
+	adminproblemsetDescProblemSetID := adminproblemsetFields[2].Descriptor()
+	// adminproblemset.ProblemSetIDValidator is a validator for the "problem_set_id" field. It is called by the builders before save.
+	adminproblemset.ProblemSetIDValidator = adminproblemsetDescProblemSetID.Validators[0].(func(int64) error)
+	// adminproblemsetDescID is the schema descriptor for id field.
+	adminproblemsetDescID := adminproblemsetFields[0].Descriptor()
+	// adminproblemset.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	adminproblemset.IDValidator = adminproblemsetDescID.Validators[0].(func(int64) error)
 	announcementFields := schema.Announcement{}.Fields()
 	_ = announcementFields
 	// announcementDescPublisherID is the schema descriptor for publisher_id field.
@@ -56,60 +68,6 @@ func init() {
 	announcementDescID := announcementFields[0].Descriptor()
 	// announcement.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	announcement.IDValidator = announcementDescID.Validators[0].(func(int64) error)
-	casegroupresultFields := schema.CaseGroupResult{}.Fields()
-	_ = casegroupresultFields
-	// casegroupresultDescStatus is the schema descriptor for status field.
-	casegroupresultDescStatus := casegroupresultFields[2].Descriptor()
-	// casegroupresult.DefaultStatus holds the default value on creation for the status field.
-	casegroupresult.DefaultStatus = casegroupresultDescStatus.Default.(int16)
-	// casegroupresultDescScore is the schema descriptor for score field.
-	casegroupresultDescScore := casegroupresultFields[5].Descriptor()
-	// casegroupresult.DefaultScore holds the default value on creation for the score field.
-	casegroupresult.DefaultScore = casegroupresultDescScore.Default.(int)
-	// casegroupresultDescID is the schema descriptor for id field.
-	casegroupresultDescID := casegroupresultFields[0].Descriptor()
-	// casegroupresult.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	casegroupresult.IDValidator = casegroupresultDescID.Validators[0].(func(int64) error)
-	caseresultFields := schema.CaseResult{}.Fields()
-	_ = caseresultFields
-	// caseresultDescStatus is the schema descriptor for status field.
-	caseresultDescStatus := caseresultFields[2].Descriptor()
-	// caseresult.DefaultStatus holds the default value on creation for the status field.
-	caseresult.DefaultStatus = caseresultDescStatus.Default.(int16)
-	// caseresultDescStdout is the schema descriptor for stdout field.
-	caseresultDescStdout := caseresultFields[5].Descriptor()
-	// caseresult.DefaultStdout holds the default value on creation for the stdout field.
-	caseresult.DefaultStdout = caseresultDescStdout.Default.(string)
-	// caseresultDescStderr is the schema descriptor for stderr field.
-	caseresultDescStderr := caseresultFields[6].Descriptor()
-	// caseresult.DefaultStderr holds the default value on creation for the stderr field.
-	caseresult.DefaultStderr = caseresultDescStderr.Default.(string)
-	// caseresultDescScore is the schema descriptor for score field.
-	caseresultDescScore := caseresultFields[7].Descriptor()
-	// caseresult.DefaultScore holds the default value on creation for the score field.
-	caseresult.DefaultScore = caseresultDescScore.Default.(int)
-	// caseresultDescID is the schema descriptor for id field.
-	caseresultDescID := caseresultFields[0].Descriptor()
-	// caseresult.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	caseresult.IDValidator = caseresultDescID.Validators[0].(func(int64) error)
-	competitor_listFields := schema.Competitor_List{}.Fields()
-	_ = competitor_listFields
-	// competitor_listDescUserID is the schema descriptor for user_id field.
-	competitor_listDescUserID := competitor_listFields[1].Descriptor()
-	// competitor_list.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
-	competitor_list.UserIDValidator = competitor_listDescUserID.Validators[0].(func(int64) error)
-	// competitor_listDescProblemSetID is the schema descriptor for problem_set_id field.
-	competitor_listDescProblemSetID := competitor_listFields[2].Descriptor()
-	// competitor_list.ProblemSetIDValidator is a validator for the "problem_set_id" field. It is called by the builders before save.
-	competitor_list.ProblemSetIDValidator = competitor_listDescProblemSetID.Validators[0].(func(int64) error)
-	// competitor_listDescTotalScore is the schema descriptor for total_score field.
-	competitor_listDescTotalScore := competitor_listFields[3].Descriptor()
-	// competitor_list.DefaultTotalScore holds the default value on creation for the total_score field.
-	competitor_list.DefaultTotalScore = competitor_listDescTotalScore.Default.(int)
-	// competitor_listDescID is the schema descriptor for id field.
-	competitor_listDescID := competitor_listFields[0].Descriptor()
-	// competitor_list.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	competitor_list.IDValidator = competitor_listDescID.Validators[0].(func(int64) error)
 	judgerecordFields := schema.JudgeRecord{}.Fields()
 	_ = judgerecordFields
 	// judgerecordDescProblemID is the schema descriptor for problem_id field.
@@ -120,22 +78,14 @@ func init() {
 	judgerecordDescUserID := judgerecordFields[2].Descriptor()
 	// judgerecord.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	judgerecord.UserIDValidator = judgerecordDescUserID.Validators[0].(func(int64) error)
-	// judgerecordDescStatus is the schema descriptor for status field.
-	judgerecordDescStatus := judgerecordFields[4].Descriptor()
-	// judgerecord.DefaultStatus holds the default value on creation for the status field.
-	judgerecord.DefaultStatus = judgerecordDescStatus.Default.(int16)
 	// judgerecordDescJudgeStartTime is the schema descriptor for judge_start_time field.
-	judgerecordDescJudgeStartTime := judgerecordFields[5].Descriptor()
+	judgerecordDescJudgeStartTime := judgerecordFields[4].Descriptor()
 	// judgerecord.DefaultJudgeStartTime holds the default value on creation for the judge_start_time field.
 	judgerecord.DefaultJudgeStartTime = judgerecordDescJudgeStartTime.Default.(time.Time)
 	// judgerecordDescCode is the schema descriptor for code field.
-	judgerecordDescCode := judgerecordFields[8].Descriptor()
+	judgerecordDescCode := judgerecordFields[6].Descriptor()
 	// judgerecord.CodeValidator is a validator for the "code" field. It is called by the builders before save.
 	judgerecord.CodeValidator = judgerecordDescCode.Validators[0].(func(string) error)
-	// judgerecordDescLanguage is the schema descriptor for language field.
-	judgerecordDescLanguage := judgerecordFields[9].Descriptor()
-	// judgerecord.DefaultLanguage holds the default value on creation for the language field.
-	judgerecord.DefaultLanguage = judgerecordDescLanguage.Default.(string)
 	// judgerecordDescID is the schema descriptor for id field.
 	judgerecordDescID := judgerecordFields[0].Descriptor()
 	// judgerecord.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -168,44 +118,18 @@ func init() {
 	problemDescDescription := problemFields[3].Descriptor()
 	// problem.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	problem.DescriptionValidator = problemDescDescription.Validators[0].(func(string) error)
-	// problemDescCaseVersion is the schema descriptor for case_version field.
-	problemDescCaseVersion := problemFields[5].Descriptor()
-	// problem.DefaultCaseVersion holds the default value on creation for the case_version field.
-	problem.DefaultCaseVersion = problemDescCaseVersion.Default.(int16)
-	// problemDescTimeLimitMs is the schema descriptor for time_limit_ms field.
-	problemDescTimeLimitMs := problemFields[6].Descriptor()
-	// problem.TimeLimitMsValidator is a validator for the "time_limit_ms" field. It is called by the builders before save.
-	problem.TimeLimitMsValidator = problemDescTimeLimitMs.Validators[0].(func(int) error)
-	// problemDescMemoryLimitKB is the schema descriptor for memory_limit_kb field.
-	problemDescMemoryLimitKB := problemFields[7].Descriptor()
-	// problem.MemoryLimitKBValidator is a validator for the "memory_limit_kb" field. It is called by the builders before save.
-	problem.MemoryLimitKBValidator = problemDescMemoryLimitKB.Validators[0].(func(int) error)
+	// problemDescTimeLimit is the schema descriptor for time_limit field.
+	problemDescTimeLimit := problemFields[5].Descriptor()
+	// problem.TimeLimitValidator is a validator for the "time_limit" field. It is called by the builders before save.
+	problem.TimeLimitValidator = problemDescTimeLimit.Validators[0].(func(int) error)
+	// problemDescMemoryLimit is the schema descriptor for memory_limit field.
+	problemDescMemoryLimit := problemFields[6].Descriptor()
+	// problem.MemoryLimitValidator is a validator for the "memory_limit" field. It is called by the builders before save.
+	problem.MemoryLimitValidator = problemDescMemoryLimit.Validators[0].(func(int) error)
 	// problemDescID is the schema descriptor for id field.
 	problemDescID := problemFields[0].Descriptor()
 	// problem.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	problem.IDValidator = problemDescID.Validators[0].(func(int64) error)
-	problemjudgeconfigFields := schema.ProblemJudgeConfig{}.Fields()
-	_ = problemjudgeconfigFields
-	// problemjudgeconfigDescDescription is the schema descriptor for description field.
-	problemjudgeconfigDescDescription := problemjudgeconfigFields[2].Descriptor()
-	// problemjudgeconfig.DefaultDescription holds the default value on creation for the description field.
-	problemjudgeconfig.DefaultDescription = problemjudgeconfigDescDescription.Default.(string)
-	// problemjudgeconfigDescSubmissionQueueName is the schema descriptor for submission_queue_name field.
-	problemjudgeconfigDescSubmissionQueueName := problemjudgeconfigFields[3].Descriptor()
-	// problemjudgeconfig.DefaultSubmissionQueueName holds the default value on creation for the submission_queue_name field.
-	problemjudgeconfig.DefaultSubmissionQueueName = problemjudgeconfigDescSubmissionQueueName.Default.(string)
-	// problemjudgeconfigDescSelfTestQueueName is the schema descriptor for self_test_queue_name field.
-	problemjudgeconfigDescSelfTestQueueName := problemjudgeconfigFields[4].Descriptor()
-	// problemjudgeconfig.DefaultSelfTestQueueName holds the default value on creation for the self_test_queue_name field.
-	problemjudgeconfig.DefaultSelfTestQueueName = problemjudgeconfigDescSelfTestQueueName.Default.(string)
-	// problemjudgeconfigDescJudgeEngine is the schema descriptor for judge_engine field.
-	problemjudgeconfigDescJudgeEngine := problemjudgeconfigFields[5].Descriptor()
-	// problemjudgeconfig.DefaultJudgeEngine holds the default value on creation for the judge_engine field.
-	problemjudgeconfig.DefaultJudgeEngine = problemjudgeconfigDescJudgeEngine.Default.(string)
-	// problemjudgeconfigDescID is the schema descriptor for id field.
-	problemjudgeconfigDescID := problemjudgeconfigFields[0].Descriptor()
-	// problemjudgeconfig.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	problemjudgeconfig.IDValidator = problemjudgeconfigDescID.Validators[0].(func(int64) error)
 	problemsetFields := schema.ProblemSet{}.Fields()
 	_ = problemsetFields
 	// problemsetDescName is the schema descriptor for name field.
@@ -230,38 +154,42 @@ func init() {
 	problemsetDescID := problemsetFields[0].Descriptor()
 	// problemset.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	problemset.IDValidator = problemsetDescID.Validators[0].(func(int64) error)
-	problemsetmanagerFields := schema.ProblemSetManager{}.Fields()
-	_ = problemsetmanagerFields
-	// problemsetmanagerDescAdminID is the schema descriptor for admin_id field.
-	problemsetmanagerDescAdminID := problemsetmanagerFields[1].Descriptor()
-	// problemsetmanager.AdminIDValidator is a validator for the "admin_id" field. It is called by the builders before save.
-	problemsetmanager.AdminIDValidator = problemsetmanagerDescAdminID.Validators[0].(func(int64) error)
-	// problemsetmanagerDescProblemSetID is the schema descriptor for problem_set_id field.
-	problemsetmanagerDescProblemSetID := problemsetmanagerFields[2].Descriptor()
-	// problemsetmanager.ProblemSetIDValidator is a validator for the "problem_set_id" field. It is called by the builders before save.
-	problemsetmanager.ProblemSetIDValidator = problemsetmanagerDescProblemSetID.Validators[0].(func(int64) error)
-	// problemsetmanagerDescID is the schema descriptor for id field.
-	problemsetmanagerDescID := problemsetmanagerFields[0].Descriptor()
-	// problemsetmanager.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	problemsetmanager.IDValidator = problemsetmanagerDescID.Validators[0].(func(int64) error)
-	problemset_includesFields := schema.ProblemSet_Includes{}.Fields()
-	_ = problemset_includesFields
-	// problemset_includesDescProblemSetID is the schema descriptor for problem_set_id field.
-	problemset_includesDescProblemSetID := problemset_includesFields[1].Descriptor()
-	// problemset_includes.ProblemSetIDValidator is a validator for the "problem_set_id" field. It is called by the builders before save.
-	problemset_includes.ProblemSetIDValidator = problemset_includesDescProblemSetID.Validators[0].(func(int64) error)
-	// problemset_includesDescProblemID is the schema descriptor for problem_id field.
-	problemset_includesDescProblemID := problemset_includesFields[2].Descriptor()
-	// problemset_includes.ProblemIDValidator is a validator for the "problem_id" field. It is called by the builders before save.
-	problemset_includes.ProblemIDValidator = problemset_includesDescProblemID.Validators[0].(func(int64) error)
-	// problemset_includesDescProblemOrder is the schema descriptor for problem_order field.
-	problemset_includesDescProblemOrder := problemset_includesFields[3].Descriptor()
-	// problemset_includes.ProblemOrderValidator is a validator for the "problem_order" field. It is called by the builders before save.
-	problemset_includes.ProblemOrderValidator = problemset_includesDescProblemOrder.Validators[0].(func(int) error)
-	// problemset_includesDescID is the schema descriptor for id field.
-	problemset_includesDescID := problemset_includesFields[0].Descriptor()
-	// problemset_includes.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	problemset_includes.IDValidator = problemset_includesDescID.Validators[0].(func(int64) error)
+	problemset_problemFields := schema.ProblemSet_Problem{}.Fields()
+	_ = problemset_problemFields
+	// problemset_problemDescProblemSetID is the schema descriptor for problem_set_id field.
+	problemset_problemDescProblemSetID := problemset_problemFields[1].Descriptor()
+	// problemset_problem.ProblemSetIDValidator is a validator for the "problem_set_id" field. It is called by the builders before save.
+	problemset_problem.ProblemSetIDValidator = problemset_problemDescProblemSetID.Validators[0].(func(int64) error)
+	// problemset_problemDescProblemID is the schema descriptor for problem_id field.
+	problemset_problemDescProblemID := problemset_problemFields[2].Descriptor()
+	// problemset_problem.ProblemIDValidator is a validator for the "problem_id" field. It is called by the builders before save.
+	problemset_problem.ProblemIDValidator = problemset_problemDescProblemID.Validators[0].(func(int64) error)
+	// problemset_problemDescProblemOrder is the schema descriptor for problem_order field.
+	problemset_problemDescProblemOrder := problemset_problemFields[3].Descriptor()
+	// problemset_problem.ProblemOrderValidator is a validator for the "problem_order" field. It is called by the builders before save.
+	problemset_problem.ProblemOrderValidator = problemset_problemDescProblemOrder.Validators[0].(func(int) error)
+	// problemset_problemDescID is the schema descriptor for id field.
+	problemset_problemDescID := problemset_problemFields[0].Descriptor()
+	// problemset_problem.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	problemset_problem.IDValidator = problemset_problemDescID.Validators[0].(func(int64) error)
+	problemset_userFields := schema.ProblemSet_User{}.Fields()
+	_ = problemset_userFields
+	// problemset_userDescUserID is the schema descriptor for user_id field.
+	problemset_userDescUserID := problemset_userFields[1].Descriptor()
+	// problemset_user.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	problemset_user.UserIDValidator = problemset_userDescUserID.Validators[0].(func(int64) error)
+	// problemset_userDescProblemSetID is the schema descriptor for problem_set_id field.
+	problemset_userDescProblemSetID := problemset_userFields[2].Descriptor()
+	// problemset_user.ProblemSetIDValidator is a validator for the "problem_set_id" field. It is called by the builders before save.
+	problemset_user.ProblemSetIDValidator = problemset_userDescProblemSetID.Validators[0].(func(int64) error)
+	// problemset_userDescTotalScore is the schema descriptor for total_score field.
+	problemset_userDescTotalScore := problemset_userFields[3].Descriptor()
+	// problemset_user.DefaultTotalScore holds the default value on creation for the total_score field.
+	problemset_user.DefaultTotalScore = problemset_userDescTotalScore.Default.(int)
+	// problemset_userDescID is the schema descriptor for id field.
+	problemset_userDescID := problemset_userFields[0].Descriptor()
+	// problemset_user.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	problemset_user.IDValidator = problemset_userDescID.Validators[0].(func(int64) error)
 	submissionrecordFields := schema.SubmissionRecord{}.Fields()
 	_ = submissionrecordFields
 	// submissionrecordDescJudgeID is the schema descriptor for judge_id field.
@@ -273,11 +201,11 @@ func init() {
 	// submissionrecord.ProblemIDValidator is a validator for the "problem_id" field. It is called by the builders before save.
 	submissionrecord.ProblemIDValidator = submissionrecordDescProblemID.Validators[0].(func(int64) error)
 	// submissionrecordDescSubmissionTime is the schema descriptor for submission_time field.
-	submissionrecordDescSubmissionTime := submissionrecordFields[4].Descriptor()
+	submissionrecordDescSubmissionTime := submissionrecordFields[5].Descriptor()
 	// submissionrecord.DefaultSubmissionTime holds the default value on creation for the submission_time field.
 	submissionrecord.DefaultSubmissionTime = submissionrecordDescSubmissionTime.Default.(time.Time)
 	// submissionrecordDescScore is the schema descriptor for score field.
-	submissionrecordDescScore := submissionrecordFields[5].Descriptor()
+	submissionrecordDescScore := submissionrecordFields[6].Descriptor()
 	// submissionrecord.DefaultScore holds the default value on creation for the score field.
 	submissionrecord.DefaultScore = submissionrecordDescScore.Default.(int)
 	// submissionrecordDescID is the schema descriptor for id field.
@@ -298,6 +226,24 @@ func init() {
 	systemlogDescID := systemlogFields[0].Descriptor()
 	// systemlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	systemlog.IDValidator = systemlogDescID.Validators[0].(func(int64) error)
+	testcaseFields := schema.TestCase{}.Fields()
+	_ = testcaseFields
+	// testcaseDescProblemID is the schema descriptor for problem_id field.
+	testcaseDescProblemID := testcaseFields[1].Descriptor()
+	// testcase.ProblemIDValidator is a validator for the "problem_id" field. It is called by the builders before save.
+	testcase.ProblemIDValidator = testcaseDescProblemID.Validators[0].(func(int64) error)
+	// testcaseDescInput is the schema descriptor for input field.
+	testcaseDescInput := testcaseFields[2].Descriptor()
+	// testcase.InputValidator is a validator for the "input" field. It is called by the builders before save.
+	testcase.InputValidator = testcaseDescInput.Validators[0].(func(string) error)
+	// testcaseDescOutput is the schema descriptor for output field.
+	testcaseDescOutput := testcaseFields[3].Descriptor()
+	// testcase.OutputValidator is a validator for the "output" field. It is called by the builders before save.
+	testcase.OutputValidator = testcaseDescOutput.Validators[0].(func(string) error)
+	// testcaseDescID is the schema descriptor for id field.
+	testcaseDescID := testcaseFields[0].Descriptor()
+	// testcase.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	testcase.IDValidator = testcaseDescID.Validators[0].(func(int64) error)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescUsername is the schema descriptor for username field.

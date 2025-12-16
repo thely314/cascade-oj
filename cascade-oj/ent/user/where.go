@@ -353,21 +353,21 @@ func HasAnnouncementsWith(preds ...predicate.Announcement) predicate.User {
 	})
 }
 
-// HasProblemSetManager applies the HasEdge predicate on the "problem_set_manager" edge.
-func HasProblemSetManager() predicate.User {
+// HasAdminProblemSets applies the HasEdge predicate on the "admin_problem_sets" edge.
+func HasAdminProblemSets() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetManagerTable, ProblemSetManagerColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, AdminProblemSetsTable, AdminProblemSetsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasProblemSetManagerWith applies the HasEdge predicate on the "problem_set_manager" edge with a given conditions (other predicates).
-func HasProblemSetManagerWith(preds ...predicate.ProblemSetManager) predicate.User {
+// HasAdminProblemSetsWith applies the HasEdge predicate on the "admin_problem_sets" edge with a given conditions (other predicates).
+func HasAdminProblemSetsWith(preds ...predicate.AdminProblemSet) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newProblemSetManagerStep()
+		step := newAdminProblemSetsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -376,21 +376,21 @@ func HasProblemSetManagerWith(preds ...predicate.ProblemSetManager) predicate.Us
 	})
 }
 
-// HasCompetitorList applies the HasEdge predicate on the "competitor_list" edge.
-func HasCompetitorList() predicate.User {
+// HasProblemSetUsers applies the HasEdge predicate on the "problem_set_users" edge.
+func HasProblemSetUsers() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, CompetitorListTable, CompetitorListColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetUsersTable, ProblemSetUsersColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasCompetitorListWith applies the HasEdge predicate on the "competitor_list" edge with a given conditions (other predicates).
-func HasCompetitorListWith(preds ...predicate.Competitor_List) predicate.User {
+// HasProblemSetUsersWith applies the HasEdge predicate on the "problem_set_users" edge with a given conditions (other predicates).
+func HasProblemSetUsersWith(preds ...predicate.ProblemSet_User) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newCompetitorListStep()
+		step := newProblemSetUsersStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

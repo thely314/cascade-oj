@@ -3,11 +3,11 @@
 package ent
 
 import (
+	"cascade-oj/ent/adminproblemset"
 	"cascade-oj/ent/announcement"
-	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemsetmanager"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/user"
 	"context"
 	"errors"
@@ -107,34 +107,34 @@ func (_c *UserCreate) AddAnnouncements(v ...*Announcement) *UserCreate {
 	return _c.AddAnnouncementIDs(ids...)
 }
 
-// AddProblemSetManagerIDs adds the "problem_set_manager" edge to the ProblemSetManager entity by IDs.
-func (_c *UserCreate) AddProblemSetManagerIDs(ids ...int64) *UserCreate {
-	_c.mutation.AddProblemSetManagerIDs(ids...)
+// AddAdminProblemSetIDs adds the "admin_problem_sets" edge to the AdminProblemSet entity by IDs.
+func (_c *UserCreate) AddAdminProblemSetIDs(ids ...int64) *UserCreate {
+	_c.mutation.AddAdminProblemSetIDs(ids...)
 	return _c
 }
 
-// AddProblemSetManager adds the "problem_set_manager" edges to the ProblemSetManager entity.
-func (_c *UserCreate) AddProblemSetManager(v ...*ProblemSetManager) *UserCreate {
+// AddAdminProblemSets adds the "admin_problem_sets" edges to the AdminProblemSet entity.
+func (_c *UserCreate) AddAdminProblemSets(v ...*AdminProblemSet) *UserCreate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddProblemSetManagerIDs(ids...)
+	return _c.AddAdminProblemSetIDs(ids...)
 }
 
-// AddCompetitorListIDs adds the "competitor_list" edge to the Competitor_List entity by IDs.
-func (_c *UserCreate) AddCompetitorListIDs(ids ...int64) *UserCreate {
-	_c.mutation.AddCompetitorListIDs(ids...)
+// AddProblemSetUserIDs adds the "problem_set_users" edge to the ProblemSet_User entity by IDs.
+func (_c *UserCreate) AddProblemSetUserIDs(ids ...int64) *UserCreate {
+	_c.mutation.AddProblemSetUserIDs(ids...)
 	return _c
 }
 
-// AddCompetitorList adds the "competitor_list" edges to the Competitor_List entity.
-func (_c *UserCreate) AddCompetitorList(v ...*Competitor_List) *UserCreate {
+// AddProblemSetUsers adds the "problem_set_users" edges to the ProblemSet_User entity.
+func (_c *UserCreate) AddProblemSetUsers(v ...*ProblemSet_User) *UserCreate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddCompetitorListIDs(ids...)
+	return _c.AddProblemSetUserIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -313,15 +313,15 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.ProblemSetManagerIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.AdminProblemSetsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ProblemSetManagerTable,
-			Columns: []string{user.ProblemSetManagerColumn},
+			Table:   user.AdminProblemSetsTable,
+			Columns: []string{user.AdminProblemSetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -329,15 +329,15 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.CompetitorListIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ProblemSetUsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.CompetitorListTable,
-			Columns: []string{user.CompetitorListColumn},
+			Table:   user.ProblemSetUsersTable,
+			Columns: []string{user.ProblemSetUsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

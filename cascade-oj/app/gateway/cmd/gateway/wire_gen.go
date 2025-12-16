@@ -27,11 +27,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, client *conf.Client, 
 	}
 	judgeRepo := data.NewJudgeRepo(dataData, logger)
 	judgeUsecase := biz.NewJudgeUsecase(judgeRepo, logger)
-	contestRepo := data.NewContestRepo(dataData, logger)
-	contestUsecase := biz.NewContestUsecase(contestRepo, logger)
-	miscRepo := data.NewMiscRepo(dataData, logger)
-	miscUsecase := biz.NewMiscUsecase(miscRepo, logger)
-	gatewayService := service.NewGatewayService(judgeUsecase, contestUsecase, miscUsecase)
+	gatewayService := service.NewGatewayService(judgeUsecase)
 	grpcServer := server.NewGRPCServer(confServer, gatewayService, logger)
 	httpServer := server.NewHTTPServer(confServer, gatewayService, logger)
 	app := newApp(logger, grpcServer, httpServer)

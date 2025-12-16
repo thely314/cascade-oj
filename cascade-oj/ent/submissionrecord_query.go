@@ -3,14 +3,12 @@
 package ent
 
 import (
-	"cascade-oj/ent/casegroupresult"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset"
 	"cascade-oj/ent/submissionrecord"
 	"context"
-	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -23,14 +21,13 @@ import (
 // SubmissionRecordQuery is the builder for querying SubmissionRecord entities.
 type SubmissionRecordQuery struct {
 	config
-	ctx                  *QueryContext
-	order                []submissionrecord.OrderOption
-	inters               []Interceptor
-	predicates           []predicate.SubmissionRecord
-	withJudge            *JudgeRecordQuery
-	withProblem          *ProblemQuery
-	withProblemSet       *ProblemSetQuery
-	withCaseGroupResults *CaseGroupResultQuery
+	ctx            *QueryContext
+	order          []submissionrecord.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.SubmissionRecord
+	withJudge      *JudgeRecordQuery
+	withProblem    *ProblemQuery
+	withProblemSet *ProblemSetQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -126,28 +123,6 @@ func (_q *SubmissionRecordQuery) QueryProblemSet() *ProblemSetQuery {
 			sqlgraph.From(submissionrecord.Table, submissionrecord.FieldID, selector),
 			sqlgraph.To(problemset.Table, problemset.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, submissionrecord.ProblemSetTable, submissionrecord.ProblemSetColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryCaseGroupResults chains the current query on the "case_group_results" edge.
-func (_q *SubmissionRecordQuery) QueryCaseGroupResults() *CaseGroupResultQuery {
-	query := (&CaseGroupResultClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(submissionrecord.Table, submissionrecord.FieldID, selector),
-			sqlgraph.To(casegroupresult.Table, casegroupresult.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, submissionrecord.CaseGroupResultsTable, submissionrecord.CaseGroupResultsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -342,15 +317,14 @@ func (_q *SubmissionRecordQuery) Clone() *SubmissionRecordQuery {
 		return nil
 	}
 	return &SubmissionRecordQuery{
-		config:               _q.config,
-		ctx:                  _q.ctx.Clone(),
-		order:                append([]submissionrecord.OrderOption{}, _q.order...),
-		inters:               append([]Interceptor{}, _q.inters...),
-		predicates:           append([]predicate.SubmissionRecord{}, _q.predicates...),
-		withJudge:            _q.withJudge.Clone(),
-		withProblem:          _q.withProblem.Clone(),
-		withProblemSet:       _q.withProblemSet.Clone(),
-		withCaseGroupResults: _q.withCaseGroupResults.Clone(),
+		config:         _q.config,
+		ctx:            _q.ctx.Clone(),
+		order:          append([]submissionrecord.OrderOption{}, _q.order...),
+		inters:         append([]Interceptor{}, _q.inters...),
+		predicates:     append([]predicate.SubmissionRecord{}, _q.predicates...),
+		withJudge:      _q.withJudge.Clone(),
+		withProblem:    _q.withProblem.Clone(),
+		withProblemSet: _q.withProblemSet.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -387,17 +361,6 @@ func (_q *SubmissionRecordQuery) WithProblemSet(opts ...func(*ProblemSetQuery)) 
 		opt(query)
 	}
 	_q.withProblemSet = query
-	return _q
-}
-
-// WithCaseGroupResults tells the query-builder to eager-load the nodes that are connected to
-// the "case_group_results" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *SubmissionRecordQuery) WithCaseGroupResults(opts ...func(*CaseGroupResultQuery)) *SubmissionRecordQuery {
-	query := (&CaseGroupResultClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withCaseGroupResults = query
 	return _q
 }
 
@@ -479,11 +442,10 @@ func (_q *SubmissionRecordQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	var (
 		nodes       = []*SubmissionRecord{}
 		_spec       = _q.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [3]bool{
 			_q.withJudge != nil,
 			_q.withProblem != nil,
 			_q.withProblemSet != nil,
-			_q.withCaseGroupResults != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -519,15 +481,6 @@ func (_q *SubmissionRecordQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	if query := _q.withProblemSet; query != nil {
 		if err := _q.loadProblemSet(ctx, query, nodes, nil,
 			func(n *SubmissionRecord, e *ProblemSet) { n.Edges.ProblemSet = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := _q.withCaseGroupResults; query != nil {
-		if err := _q.loadCaseGroupResults(ctx, query, nodes,
-			func(n *SubmissionRecord) { n.Edges.CaseGroupResults = []*CaseGroupResult{} },
-			func(n *SubmissionRecord, e *CaseGroupResult) {
-				n.Edges.CaseGroupResults = append(n.Edges.CaseGroupResults, e)
-			}); err != nil {
 			return nil, err
 		}
 	}
@@ -618,36 +571,6 @@ func (_q *SubmissionRecordQuery) loadProblemSet(ctx context.Context, query *Prob
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
-	}
-	return nil
-}
-func (_q *SubmissionRecordQuery) loadCaseGroupResults(ctx context.Context, query *CaseGroupResultQuery, nodes []*SubmissionRecord, init func(*SubmissionRecord), assign func(*SubmissionRecord, *CaseGroupResult)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*SubmissionRecord)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(casegroupresult.FieldSubmissionID)
-	}
-	query.Where(predicate.CaseGroupResult(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(submissionrecord.CaseGroupResultsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.SubmissionID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "submission_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
 	}
 	return nil
 }

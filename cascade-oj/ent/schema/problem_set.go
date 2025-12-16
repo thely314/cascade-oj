@@ -41,11 +41,11 @@ func (ProblemSet) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("submissions", SubmissionRecord.Type).
 			Annotations(entsql.OnDelete(entsql.SetNull)),
-		edge.To("problem_set_manager", ProblemSetManager.Type).
+		edge.To("admin_problem_sets", AdminProblemSet.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
-		edge.To("problem_set_includes", ProblemSet_Includes.Type).
+		edge.To("problem_set_problems", ProblemSet_Problem.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
-		edge.To("competitor_list", Competitor_List.Type).
+		edge.To("problem_set_users", ProblemSet_User.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

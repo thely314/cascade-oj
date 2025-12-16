@@ -3,11 +3,9 @@ package data
 import (
 	"context"
 	"encoding/json"
-	"time"
 
-	pb "cascade-oj/api/cascade/user/v1"
+	// pb "cascade-oj/api/cascade/user/v1"
 	"cascade-oj/app/gateway/internal/biz"
-	"cascade-oj/pkg/mq"
 
 	"github.com/go-kratos/kratos/v2/log"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -19,7 +17,7 @@ type judgeRepo struct {
 }
 
 type selfTestDTO struct {
-	UUID     string `json:"id,omitempty"`
+	ID       string `json:"id,omitempty"`
 	UserID   int64  `json:"user_id,omitempty"`
 	Code     string `json:"code,omitempty"`
 	Language string `json:"language,omitempty"`
@@ -28,35 +26,35 @@ type selfTestDTO struct {
 }
 
 type submissionDTO struct {
-	UUID       string    `json:"id,omitempty"`
-	UserID     int64     `json:"user_id,omitempty"`
-	ProblemID  int64     `json:"problem_id,omitempty"`
-	Code       string    `json:"code,omitempty"`
-	Language   string    `json:"language,omitempty"`
-	Status     string    `json:"status,omitempty"`
-	CreateTime time.Time `json:"create_time"`
-	Score      int64     `json:"score,omitempty"`
-	TimeCost   int64     `json:"time_cost,omitempty"`
-	MemoryCost int64     `json:"memory_cost,omitempty"`
-	Token      string    `json:"token,omitempty"`
+	ID         string `json:"id,omitempty"`
+	UserID     int64  `json:"user_id,omitempty"`
+	ProblemID  int64  `json:"problem_id,omitempty"`
+	Code       string `json:"code,omitempty"`
+	Language   string `json:"language,omitempty"`
+	Status     string `json:"status,omitempty"`
+	CreateTime int64  `json:"create_time"`
+	Score      int64  `json:"score,omitempty"`
+	TimeCost   int64  `json:"time_cost,omitempty"`
+	MemoryCost int64  `json:"memory_cost,omitempty"`
+	Token      string `json:"token,omitempty"`
 }
 
 // create self test record
 func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTest) (string, error) {
-	// TODO store into mq
+	// store into mq
 	q, err := repo.data.mq_channel.QueueDeclare(
-		mq.GojudgeSelfTestQueueName, // name
-		false,                       // durable
-		false,                       // delete when unused
-		false,                       // exclusive
-		false,                       // no-wait
-		nil,                         // arguments
+		"self_test_queue", // name
+		false,             // durable
+		false,             // delete when unused
+		false,             // exclusive
+		false,             // no-wait
+		nil,               // arguments
 	)
 	if err != nil {
 		return "", err
 	}
 	sDTO := &selfTestDTO{
-		UUID:     selfTest.UUID,
+		ID:       selfTest.ID,
 		UserID:   selfTest.UserID,
 		Code:     selfTest.Code,
 		Language: selfTest.Language,
@@ -82,26 +80,26 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 	if err != nil {
 		return "", err
 	}
-	// judge microservice is responsible for updating cache
-	return selfTest.UUID, nil
+	// update cache if needed
+	return selfTest.ID, nil
 }
 
 // create submission record
 func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Submission) (string, error) {
-	// TODO store into mq
+	// store into mq
 	q, err := repo.data.mq_channel.QueueDeclare(
-		mq.GojudgeSubmissionQueueName, // name
-		false,                         // durable
-		false,                         // delete when unused
-		false,                         // exclusive
-		false,                         // no-wait
-		nil,                           // arguments
+		"submission_queue", // name
+		false,              // durable
+		false,              // delete when unused
+		false,              // exclusive
+		false,              // no-wait
+		nil,                // arguments
 	)
 	if err != nil {
 		return "", err
 	}
 	sDTO := &submissionDTO{
-		UUID:       submission.UUID,
+		ID:         submission.ID,
 		UserID:     submission.UserID,
 		ProblemID:  submission.ProblemID,
 		Code:       submission.Code,
@@ -132,52 +130,8 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 	if err != nil {
 		return "", err
 	}
-	// judge microservice is responsible for updating cache
-	return submission.UUID, nil
-}
-
-func (repo *judgeRepo) GetSubmissions(ctx context.Context, userID int64, problemID int64) ([]*biz.SubmissionMetadata, error) {
-	submissions, err := repo.data.grpcUserClient.GetSubmissions(ctx, &pb.GetSubmissionsRequest{
-		UserId:    userID,
-		ProblemId: problemID,
-	})
-	if err != nil {
-		return nil, err
-	}
-	var res []*biz.SubmissionMetadata
-	for _, v := range submissions.Submissions {
-		res = append(res, &biz.SubmissionMetadata{
-			SubmissionID: v.SubmissionUuid,
-			ProblemID:    v.ProblemId,
-			UserID:       v.UserId,
-			Status:       v.Status,
-			SubmitTime:   v.SubmitTime.AsTime(),
-			Score:        int32(v.Score),
-		})
-	}
-	return res, nil
-}
-
-func (repo *judgeRepo) GetSingleSubmission(ctx context.Context, submissionID string) (*biz.Submission, error) {
-	submission, err := repo.data.grpcUserClient.GetSingleSubmission(ctx, &pb.GetSingleSubmissionRequest{
-		SubmissionId: submissionID,
-	})
-	if err != nil {
-		return nil, err
-	}
-	var res = &biz.Submission{
-		UUID:       submissionID,
-		UserID:     submission.Metadata.UserId,
-		ProblemID:  submission.Metadata.ProblemId,
-		Code:       submission.Code,
-		Language:   submission.Language,
-		Status:     submission.Metadata.Status,
-		CreateTime: submission.Metadata.SubmitTime.AsTime(),
-		Score:      int64(submission.Metadata.Score),
-		TimeCost:   int64(submission.TimeCost),
-		MemoryCost: int64(submission.MemoryCost),
-	}
-	return res, nil
+	// update cache if needed
+	return submission.ID, nil
 }
 
 func NewJudgeRepo(data *Data, logger log.Logger) biz.JudgeRepo {

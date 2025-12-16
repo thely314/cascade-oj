@@ -23,20 +23,16 @@ type JudgeRecord struct {
 	ProblemID int64 `json:"problem_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID int64 `json:"user_id,omitempty"`
-	// identifier for the submission in mq
-	UUID string `json:"uuid,omitempty"`
 	// Status holds the value of the "status" field.
-	Status int16 `json:"status,omitempty"`
+	Status judgerecord.Status `json:"status,omitempty"`
 	// JudgeStartTime holds the value of the "judge_start_time" field.
 	JudgeStartTime time.Time `json:"judge_start_time,omitempty"`
-	// TimeCostMs holds the value of the "time_cost_ms" field.
-	TimeCostMs uint64 `json:"time_cost_ms,omitempty"`
-	// MemoryCostKB holds the value of the "memory_cost_kb" field.
-	MemoryCostKB uint64 `json:"memory_cost_kb,omitempty"`
+	// Result holds the value of the "result" field.
+	Result string `json:"result,omitempty"`
 	// Code holds the value of the "code" field.
 	Code string `json:"code,omitempty"`
-	// programming language, lower case spelling
-	Language string `json:"language,omitempty"`
+	// Language holds the value of the "language" field.
+	Language judgerecord.Language `json:"language,omitempty"`
 	// JudgeType holds the value of the "judge_type" field.
 	JudgeType judgerecord.JudgeType `json:"judge_type,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -94,9 +90,9 @@ func (*JudgeRecord) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case judgerecord.FieldID, judgerecord.FieldProblemID, judgerecord.FieldUserID, judgerecord.FieldStatus, judgerecord.FieldTimeCostMs, judgerecord.FieldMemoryCostKB:
+		case judgerecord.FieldID, judgerecord.FieldProblemID, judgerecord.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case judgerecord.FieldUUID, judgerecord.FieldCode, judgerecord.FieldLanguage, judgerecord.FieldJudgeType:
+		case judgerecord.FieldStatus, judgerecord.FieldResult, judgerecord.FieldCode, judgerecord.FieldLanguage, judgerecord.FieldJudgeType:
 			values[i] = new(sql.NullString)
 		case judgerecord.FieldJudgeStartTime:
 			values[i] = new(sql.NullTime)
@@ -133,17 +129,11 @@ func (_m *JudgeRecord) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UserID = value.Int64
 			}
-		case judgerecord.FieldUUID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field uuid", values[i])
-			} else if value.Valid {
-				_m.UUID = value.String
-			}
 		case judgerecord.FieldStatus:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				_m.Status = int16(value.Int64)
+				_m.Status = judgerecord.Status(value.String)
 			}
 		case judgerecord.FieldJudgeStartTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -151,17 +141,11 @@ func (_m *JudgeRecord) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.JudgeStartTime = value.Time
 			}
-		case judgerecord.FieldTimeCostMs:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field time_cost_ms", values[i])
+		case judgerecord.FieldResult:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field result", values[i])
 			} else if value.Valid {
-				_m.TimeCostMs = uint64(value.Int64)
-			}
-		case judgerecord.FieldMemoryCostKB:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field memory_cost_kb", values[i])
-			} else if value.Valid {
-				_m.MemoryCostKB = uint64(value.Int64)
+				_m.Result = value.String
 			}
 		case judgerecord.FieldCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -173,7 +157,7 @@ func (_m *JudgeRecord) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field language", values[i])
 			} else if value.Valid {
-				_m.Language = value.String
+				_m.Language = judgerecord.Language(value.String)
 			}
 		case judgerecord.FieldJudgeType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -238,26 +222,20 @@ func (_m *JudgeRecord) String() string {
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
 	builder.WriteString(", ")
-	builder.WriteString("uuid=")
-	builder.WriteString(_m.UUID)
-	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status))
 	builder.WriteString(", ")
 	builder.WriteString("judge_start_time=")
 	builder.WriteString(_m.JudgeStartTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("time_cost_ms=")
-	builder.WriteString(fmt.Sprintf("%v", _m.TimeCostMs))
-	builder.WriteString(", ")
-	builder.WriteString("memory_cost_kb=")
-	builder.WriteString(fmt.Sprintf("%v", _m.MemoryCostKB))
+	builder.WriteString("result=")
+	builder.WriteString(_m.Result)
 	builder.WriteString(", ")
 	builder.WriteString("code=")
 	builder.WriteString(_m.Code)
 	builder.WriteString(", ")
 	builder.WriteString("language=")
-	builder.WriteString(_m.Language)
+	builder.WriteString(fmt.Sprintf("%v", _m.Language))
 	builder.WriteString(", ")
 	builder.WriteString("judge_type=")
 	builder.WriteString(fmt.Sprintf("%v", _m.JudgeType))

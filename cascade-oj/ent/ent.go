@@ -3,18 +3,16 @@
 package ent
 
 import (
+	"cascade-oj/ent/adminproblemset"
 	"cascade-oj/ent/announcement"
-	"cascade-oj/ent/casegroupresult"
-	"cascade-oj/ent/caseresult"
-	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemjudgeconfig"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemset_includes"
-	"cascade-oj/ent/problemsetmanager"
+	"cascade-oj/ent/problemset_problem"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/systemlog"
+	"cascade-oj/ent/testcase"
 	"cascade-oj/ent/user"
 	"context"
 	"errors"
@@ -85,19 +83,17 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			announcement.Table:        announcement.ValidColumn,
-			casegroupresult.Table:     casegroupresult.ValidColumn,
-			caseresult.Table:          caseresult.ValidColumn,
-			competitor_list.Table:     competitor_list.ValidColumn,
-			judgerecord.Table:         judgerecord.ValidColumn,
-			problem.Table:             problem.ValidColumn,
-			problemjudgeconfig.Table:  problemjudgeconfig.ValidColumn,
-			problemset.Table:          problemset.ValidColumn,
-			problemsetmanager.Table:   problemsetmanager.ValidColumn,
-			problemset_includes.Table: problemset_includes.ValidColumn,
-			submissionrecord.Table:    submissionrecord.ValidColumn,
-			systemlog.Table:           systemlog.ValidColumn,
-			user.Table:                user.ValidColumn,
+			adminproblemset.Table:    adminproblemset.ValidColumn,
+			announcement.Table:       announcement.ValidColumn,
+			judgerecord.Table:        judgerecord.ValidColumn,
+			problem.Table:            problem.ValidColumn,
+			problemset.Table:         problemset.ValidColumn,
+			problemset_problem.Table: problemset_problem.ValidColumn,
+			problemset_user.Table:    problemset_user.ValidColumn,
+			submissionrecord.Table:   submissionrecord.ValidColumn,
+			systemlog.Table:          systemlog.ValidColumn,
+			testcase.Table:           testcase.ValidColumn,
+			user.Table:               user.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

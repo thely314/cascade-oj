@@ -17,18 +17,18 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewJudgeRepo, NewContestRepo, NewMiscRepo, NewGrpcUserClient)
+var ProviderSet = wire.NewSet(NewData, NewJudgeRepo, NewGrpcUserClient)
 
 // Data
 type Data struct {
+	// TODO wrapped database client
 	cache          *Cache
 	mq_channel     *amqp.Channel
 	grpcUserClient pb.UserClient
 }
 
-// TODO Cache store maps in memory
+// Cache store maps
 type Cache struct {
-	// TODO cache fields
 	token string
 }
 

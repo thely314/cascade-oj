@@ -4,7 +4,6 @@ package ent
 
 import (
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemjudgeconfig"
 	"cascade-oj/ent/user"
 	"fmt"
 	"strings"
@@ -24,35 +23,32 @@ type Problem struct {
 	Title string `json:"title,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
-	// JudgeConfigID holds the value of the "judge_config_id" field.
-	JudgeConfigID int64 `json:"judge_config_id,omitempty"`
-	// CaseVersion holds the value of the "case_version" field.
-	CaseVersion int16 `json:"case_version,omitempty"`
-	// milliseconds
-	TimeLimitMs int `json:"time_limit_ms,omitempty"`
-	// kilobytes
-	MemoryLimitKB int `json:"memory_limit_kb,omitempty"`
+	// ProblemType holds the value of the "problem_type" field.
+	ProblemType problem.ProblemType `json:"problem_type,omitempty"`
+	// TimeLimit holds the value of the "time_limit" field.
+	TimeLimit int `json:"time_limit,omitempty"`
+	// MemoryLimit holds the value of the "memory_limit" field.
+	MemoryLimit int `json:"memory_limit,omitempty"`
 	// UseStatus holds the value of the "use_status" field.
 	UseStatus problem.UseStatus `json:"use_status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProblemQuery when eager-loading is set.
-	Edges                     ProblemEdges `json:"edges"`
-	case_group_result_problem *int64
-	selectValues              sql.SelectValues
+	Edges        ProblemEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // ProblemEdges holds the relations/edges for other nodes in the graph.
 type ProblemEdges struct {
 	// Creator holds the value of the creator edge.
 	Creator *User `json:"creator,omitempty"`
-	// JudgeConfig holds the value of the judge_config edge.
-	JudgeConfig *ProblemJudgeConfig `json:"judge_config,omitempty"`
+	// TestCases holds the value of the test_cases edge.
+	TestCases []*TestCase `json:"test_cases,omitempty"`
 	// JudgeRecords holds the value of the judge_records edge.
 	JudgeRecords []*JudgeRecord `json:"judge_records,omitempty"`
 	// Submissions holds the value of the submissions edge.
 	Submissions []*SubmissionRecord `json:"submissions,omitempty"`
-	// ProblemSetIncludes holds the value of the problem_set_includes edge.
-	ProblemSetIncludes []*ProblemSet_Includes `json:"problem_set_includes,omitempty"`
+	// ProblemSetProblems holds the value of the problem_set_problems edge.
+	ProblemSetProblems []*ProblemSet_Problem `json:"problem_set_problems,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [5]bool
@@ -69,15 +65,13 @@ func (e ProblemEdges) CreatorOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "creator"}
 }
 
-// JudgeConfigOrErr returns the JudgeConfig value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ProblemEdges) JudgeConfigOrErr() (*ProblemJudgeConfig, error) {
-	if e.JudgeConfig != nil {
-		return e.JudgeConfig, nil
-	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: problemjudgeconfig.Label}
+// TestCasesOrErr returns the TestCases value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProblemEdges) TestCasesOrErr() ([]*TestCase, error) {
+	if e.loadedTypes[1] {
+		return e.TestCases, nil
 	}
-	return nil, &NotLoadedError{edge: "judge_config"}
+	return nil, &NotLoadedError{edge: "test_cases"}
 }
 
 // JudgeRecordsOrErr returns the JudgeRecords value or an error if the edge
@@ -98,13 +92,13 @@ func (e ProblemEdges) SubmissionsOrErr() ([]*SubmissionRecord, error) {
 	return nil, &NotLoadedError{edge: "submissions"}
 }
 
-// ProblemSetIncludesOrErr returns the ProblemSetIncludes value or an error if the edge
+// ProblemSetProblemsOrErr returns the ProblemSetProblems value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProblemEdges) ProblemSetIncludesOrErr() ([]*ProblemSet_Includes, error) {
+func (e ProblemEdges) ProblemSetProblemsOrErr() ([]*ProblemSet_Problem, error) {
 	if e.loadedTypes[4] {
-		return e.ProblemSetIncludes, nil
+		return e.ProblemSetProblems, nil
 	}
-	return nil, &NotLoadedError{edge: "problem_set_includes"}
+	return nil, &NotLoadedError{edge: "problem_set_problems"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -112,12 +106,10 @@ func (*Problem) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case problem.FieldID, problem.FieldCreatorID, problem.FieldJudgeConfigID, problem.FieldCaseVersion, problem.FieldTimeLimitMs, problem.FieldMemoryLimitKB:
+		case problem.FieldID, problem.FieldCreatorID, problem.FieldTimeLimit, problem.FieldMemoryLimit:
 			values[i] = new(sql.NullInt64)
-		case problem.FieldTitle, problem.FieldDescription, problem.FieldUseStatus:
+		case problem.FieldTitle, problem.FieldDescription, problem.FieldProblemType, problem.FieldUseStatus:
 			values[i] = new(sql.NullString)
-		case problem.ForeignKeys[0]: // case_group_result_problem
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -157,42 +149,29 @@ func (_m *Problem) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Description = value.String
 			}
-		case problem.FieldJudgeConfigID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field judge_config_id", values[i])
+		case problem.FieldProblemType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field problem_type", values[i])
 			} else if value.Valid {
-				_m.JudgeConfigID = value.Int64
+				_m.ProblemType = problem.ProblemType(value.String)
 			}
-		case problem.FieldCaseVersion:
+		case problem.FieldTimeLimit:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field case_version", values[i])
+				return fmt.Errorf("unexpected type %T for field time_limit", values[i])
 			} else if value.Valid {
-				_m.CaseVersion = int16(value.Int64)
+				_m.TimeLimit = int(value.Int64)
 			}
-		case problem.FieldTimeLimitMs:
+		case problem.FieldMemoryLimit:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field time_limit_ms", values[i])
+				return fmt.Errorf("unexpected type %T for field memory_limit", values[i])
 			} else if value.Valid {
-				_m.TimeLimitMs = int(value.Int64)
-			}
-		case problem.FieldMemoryLimitKB:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field memory_limit_kb", values[i])
-			} else if value.Valid {
-				_m.MemoryLimitKB = int(value.Int64)
+				_m.MemoryLimit = int(value.Int64)
 			}
 		case problem.FieldUseStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field use_status", values[i])
 			} else if value.Valid {
 				_m.UseStatus = problem.UseStatus(value.String)
-			}
-		case problem.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field case_group_result_problem", value)
-			} else if value.Valid {
-				_m.case_group_result_problem = new(int64)
-				*_m.case_group_result_problem = int64(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -212,9 +191,9 @@ func (_m *Problem) QueryCreator() *UserQuery {
 	return NewProblemClient(_m.config).QueryCreator(_m)
 }
 
-// QueryJudgeConfig queries the "judge_config" edge of the Problem entity.
-func (_m *Problem) QueryJudgeConfig() *ProblemJudgeConfigQuery {
-	return NewProblemClient(_m.config).QueryJudgeConfig(_m)
+// QueryTestCases queries the "test_cases" edge of the Problem entity.
+func (_m *Problem) QueryTestCases() *TestCaseQuery {
+	return NewProblemClient(_m.config).QueryTestCases(_m)
 }
 
 // QueryJudgeRecords queries the "judge_records" edge of the Problem entity.
@@ -227,9 +206,9 @@ func (_m *Problem) QuerySubmissions() *SubmissionRecordQuery {
 	return NewProblemClient(_m.config).QuerySubmissions(_m)
 }
 
-// QueryProblemSetIncludes queries the "problem_set_includes" edge of the Problem entity.
-func (_m *Problem) QueryProblemSetIncludes() *ProblemSetIncludesQuery {
-	return NewProblemClient(_m.config).QueryProblemSetIncludes(_m)
+// QueryProblemSetProblems queries the "problem_set_problems" edge of the Problem entity.
+func (_m *Problem) QueryProblemSetProblems() *ProblemSetProblemQuery {
+	return NewProblemClient(_m.config).QueryProblemSetProblems(_m)
 }
 
 // Update returns a builder for updating this Problem.
@@ -264,17 +243,14 @@ func (_m *Problem) String() string {
 	builder.WriteString("description=")
 	builder.WriteString(_m.Description)
 	builder.WriteString(", ")
-	builder.WriteString("judge_config_id=")
-	builder.WriteString(fmt.Sprintf("%v", _m.JudgeConfigID))
+	builder.WriteString("problem_type=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ProblemType))
 	builder.WriteString(", ")
-	builder.WriteString("case_version=")
-	builder.WriteString(fmt.Sprintf("%v", _m.CaseVersion))
+	builder.WriteString("time_limit=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TimeLimit))
 	builder.WriteString(", ")
-	builder.WriteString("time_limit_ms=")
-	builder.WriteString(fmt.Sprintf("%v", _m.TimeLimitMs))
-	builder.WriteString(", ")
-	builder.WriteString("memory_limit_kb=")
-	builder.WriteString(fmt.Sprintf("%v", _m.MemoryLimitKB))
+	builder.WriteString("memory_limit=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MemoryLimit))
 	builder.WriteString(", ")
 	builder.WriteString("use_status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.UseStatus))

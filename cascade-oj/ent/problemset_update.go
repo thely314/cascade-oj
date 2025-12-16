@@ -3,11 +3,11 @@
 package ent
 
 import (
-	"cascade-oj/ent/competitor_list"
+	"cascade-oj/ent/adminproblemset"
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemset_includes"
-	"cascade-oj/ent/problemsetmanager"
+	"cascade-oj/ent/problemset_problem"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/submissionrecord"
 	"context"
 	"errors"
@@ -123,49 +123,49 @@ func (_u *ProblemSetUpdate) AddSubmissions(v ...*SubmissionRecord) *ProblemSetUp
 	return _u.AddSubmissionIDs(ids...)
 }
 
-// AddProblemSetManagerIDs adds the "problem_set_manager" edge to the ProblemSetManager entity by IDs.
-func (_u *ProblemSetUpdate) AddProblemSetManagerIDs(ids ...int64) *ProblemSetUpdate {
-	_u.mutation.AddProblemSetManagerIDs(ids...)
+// AddAdminProblemSetIDs adds the "admin_problem_sets" edge to the AdminProblemSet entity by IDs.
+func (_u *ProblemSetUpdate) AddAdminProblemSetIDs(ids ...int64) *ProblemSetUpdate {
+	_u.mutation.AddAdminProblemSetIDs(ids...)
 	return _u
 }
 
-// AddProblemSetManager adds the "problem_set_manager" edges to the ProblemSetManager entity.
-func (_u *ProblemSetUpdate) AddProblemSetManager(v ...*ProblemSetManager) *ProblemSetUpdate {
+// AddAdminProblemSets adds the "admin_problem_sets" edges to the AdminProblemSet entity.
+func (_u *ProblemSetUpdate) AddAdminProblemSets(v ...*AdminProblemSet) *ProblemSetUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddProblemSetManagerIDs(ids...)
+	return _u.AddAdminProblemSetIDs(ids...)
 }
 
-// AddProblemSetIncludeIDs adds the "problem_set_includes" edge to the ProblemSet_Includes entity by IDs.
-func (_u *ProblemSetUpdate) AddProblemSetIncludeIDs(ids ...int64) *ProblemSetUpdate {
-	_u.mutation.AddProblemSetIncludeIDs(ids...)
+// AddProblemSetProblemIDs adds the "problem_set_problems" edge to the ProblemSet_Problem entity by IDs.
+func (_u *ProblemSetUpdate) AddProblemSetProblemIDs(ids ...int64) *ProblemSetUpdate {
+	_u.mutation.AddProblemSetProblemIDs(ids...)
 	return _u
 }
 
-// AddProblemSetIncludes adds the "problem_set_includes" edges to the ProblemSet_Includes entity.
-func (_u *ProblemSetUpdate) AddProblemSetIncludes(v ...*ProblemSet_Includes) *ProblemSetUpdate {
+// AddProblemSetProblems adds the "problem_set_problems" edges to the ProblemSet_Problem entity.
+func (_u *ProblemSetUpdate) AddProblemSetProblems(v ...*ProblemSet_Problem) *ProblemSetUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddProblemSetIncludeIDs(ids...)
+	return _u.AddProblemSetProblemIDs(ids...)
 }
 
-// AddCompetitorListIDs adds the "competitor_list" edge to the Competitor_List entity by IDs.
-func (_u *ProblemSetUpdate) AddCompetitorListIDs(ids ...int64) *ProblemSetUpdate {
-	_u.mutation.AddCompetitorListIDs(ids...)
+// AddProblemSetUserIDs adds the "problem_set_users" edge to the ProblemSet_User entity by IDs.
+func (_u *ProblemSetUpdate) AddProblemSetUserIDs(ids ...int64) *ProblemSetUpdate {
+	_u.mutation.AddProblemSetUserIDs(ids...)
 	return _u
 }
 
-// AddCompetitorList adds the "competitor_list" edges to the Competitor_List entity.
-func (_u *ProblemSetUpdate) AddCompetitorList(v ...*Competitor_List) *ProblemSetUpdate {
+// AddProblemSetUsers adds the "problem_set_users" edges to the ProblemSet_User entity.
+func (_u *ProblemSetUpdate) AddProblemSetUsers(v ...*ProblemSet_User) *ProblemSetUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddCompetitorListIDs(ids...)
+	return _u.AddProblemSetUserIDs(ids...)
 }
 
 // Mutation returns the ProblemSetMutation object of the builder.
@@ -194,67 +194,67 @@ func (_u *ProblemSetUpdate) RemoveSubmissions(v ...*SubmissionRecord) *ProblemSe
 	return _u.RemoveSubmissionIDs(ids...)
 }
 
-// ClearProblemSetManager clears all "problem_set_manager" edges to the ProblemSetManager entity.
-func (_u *ProblemSetUpdate) ClearProblemSetManager() *ProblemSetUpdate {
-	_u.mutation.ClearProblemSetManager()
+// ClearAdminProblemSets clears all "admin_problem_sets" edges to the AdminProblemSet entity.
+func (_u *ProblemSetUpdate) ClearAdminProblemSets() *ProblemSetUpdate {
+	_u.mutation.ClearAdminProblemSets()
 	return _u
 }
 
-// RemoveProblemSetManagerIDs removes the "problem_set_manager" edge to ProblemSetManager entities by IDs.
-func (_u *ProblemSetUpdate) RemoveProblemSetManagerIDs(ids ...int64) *ProblemSetUpdate {
-	_u.mutation.RemoveProblemSetManagerIDs(ids...)
+// RemoveAdminProblemSetIDs removes the "admin_problem_sets" edge to AdminProblemSet entities by IDs.
+func (_u *ProblemSetUpdate) RemoveAdminProblemSetIDs(ids ...int64) *ProblemSetUpdate {
+	_u.mutation.RemoveAdminProblemSetIDs(ids...)
 	return _u
 }
 
-// RemoveProblemSetManager removes "problem_set_manager" edges to ProblemSetManager entities.
-func (_u *ProblemSetUpdate) RemoveProblemSetManager(v ...*ProblemSetManager) *ProblemSetUpdate {
+// RemoveAdminProblemSets removes "admin_problem_sets" edges to AdminProblemSet entities.
+func (_u *ProblemSetUpdate) RemoveAdminProblemSets(v ...*AdminProblemSet) *ProblemSetUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveProblemSetManagerIDs(ids...)
+	return _u.RemoveAdminProblemSetIDs(ids...)
 }
 
-// ClearProblemSetIncludes clears all "problem_set_includes" edges to the ProblemSet_Includes entity.
-func (_u *ProblemSetUpdate) ClearProblemSetIncludes() *ProblemSetUpdate {
-	_u.mutation.ClearProblemSetIncludes()
+// ClearProblemSetProblems clears all "problem_set_problems" edges to the ProblemSet_Problem entity.
+func (_u *ProblemSetUpdate) ClearProblemSetProblems() *ProblemSetUpdate {
+	_u.mutation.ClearProblemSetProblems()
 	return _u
 }
 
-// RemoveProblemSetIncludeIDs removes the "problem_set_includes" edge to ProblemSet_Includes entities by IDs.
-func (_u *ProblemSetUpdate) RemoveProblemSetIncludeIDs(ids ...int64) *ProblemSetUpdate {
-	_u.mutation.RemoveProblemSetIncludeIDs(ids...)
+// RemoveProblemSetProblemIDs removes the "problem_set_problems" edge to ProblemSet_Problem entities by IDs.
+func (_u *ProblemSetUpdate) RemoveProblemSetProblemIDs(ids ...int64) *ProblemSetUpdate {
+	_u.mutation.RemoveProblemSetProblemIDs(ids...)
 	return _u
 }
 
-// RemoveProblemSetIncludes removes "problem_set_includes" edges to ProblemSet_Includes entities.
-func (_u *ProblemSetUpdate) RemoveProblemSetIncludes(v ...*ProblemSet_Includes) *ProblemSetUpdate {
+// RemoveProblemSetProblems removes "problem_set_problems" edges to ProblemSet_Problem entities.
+func (_u *ProblemSetUpdate) RemoveProblemSetProblems(v ...*ProblemSet_Problem) *ProblemSetUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveProblemSetIncludeIDs(ids...)
+	return _u.RemoveProblemSetProblemIDs(ids...)
 }
 
-// ClearCompetitorList clears all "competitor_list" edges to the Competitor_List entity.
-func (_u *ProblemSetUpdate) ClearCompetitorList() *ProblemSetUpdate {
-	_u.mutation.ClearCompetitorList()
+// ClearProblemSetUsers clears all "problem_set_users" edges to the ProblemSet_User entity.
+func (_u *ProblemSetUpdate) ClearProblemSetUsers() *ProblemSetUpdate {
+	_u.mutation.ClearProblemSetUsers()
 	return _u
 }
 
-// RemoveCompetitorListIDs removes the "competitor_list" edge to Competitor_List entities by IDs.
-func (_u *ProblemSetUpdate) RemoveCompetitorListIDs(ids ...int64) *ProblemSetUpdate {
-	_u.mutation.RemoveCompetitorListIDs(ids...)
+// RemoveProblemSetUserIDs removes the "problem_set_users" edge to ProblemSet_User entities by IDs.
+func (_u *ProblemSetUpdate) RemoveProblemSetUserIDs(ids ...int64) *ProblemSetUpdate {
+	_u.mutation.RemoveProblemSetUserIDs(ids...)
 	return _u
 }
 
-// RemoveCompetitorList removes "competitor_list" edges to Competitor_List entities.
-func (_u *ProblemSetUpdate) RemoveCompetitorList(v ...*Competitor_List) *ProblemSetUpdate {
+// RemoveProblemSetUsers removes "problem_set_users" edges to ProblemSet_User entities.
+func (_u *ProblemSetUpdate) RemoveProblemSetUsers(v ...*ProblemSet_User) *ProblemSetUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveCompetitorListIDs(ids...)
+	return _u.RemoveProblemSetUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -374,28 +374,28 @@ func (_u *ProblemSetUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ProblemSetManagerCleared() {
+	if _u.mutation.AdminProblemSetsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.ProblemSetManagerTable,
-			Columns: []string{problemset.ProblemSetManagerColumn},
+			Table:   problemset.AdminProblemSetsTable,
+			Columns: []string{problemset.AdminProblemSetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedProblemSetManagerIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetManagerCleared() {
+	if nodes := _u.mutation.RemovedAdminProblemSetsIDs(); len(nodes) > 0 && !_u.mutation.AdminProblemSetsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.ProblemSetManagerTable,
-			Columns: []string{problemset.ProblemSetManagerColumn},
+			Table:   problemset.AdminProblemSetsTable,
+			Columns: []string{problemset.AdminProblemSetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -403,60 +403,15 @@ func (_u *ProblemSetUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ProblemSetManagerIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AdminProblemSetsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.ProblemSetManagerTable,
-			Columns: []string{problemset.ProblemSetManagerColumn},
+			Table:   problemset.AdminProblemSetsTable,
+			Columns: []string{problemset.AdminProblemSetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.ProblemSetIncludesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problemset.ProblemSetIncludesTable,
-			Columns: []string{problemset.ProblemSetIncludesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedProblemSetIncludesIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetIncludesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problemset.ProblemSetIncludesTable,
-			Columns: []string{problemset.ProblemSetIncludesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.ProblemSetIncludesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problemset.ProblemSetIncludesTable,
-			Columns: []string{problemset.ProblemSetIncludesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -464,28 +419,28 @@ func (_u *ProblemSetUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.CompetitorListCleared() {
+	if _u.mutation.ProblemSetProblemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.CompetitorListTable,
-			Columns: []string{problemset.CompetitorListColumn},
+			Table:   problemset.ProblemSetProblemsTable,
+			Columns: []string{problemset.ProblemSetProblemsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedCompetitorListIDs(); len(nodes) > 0 && !_u.mutation.CompetitorListCleared() {
+	if nodes := _u.mutation.RemovedProblemSetProblemsIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetProblemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.CompetitorListTable,
-			Columns: []string{problemset.CompetitorListColumn},
+			Table:   problemset.ProblemSetProblemsTable,
+			Columns: []string{problemset.ProblemSetProblemsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -493,15 +448,60 @@ func (_u *ProblemSetUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.CompetitorListIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProblemSetProblemsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.CompetitorListTable,
-			Columns: []string{problemset.CompetitorListColumn},
+			Table:   problemset.ProblemSetProblemsTable,
+			Columns: []string{problemset.ProblemSetProblemsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ProblemSetUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problemset.ProblemSetUsersTable,
+			Columns: []string{problemset.ProblemSetUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedProblemSetUsersIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problemset.ProblemSetUsersTable,
+			Columns: []string{problemset.ProblemSetUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ProblemSetUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problemset.ProblemSetUsersTable,
+			Columns: []string{problemset.ProblemSetUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -620,49 +620,49 @@ func (_u *ProblemSetUpdateOne) AddSubmissions(v ...*SubmissionRecord) *ProblemSe
 	return _u.AddSubmissionIDs(ids...)
 }
 
-// AddProblemSetManagerIDs adds the "problem_set_manager" edge to the ProblemSetManager entity by IDs.
-func (_u *ProblemSetUpdateOne) AddProblemSetManagerIDs(ids ...int64) *ProblemSetUpdateOne {
-	_u.mutation.AddProblemSetManagerIDs(ids...)
+// AddAdminProblemSetIDs adds the "admin_problem_sets" edge to the AdminProblemSet entity by IDs.
+func (_u *ProblemSetUpdateOne) AddAdminProblemSetIDs(ids ...int64) *ProblemSetUpdateOne {
+	_u.mutation.AddAdminProblemSetIDs(ids...)
 	return _u
 }
 
-// AddProblemSetManager adds the "problem_set_manager" edges to the ProblemSetManager entity.
-func (_u *ProblemSetUpdateOne) AddProblemSetManager(v ...*ProblemSetManager) *ProblemSetUpdateOne {
+// AddAdminProblemSets adds the "admin_problem_sets" edges to the AdminProblemSet entity.
+func (_u *ProblemSetUpdateOne) AddAdminProblemSets(v ...*AdminProblemSet) *ProblemSetUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddProblemSetManagerIDs(ids...)
+	return _u.AddAdminProblemSetIDs(ids...)
 }
 
-// AddProblemSetIncludeIDs adds the "problem_set_includes" edge to the ProblemSet_Includes entity by IDs.
-func (_u *ProblemSetUpdateOne) AddProblemSetIncludeIDs(ids ...int64) *ProblemSetUpdateOne {
-	_u.mutation.AddProblemSetIncludeIDs(ids...)
+// AddProblemSetProblemIDs adds the "problem_set_problems" edge to the ProblemSet_Problem entity by IDs.
+func (_u *ProblemSetUpdateOne) AddProblemSetProblemIDs(ids ...int64) *ProblemSetUpdateOne {
+	_u.mutation.AddProblemSetProblemIDs(ids...)
 	return _u
 }
 
-// AddProblemSetIncludes adds the "problem_set_includes" edges to the ProblemSet_Includes entity.
-func (_u *ProblemSetUpdateOne) AddProblemSetIncludes(v ...*ProblemSet_Includes) *ProblemSetUpdateOne {
+// AddProblemSetProblems adds the "problem_set_problems" edges to the ProblemSet_Problem entity.
+func (_u *ProblemSetUpdateOne) AddProblemSetProblems(v ...*ProblemSet_Problem) *ProblemSetUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddProblemSetIncludeIDs(ids...)
+	return _u.AddProblemSetProblemIDs(ids...)
 }
 
-// AddCompetitorListIDs adds the "competitor_list" edge to the Competitor_List entity by IDs.
-func (_u *ProblemSetUpdateOne) AddCompetitorListIDs(ids ...int64) *ProblemSetUpdateOne {
-	_u.mutation.AddCompetitorListIDs(ids...)
+// AddProblemSetUserIDs adds the "problem_set_users" edge to the ProblemSet_User entity by IDs.
+func (_u *ProblemSetUpdateOne) AddProblemSetUserIDs(ids ...int64) *ProblemSetUpdateOne {
+	_u.mutation.AddProblemSetUserIDs(ids...)
 	return _u
 }
 
-// AddCompetitorList adds the "competitor_list" edges to the Competitor_List entity.
-func (_u *ProblemSetUpdateOne) AddCompetitorList(v ...*Competitor_List) *ProblemSetUpdateOne {
+// AddProblemSetUsers adds the "problem_set_users" edges to the ProblemSet_User entity.
+func (_u *ProblemSetUpdateOne) AddProblemSetUsers(v ...*ProblemSet_User) *ProblemSetUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddCompetitorListIDs(ids...)
+	return _u.AddProblemSetUserIDs(ids...)
 }
 
 // Mutation returns the ProblemSetMutation object of the builder.
@@ -691,67 +691,67 @@ func (_u *ProblemSetUpdateOne) RemoveSubmissions(v ...*SubmissionRecord) *Proble
 	return _u.RemoveSubmissionIDs(ids...)
 }
 
-// ClearProblemSetManager clears all "problem_set_manager" edges to the ProblemSetManager entity.
-func (_u *ProblemSetUpdateOne) ClearProblemSetManager() *ProblemSetUpdateOne {
-	_u.mutation.ClearProblemSetManager()
+// ClearAdminProblemSets clears all "admin_problem_sets" edges to the AdminProblemSet entity.
+func (_u *ProblemSetUpdateOne) ClearAdminProblemSets() *ProblemSetUpdateOne {
+	_u.mutation.ClearAdminProblemSets()
 	return _u
 }
 
-// RemoveProblemSetManagerIDs removes the "problem_set_manager" edge to ProblemSetManager entities by IDs.
-func (_u *ProblemSetUpdateOne) RemoveProblemSetManagerIDs(ids ...int64) *ProblemSetUpdateOne {
-	_u.mutation.RemoveProblemSetManagerIDs(ids...)
+// RemoveAdminProblemSetIDs removes the "admin_problem_sets" edge to AdminProblemSet entities by IDs.
+func (_u *ProblemSetUpdateOne) RemoveAdminProblemSetIDs(ids ...int64) *ProblemSetUpdateOne {
+	_u.mutation.RemoveAdminProblemSetIDs(ids...)
 	return _u
 }
 
-// RemoveProblemSetManager removes "problem_set_manager" edges to ProblemSetManager entities.
-func (_u *ProblemSetUpdateOne) RemoveProblemSetManager(v ...*ProblemSetManager) *ProblemSetUpdateOne {
+// RemoveAdminProblemSets removes "admin_problem_sets" edges to AdminProblemSet entities.
+func (_u *ProblemSetUpdateOne) RemoveAdminProblemSets(v ...*AdminProblemSet) *ProblemSetUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveProblemSetManagerIDs(ids...)
+	return _u.RemoveAdminProblemSetIDs(ids...)
 }
 
-// ClearProblemSetIncludes clears all "problem_set_includes" edges to the ProblemSet_Includes entity.
-func (_u *ProblemSetUpdateOne) ClearProblemSetIncludes() *ProblemSetUpdateOne {
-	_u.mutation.ClearProblemSetIncludes()
+// ClearProblemSetProblems clears all "problem_set_problems" edges to the ProblemSet_Problem entity.
+func (_u *ProblemSetUpdateOne) ClearProblemSetProblems() *ProblemSetUpdateOne {
+	_u.mutation.ClearProblemSetProblems()
 	return _u
 }
 
-// RemoveProblemSetIncludeIDs removes the "problem_set_includes" edge to ProblemSet_Includes entities by IDs.
-func (_u *ProblemSetUpdateOne) RemoveProblemSetIncludeIDs(ids ...int64) *ProblemSetUpdateOne {
-	_u.mutation.RemoveProblemSetIncludeIDs(ids...)
+// RemoveProblemSetProblemIDs removes the "problem_set_problems" edge to ProblemSet_Problem entities by IDs.
+func (_u *ProblemSetUpdateOne) RemoveProblemSetProblemIDs(ids ...int64) *ProblemSetUpdateOne {
+	_u.mutation.RemoveProblemSetProblemIDs(ids...)
 	return _u
 }
 
-// RemoveProblemSetIncludes removes "problem_set_includes" edges to ProblemSet_Includes entities.
-func (_u *ProblemSetUpdateOne) RemoveProblemSetIncludes(v ...*ProblemSet_Includes) *ProblemSetUpdateOne {
+// RemoveProblemSetProblems removes "problem_set_problems" edges to ProblemSet_Problem entities.
+func (_u *ProblemSetUpdateOne) RemoveProblemSetProblems(v ...*ProblemSet_Problem) *ProblemSetUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveProblemSetIncludeIDs(ids...)
+	return _u.RemoveProblemSetProblemIDs(ids...)
 }
 
-// ClearCompetitorList clears all "competitor_list" edges to the Competitor_List entity.
-func (_u *ProblemSetUpdateOne) ClearCompetitorList() *ProblemSetUpdateOne {
-	_u.mutation.ClearCompetitorList()
+// ClearProblemSetUsers clears all "problem_set_users" edges to the ProblemSet_User entity.
+func (_u *ProblemSetUpdateOne) ClearProblemSetUsers() *ProblemSetUpdateOne {
+	_u.mutation.ClearProblemSetUsers()
 	return _u
 }
 
-// RemoveCompetitorListIDs removes the "competitor_list" edge to Competitor_List entities by IDs.
-func (_u *ProblemSetUpdateOne) RemoveCompetitorListIDs(ids ...int64) *ProblemSetUpdateOne {
-	_u.mutation.RemoveCompetitorListIDs(ids...)
+// RemoveProblemSetUserIDs removes the "problem_set_users" edge to ProblemSet_User entities by IDs.
+func (_u *ProblemSetUpdateOne) RemoveProblemSetUserIDs(ids ...int64) *ProblemSetUpdateOne {
+	_u.mutation.RemoveProblemSetUserIDs(ids...)
 	return _u
 }
 
-// RemoveCompetitorList removes "competitor_list" edges to Competitor_List entities.
-func (_u *ProblemSetUpdateOne) RemoveCompetitorList(v ...*Competitor_List) *ProblemSetUpdateOne {
+// RemoveProblemSetUsers removes "problem_set_users" edges to ProblemSet_User entities.
+func (_u *ProblemSetUpdateOne) RemoveProblemSetUsers(v ...*ProblemSet_User) *ProblemSetUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveCompetitorListIDs(ids...)
+	return _u.RemoveProblemSetUserIDs(ids...)
 }
 
 // Where appends a list predicates to the ProblemSetUpdate builder.
@@ -901,28 +901,28 @@ func (_u *ProblemSetUpdateOne) sqlSave(ctx context.Context) (_node *ProblemSet, 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ProblemSetManagerCleared() {
+	if _u.mutation.AdminProblemSetsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.ProblemSetManagerTable,
-			Columns: []string{problemset.ProblemSetManagerColumn},
+			Table:   problemset.AdminProblemSetsTable,
+			Columns: []string{problemset.AdminProblemSetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedProblemSetManagerIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetManagerCleared() {
+	if nodes := _u.mutation.RemovedAdminProblemSetsIDs(); len(nodes) > 0 && !_u.mutation.AdminProblemSetsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.ProblemSetManagerTable,
-			Columns: []string{problemset.ProblemSetManagerColumn},
+			Table:   problemset.AdminProblemSetsTable,
+			Columns: []string{problemset.AdminProblemSetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -930,60 +930,15 @@ func (_u *ProblemSetUpdateOne) sqlSave(ctx context.Context) (_node *ProblemSet, 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ProblemSetManagerIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AdminProblemSetsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.ProblemSetManagerTable,
-			Columns: []string{problemset.ProblemSetManagerColumn},
+			Table:   problemset.AdminProblemSetsTable,
+			Columns: []string{problemset.AdminProblemSetsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.ProblemSetIncludesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problemset.ProblemSetIncludesTable,
-			Columns: []string{problemset.ProblemSetIncludesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.RemovedProblemSetIncludesIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetIncludesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problemset.ProblemSetIncludesTable,
-			Columns: []string{problemset.ProblemSetIncludesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.ProblemSetIncludesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problemset.ProblemSetIncludesTable,
-			Columns: []string{problemset.ProblemSetIncludesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -991,28 +946,28 @@ func (_u *ProblemSetUpdateOne) sqlSave(ctx context.Context) (_node *ProblemSet, 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.CompetitorListCleared() {
+	if _u.mutation.ProblemSetProblemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.CompetitorListTable,
-			Columns: []string{problemset.CompetitorListColumn},
+			Table:   problemset.ProblemSetProblemsTable,
+			Columns: []string{problemset.ProblemSetProblemsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedCompetitorListIDs(); len(nodes) > 0 && !_u.mutation.CompetitorListCleared() {
+	if nodes := _u.mutation.RemovedProblemSetProblemsIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetProblemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.CompetitorListTable,
-			Columns: []string{problemset.CompetitorListColumn},
+			Table:   problemset.ProblemSetProblemsTable,
+			Columns: []string{problemset.ProblemSetProblemsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1020,15 +975,60 @@ func (_u *ProblemSetUpdateOne) sqlSave(ctx context.Context) (_node *ProblemSet, 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.CompetitorListIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProblemSetProblemsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problemset.CompetitorListTable,
-			Columns: []string{problemset.CompetitorListColumn},
+			Table:   problemset.ProblemSetProblemsTable,
+			Columns: []string{problemset.ProblemSetProblemsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ProblemSetUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problemset.ProblemSetUsersTable,
+			Columns: []string{problemset.ProblemSetUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedProblemSetUsersIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problemset.ProblemSetUsersTable,
+			Columns: []string{problemset.ProblemSetUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ProblemSetUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problemset.ProblemSetUsersTable,
+			Columns: []string{problemset.ProblemSetUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

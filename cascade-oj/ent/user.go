@@ -38,10 +38,10 @@ type UserEdges struct {
 	JudgeRecords []*JudgeRecord `json:"judge_records,omitempty"`
 	// Announcements holds the value of the announcements edge.
 	Announcements []*Announcement `json:"announcements,omitempty"`
-	// ProblemSetManager holds the value of the problem_set_manager edge.
-	ProblemSetManager []*ProblemSetManager `json:"problem_set_manager,omitempty"`
-	// CompetitorList holds the value of the competitor_list edge.
-	CompetitorList []*Competitor_List `json:"competitor_list,omitempty"`
+	// AdminProblemSets holds the value of the admin_problem_sets edge.
+	AdminProblemSets []*AdminProblemSet `json:"admin_problem_sets,omitempty"`
+	// ProblemSetUsers holds the value of the problem_set_users edge.
+	ProblemSetUsers []*ProblemSet_User `json:"problem_set_users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [5]bool
@@ -74,22 +74,22 @@ func (e UserEdges) AnnouncementsOrErr() ([]*Announcement, error) {
 	return nil, &NotLoadedError{edge: "announcements"}
 }
 
-// ProblemSetManagerOrErr returns the ProblemSetManager value or an error if the edge
+// AdminProblemSetsOrErr returns the AdminProblemSets value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) ProblemSetManagerOrErr() ([]*ProblemSetManager, error) {
+func (e UserEdges) AdminProblemSetsOrErr() ([]*AdminProblemSet, error) {
 	if e.loadedTypes[3] {
-		return e.ProblemSetManager, nil
+		return e.AdminProblemSets, nil
 	}
-	return nil, &NotLoadedError{edge: "problem_set_manager"}
+	return nil, &NotLoadedError{edge: "admin_problem_sets"}
 }
 
-// CompetitorListOrErr returns the CompetitorList value or an error if the edge
+// ProblemSetUsersOrErr returns the ProblemSetUsers value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) CompetitorListOrErr() ([]*Competitor_List, error) {
+func (e UserEdges) ProblemSetUsersOrErr() ([]*ProblemSet_User, error) {
 	if e.loadedTypes[4] {
-		return e.CompetitorList, nil
+		return e.ProblemSetUsers, nil
 	}
-	return nil, &NotLoadedError{edge: "competitor_list"}
+	return nil, &NotLoadedError{edge: "problem_set_users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -174,14 +174,14 @@ func (_m *User) QueryAnnouncements() *AnnouncementQuery {
 	return NewUserClient(_m.config).QueryAnnouncements(_m)
 }
 
-// QueryProblemSetManager queries the "problem_set_manager" edge of the User entity.
-func (_m *User) QueryProblemSetManager() *ProblemSetManagerQuery {
-	return NewUserClient(_m.config).QueryProblemSetManager(_m)
+// QueryAdminProblemSets queries the "admin_problem_sets" edge of the User entity.
+func (_m *User) QueryAdminProblemSets() *AdminProblemSetQuery {
+	return NewUserClient(_m.config).QueryAdminProblemSets(_m)
 }
 
-// QueryCompetitorList queries the "competitor_list" edge of the User entity.
-func (_m *User) QueryCompetitorList() *CompetitorListQuery {
-	return NewUserClient(_m.config).QueryCompetitorList(_m)
+// QueryProblemSetUsers queries the "problem_set_users" edge of the User entity.
+func (_m *User) QueryProblemSetUsers() *ProblemSetUserQuery {
+	return NewUserClient(_m.config).QueryProblemSetUsers(_m)
 }
 
 // Update returns a builder for updating this User.

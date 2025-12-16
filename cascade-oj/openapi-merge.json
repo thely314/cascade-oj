@@ -5,9 +5,6 @@
     },
     {
       "inputFile": "./tmp_openapi/cascade_user/openapi.bundled.yaml"
-    },
-    {
-      "inputFile": "./tmp_openapi/cascade_admin/openapi.bundled.yaml"
     }
   ],
   "output": "./openapi.yaml"

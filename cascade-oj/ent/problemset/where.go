@@ -338,21 +338,21 @@ func HasSubmissionsWith(preds ...predicate.SubmissionRecord) predicate.ProblemSe
 	})
 }
 
-// HasProblemSetManager applies the HasEdge predicate on the "problem_set_manager" edge.
-func HasProblemSetManager() predicate.ProblemSet {
+// HasAdminProblemSets applies the HasEdge predicate on the "admin_problem_sets" edge.
+func HasAdminProblemSets() predicate.ProblemSet {
 	return predicate.ProblemSet(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetManagerTable, ProblemSetManagerColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, AdminProblemSetsTable, AdminProblemSetsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasProblemSetManagerWith applies the HasEdge predicate on the "problem_set_manager" edge with a given conditions (other predicates).
-func HasProblemSetManagerWith(preds ...predicate.ProblemSetManager) predicate.ProblemSet {
+// HasAdminProblemSetsWith applies the HasEdge predicate on the "admin_problem_sets" edge with a given conditions (other predicates).
+func HasAdminProblemSetsWith(preds ...predicate.AdminProblemSet) predicate.ProblemSet {
 	return predicate.ProblemSet(func(s *sql.Selector) {
-		step := newProblemSetManagerStep()
+		step := newAdminProblemSetsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -361,21 +361,21 @@ func HasProblemSetManagerWith(preds ...predicate.ProblemSetManager) predicate.Pr
 	})
 }
 
-// HasProblemSetIncludes applies the HasEdge predicate on the "problem_set_includes" edge.
-func HasProblemSetIncludes() predicate.ProblemSet {
+// HasProblemSetProblems applies the HasEdge predicate on the "problem_set_problems" edge.
+func HasProblemSetProblems() predicate.ProblemSet {
 	return predicate.ProblemSet(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetIncludesTable, ProblemSetIncludesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetProblemsTable, ProblemSetProblemsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasProblemSetIncludesWith applies the HasEdge predicate on the "problem_set_includes" edge with a given conditions (other predicates).
-func HasProblemSetIncludesWith(preds ...predicate.ProblemSet_Includes) predicate.ProblemSet {
+// HasProblemSetProblemsWith applies the HasEdge predicate on the "problem_set_problems" edge with a given conditions (other predicates).
+func HasProblemSetProblemsWith(preds ...predicate.ProblemSet_Problem) predicate.ProblemSet {
 	return predicate.ProblemSet(func(s *sql.Selector) {
-		step := newProblemSetIncludesStep()
+		step := newProblemSetProblemsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -384,21 +384,21 @@ func HasProblemSetIncludesWith(preds ...predicate.ProblemSet_Includes) predicate
 	})
 }
 
-// HasCompetitorList applies the HasEdge predicate on the "competitor_list" edge.
-func HasCompetitorList() predicate.ProblemSet {
+// HasProblemSetUsers applies the HasEdge predicate on the "problem_set_users" edge.
+func HasProblemSetUsers() predicate.ProblemSet {
 	return predicate.ProblemSet(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, CompetitorListTable, CompetitorListColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetUsersTable, ProblemSetUsersColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasCompetitorListWith applies the HasEdge predicate on the "competitor_list" edge with a given conditions (other predicates).
-func HasCompetitorListWith(preds ...predicate.Competitor_List) predicate.ProblemSet {
+// HasProblemSetUsersWith applies the HasEdge predicate on the "problem_set_users" edge with a given conditions (other predicates).
+func HasProblemSetUsersWith(preds ...predicate.ProblemSet_User) predicate.ProblemSet {
 	return predicate.ProblemSet(func(s *sql.Selector) {
-		step := newCompetitorListStep()
+		step := newProblemSetUsersStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

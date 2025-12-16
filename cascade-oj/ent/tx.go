@@ -12,30 +12,26 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// AdminProblemSet is the client for interacting with the AdminProblemSet builders.
+	AdminProblemSet *AdminProblemSetClient
 	// Announcement is the client for interacting with the Announcement builders.
 	Announcement *AnnouncementClient
-	// CaseGroupResult is the client for interacting with the CaseGroupResult builders.
-	CaseGroupResult *CaseGroupResultClient
-	// CaseResult is the client for interacting with the CaseResult builders.
-	CaseResult *CaseResultClient
-	// Competitor_List is the client for interacting with the Competitor_List builders.
-	Competitor_List *CompetitorListClient
 	// JudgeRecord is the client for interacting with the JudgeRecord builders.
 	JudgeRecord *JudgeRecordClient
 	// Problem is the client for interacting with the Problem builders.
 	Problem *ProblemClient
-	// ProblemJudgeConfig is the client for interacting with the ProblemJudgeConfig builders.
-	ProblemJudgeConfig *ProblemJudgeConfigClient
 	// ProblemSet is the client for interacting with the ProblemSet builders.
 	ProblemSet *ProblemSetClient
-	// ProblemSetManager is the client for interacting with the ProblemSetManager builders.
-	ProblemSetManager *ProblemSetManagerClient
-	// ProblemSet_Includes is the client for interacting with the ProblemSet_Includes builders.
-	ProblemSet_Includes *ProblemSetIncludesClient
+	// ProblemSet_Problem is the client for interacting with the ProblemSet_Problem builders.
+	ProblemSet_Problem *ProblemSetProblemClient
+	// ProblemSet_User is the client for interacting with the ProblemSet_User builders.
+	ProblemSet_User *ProblemSetUserClient
 	// SubmissionRecord is the client for interacting with the SubmissionRecord builders.
 	SubmissionRecord *SubmissionRecordClient
 	// SystemLog is the client for interacting with the SystemLog builders.
 	SystemLog *SystemLogClient
+	// TestCase is the client for interacting with the TestCase builders.
+	TestCase *TestCaseClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -169,18 +165,16 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.AdminProblemSet = NewAdminProblemSetClient(tx.config)
 	tx.Announcement = NewAnnouncementClient(tx.config)
-	tx.CaseGroupResult = NewCaseGroupResultClient(tx.config)
-	tx.CaseResult = NewCaseResultClient(tx.config)
-	tx.Competitor_List = NewCompetitorListClient(tx.config)
 	tx.JudgeRecord = NewJudgeRecordClient(tx.config)
 	tx.Problem = NewProblemClient(tx.config)
-	tx.ProblemJudgeConfig = NewProblemJudgeConfigClient(tx.config)
 	tx.ProblemSet = NewProblemSetClient(tx.config)
-	tx.ProblemSetManager = NewProblemSetManagerClient(tx.config)
-	tx.ProblemSet_Includes = NewProblemSetIncludesClient(tx.config)
+	tx.ProblemSet_Problem = NewProblemSetProblemClient(tx.config)
+	tx.ProblemSet_User = NewProblemSetUserClient(tx.config)
 	tx.SubmissionRecord = NewSubmissionRecordClient(tx.config)
 	tx.SystemLog = NewSystemLogClient(tx.config)
+	tx.TestCase = NewTestCaseClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 
@@ -191,7 +185,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Announcement.QueryXXX(), the query will be executed
+// applies a query, for example: AdminProblemSet.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

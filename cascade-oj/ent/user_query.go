@@ -3,12 +3,12 @@
 package ent
 
 import (
+	"cascade-oj/ent/adminproblemset"
 	"cascade-oj/ent/announcement"
-	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemsetmanager"
+	"cascade-oj/ent/problemset_user"
 	"cascade-oj/ent/user"
 	"context"
 	"database/sql/driver"
@@ -24,15 +24,15 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                   *QueryContext
-	order                 []user.OrderOption
-	inters                []Interceptor
-	predicates            []predicate.User
-	withProblems          *ProblemQuery
-	withJudgeRecords      *JudgeRecordQuery
-	withAnnouncements     *AnnouncementQuery
-	withProblemSetManager *ProblemSetManagerQuery
-	withCompetitorList    *CompetitorListQuery
+	ctx                  *QueryContext
+	order                []user.OrderOption
+	inters               []Interceptor
+	predicates           []predicate.User
+	withProblems         *ProblemQuery
+	withJudgeRecords     *JudgeRecordQuery
+	withAnnouncements    *AnnouncementQuery
+	withAdminProblemSets *AdminProblemSetQuery
+	withProblemSetUsers  *ProblemSetUserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -135,9 +135,9 @@ func (_q *UserQuery) QueryAnnouncements() *AnnouncementQuery {
 	return query
 }
 
-// QueryProblemSetManager chains the current query on the "problem_set_manager" edge.
-func (_q *UserQuery) QueryProblemSetManager() *ProblemSetManagerQuery {
-	query := (&ProblemSetManagerClient{config: _q.config}).Query()
+// QueryAdminProblemSets chains the current query on the "admin_problem_sets" edge.
+func (_q *UserQuery) QueryAdminProblemSets() *AdminProblemSetQuery {
+	query := (&AdminProblemSetClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -148,8 +148,8 @@ func (_q *UserQuery) QueryProblemSetManager() *ProblemSetManagerQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(problemsetmanager.Table, problemsetmanager.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ProblemSetManagerTable, user.ProblemSetManagerColumn),
+			sqlgraph.To(adminproblemset.Table, adminproblemset.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AdminProblemSetsTable, user.AdminProblemSetsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -157,9 +157,9 @@ func (_q *UserQuery) QueryProblemSetManager() *ProblemSetManagerQuery {
 	return query
 }
 
-// QueryCompetitorList chains the current query on the "competitor_list" edge.
-func (_q *UserQuery) QueryCompetitorList() *CompetitorListQuery {
-	query := (&CompetitorListClient{config: _q.config}).Query()
+// QueryProblemSetUsers chains the current query on the "problem_set_users" edge.
+func (_q *UserQuery) QueryProblemSetUsers() *ProblemSetUserQuery {
+	query := (&ProblemSetUserClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -170,8 +170,8 @@ func (_q *UserQuery) QueryCompetitorList() *CompetitorListQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(competitor_list.Table, competitor_list.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.CompetitorListTable, user.CompetitorListColumn),
+			sqlgraph.To(problemset_user.Table, problemset_user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProblemSetUsersTable, user.ProblemSetUsersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -366,16 +366,16 @@ func (_q *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:                _q.config,
-		ctx:                   _q.ctx.Clone(),
-		order:                 append([]user.OrderOption{}, _q.order...),
-		inters:                append([]Interceptor{}, _q.inters...),
-		predicates:            append([]predicate.User{}, _q.predicates...),
-		withProblems:          _q.withProblems.Clone(),
-		withJudgeRecords:      _q.withJudgeRecords.Clone(),
-		withAnnouncements:     _q.withAnnouncements.Clone(),
-		withProblemSetManager: _q.withProblemSetManager.Clone(),
-		withCompetitorList:    _q.withCompetitorList.Clone(),
+		config:               _q.config,
+		ctx:                  _q.ctx.Clone(),
+		order:                append([]user.OrderOption{}, _q.order...),
+		inters:               append([]Interceptor{}, _q.inters...),
+		predicates:           append([]predicate.User{}, _q.predicates...),
+		withProblems:         _q.withProblems.Clone(),
+		withJudgeRecords:     _q.withJudgeRecords.Clone(),
+		withAnnouncements:    _q.withAnnouncements.Clone(),
+		withAdminProblemSets: _q.withAdminProblemSets.Clone(),
+		withProblemSetUsers:  _q.withProblemSetUsers.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -415,25 +415,25 @@ func (_q *UserQuery) WithAnnouncements(opts ...func(*AnnouncementQuery)) *UserQu
 	return _q
 }
 
-// WithProblemSetManager tells the query-builder to eager-load the nodes that are connected to
-// the "problem_set_manager" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithProblemSetManager(opts ...func(*ProblemSetManagerQuery)) *UserQuery {
-	query := (&ProblemSetManagerClient{config: _q.config}).Query()
+// WithAdminProblemSets tells the query-builder to eager-load the nodes that are connected to
+// the "admin_problem_sets" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithAdminProblemSets(opts ...func(*AdminProblemSetQuery)) *UserQuery {
+	query := (&AdminProblemSetClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withProblemSetManager = query
+	_q.withAdminProblemSets = query
 	return _q
 }
 
-// WithCompetitorList tells the query-builder to eager-load the nodes that are connected to
-// the "competitor_list" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithCompetitorList(opts ...func(*CompetitorListQuery)) *UserQuery {
-	query := (&CompetitorListClient{config: _q.config}).Query()
+// WithProblemSetUsers tells the query-builder to eager-load the nodes that are connected to
+// the "problem_set_users" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithProblemSetUsers(opts ...func(*ProblemSetUserQuery)) *UserQuery {
+	query := (&ProblemSetUserClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withCompetitorList = query
+	_q.withProblemSetUsers = query
 	return _q
 }
 
@@ -519,8 +519,8 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			_q.withProblems != nil,
 			_q.withJudgeRecords != nil,
 			_q.withAnnouncements != nil,
-			_q.withProblemSetManager != nil,
-			_q.withCompetitorList != nil,
+			_q.withAdminProblemSets != nil,
+			_q.withProblemSetUsers != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -562,17 +562,17 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := _q.withProblemSetManager; query != nil {
-		if err := _q.loadProblemSetManager(ctx, query, nodes,
-			func(n *User) { n.Edges.ProblemSetManager = []*ProblemSetManager{} },
-			func(n *User, e *ProblemSetManager) { n.Edges.ProblemSetManager = append(n.Edges.ProblemSetManager, e) }); err != nil {
+	if query := _q.withAdminProblemSets; query != nil {
+		if err := _q.loadAdminProblemSets(ctx, query, nodes,
+			func(n *User) { n.Edges.AdminProblemSets = []*AdminProblemSet{} },
+			func(n *User, e *AdminProblemSet) { n.Edges.AdminProblemSets = append(n.Edges.AdminProblemSets, e) }); err != nil {
 			return nil, err
 		}
 	}
-	if query := _q.withCompetitorList; query != nil {
-		if err := _q.loadCompetitorList(ctx, query, nodes,
-			func(n *User) { n.Edges.CompetitorList = []*Competitor_List{} },
-			func(n *User, e *Competitor_List) { n.Edges.CompetitorList = append(n.Edges.CompetitorList, e) }); err != nil {
+	if query := _q.withProblemSetUsers; query != nil {
+		if err := _q.loadProblemSetUsers(ctx, query, nodes,
+			func(n *User) { n.Edges.ProblemSetUsers = []*ProblemSet_User{} },
+			func(n *User, e *ProblemSet_User) { n.Edges.ProblemSetUsers = append(n.Edges.ProblemSetUsers, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -589,7 +589,6 @@ func (_q *UserQuery) loadProblems(ctx context.Context, query *ProblemQuery, node
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(problem.FieldCreatorID)
 	}
@@ -670,7 +669,7 @@ func (_q *UserQuery) loadAnnouncements(ctx context.Context, query *AnnouncementQ
 	}
 	return nil
 }
-func (_q *UserQuery) loadProblemSetManager(ctx context.Context, query *ProblemSetManagerQuery, nodes []*User, init func(*User), assign func(*User, *ProblemSetManager)) error {
+func (_q *UserQuery) loadAdminProblemSets(ctx context.Context, query *AdminProblemSetQuery, nodes []*User, init func(*User), assign func(*User, *AdminProblemSet)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
 	for i := range nodes {
@@ -681,10 +680,10 @@ func (_q *UserQuery) loadProblemSetManager(ctx context.Context, query *ProblemSe
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(problemsetmanager.FieldAdminID)
+		query.ctx.AppendFieldOnce(adminproblemset.FieldAdminID)
 	}
-	query.Where(predicate.ProblemSetManager(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.ProblemSetManagerColumn), fks...))
+	query.Where(predicate.AdminProblemSet(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.AdminProblemSetsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -700,7 +699,7 @@ func (_q *UserQuery) loadProblemSetManager(ctx context.Context, query *ProblemSe
 	}
 	return nil
 }
-func (_q *UserQuery) loadCompetitorList(ctx context.Context, query *CompetitorListQuery, nodes []*User, init func(*User), assign func(*User, *Competitor_List)) error {
+func (_q *UserQuery) loadProblemSetUsers(ctx context.Context, query *ProblemSetUserQuery, nodes []*User, init func(*User), assign func(*User, *ProblemSet_User)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*User)
 	for i := range nodes {
@@ -711,10 +710,10 @@ func (_q *UserQuery) loadCompetitorList(ctx context.Context, query *CompetitorLi
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(competitor_list.FieldUserID)
+		query.ctx.AppendFieldOnce(problemset_user.FieldUserID)
 	}
-	query.Where(predicate.Competitor_List(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.CompetitorListColumn), fks...))
+	query.Where(predicate.ProblemSet_User(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ProblemSetUsersColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

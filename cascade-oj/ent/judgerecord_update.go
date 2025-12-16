@@ -59,38 +59,17 @@ func (_u *JudgeRecordUpdate) SetNillableUserID(v *int64) *JudgeRecordUpdate {
 	return _u
 }
 
-// SetUUID sets the "uuid" field.
-func (_u *JudgeRecordUpdate) SetUUID(v string) *JudgeRecordUpdate {
-	_u.mutation.SetUUID(v)
-	return _u
-}
-
-// SetNillableUUID sets the "uuid" field if the given value is not nil.
-func (_u *JudgeRecordUpdate) SetNillableUUID(v *string) *JudgeRecordUpdate {
-	if v != nil {
-		_u.SetUUID(*v)
-	}
-	return _u
-}
-
 // SetStatus sets the "status" field.
-func (_u *JudgeRecordUpdate) SetStatus(v int16) *JudgeRecordUpdate {
-	_u.mutation.ResetStatus()
+func (_u *JudgeRecordUpdate) SetStatus(v judgerecord.Status) *JudgeRecordUpdate {
 	_u.mutation.SetStatus(v)
 	return _u
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (_u *JudgeRecordUpdate) SetNillableStatus(v *int16) *JudgeRecordUpdate {
+func (_u *JudgeRecordUpdate) SetNillableStatus(v *judgerecord.Status) *JudgeRecordUpdate {
 	if v != nil {
 		_u.SetStatus(*v)
 	}
-	return _u
-}
-
-// AddStatus adds value to the "status" field.
-func (_u *JudgeRecordUpdate) AddStatus(v int16) *JudgeRecordUpdate {
-	_u.mutation.AddStatus(v)
 	return _u
 }
 
@@ -108,45 +87,23 @@ func (_u *JudgeRecordUpdate) SetNillableJudgeStartTime(v *time.Time) *JudgeRecor
 	return _u
 }
 
-// SetTimeCostMs sets the "time_cost_ms" field.
-func (_u *JudgeRecordUpdate) SetTimeCostMs(v uint64) *JudgeRecordUpdate {
-	_u.mutation.ResetTimeCostMs()
-	_u.mutation.SetTimeCostMs(v)
+// SetResult sets the "result" field.
+func (_u *JudgeRecordUpdate) SetResult(v string) *JudgeRecordUpdate {
+	_u.mutation.SetResult(v)
 	return _u
 }
 
-// SetNillableTimeCostMs sets the "time_cost_ms" field if the given value is not nil.
-func (_u *JudgeRecordUpdate) SetNillableTimeCostMs(v *uint64) *JudgeRecordUpdate {
+// SetNillableResult sets the "result" field if the given value is not nil.
+func (_u *JudgeRecordUpdate) SetNillableResult(v *string) *JudgeRecordUpdate {
 	if v != nil {
-		_u.SetTimeCostMs(*v)
+		_u.SetResult(*v)
 	}
 	return _u
 }
 
-// AddTimeCostMs adds value to the "time_cost_ms" field.
-func (_u *JudgeRecordUpdate) AddTimeCostMs(v int64) *JudgeRecordUpdate {
-	_u.mutation.AddTimeCostMs(v)
-	return _u
-}
-
-// SetMemoryCostKB sets the "memory_cost_kb" field.
-func (_u *JudgeRecordUpdate) SetMemoryCostKB(v uint64) *JudgeRecordUpdate {
-	_u.mutation.ResetMemoryCostKB()
-	_u.mutation.SetMemoryCostKB(v)
-	return _u
-}
-
-// SetNillableMemoryCostKB sets the "memory_cost_kb" field if the given value is not nil.
-func (_u *JudgeRecordUpdate) SetNillableMemoryCostKB(v *uint64) *JudgeRecordUpdate {
-	if v != nil {
-		_u.SetMemoryCostKB(*v)
-	}
-	return _u
-}
-
-// AddMemoryCostKB adds value to the "memory_cost_kb" field.
-func (_u *JudgeRecordUpdate) AddMemoryCostKB(v int64) *JudgeRecordUpdate {
-	_u.mutation.AddMemoryCostKB(v)
+// ClearResult clears the value of the "result" field.
+func (_u *JudgeRecordUpdate) ClearResult() *JudgeRecordUpdate {
+	_u.mutation.ClearResult()
 	return _u
 }
 
@@ -165,13 +122,13 @@ func (_u *JudgeRecordUpdate) SetNillableCode(v *string) *JudgeRecordUpdate {
 }
 
 // SetLanguage sets the "language" field.
-func (_u *JudgeRecordUpdate) SetLanguage(v string) *JudgeRecordUpdate {
+func (_u *JudgeRecordUpdate) SetLanguage(v judgerecord.Language) *JudgeRecordUpdate {
 	_u.mutation.SetLanguage(v)
 	return _u
 }
 
 // SetNillableLanguage sets the "language" field if the given value is not nil.
-func (_u *JudgeRecordUpdate) SetNillableLanguage(v *string) *JudgeRecordUpdate {
+func (_u *JudgeRecordUpdate) SetNillableLanguage(v *judgerecord.Language) *JudgeRecordUpdate {
 	if v != nil {
 		_u.SetLanguage(*v)
 	}
@@ -294,9 +251,19 @@ func (_u *JudgeRecordUpdate) check() error {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.user_id": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := judgerecord.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.status": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Code(); ok {
 		if err := judgerecord.CodeValidator(v); err != nil {
 			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.code": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Language(); ok {
+		if err := judgerecord.LanguageValidator(v); err != nil {
+			return &ValidationError{Name: "language", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.language": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.JudgeType(); ok {
@@ -325,35 +292,23 @@ func (_u *JudgeRecordUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			}
 		}
 	}
-	if value, ok := _u.mutation.UUID(); ok {
-		_spec.SetField(judgerecord.FieldUUID, field.TypeString, value)
-	}
 	if value, ok := _u.mutation.Status(); ok {
-		_spec.SetField(judgerecord.FieldStatus, field.TypeInt16, value)
-	}
-	if value, ok := _u.mutation.AddedStatus(); ok {
-		_spec.AddField(judgerecord.FieldStatus, field.TypeInt16, value)
+		_spec.SetField(judgerecord.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.JudgeStartTime(); ok {
 		_spec.SetField(judgerecord.FieldJudgeStartTime, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.TimeCostMs(); ok {
-		_spec.SetField(judgerecord.FieldTimeCostMs, field.TypeUint64, value)
+	if value, ok := _u.mutation.Result(); ok {
+		_spec.SetField(judgerecord.FieldResult, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.AddedTimeCostMs(); ok {
-		_spec.AddField(judgerecord.FieldTimeCostMs, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.MemoryCostKB(); ok {
-		_spec.SetField(judgerecord.FieldMemoryCostKB, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.AddedMemoryCostKB(); ok {
-		_spec.AddField(judgerecord.FieldMemoryCostKB, field.TypeUint64, value)
+	if _u.mutation.ResultCleared() {
+		_spec.ClearField(judgerecord.FieldResult, field.TypeString)
 	}
 	if value, ok := _u.mutation.Code(); ok {
 		_spec.SetField(judgerecord.FieldCode, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Language(); ok {
-		_spec.SetField(judgerecord.FieldLanguage, field.TypeString, value)
+		_spec.SetField(judgerecord.FieldLanguage, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.JudgeType(); ok {
 		_spec.SetField(judgerecord.FieldJudgeType, field.TypeEnum, value)
@@ -509,38 +464,17 @@ func (_u *JudgeRecordUpdateOne) SetNillableUserID(v *int64) *JudgeRecordUpdateOn
 	return _u
 }
 
-// SetUUID sets the "uuid" field.
-func (_u *JudgeRecordUpdateOne) SetUUID(v string) *JudgeRecordUpdateOne {
-	_u.mutation.SetUUID(v)
-	return _u
-}
-
-// SetNillableUUID sets the "uuid" field if the given value is not nil.
-func (_u *JudgeRecordUpdateOne) SetNillableUUID(v *string) *JudgeRecordUpdateOne {
-	if v != nil {
-		_u.SetUUID(*v)
-	}
-	return _u
-}
-
 // SetStatus sets the "status" field.
-func (_u *JudgeRecordUpdateOne) SetStatus(v int16) *JudgeRecordUpdateOne {
-	_u.mutation.ResetStatus()
+func (_u *JudgeRecordUpdateOne) SetStatus(v judgerecord.Status) *JudgeRecordUpdateOne {
 	_u.mutation.SetStatus(v)
 	return _u
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (_u *JudgeRecordUpdateOne) SetNillableStatus(v *int16) *JudgeRecordUpdateOne {
+func (_u *JudgeRecordUpdateOne) SetNillableStatus(v *judgerecord.Status) *JudgeRecordUpdateOne {
 	if v != nil {
 		_u.SetStatus(*v)
 	}
-	return _u
-}
-
-// AddStatus adds value to the "status" field.
-func (_u *JudgeRecordUpdateOne) AddStatus(v int16) *JudgeRecordUpdateOne {
-	_u.mutation.AddStatus(v)
 	return _u
 }
 
@@ -558,45 +492,23 @@ func (_u *JudgeRecordUpdateOne) SetNillableJudgeStartTime(v *time.Time) *JudgeRe
 	return _u
 }
 
-// SetTimeCostMs sets the "time_cost_ms" field.
-func (_u *JudgeRecordUpdateOne) SetTimeCostMs(v uint64) *JudgeRecordUpdateOne {
-	_u.mutation.ResetTimeCostMs()
-	_u.mutation.SetTimeCostMs(v)
+// SetResult sets the "result" field.
+func (_u *JudgeRecordUpdateOne) SetResult(v string) *JudgeRecordUpdateOne {
+	_u.mutation.SetResult(v)
 	return _u
 }
 
-// SetNillableTimeCostMs sets the "time_cost_ms" field if the given value is not nil.
-func (_u *JudgeRecordUpdateOne) SetNillableTimeCostMs(v *uint64) *JudgeRecordUpdateOne {
+// SetNillableResult sets the "result" field if the given value is not nil.
+func (_u *JudgeRecordUpdateOne) SetNillableResult(v *string) *JudgeRecordUpdateOne {
 	if v != nil {
-		_u.SetTimeCostMs(*v)
+		_u.SetResult(*v)
 	}
 	return _u
 }
 
-// AddTimeCostMs adds value to the "time_cost_ms" field.
-func (_u *JudgeRecordUpdateOne) AddTimeCostMs(v int64) *JudgeRecordUpdateOne {
-	_u.mutation.AddTimeCostMs(v)
-	return _u
-}
-
-// SetMemoryCostKB sets the "memory_cost_kb" field.
-func (_u *JudgeRecordUpdateOne) SetMemoryCostKB(v uint64) *JudgeRecordUpdateOne {
-	_u.mutation.ResetMemoryCostKB()
-	_u.mutation.SetMemoryCostKB(v)
-	return _u
-}
-
-// SetNillableMemoryCostKB sets the "memory_cost_kb" field if the given value is not nil.
-func (_u *JudgeRecordUpdateOne) SetNillableMemoryCostKB(v *uint64) *JudgeRecordUpdateOne {
-	if v != nil {
-		_u.SetMemoryCostKB(*v)
-	}
-	return _u
-}
-
-// AddMemoryCostKB adds value to the "memory_cost_kb" field.
-func (_u *JudgeRecordUpdateOne) AddMemoryCostKB(v int64) *JudgeRecordUpdateOne {
-	_u.mutation.AddMemoryCostKB(v)
+// ClearResult clears the value of the "result" field.
+func (_u *JudgeRecordUpdateOne) ClearResult() *JudgeRecordUpdateOne {
+	_u.mutation.ClearResult()
 	return _u
 }
 
@@ -615,13 +527,13 @@ func (_u *JudgeRecordUpdateOne) SetNillableCode(v *string) *JudgeRecordUpdateOne
 }
 
 // SetLanguage sets the "language" field.
-func (_u *JudgeRecordUpdateOne) SetLanguage(v string) *JudgeRecordUpdateOne {
+func (_u *JudgeRecordUpdateOne) SetLanguage(v judgerecord.Language) *JudgeRecordUpdateOne {
 	_u.mutation.SetLanguage(v)
 	return _u
 }
 
 // SetNillableLanguage sets the "language" field if the given value is not nil.
-func (_u *JudgeRecordUpdateOne) SetNillableLanguage(v *string) *JudgeRecordUpdateOne {
+func (_u *JudgeRecordUpdateOne) SetNillableLanguage(v *judgerecord.Language) *JudgeRecordUpdateOne {
 	if v != nil {
 		_u.SetLanguage(*v)
 	}
@@ -757,9 +669,19 @@ func (_u *JudgeRecordUpdateOne) check() error {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.user_id": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Status(); ok {
+		if err := judgerecord.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.status": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Code(); ok {
 		if err := judgerecord.CodeValidator(v); err != nil {
 			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.code": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.Language(); ok {
+		if err := judgerecord.LanguageValidator(v); err != nil {
+			return &ValidationError{Name: "language", err: fmt.Errorf(`ent: validator failed for field "JudgeRecord.language": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.JudgeType(); ok {
@@ -805,35 +727,23 @@ func (_u *JudgeRecordUpdateOne) sqlSave(ctx context.Context) (_node *JudgeRecord
 			}
 		}
 	}
-	if value, ok := _u.mutation.UUID(); ok {
-		_spec.SetField(judgerecord.FieldUUID, field.TypeString, value)
-	}
 	if value, ok := _u.mutation.Status(); ok {
-		_spec.SetField(judgerecord.FieldStatus, field.TypeInt16, value)
-	}
-	if value, ok := _u.mutation.AddedStatus(); ok {
-		_spec.AddField(judgerecord.FieldStatus, field.TypeInt16, value)
+		_spec.SetField(judgerecord.FieldStatus, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.JudgeStartTime(); ok {
 		_spec.SetField(judgerecord.FieldJudgeStartTime, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.TimeCostMs(); ok {
-		_spec.SetField(judgerecord.FieldTimeCostMs, field.TypeUint64, value)
+	if value, ok := _u.mutation.Result(); ok {
+		_spec.SetField(judgerecord.FieldResult, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.AddedTimeCostMs(); ok {
-		_spec.AddField(judgerecord.FieldTimeCostMs, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.MemoryCostKB(); ok {
-		_spec.SetField(judgerecord.FieldMemoryCostKB, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.AddedMemoryCostKB(); ok {
-		_spec.AddField(judgerecord.FieldMemoryCostKB, field.TypeUint64, value)
+	if _u.mutation.ResultCleared() {
+		_spec.ClearField(judgerecord.FieldResult, field.TypeString)
 	}
 	if value, ok := _u.mutation.Code(); ok {
 		_spec.SetField(judgerecord.FieldCode, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Language(); ok {
-		_spec.SetField(judgerecord.FieldLanguage, field.TypeString, value)
+		_spec.SetField(judgerecord.FieldLanguage, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.JudgeType(); ok {
 		_spec.SetField(judgerecord.FieldJudgeType, field.TypeEnum, value)

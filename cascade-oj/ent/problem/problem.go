@@ -20,26 +20,24 @@ const (
 	FieldTitle = "title"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldJudgeConfigID holds the string denoting the judge_config_id field in the database.
-	FieldJudgeConfigID = "judge_config_id"
-	// FieldCaseVersion holds the string denoting the case_version field in the database.
-	FieldCaseVersion = "case_version"
-	// FieldTimeLimitMs holds the string denoting the time_limit_ms field in the database.
-	FieldTimeLimitMs = "time_limit_ms"
-	// FieldMemoryLimitKB holds the string denoting the memory_limit_kb field in the database.
-	FieldMemoryLimitKB = "memory_limit_kb"
+	// FieldProblemType holds the string denoting the problem_type field in the database.
+	FieldProblemType = "problem_type"
+	// FieldTimeLimit holds the string denoting the time_limit field in the database.
+	FieldTimeLimit = "time_limit"
+	// FieldMemoryLimit holds the string denoting the memory_limit field in the database.
+	FieldMemoryLimit = "memory_limit"
 	// FieldUseStatus holds the string denoting the use_status field in the database.
 	FieldUseStatus = "use_status"
 	// EdgeCreator holds the string denoting the creator edge name in mutations.
 	EdgeCreator = "creator"
-	// EdgeJudgeConfig holds the string denoting the judge_config edge name in mutations.
-	EdgeJudgeConfig = "judge_config"
+	// EdgeTestCases holds the string denoting the test_cases edge name in mutations.
+	EdgeTestCases = "test_cases"
 	// EdgeJudgeRecords holds the string denoting the judge_records edge name in mutations.
 	EdgeJudgeRecords = "judge_records"
 	// EdgeSubmissions holds the string denoting the submissions edge name in mutations.
 	EdgeSubmissions = "submissions"
-	// EdgeProblemSetIncludes holds the string denoting the problem_set_includes edge name in mutations.
-	EdgeProblemSetIncludes = "problem_set_includes"
+	// EdgeProblemSetProblems holds the string denoting the problem_set_problems edge name in mutations.
+	EdgeProblemSetProblems = "problem_set_problems"
 	// Table holds the table name of the problem in the database.
 	Table = "Problems"
 	// CreatorTable is the table that holds the creator relation/edge.
@@ -49,18 +47,18 @@ const (
 	CreatorInverseTable = "Users"
 	// CreatorColumn is the table column denoting the creator relation/edge.
 	CreatorColumn = "creator_id"
-	// JudgeConfigTable is the table that holds the judge_config relation/edge.
-	JudgeConfigTable = "Problems"
-	// JudgeConfigInverseTable is the table name for the ProblemJudgeConfig entity.
-	// It exists in this package in order to avoid circular dependency with the "problemjudgeconfig" package.
-	JudgeConfigInverseTable = "Problem_JudgeConfigs"
-	// JudgeConfigColumn is the table column denoting the judge_config relation/edge.
-	JudgeConfigColumn = "judge_config_id"
+	// TestCasesTable is the table that holds the test_cases relation/edge.
+	TestCasesTable = "TestCases"
+	// TestCasesInverseTable is the table name for the TestCase entity.
+	// It exists in this package in order to avoid circular dependency with the "testcase" package.
+	TestCasesInverseTable = "TestCases"
+	// TestCasesColumn is the table column denoting the test_cases relation/edge.
+	TestCasesColumn = "problem_id"
 	// JudgeRecordsTable is the table that holds the judge_records relation/edge.
-	JudgeRecordsTable = "Judge_Records"
+	JudgeRecordsTable = "JudgeRecords"
 	// JudgeRecordsInverseTable is the table name for the JudgeRecord entity.
 	// It exists in this package in order to avoid circular dependency with the "judgerecord" package.
-	JudgeRecordsInverseTable = "Judge_Records"
+	JudgeRecordsInverseTable = "JudgeRecords"
 	// JudgeRecordsColumn is the table column denoting the judge_records relation/edge.
 	JudgeRecordsColumn = "problem_id"
 	// SubmissionsTable is the table that holds the submissions relation/edge.
@@ -70,13 +68,13 @@ const (
 	SubmissionsInverseTable = "SubmissionRecords"
 	// SubmissionsColumn is the table column denoting the submissions relation/edge.
 	SubmissionsColumn = "problem_id"
-	// ProblemSetIncludesTable is the table that holds the problem_set_includes relation/edge.
-	ProblemSetIncludesTable = "ProblemSet_Includes"
-	// ProblemSetIncludesInverseTable is the table name for the ProblemSet_Includes entity.
-	// It exists in this package in order to avoid circular dependency with the "problemset_includes" package.
-	ProblemSetIncludesInverseTable = "ProblemSet_Includes"
-	// ProblemSetIncludesColumn is the table column denoting the problem_set_includes relation/edge.
-	ProblemSetIncludesColumn = "problem_id"
+	// ProblemSetProblemsTable is the table that holds the problem_set_problems relation/edge.
+	ProblemSetProblemsTable = "ProblemSet_Problems"
+	// ProblemSetProblemsInverseTable is the table name for the ProblemSet_Problem entity.
+	// It exists in this package in order to avoid circular dependency with the "problemset_problem" package.
+	ProblemSetProblemsInverseTable = "ProblemSet_Problems"
+	// ProblemSetProblemsColumn is the table column denoting the problem_set_problems relation/edge.
+	ProblemSetProblemsColumn = "problem_id"
 )
 
 // Columns holds all SQL columns for problem fields.
@@ -85,28 +83,16 @@ var Columns = []string{
 	FieldCreatorID,
 	FieldTitle,
 	FieldDescription,
-	FieldJudgeConfigID,
-	FieldCaseVersion,
-	FieldTimeLimitMs,
-	FieldMemoryLimitKB,
+	FieldProblemType,
+	FieldTimeLimit,
+	FieldMemoryLimit,
 	FieldUseStatus,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "Problems"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"case_group_result_problem",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -120,15 +106,39 @@ var (
 	TitleValidator func(string) error
 	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	DescriptionValidator func(string) error
-	// DefaultCaseVersion holds the default value on creation for the "case_version" field.
-	DefaultCaseVersion int16
-	// TimeLimitMsValidator is a validator for the "time_limit_ms" field. It is called by the builders before save.
-	TimeLimitMsValidator func(int) error
-	// MemoryLimitKBValidator is a validator for the "memory_limit_kb" field. It is called by the builders before save.
-	MemoryLimitKBValidator func(int) error
+	// TimeLimitValidator is a validator for the "time_limit" field. It is called by the builders before save.
+	TimeLimitValidator func(int) error
+	// MemoryLimitValidator is a validator for the "memory_limit" field. It is called by the builders before save.
+	MemoryLimitValidator func(int) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(int64) error
 )
+
+// ProblemType defines the type for the "problem_type" enum field.
+type ProblemType string
+
+// ProblemTypeOJ is the default value of the ProblemType enum.
+const DefaultProblemType = ProblemTypeOJ
+
+// ProblemType values.
+const (
+	ProblemTypeOJ    ProblemType = "OJ"
+	ProblemTypeOther ProblemType = "other"
+)
+
+func (pt ProblemType) String() string {
+	return string(pt)
+}
+
+// ProblemTypeValidator is a validator for the "problem_type" field enum values. It is called by the builders before save.
+func ProblemTypeValidator(pt ProblemType) error {
+	switch pt {
+	case ProblemTypeOJ, ProblemTypeOther:
+		return nil
+	default:
+		return fmt.Errorf("problem: invalid enum value for problem_type field: %q", pt)
+	}
+}
 
 // UseStatus defines the type for the "use_status" enum field.
 type UseStatus string
@@ -180,24 +190,19 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
-// ByJudgeConfigID orders the results by the judge_config_id field.
-func ByJudgeConfigID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldJudgeConfigID, opts...).ToFunc()
+// ByProblemType orders the results by the problem_type field.
+func ByProblemType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldProblemType, opts...).ToFunc()
 }
 
-// ByCaseVersion orders the results by the case_version field.
-func ByCaseVersion(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCaseVersion, opts...).ToFunc()
+// ByTimeLimit orders the results by the time_limit field.
+func ByTimeLimit(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimeLimit, opts...).ToFunc()
 }
 
-// ByTimeLimitMs orders the results by the time_limit_ms field.
-func ByTimeLimitMs(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTimeLimitMs, opts...).ToFunc()
-}
-
-// ByMemoryLimitKB orders the results by the memory_limit_kb field.
-func ByMemoryLimitKB(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldMemoryLimitKB, opts...).ToFunc()
+// ByMemoryLimit orders the results by the memory_limit field.
+func ByMemoryLimit(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMemoryLimit, opts...).ToFunc()
 }
 
 // ByUseStatus orders the results by the use_status field.
@@ -212,10 +217,17 @@ func ByCreatorField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByJudgeConfigField orders the results by judge_config field.
-func ByJudgeConfigField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByTestCasesCount orders the results by test_cases count.
+func ByTestCasesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newJudgeConfigStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newTestCasesStep(), opts...)
+	}
+}
+
+// ByTestCases orders the results by test_cases terms.
+func ByTestCases(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTestCasesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -247,17 +259,17 @@ func BySubmissions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByProblemSetIncludesCount orders the results by problem_set_includes count.
-func ByProblemSetIncludesCount(opts ...sql.OrderTermOption) OrderOption {
+// ByProblemSetProblemsCount orders the results by problem_set_problems count.
+func ByProblemSetProblemsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newProblemSetIncludesStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newProblemSetProblemsStep(), opts...)
 	}
 }
 
-// ByProblemSetIncludes orders the results by problem_set_includes terms.
-func ByProblemSetIncludes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByProblemSetProblems orders the results by problem_set_problems terms.
+func ByProblemSetProblems(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newProblemSetIncludesStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newProblemSetProblemsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newCreatorStep() *sqlgraph.Step {
@@ -267,11 +279,11 @@ func newCreatorStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, CreatorTable, CreatorColumn),
 	)
 }
-func newJudgeConfigStep() *sqlgraph.Step {
+func newTestCasesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(JudgeConfigInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, JudgeConfigTable, JudgeConfigColumn),
+		sqlgraph.To(TestCasesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TestCasesTable, TestCasesColumn),
 	)
 }
 func newJudgeRecordsStep() *sqlgraph.Step {
@@ -288,10 +300,10 @@ func newSubmissionsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, SubmissionsTable, SubmissionsColumn),
 	)
 }
-func newProblemSetIncludesStep() *sqlgraph.Step {
+func newProblemSetProblemsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ProblemSetIncludesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetIncludesTable, ProblemSetIncludesColumn),
+		sqlgraph.To(ProblemSetProblemsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetProblemsTable, ProblemSetProblemsColumn),
 	)
 }

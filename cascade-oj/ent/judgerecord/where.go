@@ -65,39 +65,19 @@ func UserID(v int64) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldEQ(FieldUserID, v))
 }
 
-// UUID applies equality check predicate on the "uuid" field. It's identical to UUIDEQ.
-func UUID(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEQ(FieldUUID, v))
-}
-
-// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
-func Status(v int16) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEQ(FieldStatus, v))
-}
-
 // JudgeStartTime applies equality check predicate on the "judge_start_time" field. It's identical to JudgeStartTimeEQ.
 func JudgeStartTime(v time.Time) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldEQ(FieldJudgeStartTime, v))
 }
 
-// TimeCostMs applies equality check predicate on the "time_cost_ms" field. It's identical to TimeCostMsEQ.
-func TimeCostMs(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEQ(FieldTimeCostMs, v))
-}
-
-// MemoryCostKB applies equality check predicate on the "memory_cost_kb" field. It's identical to MemoryCostKBEQ.
-func MemoryCostKB(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEQ(FieldMemoryCostKB, v))
+// Result applies equality check predicate on the "result" field. It's identical to ResultEQ.
+func Result(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldEQ(FieldResult, v))
 }
 
 // Code applies equality check predicate on the "code" field. It's identical to CodeEQ.
 func Code(v string) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldEQ(FieldCode, v))
-}
-
-// Language applies equality check predicate on the "language" field. It's identical to LanguageEQ.
-func Language(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEQ(FieldLanguage, v))
 }
 
 // ProblemIDEQ applies the EQ predicate on the "problem_id" field.
@@ -140,109 +120,24 @@ func UserIDNotIn(vs ...int64) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldNotIn(FieldUserID, vs...))
 }
 
-// UUIDEQ applies the EQ predicate on the "uuid" field.
-func UUIDEQ(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEQ(FieldUUID, v))
-}
-
-// UUIDNEQ applies the NEQ predicate on the "uuid" field.
-func UUIDNEQ(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldNEQ(FieldUUID, v))
-}
-
-// UUIDIn applies the In predicate on the "uuid" field.
-func UUIDIn(vs ...string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldIn(FieldUUID, vs...))
-}
-
-// UUIDNotIn applies the NotIn predicate on the "uuid" field.
-func UUIDNotIn(vs ...string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldNotIn(FieldUUID, vs...))
-}
-
-// UUIDGT applies the GT predicate on the "uuid" field.
-func UUIDGT(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGT(FieldUUID, v))
-}
-
-// UUIDGTE applies the GTE predicate on the "uuid" field.
-func UUIDGTE(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGTE(FieldUUID, v))
-}
-
-// UUIDLT applies the LT predicate on the "uuid" field.
-func UUIDLT(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLT(FieldUUID, v))
-}
-
-// UUIDLTE applies the LTE predicate on the "uuid" field.
-func UUIDLTE(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLTE(FieldUUID, v))
-}
-
-// UUIDContains applies the Contains predicate on the "uuid" field.
-func UUIDContains(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldContains(FieldUUID, v))
-}
-
-// UUIDHasPrefix applies the HasPrefix predicate on the "uuid" field.
-func UUIDHasPrefix(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldHasPrefix(FieldUUID, v))
-}
-
-// UUIDHasSuffix applies the HasSuffix predicate on the "uuid" field.
-func UUIDHasSuffix(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldHasSuffix(FieldUUID, v))
-}
-
-// UUIDEqualFold applies the EqualFold predicate on the "uuid" field.
-func UUIDEqualFold(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEqualFold(FieldUUID, v))
-}
-
-// UUIDContainsFold applies the ContainsFold predicate on the "uuid" field.
-func UUIDContainsFold(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldContainsFold(FieldUUID, v))
-}
-
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v int16) predicate.JudgeRecord {
+func StatusEQ(v Status) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldEQ(FieldStatus, v))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v int16) predicate.JudgeRecord {
+func StatusNEQ(v Status) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldNEQ(FieldStatus, v))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...int16) predicate.JudgeRecord {
+func StatusIn(vs ...Status) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldIn(FieldStatus, vs...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...int16) predicate.JudgeRecord {
+func StatusNotIn(vs ...Status) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldNotIn(FieldStatus, vs...))
-}
-
-// StatusGT applies the GT predicate on the "status" field.
-func StatusGT(v int16) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGT(FieldStatus, v))
-}
-
-// StatusGTE applies the GTE predicate on the "status" field.
-func StatusGTE(v int16) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGTE(FieldStatus, v))
-}
-
-// StatusLT applies the LT predicate on the "status" field.
-func StatusLT(v int16) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLT(FieldStatus, v))
-}
-
-// StatusLTE applies the LTE predicate on the "status" field.
-func StatusLTE(v int16) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLTE(FieldStatus, v))
 }
 
 // JudgeStartTimeEQ applies the EQ predicate on the "judge_start_time" field.
@@ -285,84 +180,79 @@ func JudgeStartTimeLTE(v time.Time) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldLTE(FieldJudgeStartTime, v))
 }
 
-// TimeCostMsEQ applies the EQ predicate on the "time_cost_ms" field.
-func TimeCostMsEQ(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEQ(FieldTimeCostMs, v))
+// ResultEQ applies the EQ predicate on the "result" field.
+func ResultEQ(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldEQ(FieldResult, v))
 }
 
-// TimeCostMsNEQ applies the NEQ predicate on the "time_cost_ms" field.
-func TimeCostMsNEQ(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldNEQ(FieldTimeCostMs, v))
+// ResultNEQ applies the NEQ predicate on the "result" field.
+func ResultNEQ(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldNEQ(FieldResult, v))
 }
 
-// TimeCostMsIn applies the In predicate on the "time_cost_ms" field.
-func TimeCostMsIn(vs ...uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldIn(FieldTimeCostMs, vs...))
+// ResultIn applies the In predicate on the "result" field.
+func ResultIn(vs ...string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldIn(FieldResult, vs...))
 }
 
-// TimeCostMsNotIn applies the NotIn predicate on the "time_cost_ms" field.
-func TimeCostMsNotIn(vs ...uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldNotIn(FieldTimeCostMs, vs...))
+// ResultNotIn applies the NotIn predicate on the "result" field.
+func ResultNotIn(vs ...string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldNotIn(FieldResult, vs...))
 }
 
-// TimeCostMsGT applies the GT predicate on the "time_cost_ms" field.
-func TimeCostMsGT(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGT(FieldTimeCostMs, v))
+// ResultGT applies the GT predicate on the "result" field.
+func ResultGT(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldGT(FieldResult, v))
 }
 
-// TimeCostMsGTE applies the GTE predicate on the "time_cost_ms" field.
-func TimeCostMsGTE(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGTE(FieldTimeCostMs, v))
+// ResultGTE applies the GTE predicate on the "result" field.
+func ResultGTE(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldGTE(FieldResult, v))
 }
 
-// TimeCostMsLT applies the LT predicate on the "time_cost_ms" field.
-func TimeCostMsLT(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLT(FieldTimeCostMs, v))
+// ResultLT applies the LT predicate on the "result" field.
+func ResultLT(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldLT(FieldResult, v))
 }
 
-// TimeCostMsLTE applies the LTE predicate on the "time_cost_ms" field.
-func TimeCostMsLTE(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLTE(FieldTimeCostMs, v))
+// ResultLTE applies the LTE predicate on the "result" field.
+func ResultLTE(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldLTE(FieldResult, v))
 }
 
-// MemoryCostKBEQ applies the EQ predicate on the "memory_cost_kb" field.
-func MemoryCostKBEQ(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEQ(FieldMemoryCostKB, v))
+// ResultContains applies the Contains predicate on the "result" field.
+func ResultContains(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldContains(FieldResult, v))
 }
 
-// MemoryCostKBNEQ applies the NEQ predicate on the "memory_cost_kb" field.
-func MemoryCostKBNEQ(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldNEQ(FieldMemoryCostKB, v))
+// ResultHasPrefix applies the HasPrefix predicate on the "result" field.
+func ResultHasPrefix(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldHasPrefix(FieldResult, v))
 }
 
-// MemoryCostKBIn applies the In predicate on the "memory_cost_kb" field.
-func MemoryCostKBIn(vs ...uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldIn(FieldMemoryCostKB, vs...))
+// ResultHasSuffix applies the HasSuffix predicate on the "result" field.
+func ResultHasSuffix(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldHasSuffix(FieldResult, v))
 }
 
-// MemoryCostKBNotIn applies the NotIn predicate on the "memory_cost_kb" field.
-func MemoryCostKBNotIn(vs ...uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldNotIn(FieldMemoryCostKB, vs...))
+// ResultIsNil applies the IsNil predicate on the "result" field.
+func ResultIsNil() predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldIsNull(FieldResult))
 }
 
-// MemoryCostKBGT applies the GT predicate on the "memory_cost_kb" field.
-func MemoryCostKBGT(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGT(FieldMemoryCostKB, v))
+// ResultNotNil applies the NotNil predicate on the "result" field.
+func ResultNotNil() predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldNotNull(FieldResult))
 }
 
-// MemoryCostKBGTE applies the GTE predicate on the "memory_cost_kb" field.
-func MemoryCostKBGTE(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGTE(FieldMemoryCostKB, v))
+// ResultEqualFold applies the EqualFold predicate on the "result" field.
+func ResultEqualFold(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldEqualFold(FieldResult, v))
 }
 
-// MemoryCostKBLT applies the LT predicate on the "memory_cost_kb" field.
-func MemoryCostKBLT(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLT(FieldMemoryCostKB, v))
-}
-
-// MemoryCostKBLTE applies the LTE predicate on the "memory_cost_kb" field.
-func MemoryCostKBLTE(v uint64) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLTE(FieldMemoryCostKB, v))
+// ResultContainsFold applies the ContainsFold predicate on the "result" field.
+func ResultContainsFold(v string) predicate.JudgeRecord {
+	return predicate.JudgeRecord(sql.FieldContainsFold(FieldResult, v))
 }
 
 // CodeEQ applies the EQ predicate on the "code" field.
@@ -431,68 +321,23 @@ func CodeContainsFold(v string) predicate.JudgeRecord {
 }
 
 // LanguageEQ applies the EQ predicate on the "language" field.
-func LanguageEQ(v string) predicate.JudgeRecord {
+func LanguageEQ(v Language) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldEQ(FieldLanguage, v))
 }
 
 // LanguageNEQ applies the NEQ predicate on the "language" field.
-func LanguageNEQ(v string) predicate.JudgeRecord {
+func LanguageNEQ(v Language) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldNEQ(FieldLanguage, v))
 }
 
 // LanguageIn applies the In predicate on the "language" field.
-func LanguageIn(vs ...string) predicate.JudgeRecord {
+func LanguageIn(vs ...Language) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldIn(FieldLanguage, vs...))
 }
 
 // LanguageNotIn applies the NotIn predicate on the "language" field.
-func LanguageNotIn(vs ...string) predicate.JudgeRecord {
+func LanguageNotIn(vs ...Language) predicate.JudgeRecord {
 	return predicate.JudgeRecord(sql.FieldNotIn(FieldLanguage, vs...))
-}
-
-// LanguageGT applies the GT predicate on the "language" field.
-func LanguageGT(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGT(FieldLanguage, v))
-}
-
-// LanguageGTE applies the GTE predicate on the "language" field.
-func LanguageGTE(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldGTE(FieldLanguage, v))
-}
-
-// LanguageLT applies the LT predicate on the "language" field.
-func LanguageLT(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLT(FieldLanguage, v))
-}
-
-// LanguageLTE applies the LTE predicate on the "language" field.
-func LanguageLTE(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldLTE(FieldLanguage, v))
-}
-
-// LanguageContains applies the Contains predicate on the "language" field.
-func LanguageContains(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldContains(FieldLanguage, v))
-}
-
-// LanguageHasPrefix applies the HasPrefix predicate on the "language" field.
-func LanguageHasPrefix(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldHasPrefix(FieldLanguage, v))
-}
-
-// LanguageHasSuffix applies the HasSuffix predicate on the "language" field.
-func LanguageHasSuffix(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldHasSuffix(FieldLanguage, v))
-}
-
-// LanguageEqualFold applies the EqualFold predicate on the "language" field.
-func LanguageEqualFold(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldEqualFold(FieldLanguage, v))
-}
-
-// LanguageContainsFold applies the ContainsFold predicate on the "language" field.
-func LanguageContainsFold(v string) predicate.JudgeRecord {
-	return predicate.JudgeRecord(sql.FieldContainsFold(FieldLanguage, v))
 }
 
 // JudgeTypeEQ applies the EQ predicate on the "judge_type" field.

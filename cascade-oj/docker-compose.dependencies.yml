@@ -15,3 +15,19 @@ services:
       - ./data/mysql:/var/lib/mysql
       - ./data/mysql_conf:/etc/mysql/mysql.conf.d
     container_name: cascade_oj_mysql
+  cascade_redis:
+    image: redis:7.0
+    restart: always
+    ports:
+      - "6379:6379"
+    container_name: cascade_oj_redis
+  cascade_rabbitmq:
+    image: rabbitmq:3.11-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: cascade_oj
+      RABBITMQ_DEFAULT_PASS: 123456
+    container_name: cascade_oj_rabbitmq

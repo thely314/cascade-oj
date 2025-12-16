@@ -23,7 +23,6 @@ const OperationUserGetAnnouncements = "/api.cascade.user.v1.User/GetAnnouncement
 const OperationUserGetContests = "/api.cascade.user.v1.User/GetContests"
 const OperationUserGetProblems = "/api.cascade.user.v1.User/GetProblems"
 const OperationUserGetRanks = "/api.cascade.user.v1.User/GetRanks"
-const OperationUserGetSelfTestResult = "/api.cascade.user.v1.User/GetSelfTestResult"
 const OperationUserGetSingleContest = "/api.cascade.user.v1.User/GetSingleContest"
 const OperationUserGetSingleProblem = "/api.cascade.user.v1.User/GetSingleProblem"
 const OperationUserGetSingleSubmission = "/api.cascade.user.v1.User/GetSingleSubmission"
@@ -40,7 +39,6 @@ type UserHTTPServer interface {
 	GetContests(context.Context, *GetContestsRequest) (*GetContestsReply, error)
 	GetProblems(context.Context, *GetProblemsRequest) (*GetProblemsReply, error)
 	GetRanks(context.Context, *GetRanksRequest) (*GetRanksReply, error)
-	GetSelfTestResult(context.Context, *GetSelfTestResultRequest) (*GetSelfTestResultReply, error)
 	GetSingleContest(context.Context, *GetSingleContestRequest) (*GetSingleContestReply, error)
 	GetSingleProblem(context.Context, *GetSingleProblemRequest) (*GetSingleProblemReply, error)
 	GetSingleSubmission(context.Context, *GetSingleSubmissionRequest) (*GetSingleSubmissionReply, error)
@@ -48,7 +46,7 @@ type UserHTTPServer interface {
 	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoReply, error)
 	JoinContest(context.Context, *JoinContestRequest) (*JoinContestReply, error)
 	PostSelfTest(context.Context, *SelfTestRequest) (*SelfTestReply, error)
-	PostSubmission(context.Context, *PostSubmissionRequest) (*PostSubmissionReply, error)
+	PostSubmission(context.Context, *SubmissionRequest) (*SubmissionReply, error)
 	QuitContest(context.Context, *QuitContestRequest) (*QuitContestReply, error)
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoReply, error)
 }
@@ -56,16 +54,15 @@ type UserHTTPServer interface {
 func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r := s.Route("/")
 	r.GET("/user/contests", _User_GetContests0_HTTP_Handler(srv))
-	r.GET("/user/contests/{contest_id}", _User_GetSingleContest0_HTTP_Handler(srv))
-	r.POST("/user/contests/{contest_id}/join", _User_JoinContest0_HTTP_Handler(srv))
-	r.DELETE("/user/contests/{contest_id}/join", _User_QuitContest0_HTTP_Handler(srv))
+	r.GET("/user/contest/{contest_id}", _User_GetSingleContest0_HTTP_Handler(srv))
+	r.POST("/user/contest/{contest_id}/join", _User_JoinContest0_HTTP_Handler(srv))
+	r.DELETE("/user/contest/{contest_id}/join", _User_QuitContest0_HTTP_Handler(srv))
 	r.GET("/user/problems/{contest_id}", _User_GetProblems0_HTTP_Handler(srv))
-	r.GET("/user/problems/{problem_id}", _User_GetSingleProblem0_HTTP_Handler(srv))
+	r.GET("/user/problem/{problem_id}", _User_GetSingleProblem0_HTTP_Handler(srv))
 	r.POST("/user/selftests", _User_PostSelfTest0_HTTP_Handler(srv))
-	r.GET("/user/selftests/{selftest_uuid}", _User_GetSelfTestResult0_HTTP_Handler(srv))
 	r.POST("/user/submissions", _User_PostSubmission0_HTTP_Handler(srv))
 	r.GET("/user/submissions", _User_GetSubmissions0_HTTP_Handler(srv))
-	r.GET("/user/submissions/{submission_uuid}", _User_GetSingleSubmission0_HTTP_Handler(srv))
+	r.GET("/user/submissions/{submission_id}", _User_GetSingleSubmission0_HTTP_Handler(srv))
 	r.GET("/user/{contest_id}/ranks", _User_GetRanks0_HTTP_Handler(srv))
 	r.GET("/user/announcements", _User_GetAnnouncements0_HTTP_Handler(srv))
 	r.GET("/users/{user_id}", _User_GetUserInfo0_HTTP_Handler(srv))
@@ -226,31 +223,9 @@ func _User_PostSelfTest0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context)
 	}
 }
 
-func _User_GetSelfTestResult0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in GetSelfTestResultRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationUserGetSelfTestResult)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetSelfTestResult(ctx, req.(*GetSelfTestResultRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*GetSelfTestResultReply)
-		return ctx.Result(200, reply)
-	}
-}
-
 func _User_PostSubmission0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in PostSubmissionRequest
+		var in SubmissionRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -259,13 +234,13 @@ func _User_PostSubmission0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Contex
 		}
 		http.SetOperation(ctx, OperationUserPostSubmission)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.PostSubmission(ctx, req.(*PostSubmissionRequest))
+			return srv.PostSubmission(ctx, req.(*SubmissionRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*PostSubmissionReply)
+		reply := out.(*SubmissionReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -404,7 +379,6 @@ type UserHTTPClient interface {
 	GetContests(ctx context.Context, req *GetContestsRequest, opts ...http.CallOption) (rsp *GetContestsReply, err error)
 	GetProblems(ctx context.Context, req *GetProblemsRequest, opts ...http.CallOption) (rsp *GetProblemsReply, err error)
 	GetRanks(ctx context.Context, req *GetRanksRequest, opts ...http.CallOption) (rsp *GetRanksReply, err error)
-	GetSelfTestResult(ctx context.Context, req *GetSelfTestResultRequest, opts ...http.CallOption) (rsp *GetSelfTestResultReply, err error)
 	GetSingleContest(ctx context.Context, req *GetSingleContestRequest, opts ...http.CallOption) (rsp *GetSingleContestReply, err error)
 	GetSingleProblem(ctx context.Context, req *GetSingleProblemRequest, opts ...http.CallOption) (rsp *GetSingleProblemReply, err error)
 	GetSingleSubmission(ctx context.Context, req *GetSingleSubmissionRequest, opts ...http.CallOption) (rsp *GetSingleSubmissionReply, err error)
@@ -412,7 +386,7 @@ type UserHTTPClient interface {
 	GetUserInfo(ctx context.Context, req *GetUserInfoRequest, opts ...http.CallOption) (rsp *GetUserInfoReply, err error)
 	JoinContest(ctx context.Context, req *JoinContestRequest, opts ...http.CallOption) (rsp *JoinContestReply, err error)
 	PostSelfTest(ctx context.Context, req *SelfTestRequest, opts ...http.CallOption) (rsp *SelfTestReply, err error)
-	PostSubmission(ctx context.Context, req *PostSubmissionRequest, opts ...http.CallOption) (rsp *PostSubmissionReply, err error)
+	PostSubmission(ctx context.Context, req *SubmissionRequest, opts ...http.CallOption) (rsp *SubmissionReply, err error)
 	QuitContest(ctx context.Context, req *QuitContestRequest, opts ...http.CallOption) (rsp *QuitContestReply, err error)
 	UpdateUserInfo(ctx context.Context, req *UpdateUserInfoRequest, opts ...http.CallOption) (rsp *UpdateUserInfoReply, err error)
 }
@@ -477,22 +451,9 @@ func (c *UserHTTPClientImpl) GetRanks(ctx context.Context, in *GetRanksRequest, 
 	return &out, nil
 }
 
-func (c *UserHTTPClientImpl) GetSelfTestResult(ctx context.Context, in *GetSelfTestResultRequest, opts ...http.CallOption) (*GetSelfTestResultReply, error) {
-	var out GetSelfTestResultReply
-	pattern := "/user/selftests/{selftest_uuid}"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationUserGetSelfTestResult))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
 func (c *UserHTTPClientImpl) GetSingleContest(ctx context.Context, in *GetSingleContestRequest, opts ...http.CallOption) (*GetSingleContestReply, error) {
 	var out GetSingleContestReply
-	pattern := "/user/contests/{contest_id}"
+	pattern := "/user/contest/{contest_id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetSingleContest))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -505,7 +466,7 @@ func (c *UserHTTPClientImpl) GetSingleContest(ctx context.Context, in *GetSingle
 
 func (c *UserHTTPClientImpl) GetSingleProblem(ctx context.Context, in *GetSingleProblemRequest, opts ...http.CallOption) (*GetSingleProblemReply, error) {
 	var out GetSingleProblemReply
-	pattern := "/user/problems/{problem_id}"
+	pattern := "/user/problem/{problem_id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetSingleProblem))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -518,7 +479,7 @@ func (c *UserHTTPClientImpl) GetSingleProblem(ctx context.Context, in *GetSingle
 
 func (c *UserHTTPClientImpl) GetSingleSubmission(ctx context.Context, in *GetSingleSubmissionRequest, opts ...http.CallOption) (*GetSingleSubmissionReply, error) {
 	var out GetSingleSubmissionReply
-	pattern := "/user/submissions/{submission_uuid}"
+	pattern := "/user/submissions/{submission_id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetSingleSubmission))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -557,7 +518,7 @@ func (c *UserHTTPClientImpl) GetUserInfo(ctx context.Context, in *GetUserInfoReq
 
 func (c *UserHTTPClientImpl) JoinContest(ctx context.Context, in *JoinContestRequest, opts ...http.CallOption) (*JoinContestReply, error) {
 	var out JoinContestReply
-	pattern := "/user/contests/{contest_id}/join"
+	pattern := "/user/contest/{contest_id}/join"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserJoinContest))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -581,8 +542,8 @@ func (c *UserHTTPClientImpl) PostSelfTest(ctx context.Context, in *SelfTestReque
 	return &out, nil
 }
 
-func (c *UserHTTPClientImpl) PostSubmission(ctx context.Context, in *PostSubmissionRequest, opts ...http.CallOption) (*PostSubmissionReply, error) {
-	var out PostSubmissionReply
+func (c *UserHTTPClientImpl) PostSubmission(ctx context.Context, in *SubmissionRequest, opts ...http.CallOption) (*SubmissionReply, error) {
+	var out SubmissionReply
 	pattern := "/user/submissions"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserPostSubmission))
@@ -596,7 +557,7 @@ func (c *UserHTTPClientImpl) PostSubmission(ctx context.Context, in *PostSubmiss
 
 func (c *UserHTTPClientImpl) QuitContest(ctx context.Context, in *QuitContestRequest, opts ...http.CallOption) (*QuitContestReply, error) {
 	var out QuitContestReply
-	pattern := "/user/contests/{contest_id}/join"
+	pattern := "/user/contest/{contest_id}/join"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserQuitContest))
 	opts = append(opts, http.PathTemplate(pattern))

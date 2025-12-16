@@ -15,19 +15,19 @@ service User {
     };
     rpc GetSingleContest(GetSingleContestRequest) returns (GetSingleContestReply) {
         option (google.api.http) = {
-            get: "/user/contests/{contest_id}"
+            get: "/user/contest/{contest_id}"
         };
     };
 
     rpc JoinContest(JoinContestRequest) returns (JoinContestReply) {
         option (google.api.http) = {
-            post: "/user/contests/{contest_id}/join"
+            post: "/user/contest/{contest_id}/join"
             body: "*"
         };
     };
     rpc QuitContest(QuitContestRequest) returns (QuitContestReply) {
         option (google.api.http) = {
-            delete: "/user/contests/{contest_id}/join"
+            delete: "/user/contest/{contest_id}/join"
         };
     };
     rpc GetProblems(GetProblemsRequest) returns (GetProblemsReply) {
@@ -37,7 +37,7 @@ service User {
     };
     rpc GetSingleProblem(GetSingleProblemRequest) returns (GetSingleProblemReply) {
         option (google.api.http) = {
-            get: "/user/problems/{problem_id}"
+            get: "/user/problem/{problem_id}"
         };
     };
 
@@ -47,12 +47,7 @@ service User {
             body: "*"
         };
     };
-    rpc GetSelfTestResult(GetSelfTestResultRequest) returns (GetSelfTestResultReply) {
-        option (google.api.http) = {
-            get: "/user/selftests/{selftest_uuid}"
-        };
-    }
-    rpc PostSubmission(PostSubmissionRequest) returns (PostSubmissionReply) {
+    rpc PostSubmission(SubmissionRequest) returns (SubmissionReply) {
         option (google.api.http) = {
             post: "/user/submissions"
             body: "*"
@@ -65,7 +60,7 @@ service User {
     };
     rpc GetSingleSubmission(GetSingleSubmissionRequest) returns (GetSingleSubmissionReply) {
         option (google.api.http) = {
-            get: "/user/submissions/{submission_uuid}"
+            get: "/user/submissions/{submission_id}"
         };
     };
 
@@ -93,7 +88,6 @@ service User {
         };
     };
 
-    // Used for registering gateway clients
     rpc Register(RegisterRequest) returns (RegisterReply) {};
 }
 
@@ -136,8 +130,9 @@ message QuitContestReply {
 message ProblemMetadata {
     int64 id = 1; // Problem ID
     string title = 2; // Problem Title
-    int32 time_limit_ms = 3; // Time Limit in milliseconds
-    int32 memory_limit_mb = 4; // Memory Limit in megabytes
+    string problem_type = 3; // Problem Type
+    int32 time_limit_ms = 4; // Time Limit in milliseconds
+    int32 memory_limit_mb = 5; // Memory Limit in megabytes
 }
 message GetProblemsRequest {
     int64 contest_id = 1; // Contest ID
@@ -159,39 +154,29 @@ message SelfTestRequest {
     int64 problem_id = 1; // Problem ID
     string code = 2; // User Code
     string language = 3; // Programming Language
-    string input = 4; // User testcase input
+    string self_case = 4; // User testcase
 }
 message SelfTestReply {
     string uuid = 1;
 }
 
-message GetSelfTestResultRequest {
-    string selftest_uuid = 1; // Self-test UUID
-}
-message GetSelfTestResultReply {
-    bool is_compiled = 1; // Whether the self-test is finished
-    string stdout = 2; // Standard Output
-    string stderr = 3; // Standard Error
-    int32 time_cost = 4; // Time Cost
-    int32 memory_cost = 5; // Memory Cost
-}
-
-message PostSubmissionRequest {
+message SubmissionRequest {
     int64 problem_id = 1; // Problem ID
     string code = 2; // User Code
     string language = 3; // Programming Language
 }
-message PostSubmissionReply {
+message SubmissionReply {
     string uuid = 1;
 }
 
 message SubmissionMetadata {
-    string submission_uuid = 1; // Submission UUID
+    int64 submission_id = 1; // Submission ID
     int64 problem_id = 2; // Problem ID
     int64 user_id = 3; // User ID
     string status = 4; // Submission Status
-    google.protobuf.Timestamp submit_time = 5; // Submission Time
-    int32 score = 6; // Submission Score
+    string result = 5; // Submission Result
+    google.protobuf.Timestamp submit_time = 6; // Submission Time
+    int32 score = 7; // Submission Score
 }
 message GetSubmissionsRequest {
     int64 problem_id = 1; // Problem ID
@@ -205,14 +190,12 @@ message GetSubmissionsReply {
 }
 
 message GetSingleSubmissionRequest {
-    string submission_uuid = 1; // Submission UUID
+    string submission_id = 1; // Submission ID
 }
 message GetSingleSubmissionReply {
     SubmissionMetadata metadata = 1; // Submission Metadata
     string code = 2; // User Code
     string language = 3; // Programming Language
-    int32 time_cost = 4; // Time Cost
-    int32 memory_cost = 5; // Memory Cost
 }
 
 message GetRanksRequest {
@@ -257,7 +240,6 @@ message UpdateUserInfoReply {
     bool is_updated = 1; // Whether the user info is updated
 }
 
-// Used for registering gateway clients
 message RegisterRequest {
     string endpoint = 1;
     string api_key = 2;

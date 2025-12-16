@@ -3,6 +3,7 @@
 package submissionrecord
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -20,6 +21,8 @@ const (
 	FieldProblemID = "problem_id"
 	// FieldProblemSetID holds the string denoting the problem_set_id field in the database.
 	FieldProblemSetID = "problem_set_id"
+	// FieldResult holds the string denoting the result field in the database.
+	FieldResult = "result"
 	// FieldSubmissionTime holds the string denoting the submission_time field in the database.
 	FieldSubmissionTime = "submission_time"
 	// FieldScore holds the string denoting the score field in the database.
@@ -30,15 +33,13 @@ const (
 	EdgeProblem = "problem"
 	// EdgeProblemSet holds the string denoting the problem_set edge name in mutations.
 	EdgeProblemSet = "problem_set"
-	// EdgeCaseGroupResults holds the string denoting the case_group_results edge name in mutations.
-	EdgeCaseGroupResults = "case_group_results"
 	// Table holds the table name of the submissionrecord in the database.
 	Table = "SubmissionRecords"
 	// JudgeTable is the table that holds the judge relation/edge.
 	JudgeTable = "SubmissionRecords"
 	// JudgeInverseTable is the table name for the JudgeRecord entity.
 	// It exists in this package in order to avoid circular dependency with the "judgerecord" package.
-	JudgeInverseTable = "Judge_Records"
+	JudgeInverseTable = "JudgeRecords"
 	// JudgeColumn is the table column denoting the judge relation/edge.
 	JudgeColumn = "judge_id"
 	// ProblemTable is the table that holds the problem relation/edge.
@@ -55,13 +56,6 @@ const (
 	ProblemSetInverseTable = "ProblemSets"
 	// ProblemSetColumn is the table column denoting the problem_set relation/edge.
 	ProblemSetColumn = "problem_set_id"
-	// CaseGroupResultsTable is the table that holds the case_group_results relation/edge.
-	CaseGroupResultsTable = "CaseGroup_Results"
-	// CaseGroupResultsInverseTable is the table name for the CaseGroupResult entity.
-	// It exists in this package in order to avoid circular dependency with the "casegroupresult" package.
-	CaseGroupResultsInverseTable = "CaseGroup_Results"
-	// CaseGroupResultsColumn is the table column denoting the case_group_results relation/edge.
-	CaseGroupResultsColumn = "submission_id"
 )
 
 // Columns holds all SQL columns for submissionrecord fields.
@@ -70,6 +64,7 @@ var Columns = []string{
 	FieldJudgeID,
 	FieldProblemID,
 	FieldProblemSetID,
+	FieldResult,
 	FieldSubmissionTime,
 	FieldScore,
 }
@@ -97,6 +92,29 @@ var (
 	IDValidator func(int64) error
 )
 
+// Result defines the type for the "result" enum field.
+type Result string
+
+// Result values.
+const (
+	ResultPass Result = "Pass"
+	ResultFail Result = "Fail"
+)
+
+func (r Result) String() string {
+	return string(r)
+}
+
+// ResultValidator is a validator for the "result" field enum values. It is called by the builders before save.
+func ResultValidator(r Result) error {
+	switch r {
+	case ResultPass, ResultFail:
+		return nil
+	default:
+		return fmt.Errorf("submissionrecord: invalid enum value for result field: %q", r)
+	}
+}
+
 // OrderOption defines the ordering options for the SubmissionRecord queries.
 type OrderOption func(*sql.Selector)
 
@@ -118,6 +136,11 @@ func ByProblemID(opts ...sql.OrderTermOption) OrderOption {
 // ByProblemSetID orders the results by the problem_set_id field.
 func ByProblemSetID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldProblemSetID, opts...).ToFunc()
+}
+
+// ByResult orders the results by the result field.
+func ByResult(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldResult, opts...).ToFunc()
 }
 
 // BySubmissionTime orders the results by the submission_time field.
@@ -150,20 +173,6 @@ func ByProblemSetField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newProblemSetStep(), sql.OrderByField(field, opts...))
 	}
 }
-
-// ByCaseGroupResultsCount orders the results by case_group_results count.
-func ByCaseGroupResultsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newCaseGroupResultsStep(), opts...)
-	}
-}
-
-// ByCaseGroupResults orders the results by case_group_results terms.
-func ByCaseGroupResults(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newCaseGroupResultsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
 func newJudgeStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -183,12 +192,5 @@ func newProblemSetStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProblemSetInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, ProblemSetTable, ProblemSetColumn),
-	)
-}
-func newCaseGroupResultsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(CaseGroupResultsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, CaseGroupResultsTable, CaseGroupResultsColumn),
 	)
 }

@@ -1,27 +1,20 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "pages/404.vue"
+  ],
+  "exclude": [
+    "src/**/__tests__/*"
+  ],
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "strict": true,
-    "jsx": "preserve",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
-    
-    /* --- 尝试解决 @ 报错 --- */
-    "baseUrl": ".",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "paths": {
-      "@/*": ["src/*"]
-    },
-
-    /* --- 建议添加这一行，忽略第三方库类型定义的报错 --- */
-    /* 因为 Monaco Editor 有时候内部类型定义会和环境冲突，加这个比较保险 */
-    "skipLibCheck": true,
-
-    "types": ["vite/client"] 
-  },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  }
 }
