@@ -6,9 +6,9 @@ import (
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemset_problem"
+	"cascade-oj/ent/problemjudgeconfig"
+	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/submissionrecord"
-	"cascade-oj/ent/testcase"
 	"cascade-oj/ent/user"
 	"context"
 	"errors"
@@ -74,59 +74,80 @@ func (_u *ProblemUpdate) SetNillableDescription(v *string) *ProblemUpdate {
 	return _u
 }
 
-// SetProblemType sets the "problem_type" field.
-func (_u *ProblemUpdate) SetProblemType(v problem.ProblemType) *ProblemUpdate {
-	_u.mutation.SetProblemType(v)
+// SetJudgeConfigID sets the "judge_config_id" field.
+func (_u *ProblemUpdate) SetJudgeConfigID(v int64) *ProblemUpdate {
+	_u.mutation.SetJudgeConfigID(v)
 	return _u
 }
 
-// SetNillableProblemType sets the "problem_type" field if the given value is not nil.
-func (_u *ProblemUpdate) SetNillableProblemType(v *problem.ProblemType) *ProblemUpdate {
+// SetNillableJudgeConfigID sets the "judge_config_id" field if the given value is not nil.
+func (_u *ProblemUpdate) SetNillableJudgeConfigID(v *int64) *ProblemUpdate {
 	if v != nil {
-		_u.SetProblemType(*v)
+		_u.SetJudgeConfigID(*v)
 	}
 	return _u
 }
 
-// SetTimeLimit sets the "time_limit" field.
-func (_u *ProblemUpdate) SetTimeLimit(v int) *ProblemUpdate {
-	_u.mutation.ResetTimeLimit()
-	_u.mutation.SetTimeLimit(v)
+// SetCaseVersion sets the "case_version" field.
+func (_u *ProblemUpdate) SetCaseVersion(v int16) *ProblemUpdate {
+	_u.mutation.ResetCaseVersion()
+	_u.mutation.SetCaseVersion(v)
 	return _u
 }
 
-// SetNillableTimeLimit sets the "time_limit" field if the given value is not nil.
-func (_u *ProblemUpdate) SetNillableTimeLimit(v *int) *ProblemUpdate {
+// SetNillableCaseVersion sets the "case_version" field if the given value is not nil.
+func (_u *ProblemUpdate) SetNillableCaseVersion(v *int16) *ProblemUpdate {
 	if v != nil {
-		_u.SetTimeLimit(*v)
+		_u.SetCaseVersion(*v)
 	}
 	return _u
 }
 
-// AddTimeLimit adds value to the "time_limit" field.
-func (_u *ProblemUpdate) AddTimeLimit(v int) *ProblemUpdate {
-	_u.mutation.AddTimeLimit(v)
+// AddCaseVersion adds value to the "case_version" field.
+func (_u *ProblemUpdate) AddCaseVersion(v int16) *ProblemUpdate {
+	_u.mutation.AddCaseVersion(v)
 	return _u
 }
 
-// SetMemoryLimit sets the "memory_limit" field.
-func (_u *ProblemUpdate) SetMemoryLimit(v int) *ProblemUpdate {
-	_u.mutation.ResetMemoryLimit()
-	_u.mutation.SetMemoryLimit(v)
+// SetTimeLimitMs sets the "time_limit_ms" field.
+func (_u *ProblemUpdate) SetTimeLimitMs(v int) *ProblemUpdate {
+	_u.mutation.ResetTimeLimitMs()
+	_u.mutation.SetTimeLimitMs(v)
 	return _u
 }
 
-// SetNillableMemoryLimit sets the "memory_limit" field if the given value is not nil.
-func (_u *ProblemUpdate) SetNillableMemoryLimit(v *int) *ProblemUpdate {
+// SetNillableTimeLimitMs sets the "time_limit_ms" field if the given value is not nil.
+func (_u *ProblemUpdate) SetNillableTimeLimitMs(v *int) *ProblemUpdate {
 	if v != nil {
-		_u.SetMemoryLimit(*v)
+		_u.SetTimeLimitMs(*v)
 	}
 	return _u
 }
 
-// AddMemoryLimit adds value to the "memory_limit" field.
-func (_u *ProblemUpdate) AddMemoryLimit(v int) *ProblemUpdate {
-	_u.mutation.AddMemoryLimit(v)
+// AddTimeLimitMs adds value to the "time_limit_ms" field.
+func (_u *ProblemUpdate) AddTimeLimitMs(v int) *ProblemUpdate {
+	_u.mutation.AddTimeLimitMs(v)
+	return _u
+}
+
+// SetMemoryLimitKB sets the "memory_limit_kb" field.
+func (_u *ProblemUpdate) SetMemoryLimitKB(v int) *ProblemUpdate {
+	_u.mutation.ResetMemoryLimitKB()
+	_u.mutation.SetMemoryLimitKB(v)
+	return _u
+}
+
+// SetNillableMemoryLimitKB sets the "memory_limit_kb" field if the given value is not nil.
+func (_u *ProblemUpdate) SetNillableMemoryLimitKB(v *int) *ProblemUpdate {
+	if v != nil {
+		_u.SetMemoryLimitKB(*v)
+	}
+	return _u
+}
+
+// AddMemoryLimitKB adds value to the "memory_limit_kb" field.
+func (_u *ProblemUpdate) AddMemoryLimitKB(v int) *ProblemUpdate {
+	_u.mutation.AddMemoryLimitKB(v)
 	return _u
 }
 
@@ -149,19 +170,9 @@ func (_u *ProblemUpdate) SetCreator(v *User) *ProblemUpdate {
 	return _u.SetCreatorID(v.ID)
 }
 
-// AddTestCaseIDs adds the "test_cases" edge to the TestCase entity by IDs.
-func (_u *ProblemUpdate) AddTestCaseIDs(ids ...int64) *ProblemUpdate {
-	_u.mutation.AddTestCaseIDs(ids...)
-	return _u
-}
-
-// AddTestCases adds the "test_cases" edges to the TestCase entity.
-func (_u *ProblemUpdate) AddTestCases(v ...*TestCase) *ProblemUpdate {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddTestCaseIDs(ids...)
+// SetJudgeConfig sets the "judge_config" edge to the ProblemJudgeConfig entity.
+func (_u *ProblemUpdate) SetJudgeConfig(v *ProblemJudgeConfig) *ProblemUpdate {
+	return _u.SetJudgeConfigID(v.ID)
 }
 
 // AddJudgeRecordIDs adds the "judge_records" edge to the JudgeRecord entity by IDs.
@@ -194,19 +205,19 @@ func (_u *ProblemUpdate) AddSubmissions(v ...*SubmissionRecord) *ProblemUpdate {
 	return _u.AddSubmissionIDs(ids...)
 }
 
-// AddProblemSetProblemIDs adds the "problem_set_problems" edge to the ProblemSet_Problem entity by IDs.
-func (_u *ProblemUpdate) AddProblemSetProblemIDs(ids ...int64) *ProblemUpdate {
-	_u.mutation.AddProblemSetProblemIDs(ids...)
+// AddProblemSetIncludeIDs adds the "problem_set_includes" edge to the ProblemSet_Includes entity by IDs.
+func (_u *ProblemUpdate) AddProblemSetIncludeIDs(ids ...int64) *ProblemUpdate {
+	_u.mutation.AddProblemSetIncludeIDs(ids...)
 	return _u
 }
 
-// AddProblemSetProblems adds the "problem_set_problems" edges to the ProblemSet_Problem entity.
-func (_u *ProblemUpdate) AddProblemSetProblems(v ...*ProblemSet_Problem) *ProblemUpdate {
+// AddProblemSetIncludes adds the "problem_set_includes" edges to the ProblemSet_Includes entity.
+func (_u *ProblemUpdate) AddProblemSetIncludes(v ...*ProblemSet_Includes) *ProblemUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddProblemSetProblemIDs(ids...)
+	return _u.AddProblemSetIncludeIDs(ids...)
 }
 
 // Mutation returns the ProblemMutation object of the builder.
@@ -220,25 +231,10 @@ func (_u *ProblemUpdate) ClearCreator() *ProblemUpdate {
 	return _u
 }
 
-// ClearTestCases clears all "test_cases" edges to the TestCase entity.
-func (_u *ProblemUpdate) ClearTestCases() *ProblemUpdate {
-	_u.mutation.ClearTestCases()
+// ClearJudgeConfig clears the "judge_config" edge to the ProblemJudgeConfig entity.
+func (_u *ProblemUpdate) ClearJudgeConfig() *ProblemUpdate {
+	_u.mutation.ClearJudgeConfig()
 	return _u
-}
-
-// RemoveTestCaseIDs removes the "test_cases" edge to TestCase entities by IDs.
-func (_u *ProblemUpdate) RemoveTestCaseIDs(ids ...int64) *ProblemUpdate {
-	_u.mutation.RemoveTestCaseIDs(ids...)
-	return _u
-}
-
-// RemoveTestCases removes "test_cases" edges to TestCase entities.
-func (_u *ProblemUpdate) RemoveTestCases(v ...*TestCase) *ProblemUpdate {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveTestCaseIDs(ids...)
 }
 
 // ClearJudgeRecords clears all "judge_records" edges to the JudgeRecord entity.
@@ -283,25 +279,25 @@ func (_u *ProblemUpdate) RemoveSubmissions(v ...*SubmissionRecord) *ProblemUpdat
 	return _u.RemoveSubmissionIDs(ids...)
 }
 
-// ClearProblemSetProblems clears all "problem_set_problems" edges to the ProblemSet_Problem entity.
-func (_u *ProblemUpdate) ClearProblemSetProblems() *ProblemUpdate {
-	_u.mutation.ClearProblemSetProblems()
+// ClearProblemSetIncludes clears all "problem_set_includes" edges to the ProblemSet_Includes entity.
+func (_u *ProblemUpdate) ClearProblemSetIncludes() *ProblemUpdate {
+	_u.mutation.ClearProblemSetIncludes()
 	return _u
 }
 
-// RemoveProblemSetProblemIDs removes the "problem_set_problems" edge to ProblemSet_Problem entities by IDs.
-func (_u *ProblemUpdate) RemoveProblemSetProblemIDs(ids ...int64) *ProblemUpdate {
-	_u.mutation.RemoveProblemSetProblemIDs(ids...)
+// RemoveProblemSetIncludeIDs removes the "problem_set_includes" edge to ProblemSet_Includes entities by IDs.
+func (_u *ProblemUpdate) RemoveProblemSetIncludeIDs(ids ...int64) *ProblemUpdate {
+	_u.mutation.RemoveProblemSetIncludeIDs(ids...)
 	return _u
 }
 
-// RemoveProblemSetProblems removes "problem_set_problems" edges to ProblemSet_Problem entities.
-func (_u *ProblemUpdate) RemoveProblemSetProblems(v ...*ProblemSet_Problem) *ProblemUpdate {
+// RemoveProblemSetIncludes removes "problem_set_includes" edges to ProblemSet_Includes entities.
+func (_u *ProblemUpdate) RemoveProblemSetIncludes(v ...*ProblemSet_Includes) *ProblemUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveProblemSetProblemIDs(ids...)
+	return _u.RemoveProblemSetIncludeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -348,19 +344,14 @@ func (_u *ProblemUpdate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Problem.description": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.ProblemType(); ok {
-		if err := problem.ProblemTypeValidator(v); err != nil {
-			return &ValidationError{Name: "problem_type", err: fmt.Errorf(`ent: validator failed for field "Problem.problem_type": %w`, err)}
+	if v, ok := _u.mutation.TimeLimitMs(); ok {
+		if err := problem.TimeLimitMsValidator(v); err != nil {
+			return &ValidationError{Name: "time_limit_ms", err: fmt.Errorf(`ent: validator failed for field "Problem.time_limit_ms": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.TimeLimit(); ok {
-		if err := problem.TimeLimitValidator(v); err != nil {
-			return &ValidationError{Name: "time_limit", err: fmt.Errorf(`ent: validator failed for field "Problem.time_limit": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.MemoryLimit(); ok {
-		if err := problem.MemoryLimitValidator(v); err != nil {
-			return &ValidationError{Name: "memory_limit", err: fmt.Errorf(`ent: validator failed for field "Problem.memory_limit": %w`, err)}
+	if v, ok := _u.mutation.MemoryLimitKB(); ok {
+		if err := problem.MemoryLimitKBValidator(v); err != nil {
+			return &ValidationError{Name: "memory_limit_kb", err: fmt.Errorf(`ent: validator failed for field "Problem.memory_limit_kb": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.UseStatus(); ok {
@@ -370,6 +361,9 @@ func (_u *ProblemUpdate) check() error {
 	}
 	if _u.mutation.CreatorCleared() && len(_u.mutation.CreatorIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Problem.creator"`)
+	}
+	if _u.mutation.JudgeConfigCleared() && len(_u.mutation.JudgeConfigIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Problem.judge_config"`)
 	}
 	return nil
 }
@@ -392,20 +386,23 @@ func (_u *ProblemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(problem.FieldDescription, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.ProblemType(); ok {
-		_spec.SetField(problem.FieldProblemType, field.TypeEnum, value)
+	if value, ok := _u.mutation.CaseVersion(); ok {
+		_spec.SetField(problem.FieldCaseVersion, field.TypeInt16, value)
 	}
-	if value, ok := _u.mutation.TimeLimit(); ok {
-		_spec.SetField(problem.FieldTimeLimit, field.TypeInt, value)
+	if value, ok := _u.mutation.AddedCaseVersion(); ok {
+		_spec.AddField(problem.FieldCaseVersion, field.TypeInt16, value)
 	}
-	if value, ok := _u.mutation.AddedTimeLimit(); ok {
-		_spec.AddField(problem.FieldTimeLimit, field.TypeInt, value)
+	if value, ok := _u.mutation.TimeLimitMs(); ok {
+		_spec.SetField(problem.FieldTimeLimitMs, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.MemoryLimit(); ok {
-		_spec.SetField(problem.FieldMemoryLimit, field.TypeInt, value)
+	if value, ok := _u.mutation.AddedTimeLimitMs(); ok {
+		_spec.AddField(problem.FieldTimeLimitMs, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.AddedMemoryLimit(); ok {
-		_spec.AddField(problem.FieldMemoryLimit, field.TypeInt, value)
+	if value, ok := _u.mutation.MemoryLimitKB(); ok {
+		_spec.SetField(problem.FieldMemoryLimitKB, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMemoryLimitKB(); ok {
+		_spec.AddField(problem.FieldMemoryLimitKB, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.UseStatus(); ok {
 		_spec.SetField(problem.FieldUseStatus, field.TypeEnum, value)
@@ -439,44 +436,28 @@ func (_u *ProblemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.TestCasesCleared() {
+	if _u.mutation.JudgeConfigCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problem.TestCasesTable,
-			Columns: []string{problem.TestCasesColumn},
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   problem.JudgeConfigTable,
+			Columns: []string{problem.JudgeConfigColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemjudgeconfig.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedTestCasesIDs(); len(nodes) > 0 && !_u.mutation.TestCasesCleared() {
+	if nodes := _u.mutation.JudgeConfigIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problem.TestCasesTable,
-			Columns: []string{problem.TestCasesColumn},
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   problem.JudgeConfigTable,
+			Columns: []string{problem.JudgeConfigColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.TestCasesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problem.TestCasesTable,
-			Columns: []string{problem.TestCasesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemjudgeconfig.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -574,28 +555,28 @@ func (_u *ProblemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ProblemSetProblemsCleared() {
+	if _u.mutation.ProblemSetIncludesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problem.ProblemSetProblemsTable,
-			Columns: []string{problem.ProblemSetProblemsColumn},
+			Table:   problem.ProblemSetIncludesTable,
+			Columns: []string{problem.ProblemSetIncludesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedProblemSetProblemsIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetProblemsCleared() {
+	if nodes := _u.mutation.RemovedProblemSetIncludesIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetIncludesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problem.ProblemSetProblemsTable,
-			Columns: []string{problem.ProblemSetProblemsColumn},
+			Table:   problem.ProblemSetIncludesTable,
+			Columns: []string{problem.ProblemSetIncludesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -603,15 +584,15 @@ func (_u *ProblemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ProblemSetProblemsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProblemSetIncludesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problem.ProblemSetProblemsTable,
-			Columns: []string{problem.ProblemSetProblemsColumn},
+			Table:   problem.ProblemSetIncludesTable,
+			Columns: []string{problem.ProblemSetIncludesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -681,59 +662,80 @@ func (_u *ProblemUpdateOne) SetNillableDescription(v *string) *ProblemUpdateOne 
 	return _u
 }
 
-// SetProblemType sets the "problem_type" field.
-func (_u *ProblemUpdateOne) SetProblemType(v problem.ProblemType) *ProblemUpdateOne {
-	_u.mutation.SetProblemType(v)
+// SetJudgeConfigID sets the "judge_config_id" field.
+func (_u *ProblemUpdateOne) SetJudgeConfigID(v int64) *ProblemUpdateOne {
+	_u.mutation.SetJudgeConfigID(v)
 	return _u
 }
 
-// SetNillableProblemType sets the "problem_type" field if the given value is not nil.
-func (_u *ProblemUpdateOne) SetNillableProblemType(v *problem.ProblemType) *ProblemUpdateOne {
+// SetNillableJudgeConfigID sets the "judge_config_id" field if the given value is not nil.
+func (_u *ProblemUpdateOne) SetNillableJudgeConfigID(v *int64) *ProblemUpdateOne {
 	if v != nil {
-		_u.SetProblemType(*v)
+		_u.SetJudgeConfigID(*v)
 	}
 	return _u
 }
 
-// SetTimeLimit sets the "time_limit" field.
-func (_u *ProblemUpdateOne) SetTimeLimit(v int) *ProblemUpdateOne {
-	_u.mutation.ResetTimeLimit()
-	_u.mutation.SetTimeLimit(v)
+// SetCaseVersion sets the "case_version" field.
+func (_u *ProblemUpdateOne) SetCaseVersion(v int16) *ProblemUpdateOne {
+	_u.mutation.ResetCaseVersion()
+	_u.mutation.SetCaseVersion(v)
 	return _u
 }
 
-// SetNillableTimeLimit sets the "time_limit" field if the given value is not nil.
-func (_u *ProblemUpdateOne) SetNillableTimeLimit(v *int) *ProblemUpdateOne {
+// SetNillableCaseVersion sets the "case_version" field if the given value is not nil.
+func (_u *ProblemUpdateOne) SetNillableCaseVersion(v *int16) *ProblemUpdateOne {
 	if v != nil {
-		_u.SetTimeLimit(*v)
+		_u.SetCaseVersion(*v)
 	}
 	return _u
 }
 
-// AddTimeLimit adds value to the "time_limit" field.
-func (_u *ProblemUpdateOne) AddTimeLimit(v int) *ProblemUpdateOne {
-	_u.mutation.AddTimeLimit(v)
+// AddCaseVersion adds value to the "case_version" field.
+func (_u *ProblemUpdateOne) AddCaseVersion(v int16) *ProblemUpdateOne {
+	_u.mutation.AddCaseVersion(v)
 	return _u
 }
 
-// SetMemoryLimit sets the "memory_limit" field.
-func (_u *ProblemUpdateOne) SetMemoryLimit(v int) *ProblemUpdateOne {
-	_u.mutation.ResetMemoryLimit()
-	_u.mutation.SetMemoryLimit(v)
+// SetTimeLimitMs sets the "time_limit_ms" field.
+func (_u *ProblemUpdateOne) SetTimeLimitMs(v int) *ProblemUpdateOne {
+	_u.mutation.ResetTimeLimitMs()
+	_u.mutation.SetTimeLimitMs(v)
 	return _u
 }
 
-// SetNillableMemoryLimit sets the "memory_limit" field if the given value is not nil.
-func (_u *ProblemUpdateOne) SetNillableMemoryLimit(v *int) *ProblemUpdateOne {
+// SetNillableTimeLimitMs sets the "time_limit_ms" field if the given value is not nil.
+func (_u *ProblemUpdateOne) SetNillableTimeLimitMs(v *int) *ProblemUpdateOne {
 	if v != nil {
-		_u.SetMemoryLimit(*v)
+		_u.SetTimeLimitMs(*v)
 	}
 	return _u
 }
 
-// AddMemoryLimit adds value to the "memory_limit" field.
-func (_u *ProblemUpdateOne) AddMemoryLimit(v int) *ProblemUpdateOne {
-	_u.mutation.AddMemoryLimit(v)
+// AddTimeLimitMs adds value to the "time_limit_ms" field.
+func (_u *ProblemUpdateOne) AddTimeLimitMs(v int) *ProblemUpdateOne {
+	_u.mutation.AddTimeLimitMs(v)
+	return _u
+}
+
+// SetMemoryLimitKB sets the "memory_limit_kb" field.
+func (_u *ProblemUpdateOne) SetMemoryLimitKB(v int) *ProblemUpdateOne {
+	_u.mutation.ResetMemoryLimitKB()
+	_u.mutation.SetMemoryLimitKB(v)
+	return _u
+}
+
+// SetNillableMemoryLimitKB sets the "memory_limit_kb" field if the given value is not nil.
+func (_u *ProblemUpdateOne) SetNillableMemoryLimitKB(v *int) *ProblemUpdateOne {
+	if v != nil {
+		_u.SetMemoryLimitKB(*v)
+	}
+	return _u
+}
+
+// AddMemoryLimitKB adds value to the "memory_limit_kb" field.
+func (_u *ProblemUpdateOne) AddMemoryLimitKB(v int) *ProblemUpdateOne {
+	_u.mutation.AddMemoryLimitKB(v)
 	return _u
 }
 
@@ -756,19 +758,9 @@ func (_u *ProblemUpdateOne) SetCreator(v *User) *ProblemUpdateOne {
 	return _u.SetCreatorID(v.ID)
 }
 
-// AddTestCaseIDs adds the "test_cases" edge to the TestCase entity by IDs.
-func (_u *ProblemUpdateOne) AddTestCaseIDs(ids ...int64) *ProblemUpdateOne {
-	_u.mutation.AddTestCaseIDs(ids...)
-	return _u
-}
-
-// AddTestCases adds the "test_cases" edges to the TestCase entity.
-func (_u *ProblemUpdateOne) AddTestCases(v ...*TestCase) *ProblemUpdateOne {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.AddTestCaseIDs(ids...)
+// SetJudgeConfig sets the "judge_config" edge to the ProblemJudgeConfig entity.
+func (_u *ProblemUpdateOne) SetJudgeConfig(v *ProblemJudgeConfig) *ProblemUpdateOne {
+	return _u.SetJudgeConfigID(v.ID)
 }
 
 // AddJudgeRecordIDs adds the "judge_records" edge to the JudgeRecord entity by IDs.
@@ -801,19 +793,19 @@ func (_u *ProblemUpdateOne) AddSubmissions(v ...*SubmissionRecord) *ProblemUpdat
 	return _u.AddSubmissionIDs(ids...)
 }
 
-// AddProblemSetProblemIDs adds the "problem_set_problems" edge to the ProblemSet_Problem entity by IDs.
-func (_u *ProblemUpdateOne) AddProblemSetProblemIDs(ids ...int64) *ProblemUpdateOne {
-	_u.mutation.AddProblemSetProblemIDs(ids...)
+// AddProblemSetIncludeIDs adds the "problem_set_includes" edge to the ProblemSet_Includes entity by IDs.
+func (_u *ProblemUpdateOne) AddProblemSetIncludeIDs(ids ...int64) *ProblemUpdateOne {
+	_u.mutation.AddProblemSetIncludeIDs(ids...)
 	return _u
 }
 
-// AddProblemSetProblems adds the "problem_set_problems" edges to the ProblemSet_Problem entity.
-func (_u *ProblemUpdateOne) AddProblemSetProblems(v ...*ProblemSet_Problem) *ProblemUpdateOne {
+// AddProblemSetIncludes adds the "problem_set_includes" edges to the ProblemSet_Includes entity.
+func (_u *ProblemUpdateOne) AddProblemSetIncludes(v ...*ProblemSet_Includes) *ProblemUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddProblemSetProblemIDs(ids...)
+	return _u.AddProblemSetIncludeIDs(ids...)
 }
 
 // Mutation returns the ProblemMutation object of the builder.
@@ -827,25 +819,10 @@ func (_u *ProblemUpdateOne) ClearCreator() *ProblemUpdateOne {
 	return _u
 }
 
-// ClearTestCases clears all "test_cases" edges to the TestCase entity.
-func (_u *ProblemUpdateOne) ClearTestCases() *ProblemUpdateOne {
-	_u.mutation.ClearTestCases()
+// ClearJudgeConfig clears the "judge_config" edge to the ProblemJudgeConfig entity.
+func (_u *ProblemUpdateOne) ClearJudgeConfig() *ProblemUpdateOne {
+	_u.mutation.ClearJudgeConfig()
 	return _u
-}
-
-// RemoveTestCaseIDs removes the "test_cases" edge to TestCase entities by IDs.
-func (_u *ProblemUpdateOne) RemoveTestCaseIDs(ids ...int64) *ProblemUpdateOne {
-	_u.mutation.RemoveTestCaseIDs(ids...)
-	return _u
-}
-
-// RemoveTestCases removes "test_cases" edges to TestCase entities.
-func (_u *ProblemUpdateOne) RemoveTestCases(v ...*TestCase) *ProblemUpdateOne {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveTestCaseIDs(ids...)
 }
 
 // ClearJudgeRecords clears all "judge_records" edges to the JudgeRecord entity.
@@ -890,25 +867,25 @@ func (_u *ProblemUpdateOne) RemoveSubmissions(v ...*SubmissionRecord) *ProblemUp
 	return _u.RemoveSubmissionIDs(ids...)
 }
 
-// ClearProblemSetProblems clears all "problem_set_problems" edges to the ProblemSet_Problem entity.
-func (_u *ProblemUpdateOne) ClearProblemSetProblems() *ProblemUpdateOne {
-	_u.mutation.ClearProblemSetProblems()
+// ClearProblemSetIncludes clears all "problem_set_includes" edges to the ProblemSet_Includes entity.
+func (_u *ProblemUpdateOne) ClearProblemSetIncludes() *ProblemUpdateOne {
+	_u.mutation.ClearProblemSetIncludes()
 	return _u
 }
 
-// RemoveProblemSetProblemIDs removes the "problem_set_problems" edge to ProblemSet_Problem entities by IDs.
-func (_u *ProblemUpdateOne) RemoveProblemSetProblemIDs(ids ...int64) *ProblemUpdateOne {
-	_u.mutation.RemoveProblemSetProblemIDs(ids...)
+// RemoveProblemSetIncludeIDs removes the "problem_set_includes" edge to ProblemSet_Includes entities by IDs.
+func (_u *ProblemUpdateOne) RemoveProblemSetIncludeIDs(ids ...int64) *ProblemUpdateOne {
+	_u.mutation.RemoveProblemSetIncludeIDs(ids...)
 	return _u
 }
 
-// RemoveProblemSetProblems removes "problem_set_problems" edges to ProblemSet_Problem entities.
-func (_u *ProblemUpdateOne) RemoveProblemSetProblems(v ...*ProblemSet_Problem) *ProblemUpdateOne {
+// RemoveProblemSetIncludes removes "problem_set_includes" edges to ProblemSet_Includes entities.
+func (_u *ProblemUpdateOne) RemoveProblemSetIncludes(v ...*ProblemSet_Includes) *ProblemUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveProblemSetProblemIDs(ids...)
+	return _u.RemoveProblemSetIncludeIDs(ids...)
 }
 
 // Where appends a list predicates to the ProblemUpdate builder.
@@ -968,19 +945,14 @@ func (_u *ProblemUpdateOne) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Problem.description": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.ProblemType(); ok {
-		if err := problem.ProblemTypeValidator(v); err != nil {
-			return &ValidationError{Name: "problem_type", err: fmt.Errorf(`ent: validator failed for field "Problem.problem_type": %w`, err)}
+	if v, ok := _u.mutation.TimeLimitMs(); ok {
+		if err := problem.TimeLimitMsValidator(v); err != nil {
+			return &ValidationError{Name: "time_limit_ms", err: fmt.Errorf(`ent: validator failed for field "Problem.time_limit_ms": %w`, err)}
 		}
 	}
-	if v, ok := _u.mutation.TimeLimit(); ok {
-		if err := problem.TimeLimitValidator(v); err != nil {
-			return &ValidationError{Name: "time_limit", err: fmt.Errorf(`ent: validator failed for field "Problem.time_limit": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.MemoryLimit(); ok {
-		if err := problem.MemoryLimitValidator(v); err != nil {
-			return &ValidationError{Name: "memory_limit", err: fmt.Errorf(`ent: validator failed for field "Problem.memory_limit": %w`, err)}
+	if v, ok := _u.mutation.MemoryLimitKB(); ok {
+		if err := problem.MemoryLimitKBValidator(v); err != nil {
+			return &ValidationError{Name: "memory_limit_kb", err: fmt.Errorf(`ent: validator failed for field "Problem.memory_limit_kb": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.UseStatus(); ok {
@@ -990,6 +962,9 @@ func (_u *ProblemUpdateOne) check() error {
 	}
 	if _u.mutation.CreatorCleared() && len(_u.mutation.CreatorIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Problem.creator"`)
+	}
+	if _u.mutation.JudgeConfigCleared() && len(_u.mutation.JudgeConfigIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Problem.judge_config"`)
 	}
 	return nil
 }
@@ -1029,20 +1004,23 @@ func (_u *ProblemUpdateOne) sqlSave(ctx context.Context) (_node *Problem, err er
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(problem.FieldDescription, field.TypeString, value)
 	}
-	if value, ok := _u.mutation.ProblemType(); ok {
-		_spec.SetField(problem.FieldProblemType, field.TypeEnum, value)
+	if value, ok := _u.mutation.CaseVersion(); ok {
+		_spec.SetField(problem.FieldCaseVersion, field.TypeInt16, value)
 	}
-	if value, ok := _u.mutation.TimeLimit(); ok {
-		_spec.SetField(problem.FieldTimeLimit, field.TypeInt, value)
+	if value, ok := _u.mutation.AddedCaseVersion(); ok {
+		_spec.AddField(problem.FieldCaseVersion, field.TypeInt16, value)
 	}
-	if value, ok := _u.mutation.AddedTimeLimit(); ok {
-		_spec.AddField(problem.FieldTimeLimit, field.TypeInt, value)
+	if value, ok := _u.mutation.TimeLimitMs(); ok {
+		_spec.SetField(problem.FieldTimeLimitMs, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.MemoryLimit(); ok {
-		_spec.SetField(problem.FieldMemoryLimit, field.TypeInt, value)
+	if value, ok := _u.mutation.AddedTimeLimitMs(); ok {
+		_spec.AddField(problem.FieldTimeLimitMs, field.TypeInt, value)
 	}
-	if value, ok := _u.mutation.AddedMemoryLimit(); ok {
-		_spec.AddField(problem.FieldMemoryLimit, field.TypeInt, value)
+	if value, ok := _u.mutation.MemoryLimitKB(); ok {
+		_spec.SetField(problem.FieldMemoryLimitKB, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMemoryLimitKB(); ok {
+		_spec.AddField(problem.FieldMemoryLimitKB, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.UseStatus(); ok {
 		_spec.SetField(problem.FieldUseStatus, field.TypeEnum, value)
@@ -1076,44 +1054,28 @@ func (_u *ProblemUpdateOne) sqlSave(ctx context.Context) (_node *Problem, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.TestCasesCleared() {
+	if _u.mutation.JudgeConfigCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problem.TestCasesTable,
-			Columns: []string{problem.TestCasesColumn},
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   problem.JudgeConfigTable,
+			Columns: []string{problem.JudgeConfigColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemjudgeconfig.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedTestCasesIDs(); len(nodes) > 0 && !_u.mutation.TestCasesCleared() {
+	if nodes := _u.mutation.JudgeConfigIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problem.TestCasesTable,
-			Columns: []string{problem.TestCasesColumn},
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   problem.JudgeConfigTable,
+			Columns: []string{problem.JudgeConfigColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.TestCasesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problem.TestCasesTable,
-			Columns: []string{problem.TestCasesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemjudgeconfig.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1211,28 +1173,28 @@ func (_u *ProblemUpdateOne) sqlSave(ctx context.Context) (_node *Problem, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ProblemSetProblemsCleared() {
+	if _u.mutation.ProblemSetIncludesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problem.ProblemSetProblemsTable,
-			Columns: []string{problem.ProblemSetProblemsColumn},
+			Table:   problem.ProblemSetIncludesTable,
+			Columns: []string{problem.ProblemSetIncludesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedProblemSetProblemsIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetProblemsCleared() {
+	if nodes := _u.mutation.RemovedProblemSetIncludesIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetIncludesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problem.ProblemSetProblemsTable,
-			Columns: []string{problem.ProblemSetProblemsColumn},
+			Table:   problem.ProblemSetIncludesTable,
+			Columns: []string{problem.ProblemSetIncludesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1240,15 +1202,15 @@ func (_u *ProblemUpdateOne) sqlSave(ctx context.Context) (_node *Problem, err er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ProblemSetProblemsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProblemSetIncludesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problem.ProblemSetProblemsTable,
-			Columns: []string{problem.ProblemSetProblemsColumn},
+			Table:   problem.ProblemSetIncludesTable,
+			Columns: []string{problem.ProblemSetIncludesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

@@ -5,9 +5,9 @@ package ent
 import (
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemset_problem"
+	"cascade-oj/ent/problemjudgeconfig"
+	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/submissionrecord"
-	"cascade-oj/ent/testcase"
 	"cascade-oj/ent/user"
 	"context"
 	"errors"
@@ -42,29 +42,35 @@ func (_c *ProblemCreate) SetDescription(v string) *ProblemCreate {
 	return _c
 }
 
-// SetProblemType sets the "problem_type" field.
-func (_c *ProblemCreate) SetProblemType(v problem.ProblemType) *ProblemCreate {
-	_c.mutation.SetProblemType(v)
+// SetJudgeConfigID sets the "judge_config_id" field.
+func (_c *ProblemCreate) SetJudgeConfigID(v int64) *ProblemCreate {
+	_c.mutation.SetJudgeConfigID(v)
 	return _c
 }
 
-// SetNillableProblemType sets the "problem_type" field if the given value is not nil.
-func (_c *ProblemCreate) SetNillableProblemType(v *problem.ProblemType) *ProblemCreate {
+// SetCaseVersion sets the "case_version" field.
+func (_c *ProblemCreate) SetCaseVersion(v int16) *ProblemCreate {
+	_c.mutation.SetCaseVersion(v)
+	return _c
+}
+
+// SetNillableCaseVersion sets the "case_version" field if the given value is not nil.
+func (_c *ProblemCreate) SetNillableCaseVersion(v *int16) *ProblemCreate {
 	if v != nil {
-		_c.SetProblemType(*v)
+		_c.SetCaseVersion(*v)
 	}
 	return _c
 }
 
-// SetTimeLimit sets the "time_limit" field.
-func (_c *ProblemCreate) SetTimeLimit(v int) *ProblemCreate {
-	_c.mutation.SetTimeLimit(v)
+// SetTimeLimitMs sets the "time_limit_ms" field.
+func (_c *ProblemCreate) SetTimeLimitMs(v int) *ProblemCreate {
+	_c.mutation.SetTimeLimitMs(v)
 	return _c
 }
 
-// SetMemoryLimit sets the "memory_limit" field.
-func (_c *ProblemCreate) SetMemoryLimit(v int) *ProblemCreate {
-	_c.mutation.SetMemoryLimit(v)
+// SetMemoryLimitKB sets the "memory_limit_kb" field.
+func (_c *ProblemCreate) SetMemoryLimitKB(v int) *ProblemCreate {
+	_c.mutation.SetMemoryLimitKB(v)
 	return _c
 }
 
@@ -93,19 +99,9 @@ func (_c *ProblemCreate) SetCreator(v *User) *ProblemCreate {
 	return _c.SetCreatorID(v.ID)
 }
 
-// AddTestCaseIDs adds the "test_cases" edge to the TestCase entity by IDs.
-func (_c *ProblemCreate) AddTestCaseIDs(ids ...int64) *ProblemCreate {
-	_c.mutation.AddTestCaseIDs(ids...)
-	return _c
-}
-
-// AddTestCases adds the "test_cases" edges to the TestCase entity.
-func (_c *ProblemCreate) AddTestCases(v ...*TestCase) *ProblemCreate {
-	ids := make([]int64, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddTestCaseIDs(ids...)
+// SetJudgeConfig sets the "judge_config" edge to the ProblemJudgeConfig entity.
+func (_c *ProblemCreate) SetJudgeConfig(v *ProblemJudgeConfig) *ProblemCreate {
+	return _c.SetJudgeConfigID(v.ID)
 }
 
 // AddJudgeRecordIDs adds the "judge_records" edge to the JudgeRecord entity by IDs.
@@ -138,19 +134,19 @@ func (_c *ProblemCreate) AddSubmissions(v ...*SubmissionRecord) *ProblemCreate {
 	return _c.AddSubmissionIDs(ids...)
 }
 
-// AddProblemSetProblemIDs adds the "problem_set_problems" edge to the ProblemSet_Problem entity by IDs.
-func (_c *ProblemCreate) AddProblemSetProblemIDs(ids ...int64) *ProblemCreate {
-	_c.mutation.AddProblemSetProblemIDs(ids...)
+// AddProblemSetIncludeIDs adds the "problem_set_includes" edge to the ProblemSet_Includes entity by IDs.
+func (_c *ProblemCreate) AddProblemSetIncludeIDs(ids ...int64) *ProblemCreate {
+	_c.mutation.AddProblemSetIncludeIDs(ids...)
 	return _c
 }
 
-// AddProblemSetProblems adds the "problem_set_problems" edges to the ProblemSet_Problem entity.
-func (_c *ProblemCreate) AddProblemSetProblems(v ...*ProblemSet_Problem) *ProblemCreate {
+// AddProblemSetIncludes adds the "problem_set_includes" edges to the ProblemSet_Includes entity.
+func (_c *ProblemCreate) AddProblemSetIncludes(v ...*ProblemSet_Includes) *ProblemCreate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddProblemSetProblemIDs(ids...)
+	return _c.AddProblemSetIncludeIDs(ids...)
 }
 
 // Mutation returns the ProblemMutation object of the builder.
@@ -188,9 +184,9 @@ func (_c *ProblemCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *ProblemCreate) defaults() {
-	if _, ok := _c.mutation.ProblemType(); !ok {
-		v := problem.DefaultProblemType
-		_c.mutation.SetProblemType(v)
+	if _, ok := _c.mutation.CaseVersion(); !ok {
+		v := problem.DefaultCaseVersion
+		_c.mutation.SetCaseVersion(v)
 	}
 	if _, ok := _c.mutation.UseStatus(); !ok {
 		v := problem.DefaultUseStatus
@@ -224,28 +220,26 @@ func (_c *ProblemCreate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Problem.description": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.ProblemType(); !ok {
-		return &ValidationError{Name: "problem_type", err: errors.New(`ent: missing required field "Problem.problem_type"`)}
+	if _, ok := _c.mutation.JudgeConfigID(); !ok {
+		return &ValidationError{Name: "judge_config_id", err: errors.New(`ent: missing required field "Problem.judge_config_id"`)}
 	}
-	if v, ok := _c.mutation.ProblemType(); ok {
-		if err := problem.ProblemTypeValidator(v); err != nil {
-			return &ValidationError{Name: "problem_type", err: fmt.Errorf(`ent: validator failed for field "Problem.problem_type": %w`, err)}
+	if _, ok := _c.mutation.CaseVersion(); !ok {
+		return &ValidationError{Name: "case_version", err: errors.New(`ent: missing required field "Problem.case_version"`)}
+	}
+	if _, ok := _c.mutation.TimeLimitMs(); !ok {
+		return &ValidationError{Name: "time_limit_ms", err: errors.New(`ent: missing required field "Problem.time_limit_ms"`)}
+	}
+	if v, ok := _c.mutation.TimeLimitMs(); ok {
+		if err := problem.TimeLimitMsValidator(v); err != nil {
+			return &ValidationError{Name: "time_limit_ms", err: fmt.Errorf(`ent: validator failed for field "Problem.time_limit_ms": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.TimeLimit(); !ok {
-		return &ValidationError{Name: "time_limit", err: errors.New(`ent: missing required field "Problem.time_limit"`)}
+	if _, ok := _c.mutation.MemoryLimitKB(); !ok {
+		return &ValidationError{Name: "memory_limit_kb", err: errors.New(`ent: missing required field "Problem.memory_limit_kb"`)}
 	}
-	if v, ok := _c.mutation.TimeLimit(); ok {
-		if err := problem.TimeLimitValidator(v); err != nil {
-			return &ValidationError{Name: "time_limit", err: fmt.Errorf(`ent: validator failed for field "Problem.time_limit": %w`, err)}
-		}
-	}
-	if _, ok := _c.mutation.MemoryLimit(); !ok {
-		return &ValidationError{Name: "memory_limit", err: errors.New(`ent: missing required field "Problem.memory_limit"`)}
-	}
-	if v, ok := _c.mutation.MemoryLimit(); ok {
-		if err := problem.MemoryLimitValidator(v); err != nil {
-			return &ValidationError{Name: "memory_limit", err: fmt.Errorf(`ent: validator failed for field "Problem.memory_limit": %w`, err)}
+	if v, ok := _c.mutation.MemoryLimitKB(); ok {
+		if err := problem.MemoryLimitKBValidator(v); err != nil {
+			return &ValidationError{Name: "memory_limit_kb", err: fmt.Errorf(`ent: validator failed for field "Problem.memory_limit_kb": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.UseStatus(); !ok {
@@ -263,6 +257,9 @@ func (_c *ProblemCreate) check() error {
 	}
 	if len(_c.mutation.CreatorIDs()) == 0 {
 		return &ValidationError{Name: "creator", err: errors.New(`ent: missing required edge "Problem.creator"`)}
+	}
+	if len(_c.mutation.JudgeConfigIDs()) == 0 {
+		return &ValidationError{Name: "judge_config", err: errors.New(`ent: missing required edge "Problem.judge_config"`)}
 	}
 	return nil
 }
@@ -304,17 +301,17 @@ func (_c *ProblemCreate) createSpec() (*Problem, *sqlgraph.CreateSpec) {
 		_spec.SetField(problem.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := _c.mutation.ProblemType(); ok {
-		_spec.SetField(problem.FieldProblemType, field.TypeEnum, value)
-		_node.ProblemType = value
+	if value, ok := _c.mutation.CaseVersion(); ok {
+		_spec.SetField(problem.FieldCaseVersion, field.TypeInt16, value)
+		_node.CaseVersion = value
 	}
-	if value, ok := _c.mutation.TimeLimit(); ok {
-		_spec.SetField(problem.FieldTimeLimit, field.TypeInt, value)
-		_node.TimeLimit = value
+	if value, ok := _c.mutation.TimeLimitMs(); ok {
+		_spec.SetField(problem.FieldTimeLimitMs, field.TypeInt, value)
+		_node.TimeLimitMs = value
 	}
-	if value, ok := _c.mutation.MemoryLimit(); ok {
-		_spec.SetField(problem.FieldMemoryLimit, field.TypeInt, value)
-		_node.MemoryLimit = value
+	if value, ok := _c.mutation.MemoryLimitKB(); ok {
+		_spec.SetField(problem.FieldMemoryLimitKB, field.TypeInt, value)
+		_node.MemoryLimitKB = value
 	}
 	if value, ok := _c.mutation.UseStatus(); ok {
 		_spec.SetField(problem.FieldUseStatus, field.TypeEnum, value)
@@ -337,20 +334,21 @@ func (_c *ProblemCreate) createSpec() (*Problem, *sqlgraph.CreateSpec) {
 		_node.CreatorID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.TestCasesIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.JudgeConfigIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   problem.TestCasesTable,
-			Columns: []string{problem.TestCasesColumn},
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   problem.JudgeConfigTable,
+			Columns: []string{problem.JudgeConfigColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemjudgeconfig.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.JudgeConfigID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.JudgeRecordsIDs(); len(nodes) > 0 {
@@ -385,15 +383,15 @@ func (_c *ProblemCreate) createSpec() (*Problem, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.ProblemSetProblemsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ProblemSetIncludesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   problem.ProblemSetProblemsTable,
-			Columns: []string{problem.ProblemSetProblemsColumn},
+			Table:   problem.ProblemSetIncludesTable,
+			Columns: []string{problem.ProblemSetIncludesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_problem.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
