@@ -1,5 +1,6 @@
 <template>
   <form class="auth-form" @submit.prevent="handleLogin">
+    <!-- 用户名/邮箱 -->
     <div class="form-group">
       <label>用户名或邮箱</label>
       <input 
@@ -11,6 +12,7 @@
       />
     </div>
     
+    <!-- 密码 -->
     <div class="form-group">
       <label>密码</label>
       <div class="password-field">
@@ -35,6 +37,7 @@
     <div class="form-actions">
       <label class="checkbox-label">
         <input type="checkbox" v-model="form.remember" />
+        <span class="checkmark"></span>
         记住我
       </label>
       <a href="#" class="forgot-link">忘记密码?</a>
@@ -44,12 +47,15 @@
     
     <div class="or-separator">或者</div>
     
-    <button type="button" class="btn-social google">
-      <span>G</span> 使用 Google 登录
-    </button>
-    <button type="button" class="btn-social github">
-      <span>GH</span> 使用 GitHub 登录
-    </button>
+    <!-- 第三方登录（置灰/禁用样式） -->
+    <div class="social-login-group">
+      <button type="button" class="btn-social disabled" disabled title="功能开发中">
+        <span>G</span> Google 登录 
+      </button>
+      <button type="button" class="btn-social disabled" disabled title="功能开发中">
+        <span>GH</span> GitHub 登录 
+      </button>
+    </div>
   </form>
 </template>
 
@@ -79,8 +85,9 @@ const handleLogin = () => {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   box-sizing: border-box;
+  animation: fadeIn 0.4s ease;
 }
 
 .form-group label {
@@ -92,16 +99,32 @@ const handleLogin = () => {
 
 .input-field {
   width: 100%;
-  padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.773);
+  padding: 12px 16px;
+  border: 1px solid #2a3331;
   border-radius: 6px;
   font-size: 14px;
-  background: #0f1716;
+  background: #0f1413;
   color: #cbd5c0;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: #23aa8f;
+  background: #131a18;
+  box-shadow: 0 0 0 2px rgba(35, 170, 143, 0.1);
+}
+
+.input-field::placeholder {
+  color: #5f6f6b;
 }
 
 .password-field {
   position: relative;
+}
+
+.password-field .input-field {
+  padding-right: 40px;
 }
 
 .toggle-password {
@@ -112,12 +135,19 @@ const handleLogin = () => {
   background: none;
   border: none;
   cursor: pointer;
+  padding: 0;
+  color: #5f6f6b;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-password:hover {
+  color: #23aa8f;
 }
 
 .toggle-password svg {
   width: 20px;
   height: 20px;
-  color: #9fbebb;
 }
 
 .form-actions {
@@ -125,22 +155,45 @@ const handleLogin = () => {
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
+  margin-bottom: 8px;
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
   cursor: pointer;
+  color: #8c9e9a;
+  user-select: none;
 }
 
 .checkbox-label input {
+  display: none;
+}
+
+.checkmark {
+  width: 14px;
+  height: 14px;
+  border: 1px solid #4a5755;
+  border-radius: 3px;
   margin-right: 8px;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.checkbox-label input:checked ~ .checkmark {
+  background: #23aa8f;
+  border-color: #23aa8f;
 }
 
 .forgot-link {
-  color: #1dad7f;
+  color: #1dad80; /* 修改处：使用 Cascade Logo Green */
   text-decoration: none;
   font-size: 14px;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: #2ed1b1;
 }
 
 .btn-primary {
@@ -148,21 +201,22 @@ const handleLogin = () => {
   color: #01210f;
   border: none;
   padding: 12px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .btn-primary:hover {
-  background-color: #159067;
+  background-color: #1eb897;
 }
 
 .or-separator {
   text-align: center;
-  color: #999999;
-  font-size: 14px;
-  margin: 12px 0;
+  color: #4a5755;
+  font-size: 12px;
+  margin: 8px 0;
   position: relative;
 }
 
@@ -173,15 +227,16 @@ const handleLogin = () => {
   top: 50%;
   width: 40%;
   height: 1px;
-  background-color: #eeeeee;
+  background-color: #2a3331;
 }
 
-.or-separator::before {
-  left: 0;
-}
+.or-separator::before { left: 0; }
+.or-separator::after { right: 0; }
 
-.or-separator::after {
-  right: 0;
+.social-login-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .btn-social {
@@ -189,13 +244,20 @@ const handleLogin = () => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid rgba(255,255,255,0.04);
-  padding: 12px;
-  border-radius: 4px;
-  background-color: #23aa8f;
+  border: 1px solid #2a3331;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: transparent;
   font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+}
+
+.btn-social.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #1a201f;
+  border-color: #252b2a;
+  color: #5f6f6b;
 }
 
 .btn-social span {
@@ -203,11 +265,8 @@ const handleLogin = () => {
   font-size: 16px;
 }
 
-.btn-social.google {
-  color: #0044ff;
-}
-
-.btn-social.github {
-  color: #000000;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>

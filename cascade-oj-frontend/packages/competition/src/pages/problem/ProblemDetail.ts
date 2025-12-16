@@ -1,5 +1,5 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from 'vue';
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
+import { useRoute, useRouter, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import { marked } from 'marked';
 import markedKatex from "marked-katex-extension";
 import "katex/dist/katex.min.css"; // 防止公式乱码
@@ -23,7 +23,7 @@ export function useProblemDetail() {
   } as any));
 
   // --- 状态管理 ---
-  const leftTabs = ['描述', '提交', '成绩', '笔记', '排名', '答案'];
+  const leftTabs = ['描述', '提交', '成绩', /*'笔记',*/ '排名', '答案'];
   const currentLeftTab = ref(0);
   
   // 界面状态
@@ -72,7 +72,7 @@ export function useProblemDetail() {
   // filesMap 定义结构
   const filesMap = reactive<Record<string, CodeFile[]>>({});
 
-  // [新增] 代码快照，用于检测未保存的更改
+  // 代码快照，用于检测未保存的更改
   const originalCodeSnapshot = reactive<Record<string, string>>({});
 
   // 当前显示的文件列表（根据语言变化）
@@ -139,6 +139,28 @@ export function useProblemDetail() {
     return false;
   };
 
+  // 抽离统一的检查逻辑
+  const checkUnsavedChange = (next: Function, cancel: Function) => {
+    if (hasUnsavedChanges()) {
+      // 暂时还是用 confirm，美化警告比较复杂，建议功能跑通后再做
+      const confirmLeave = globalThis.confirm('您有未保存的代码更改。确定要切题/离开吗？更改将丢失。');
+      if (confirmLeave) next();
+      else cancel();
+    } else {
+      next();
+    }
+  };
+
+  // 离开页面
+  onBeforeRouteLeave((to, from, next) => {
+    checkUnsavedChange(() => next(), () => next(false));
+  });
+
+  // 同组件路由更新 (切题)
+  onBeforeRouteUpdate((to, from, next) => {
+    checkUnsavedChange(() => next(), () => next(false));
+  });
+
   // --- 核心方法 ---
 
   // 加载单题详情
@@ -203,22 +225,24 @@ export function useProblemDetail() {
     router.push(`/problem/${id}`);
   };
 
-  // 上一题 
+// 假设总题数，未来从 API 获取
+  const totalProblems = ref(8); 
+
+  const isFirstProblem = computed(() => Number(problemData.value.id) <= 1);
+  const isLastProblem = computed(() => Number(problemData.value.id) >= totalProblems.value);
+
+  // 上一题
   const handlePrevProblem = () => {
+    if (isFirstProblem.value) return;
     const currentId = Number.parseInt(problemData.value.id);
-    if (!Number.isNaN(currentId) && currentId > 1) {
-      jumpToProblem(String(currentId - 1));
-    } else {
-      alert("已经是第一题了");
-    }
+    jumpToProblem(String(currentId - 1));
   };
 
   // 下一题
   const handleNextProblem = () => {
+    if (isLastProblem.value) return;
     const currentId = Number.parseInt(problemData.value.id);
-    if (!Number.isNaN(currentId)) {
-      jumpToProblem(String(currentId + 1));
-    }
+    jumpToProblem(String(currentId + 1));
   };
 
   // 测试运行
@@ -373,7 +397,7 @@ export function useProblemDetail() {
     leftWidth, startDrag, stopDrag,
     handleTestRun, handleSubmit,
     showProblemDrawer, problemList,
-    jumpToProblem, handlePrevProblem, handleNextProblem,
+    jumpToProblem, handlePrevProblem, handleNextProblem,isFirstProblem, isLastProblem, totalProblems,
     showResultModal, submissionResult,
     runStats // 导出统计数据
   };

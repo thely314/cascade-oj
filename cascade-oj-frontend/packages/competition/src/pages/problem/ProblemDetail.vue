@@ -78,9 +78,29 @@
             ☰ 题目列表
           </button>
           <div class="pagination-ctrl">
-            <button class="nav-btn" @click="handlePrevProblem"> &lt; 上一题</button>
-            <span class="page-num">{{ problemData.id }} / {{ problemList.length || '...' }}</span>
-            <button class="nav-btn" @click="handleNextProblem">下一题 &gt; </button>
+            
+            <!-- 上一题按钮 -->
+            <button 
+              class="nav-btn" 
+              :disabled="isFirstProblem" 
+              @click="handlePrevProblem"
+              :style="{ opacity: isFirstProblem ? 0.5 : 1, cursor: isFirstProblem ? 'not-allowed' : 'pointer' }"
+            > 
+              &lt; 上一题
+            </button>         
+
+            <!-- 页码显示 -->
+            <span class="page-num">{{ problemData.id }} / {{ totalProblems }}</span>
+
+            <!-- 下一题按钮 -->
+            <button 
+              class="nav-btn" 
+              :disabled="isLastProblem" 
+              @click="handleNextProblem"
+              :style="{ opacity: isLastProblem ? 0.5 : 1, cursor: isLastProblem ? 'not-allowed' : 'pointer' }"
+            >
+              下一题 &gt; 
+            </button>
           </div>
         </div>
       </div>
@@ -194,7 +214,7 @@ const {
   leftWidth, startDrag, stopDrag,
   handleTestRun, handleSubmit,
   showProblemDrawer, problemList,
-  jumpToProblem, handlePrevProblem, handleNextProblem,
+  jumpToProblem, handlePrevProblem, handleNextProblem,isFirstProblem, isLastProblem, totalProblems,
   showResultModal, submissionResult,
   runStats
 } = useProblemDetail();

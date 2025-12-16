@@ -9,7 +9,7 @@ import Contest from '../pages/contest/contest.vue'
 import Login from '../../../login/src/views/AuthPage.vue'
 
 const routes = [
-    { path: '/', redirect: '/home' },
+    { path: '/', redirect: '/problem/:id' },
     { path: '/home', name: 'Home', component: Home },
     { path: '/competition', name: 'ContestsList', component: ContestsList },
     { path: '/competition/:id', name: 'Contest', component: Contest },

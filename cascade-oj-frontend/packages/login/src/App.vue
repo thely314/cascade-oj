@@ -1,12 +1,21 @@
+<!-- src/App.vue -->
 <template>
-  <router-view /> <!-- 路由视图，会自动渲染匹配的页面 -->
+  <router-view />
 </template>
 
 <style>
-/* 全局样式 */
-body {
+/* 全局重置样式，建议放在这里或 assets/base.css */
+html, body {
   margin: 0;
-  background-color: #f5f7fa;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #0c1110;
+  color: #cbd5c0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 </style>

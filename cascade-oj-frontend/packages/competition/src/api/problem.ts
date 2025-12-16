@@ -20,7 +20,7 @@ export interface ProblemDetail {
 }
 
 export interface SubmissionResult {
-  status: 'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Compile Error' | 'Running' | 'System Error';
+  status: string; // 原本是'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Compile Error' | 'Running' | 'System Error';
   time?: string;
   memory?: string;
   output?: string; 
@@ -32,11 +32,40 @@ export interface ProblemSimple {
   title: string;
 }
 
+export interface SubmitRequest {
+  problemId: string;
+  language: string;
+  files: { name: string; content: string }[]; 
+  type: 'submit' | 'test';
+  input?: string;
+}
+
+export interface BackendSubmissionMetadata {
+  submission_uuid: string;
+  problem_id: number;
+  user_id: number;
+  status: string; 
+  score: number;
+  submit_time: any; 
+}
+
+export interface BackendSubmissionReply {
+  metadata: BackendSubmissionMetadata;
+  code: string;
+  language: string;
+  time_cost: string; 
+  memory_cost: string;
+
+  // TODO: 等待后端添加这些字段
+  stdout?: string; 
+  stderr?: string; 
+}
+
 // --- 2. 模拟真实请求的延时函数 ---
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // 开关：是否使用模拟数据
-const IS_MOCK = false;
+const IS_MOCK = true;
 
 // --- 3. API 方法 ---
 
@@ -48,7 +77,7 @@ export const fetchProblemDetail = async (id: string): Promise<ProblemDetail> => 
     // 模拟一个复杂的 C++ 题目：需要补充头文件，只读主文件
     return {
       id: id,
-      title: '3. 长方体类 (Cuboid)', // 对应你截图的例子
+      title: '1. 长方体类 (Cuboid)', // 对应你截图的例子
       timeLimit: '1000ms',
       memoryLimit: '128MB',
       description: `### 题目描述\n请实现一个长方体类 Cuboid...`,
@@ -77,18 +106,12 @@ export const fetchProblemDetail = async (id: string): Promise<ProblemDetail> => 
 };
 
 // B. 提交代码 (或测试运行)
-export const submitCode = async (data: {
-  problemId: string;
-  language: string;
-  files: { name: string; content: string }[]; 
-  type: 'submit' | 'test'; 
-  input?: string;
-}): Promise<SubmissionResult> => {
+export const submitCode = async (data: SubmitRequest): Promise<SubmissionResult> => {
   
+  // --- Mock 模式 ---
   if (IS_MOCK) {
     await delay(800);
     
-    // 模拟测试运行成功
     if (data.type === 'test') {
       return {
         status: 'Accepted',
@@ -98,11 +121,29 @@ export const submitCode = async (data: {
       };
     } 
     
-    // 模拟提交
-    return { status: 'Accepted', time: '12ms', memory: '1.2MB' };
+    return { status: 'Accepted', time: '12ms', memory: '1.2MB', output: 'Mock Output' };
   }
+
+  // --- 真实请求 ---
+  // 组装请求体 (根据后端要求，可能需要把 files 数组转成后端需要的格式)
+  // 假设后端目前只接受单文件 code，或者接受 files 数组
+  // 这里暂时假设后端接受我们 SubmitRequest 定义的结构
   const res = await request.post('/submissions', data);
-  return res.data;
+  
+  const backendData = res.data as BackendSubmissionReply;
+
+  // --- 响应适配 (Adapter) ---
+  return {
+    status: backendData.metadata?.status || 'Unknown',
+    time: backendData.time_cost || '-',
+    memory: backendData.memory_cost || '-',
+    
+    // TODO: 目前后端缺失 stdout，暂时给个占位符，等后端加上后这里会自动生效
+    output: backendData.stdout || '(后端暂未返回标准输出)',
+    
+    // TODO: 错误信息同理
+    errorMsg: backendData.stderr || ''
+  };
 };
 
 // C.获取简易题目列表
