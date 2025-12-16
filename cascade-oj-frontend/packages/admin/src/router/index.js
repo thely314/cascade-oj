@@ -5,7 +5,7 @@ import Contest from '../pages/Contest/Contest.vue'
 import Problems from '../pages/Problems/Problems.vue'
 import Submissions from '../pages/Submissions/Submissions.vue'
 import Users from '../pages/Users/Users.vue'
-import Logs from '../pages/Logs/Logs.vue'
+import Log from '../pages/Log/Log.vue'
 
 const routes = [
     { path: '/', name: 'overview', component: Overview },
@@ -13,7 +13,7 @@ const routes = [
     { path: '/problems', name: 'problems', component: Problems },
     { path: '/submissions', name: 'submissions', component: Submissions },
     { path: '/users', name: 'users', component: Users },
-    { path: '/logs', name: 'logs', component: Logs },
+    { path: '/logs', name: 'logs', component: Log },
 ]
 
 const router = createRouter({
