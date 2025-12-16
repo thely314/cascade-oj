@@ -9,7 +9,9 @@
     "competition:dev": "pnpm --filter competition dev",
     "competition:build": "pnpm --filter competition build",
     "login:dev": "pnpm --filter login dev",
-    "login:build": "pnpm --filter login build"
+    "login:build": "pnpm --filter login build",
+    "admin:dev": "pnpm --filter admin dev",
+    "admin:build": "pnpm --filter admin build"
   },
   "keywords": [],
   "author": "",

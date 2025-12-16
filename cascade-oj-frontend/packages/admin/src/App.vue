@@ -1,0 +1,36 @@
+<script setup>
+import Sidebar from './components/SideBar/SideBar.vue'
+import { RouterView } from 'vue-router'
+</script>
+
+<template>
+  <div class="layout">
+    <Sidebar />
+    <main class="content">
+      <RouterView />
+    </main>
+  </div>
+</template>
+
+<style scoped>
+:global(body) {
+  margin: 0;
+  background: #202020;
+  color: #cbd5c0;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #202020;
+}
+
+.content {
+  flex: 1;
+  padding: 24px 32px;
+  overflow: auto;
+  background: #202020;
+}
+
+</style>
