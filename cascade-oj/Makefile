@@ -57,6 +57,10 @@ api:
 				echo "Generating API code for user module..."; \
 				cd api && buf generate -o cascade cascade/user/v1/user.proto; \
 				;; \
+			admin) \
+				echo "Generating API code for admin module..."; \
+				cd api && buf generate -o cascade cascade/admin/v1/admin.proto; \
+				;; \
 			*) \
 				echo "Error: Unknown module '$$MODULE'"; \
 				echo "Available modules: auth"; \
@@ -135,6 +139,7 @@ help:
 	@printf "\033[36m%-20s\033[0m %s\n" "wire" "generate wire code";
 	@printf "\033[36m%-20s\033[0m %s\n" "build" "build all sub projects";
 	@printf "\033[36m%-20s\033[0m %s\n" "generate" "go mod tidy && go generate";
+	@printf "\033[36m%-20s\033[0m %s\n" "openapi" "generate openapi spec from api";
 	@echo ''
 	@echo 'Sub projects:'
 	@for dir in $(SUBPROJECTS); do  \
