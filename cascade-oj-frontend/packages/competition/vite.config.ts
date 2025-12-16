@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import monacoEditorPlugin from 'vite-plugin-monaco-editor' // <--- 引入插件
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -15,8 +16,12 @@ export default defineConfig({
     (monacoEditorPlugin as any).default({
       languageWorkers: ['editorWorkerService', 'typescript', 'json', 'css', 'html'], 
       // 对于 C++，通常不需要特定 Worker，Monaco 基础包里包含了高亮规则
-    }) 
+    })
   ],
+  build: {
+    outDir: path.resolve(__dirname, '../../dist/competition'),
+    emptyOutDir: true,
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

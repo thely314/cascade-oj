@@ -7,9 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "competition:dev": "pnpm --filter competition dev",
-    "competition:build": "pnpm --filter competition build",
+    "competition:build": "cd ./packages/competition && pnpm exec vite build --config ./vite.config.ts",
     "login:dev": "pnpm --filter login dev",
-    "login:build": "pnpm --filter login build"
+    "login:build": "cd ./packages/login && pnpm exec vite build --config ./vite.config.ts"
   },
   "keywords": [],
   "author": "",
