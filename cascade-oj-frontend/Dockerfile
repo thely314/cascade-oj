@@ -24,8 +24,8 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/log/nginx
 
 # 健康检查
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/health || exit 1
+HEALTHCHECK --interval=40s --timeout=3s --start-period=5s --retries=3 \
+  CMD pgrep nginx || exit 1
 
 # 暴露端口
 EXPOSE 80
