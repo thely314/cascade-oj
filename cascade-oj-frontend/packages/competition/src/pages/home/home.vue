@@ -4,24 +4,31 @@
       <h1>欢迎来到CasCade平台</h1>
       <p>这是一个在线判题系统</p>
       <div class="feature-cards">
-        <div class="card card-blue">
-          <h3>题库</h3>
-          <p>海量编程题目供您练习</p>
-        </div>
-        <router-link class="card card-white card-link" to="/competition">
+
+        <div class="card card-blue info">
           <h3>比赛</h3>
-          <p>参加编程竞赛提升技能</p>
-        </router-link>
-        <div class="card card-purple">
-          <h3>排名</h3>
-          <p>查看您在社区中的排名</p>
+          <p>加入比赛，展示你的编程实力</p>
         </div>
+
+        <div class="card card-purple notice">
+          <h3>排名</h3>
+          <p>查看比赛中各位选手的排名情况</p>
+        </div>
+
+        <router-link class="card card-white card-link" to="/competition">
+          <h3> 马上开始！</h3>
+          <p>在此查看正在进行的比赛</p>
+        </router-link>        
+
       </div>
+      <Announcement />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
 // NavBar is provided globally by App.vue
+import Announcement from '../announcement/announcement.vue'
 </script>
+
 <style scoped src="./home.css"></style>

@@ -6,17 +6,14 @@
 			<p>示例比赛卡片，点击进入对应比赛详情。</p>
 
 			<div class="feature-cards">
-				<router-link class="card card-link" to="/competition/1"><h3>示例比赛 1</h3><p>为期 2 小时，涵盖算法基础。</p></router-link>
-				<router-link class="card card-link" to="/competition/2"><h3>示例比赛 2</h3><p>面向进阶题目，含数据结构。</p></router-link>
-				<router-link class="card card-link" to="/competition/3"><h3>示例比赛 3</h3><p>团队赛（占位），协作解题。</p></router-link>
+				<!-- 保留一个静态示例比赛卡片 -->
+				<router-link class="card card-link" to="/competition/1"><h3>示例比赛（静态）</h3><p>这是一个静态示例，后续可删除。</p></router-link>
 
-				<router-link class="card card-link" to="/competition/4"><h3>示例比赛 4</h3><p>周末练习赛，欢迎参与。</p></router-link>
-				<router-link class="card card-link" to="/competition/5"><h3>示例比赛 5</h3><p>入门题目集合，适合新手。</p></router-link>
-				<router-link class="card card-link" to="/competition/6"><h3>示例比赛 6</h3><p>挑战赛，限时高难度题。</p></router-link>
-
-				<router-link class="card card-link" to="/competition/7"><h3>示例比赛 7</h3><p>趣味题目，轻松练习。</p></router-link>
-				<router-link class="card card-link" to="/competition/8"><h3>示例比赛 8</h3><p>月度排行榜赛（占位）。</p></router-link>
-				<router-link class="card card-link" to="/competition/9"><h3>示例比赛 9</h3><p>专题训练：图论与搜索。</p></router-link>
+				<!-- 动态比赛列表 -->
+				<router-link v-for="c in contests" :key="c.id" class="card card-link" :to="`/competition/${c.id}`">
+					<h3>{{ c.title }}</h3>
+					<p>{{ c.status }} · {{ c.startTime }} — {{ c.endTime }}</p>
+				</router-link>
 			</div>
 
 		</main>
@@ -25,6 +22,24 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { getContests, type ContestMetadata } from '../../api/contests'
+
+const contests = ref<ContestMetadata[]>([])
+const loading = ref(false)
+const error = ref<string | null>(null)
+
+onMounted(async () => {
+	loading.value = true
+	try {
+		const res = await getContests()
+		contests.value = res.contests
+	} catch (e: any) {
+		error.value = e?.message ?? '加载比赛列表失败'
+	} finally {
+		loading.value = false
+	}
+})
 </script>
 
 <style scoped>

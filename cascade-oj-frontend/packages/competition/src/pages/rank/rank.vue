@@ -1,47 +1,40 @@
 <template>
-	<div class="card">
+		<div class="card card-blue info">
 		<h3>排名</h3>
 
 		<p v-if="loading">加载中...</p>
 		<p v-else-if="!loading && entries.length === 0">暂无排名数据</p>
 
 		<ol class="rank-list" v-else>
-			<li v-for="e in entries" :key="e.userId">{{ e.userId }} — {{ e.score }} 分</li>
+			<li v-for="e in entries" :key="e.userId">{{ (e as any).username || e.userId }} — {{ e.score }} 分</li>
 		</ol>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { getRanks, type RankItem } from '../../api/rank'
 
 const props = defineProps<{ contestId?: string }>()
 
-type Entry = { userId: string; score: number }
-
-const entries = ref<Entry[]>([])
+// 预置一个静态示例排名，后续可删除
+const entries = ref<RankItem[]>([
+	{ userId: 'example-user', username: '示例用户（静态）', rank: 1, score: 500 }
+])
 const loading = ref(false)
+const error = ref<string | null>(null)
 
-// TODO: replace this stub with a real API call.
 async function fetchRanking(contestId?: string) {
+	if (!contestId) return
 	loading.value = true
-	// simulate network latency and return mock data for now
-	await new Promise((res) => setTimeout(res, 150))
-
-	// If contestId is provided, you could fetch specific data.
-	// Here we return deterministic mock data so the UI can be built.
-	entries.value = contestId
-		? [
-				{ userId: `${contestId}-user1`, score: 500 },
-				{ userId: `${contestId}-user2`, score: 420 },
-				{ userId: `${contestId}-user3`, score: 380 },
-			]
-		: [
-				{ userId: 'user1', score: 500 },
-				{ userId: 'user2', score: 420 },
-				{ userId: 'user3', score: 380 },
-			]
-
-	loading.value = false
+	try {
+		const res = await getRanks(contestId)
+		entries.value = [entries.value[0], ...res.ranks]
+	} catch (e: any) {
+		error.value = e?.message ?? '加载排名失败'
+	} finally {
+		loading.value = false
+	}
 }
 
 onMounted(() => {
@@ -51,7 +44,6 @@ onMounted(() => {
 watch(
 	() => props.contestId,
 	(v) => {
-		// refetch when contest changes
 		fetchRanking(v)
 	}
 )
@@ -67,6 +59,13 @@ watch(
 
 .rank-list li {
 	margin: 6px 0;
-	color: #e6f3ef;
+	color: inherit;
+}
+
+/* 禁用本卡片的 hover 交互效果*/
+.card.card-blue.info:hover {
+	transform: none !important;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6) !important;
+	cursor: default !important;
 }
 </style>

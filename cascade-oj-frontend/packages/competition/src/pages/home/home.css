@@ -56,6 +56,43 @@ p {
     box-shadow: 0 6px 18px rgba(22, 163, 142, 0.12);
 }
 
+/* 信息展示卡片：不交互 */
+.card.info {
+    border-color: rgba(88, 220, 220, 0.2);
+}
+.card.info .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    background: rgba(88, 220, 220, 0.1);
+    color: #58dcdc;
+    border: 1px solid rgba(88, 220, 220, 0.25);
+}
+.card.info p {
+    color: #8fb7bf;
+}
+
+.card.notice {
+    border-color: rgba(205, 139, 241, 0.2);
+}
+.card.notice .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    background: rgba(205, 139, 241, 0.1);
+    color: #cd8bf1;
+    border: 1px solid rgba(205, 139, 241, 0.25);
+}
+.card.notice p {
+    color: #b89fd0;
+}
+
 .card h3 {
     color: #1dad80;
     /* 卡片标题使用绿色 */
@@ -75,13 +112,28 @@ p {
     text-decoration: none;
     display: block;
     height: 100%;
+    border-color: rgba(255, 255, 255, 0.603);
 }
 
+.card-link .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    background: rgb(255, 255, 255);
+    color: #b9ffef;
+    border: 1px solid rgb(255, 255, 255);
+}
 .card-link:focus {
     outline: none;
 }
 
-.card-link h3, .card-link p {
+.card-link h3 {
+    margin-bottom: 15px;
+}
+.card-link p {
     margin: 0;
 }
 
