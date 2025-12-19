@@ -1,11 +1,20 @@
-<script setup>
-const users = [
+<script setup lang="ts">
+type UserStatus = 'Active' | 'Suspended'
+
+type User = {
+  id: number
+  username: string
+  email: string
+  status: UserStatus
+}
+
+const users: User[] = [
   { id: 18, username: 'alice', email: 'alice@example.com', status: 'Active' },
   { id: 25, username: 'bob', email: 'bob@example.com', status: 'Active' },
   { id: 42, username: 'charlie', email: 'charlie@example.com', status: 'Suspended' },
 ]
 
-const statusTone = {
+const statusTone: Record<UserStatus, string> = {
   Active: 'badge-live',
   Suspended: 'badge-dim',
 }

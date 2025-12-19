@@ -1,11 +1,22 @@
-<script setup>
-const submissions = [
+<script setup lang="ts">
+type SubmissionStatus = 'Accepted' | 'Pending' | 'Wrong Answer'
+
+type Submission = {
+  uuid: string
+  problemId: number
+  userId: number
+  status: SubmissionStatus
+  time: string
+  score: number
+}
+
+const submissions: Submission[] = [
   { uuid: 'c1a2', problemId: 401, userId: 18, status: 'Accepted', time: '2025-12-15 21:10', score: 100 },
   { uuid: 'd3b4', problemId: 402, userId: 25, status: 'Pending', time: '2025-12-15 21:08', score: 0 },
   { uuid: 'e5f6', problemId: 403, userId: 42, status: 'Wrong Answer', time: '2025-12-15 21:05', score: 30 },
 ]
 
-const statusTone = {
+const statusTone: Record<SubmissionStatus, string> = {
   Accepted: 'badge-live',
   Pending: 'badge-muted',
   'Wrong Answer': 'badge-dim',

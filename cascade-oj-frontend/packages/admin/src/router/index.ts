@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 import Overview from '../pages/Overview/Overview.vue'
 import Contest from '../pages/Contest/Contest.vue'
@@ -7,7 +7,7 @@ import Submissions from '../pages/Submissions/Submissions.vue'
 import Users from '../pages/Users/Users.vue'
 import Log from '../pages/Log/Log.vue'
 
-const routes = [
+const routes: RouteRecordRaw[] = [
     { path: '/', name: 'overview', component: Overview },
     { path: '/contests', name: 'contests', component: Contest },
     { path: '/problems', name: 'problems', component: Problems },

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const logs = [
   { id: 301, message: 'Admin login success', time: '2025-12-15 20:20' },
   { id: 302, message: 'Contest #87 updated', time: '2025-12-15 20:05' },

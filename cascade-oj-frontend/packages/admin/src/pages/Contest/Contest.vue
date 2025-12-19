@@ -1,11 +1,21 @@
-<script setup>
-const contests = [
+<script setup lang="ts">
+type ContestStatus = 'Scheduled' | 'Running' | 'Finished'
+
+type Contest = {
+  id: number
+  title: string
+  start: string
+  end: string
+  status: ContestStatus
+}
+
+const contests: Contest[] = [
   { id: 101, title: 'Spring Challenge', start: '2025-03-12 10:00', end: '2025-03-12 14:00', status: 'Scheduled' },
   { id: 92, title: 'Winter Cup', start: '2025-01-20 18:00', end: '2025-01-20 22:00', status: 'Finished' },
   { id: 87, title: 'Weekly #87', start: '2025-12-20 19:00', end: '2025-12-20 21:00', status: 'Running' },
 ]
 
-const statusTone = {
+const statusTone: Record<ContestStatus, string> = {
   Scheduled: 'badge-muted',
   Running: 'badge-live',
   Finished: 'badge-dim',

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import Sidebar from './components/SideBar/SideBar.vue'
 import { RouterView } from 'vue-router'
 </script>

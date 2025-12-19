@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 const stats = [
 	{ label: '正在进行', value: '1,248' },

@@ -1,11 +1,20 @@
-<script setup>
-const problems = [
+<script setup lang="ts">
+type ProblemStatus = 'Published' | 'Draft'
+
+type Problem = {
+  id: number
+  title: string
+  limits: string
+  status: ProblemStatus
+}
+
+const problems: Problem[] = [
   { id: 401, title: 'Two Sum', limits: '1000ms · 128MB', status: 'Published' },
   { id: 402, title: 'Binary Search Tree', limits: '1500ms · 256MB', status: 'Draft' },
   { id: 403, title: 'Network Delay', limits: '2000ms · 256MB', status: 'Published' },
 ]
 
-const statusTone = {
+const statusTone: Record<ProblemStatus, string> = {
   Published: 'badge-live',
   Draft: 'badge-muted',
 }
