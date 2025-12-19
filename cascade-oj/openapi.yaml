@@ -931,7 +931,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSingleSubmissionReply1'
+                $ref: '#/components/schemas/GetSingleSubmissionReply'
         default:
           description: Default error response
           content:
@@ -1159,6 +1159,20 @@ components:
         details. You can find out more about this error model and how to work
         with it in the [API Design
         Guide](https://cloud.google.com/apis/design/errors).
+    CaseMetadata:
+      type: object
+      properties:
+        score:
+          type: integer
+          format: int32
+        status:
+          type: string
+        timeCost:
+          type: integer
+          format: int32
+        memoryCost:
+          type: integer
+          format: int32
     ContestMetadata:
       type: object
       properties:
@@ -1272,6 +1286,15 @@ components:
         memoryCost:
           type: integer
           format: int32
+        caseResults:
+          $ref: '#/components/schemas/GetSingleSubmissionReply_CaseResults'
+    GetSingleSubmissionReply_CaseResults:
+      type: object
+      properties:
+        cases:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseMetadata'
     GetSubmissionsReply:
       type: object
       properties:
@@ -1379,20 +1402,6 @@ components:
           type: string
         email:
           type: string
-    CaseMetadata:
-      type: object
-      properties:
-        score:
-          type: integer
-          format: int32
-        status:
-          type: string
-        timeCost:
-          type: integer
-          format: int32
-        memoryCost:
-          type: integer
-          format: int32
     DeleteAnnouncementReply:
       type: object
       properties:
@@ -1436,30 +1445,6 @@ components:
         timestamp:
           type: string
           format: date-time
-    GetSingleSubmissionReply1:
-      type: object
-      properties:
-        metadata:
-          $ref: '#/components/schemas/SubmissionMetadata'
-        code:
-          type: string
-        language:
-          type: string
-        timeCost:
-          type: integer
-          format: int32
-        memoryCost:
-          type: integer
-          format: int32
-        caseResults:
-          $ref: '#/components/schemas/GetSingleSubmissionReply_CaseResults'
-    GetSingleSubmissionReply_CaseResults:
-      type: object
-      properties:
-        cases:
-          type: array
-          items:
-            $ref: '#/components/schemas/CaseMetadata'
     GetUsersReply:
       type: object
       properties:
