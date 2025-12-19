@@ -1,23 +1,29 @@
 <script setup lang="ts">
-type ProblemStatus = 'Published' | 'Draft'
+import { ref, onMounted } from 'vue'
+import { getProblems } from '../../api/admin'
+import type { ProblemMetadata } from '../../api/types'
 
-type Problem = {
-  id: number
-  title: string
-  limits: string
-  status: ProblemStatus
+const problems = ref<ProblemMetadata[]>([])
+const loading = ref(false)
+const error = ref('')
+
+const fetchProblems = async () => {
+  loading.value = true
+  error.value = ''
+  try {
+    const response = await getProblems()
+    problems.value = response.problems || []
+  } catch (err) {
+    error.value = 'Failed to load problems'
+    console.error(err)
+  } finally {
+    loading.value = false
+  }
 }
 
-const problems: Problem[] = [
-  { id: 401, title: 'Two Sum', limits: '1000ms · 128MB', status: 'Published' },
-  { id: 402, title: 'Binary Search Tree', limits: '1500ms · 256MB', status: 'Draft' },
-  { id: 403, title: 'Network Delay', limits: '2000ms · 256MB', status: 'Published' },
-]
-
-const statusTone: Record<ProblemStatus, string> = {
-  Published: 'badge-live',
-  Draft: 'badge-muted',
-}
+onMounted(() => {
+  fetchProblems()
+})
 </script>
 
 <template>
@@ -28,7 +34,9 @@ const statusTone: Record<ProblemStatus, string> = {
         <h1 class="title">Problems</h1>
       </div>
       <div class="actions">
-        <button class="ghost">Import</button>
+        <button class="ghost" @click="fetchProblems" :disabled="loading">
+          {{ loading ? 'Loading...' : 'Refresh' }}
+        </button>
         <button class="primary">New Problem</button>
       </div>
     </header>
@@ -38,14 +46,14 @@ const statusTone: Record<ProblemStatus, string> = {
         <h2>Problem Library</h2>
         <a href="#">View all</a>
       </header>
-      <ul class="list">
+      <div v-if="error" class="error-message">{{ error }}</div>
+      <ul v-else class="list">
         <li v-for="problem in problems" :key="problem.id" class="list-item">
           <div class="list-main">
             <p class="list-title">{{ problem.title }}</p>
-            <p class="list-meta">ID {{ problem.id }} · {{ problem.limits }}</p>
+            <p class="list-meta">ID {{ problem.id }} · {{ problem.time_limit_ms }}ms · {{ problem.memory_limit_mb }}MB</p>
           </div>
           <div class="list-right">
-            <span class="badge" :class="statusTone[problem.status]">{{ problem.status }}</span>
             <button class="ghost">Edit</button>
           </div>
         </li>

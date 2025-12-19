@@ -1,23 +1,29 @@
 <script setup lang="ts">
-type UserStatus = 'Active' | 'Suspended'
+import { ref, onMounted } from 'vue'
+import { getUsers } from '../../api/admin'
+import type { UserInfo } from '../../api/types'
 
-type User = {
-  id: number
-  username: string
-  email: string
-  status: UserStatus
+const users = ref<UserInfo[]>([])
+const loading = ref(false)
+const error = ref('')
+
+const fetchUsers = async () => {
+  loading.value = true
+  error.value = ''
+  try {
+    const response = await getUsers({})
+    users.value = response.users || []
+  } catch (err) {
+    error.value = 'Failed to load users'
+    console.error(err)
+  } finally {
+    loading.value = false
+  }
 }
 
-const users: User[] = [
-  { id: 18, username: 'alice', email: 'alice@example.com', status: 'Active' },
-  { id: 25, username: 'bob', email: 'bob@example.com', status: 'Active' },
-  { id: 42, username: 'charlie', email: 'charlie@example.com', status: 'Suspended' },
-]
-
-const statusTone: Record<UserStatus, string> = {
-  Active: 'badge-live',
-  Suspended: 'badge-dim',
-}
+onMounted(() => {
+  fetchUsers()
+})
 </script>
 
 <template>
@@ -28,7 +34,9 @@ const statusTone: Record<UserStatus, string> = {
         <h1 class="title">Users</h1>
       </div>
       <div class="actions">
-        <button class="ghost">Invite</button>
+        <button class="ghost" @click="fetchUsers" :disabled="loading">
+          {{ loading ? 'Loading...' : 'Refresh' }}
+        </button>
         <button class="primary">Add User</button>
       </div>
     </header>
@@ -38,14 +46,14 @@ const statusTone: Record<UserStatus, string> = {
         <h2>User Directory</h2>
         <a href="#">View all</a>
       </header>
-      <ul class="list">
-        <li v-for="user in users" :key="user.id" class="list-item">
+      <div v-if="error" class="error-message">{{ error }}</div>
+      <ul v-else class="list">
+        <li v-for="user in users" :key="user.user_id" class="list-item">
           <div class="list-main">
             <p class="list-title">{{ user.username }}</p>
-            <p class="list-meta">ID {{ user.id }} · {{ user.email }}</p>
+            <p class="list-meta">ID {{ user.user_id }} · {{ user.email }}</p>
           </div>
           <div class="list-right">
-            <span class="badge" :class="statusTone[user.status]">{{ user.status }}</span>
             <button class="ghost">Edit</button>
           </div>
         </li>
