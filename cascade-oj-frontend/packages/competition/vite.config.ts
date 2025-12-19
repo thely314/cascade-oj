@@ -19,7 +19,8 @@ export default defineConfig({
     })
   ],
   build: {
-    outDir: path.resolve(__dirname, '../../dist/competition'),
+    // 使用相对路径，避免部分插件将 root 与绝对 outDir 进行字符串拼接导致路径异常
+    outDir: '../../dist/competition',
     emptyOutDir: true,
   },
   resolve: {
