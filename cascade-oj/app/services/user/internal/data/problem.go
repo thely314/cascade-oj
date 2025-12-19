@@ -5,6 +5,7 @@ import (
 	"cascade-oj/ent"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset_problem"
+	"cascade-oj/ent/user"
 	"context"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -33,10 +34,13 @@ func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64
 }
 
 func (problemRepo *ProblemRepo) GetSingleProblem(ctx context.Context, problemID int64) (*ent.Problem, error) {
-	queryProblem, err := problemRepo.data.db.Problem.Query().Select(problem.FieldID, problem.FieldTitle, problem.FieldProblemType, problem.FieldTimeLimit, problem.FieldMemoryLimit).Where(problem.IDEQ(problemID)).Only(ctx)
+	queryProblem, err := problemRepo.data.db.Problem.Query().Select(problem.FieldID, problem.FieldTitle, problem.FieldProblemType, problem.FieldTimeLimit, problem.FieldMemoryLimit).WithCreator(func(uq *ent.UserQuery) {
+		uq.Select(user.FieldUsername)
+	}).Where(problem.IDEQ(problemID)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
+
 	return queryProblem, nil
 }
 
