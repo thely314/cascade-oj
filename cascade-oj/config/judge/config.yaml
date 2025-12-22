@@ -1,18 +1,18 @@
 server:
-  mq: amqp://cascade:123456@mq:5672
+  mq: amqp://cascade_oj:123456@cascade_rabbitmq:5672
 data:
   database:
     driver: mysql
     source: cascade_oj:123456@tcp(cascade_mysql:3306)/cascade_oj_db?charset=utf8&parseTime=True&loc=Local
   redis:
-    addr: rd:6379
+    addr: cascade_redis:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
     db: 0
   case_location:
     problem_cases_location: /cases
   judge_config:
-    endpoint: localhost:5051
+    endpoint: cascade_go_judge:5051
     language:
       enable:
         - c
@@ -24,7 +24,8 @@ data:
         - c++17(O2)
       env:
         default:
-          - PATH=/usr/bin:/bin
+          env:
+            - PATH=/usr/bin:/bin
       compile:
         c: /usr/bin/gcc -Wall --std=c99 -o foo foo.c -lm
         c++11: /usr/bin/g++ -Wall -std=c++11 -o foo foo.cc -lm -I/include

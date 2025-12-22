@@ -6,9 +6,16 @@ server:
     addr: 0.0.0.0:9000
     timeout: 1s
   jwt_secret: cascade
+client:
+  http:
+    addr: localhost:8080
+    timeout: 1s
+  grpc:
+    addr: localhost:9000
+    timeout: 1s
 data:
-  mq: amqp://cascade:123456@mq:5672
-  ipv4_prefix: 0.0.0.0
+  mq: amqp://cascade:123456@cascade_rabbitmq:5672
+  ipv4_prefix: 0
   port: 8080
   api_key: cascade
   endpoint_preset: "gateway:8080"
