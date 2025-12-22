@@ -5,7 +5,7 @@ import (
 
 	"cascade-oj/app/services/user/internal/biz"
 	"cascade-oj/ent"
-	"cascade-oj/ent/problemset_user"
+	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/user"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -24,9 +24,10 @@ func NewMiscRepo(data *Data, logger log.Logger) biz.MiscRepo {
 }
 
 func (repo *miscRepo) GetRanks(ctx context.Context, contestID int64) ([]*biz.Rank, error) {
-	ranks, err := repo.data.db.ProblemSet_User.Query().
-		Where(problemset_user.ProblemSetIDEQ(contestID)).
-		Order(ent.Desc("score")).
+	ranks, err := repo.data.db.Competitor_List.Query().
+		WithUser().
+		Where(competitor_list.ProblemSetIDEQ(contestID)).
+		Order(ent.Desc(competitor_list.FieldTotalScore)).
 		All(ctx)
 	if err != nil {
 		return nil, err
@@ -45,6 +46,7 @@ func (repo *miscRepo) GetRanks(ctx context.Context, contestID int64) ([]*biz.Ran
 
 func (repo *miscRepo) GetAnnouncements(ctx context.Context) ([]*biz.Announcement, error) {
 	announcements, err := repo.data.db.Announcement.Query().
+		WithPublisher().
 		All(ctx)
 	if err != nil {
 		return nil, err

@@ -4,6 +4,7 @@ import (
 	pb "cascade-oj/api/cascade/user/v1"
 	"cascade-oj/app/services/user/internal/conf"
 	"cascade-oj/app/services/user/internal/service"
+	"cascade-oj/pkg/middleware/auth"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -15,6 +16,7 @@ func NewHTTPServer(c *conf.Server, user *service.UserService, logger log.Logger)
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			auth.Auth(c.JwtSecret, auth.RoleCompetitor, nil),
 		),
 	}
 	if c.Http.Network != "" {

@@ -79,7 +79,6 @@ func (gatewayService *GatewayService) GetProblems(ctx context.Context, req *pb.G
 		res.Problems = append(res.Problems, &pb.ProblemMetadata{
 			Id:            v.ID,
 			Title:         v.Title,
-			ProblemType:   v.ProblemType,
 			TimeLimitMs:   v.TimeLimitMs,
 			MemoryLimitMb: v.MemoryLimitMb,
 		})
@@ -97,7 +96,6 @@ func (gatewayService *GatewayService) GetSingleProblem(ctx context.Context, req 
 		Metadata: &pb.ProblemMetadata{
 			Id:            problem.Metadata.ID,
 			Title:         problem.Metadata.Title,
-			ProblemType:   problem.Metadata.ProblemType,
 			TimeLimitMs:   problem.Metadata.TimeLimitMs,
 			MemoryLimitMb: problem.Metadata.MemoryLimitMb,
 		},

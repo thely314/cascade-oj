@@ -1,5 +1,11 @@
 package mq
 
+// judge types
+const (
+	SubmissionType = "test_case"
+	SelfTestType   = "custom_test_case"
+)
+
 type ProblemMessage struct {
 	ID       int64             `json:"id,omitempty"`
 	Title    string            `json:"title,omitempty"`

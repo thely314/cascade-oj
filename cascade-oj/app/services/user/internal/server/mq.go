@@ -10,7 +10,7 @@ import (
 	"github.com/tx7do/kratos-transport/transport/rabbitmq"
 )
 
-// TODO: understanding WIP
+// TODO: used for problem update mq
 const ProblemExchangeName = "update_problem"
 
 func NewMQServer(c *conf.Server, s *service.UserService, logger log.Logger) *rabbitmq.Server {
@@ -22,7 +22,7 @@ func NewMQServer(c *conf.Server, s *service.UserService, logger log.Logger) *rab
 
 	srv := rabbitmq.NewServer(opts...)
 
-	// TODO: register mq handlers
+	// TODO: register mq handlers for update problem in redis
 	// _ = rabbitmq.RegisterSubscriber(srv, context.Background(), ProblemExchangeName, s.UpdateProblemHandle)
 
 	return srv

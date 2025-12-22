@@ -1,0 +1,17 @@
+# 两数之和示例 a + b
+# int
+Score = 100
+
+# int64 ms
+TimeResourceLimit = 500
+
+# int64 MiBytes
+MemoryResourceLimit = 16
+
+# CaseGroup
+CaseGroups = [
+    { GroupScore = 100, Cases = [
+        { SubScore = 50, InputFileLocation = "1.in", AnswerFileLocation = "1.ans" },
+        { SubScore = 50, InputFileLocation = "2.in", AnswerFileLocation = "2.ans" }
+    ] }
+]

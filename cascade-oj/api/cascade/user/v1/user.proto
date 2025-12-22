@@ -32,7 +32,7 @@ service User {
     };
     rpc GetProblems(GetProblemsRequest) returns (GetProblemsReply) {
         option (google.api.http) = {
-            get: "/user/problems/{contest_id}"
+            get: "/user/contests/{contest_id}/problems"
         };
     };
     rpc GetSingleProblem(GetSingleProblemRequest) returns (GetSingleProblemReply) {
@@ -177,9 +177,10 @@ message GetSelfTestResultReply {
 }
 
 message PostSubmissionRequest {
-    int64 problem_id = 1; // Problem ID
-    string code = 2; // User Code
-    string language = 3; // Programming Language
+    int64 contest_id = 1; // Contest ID
+    int64 problem_id = 2; // Problem ID
+    string code = 3; // User Code
+    string language = 4; // Programming Language
 }
 message PostSubmissionReply {
     string uuid = 1;

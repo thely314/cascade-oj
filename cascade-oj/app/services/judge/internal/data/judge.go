@@ -1,7 +1,6 @@
 package data
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -10,20 +9,16 @@ import (
 	"time"
 
 	"cascade-oj/app/services/judge/internal/biz"
-	"cascade-oj/app/services/judge/pkg/gojudge"
 	"cascade-oj/ent"
+	"cascade-oj/ent/competitor_list"
+	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
+	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/pkg/mq"
 	"cascade-oj/pkg/util"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/uuid"
-)
-
-// judge types
-const (
-	SubmissionType = "test_case"
-	SelfTestType   = "custom_test_case"
 )
 
 type judgeRepo struct {
@@ -34,7 +29,7 @@ type judgeRepo struct {
 // arg msg_submission comes with status = pending(0 in i16)
 func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.SubmissionMessage) error {
 	// set submission to judging status
-	msg_submission.Status = gojudge.StatusToInt16(gojudge.Judging)
+	msg_submission.Status = util.StatusToInt16(util.Judging)
 	// set submission meta info
 	msg_submission.MemoryCost = 0
 	msg_submission.TimeCost = 0
@@ -43,10 +38,10 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		return err
 	}
 	// update redis cache
-	repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", SubmissionType, msg_submission.UserID, msg_submission.UUID), msg_marshal, 1*time.Hour)
+	repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, msg_submission.UserID, msg_submission.UUID), msg_marshal, 1*time.Hour)
 
 	// default error status, recover when judge completed
-	msg_submission.Status = gojudge.StatusToInt16(gojudge.SystemError)
+	msg_submission.Status = util.StatusToInt16(util.SystemError)
 
 	// update cache after judge completed
 	defer func() {
@@ -54,7 +49,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		if err != nil {
 			repo.log.Errorf("failed to marshal submission message: %v", err)
 		}
-		err = repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", SubmissionType, msg_submission.UserID, msg_submission.UUID), msg_marshal, 1*time.Hour).Err()
+		err = repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, msg_submission.UserID, msg_submission.UUID), msg_marshal, 1*time.Hour).Err()
 		if err != nil {
 			repo.log.Errorf("failed to update submission message in redis: %v", err)
 		}
@@ -111,7 +106,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 			SetMemoryCostKB(msg_submission.MemoryCost).
 			SetCode(msg_submission.Code).
 			SetLanguage(msg_submission.Language).
-			SetJudgeType(SubmissionType).
+			SetJudgeType(mq.SubmissionType).
 			Save(ctx)
 		if err != nil {
 			repo.log.Errorf("failed to save judge record to db: %v", err)
@@ -130,9 +125,54 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 			return
 		}
 
+		// update ranks
+		// get all submissions from this user
+		// then calculate total rank score
+		// each submission group by the same problem should only count the highest score
+		var existingJudges []struct {
+			ProblemID int64 `json:"problem_id"`
+			Max       int   `json:"max"`
+		}
+		err = repo.data.db.SubmissionRecord.Query().
+			Where(submissionrecord.And(
+				submissionrecord.HasJudgeWith(judgerecord.UserIDEQ(msg_submission.UserID)),
+				submissionrecord.ProblemSetIDEQ(msg_submission.ProblemSetID),
+			)).
+			GroupBy(submissionrecord.FieldProblemID).
+			Aggregate(ent.Max(submissionrecord.FieldScore)).
+			Scan(ctx, &existingJudges)
+		if err != nil {
+			repo.log.Errorf("failed to query existing submission records: %v", err)
+			return
+		}
+		var newRankScore int = 0
+		for _, record := range existingJudges {
+			newRankScore += record.Max
+		}
+
+		// calculate new total rank score
+		oldRank, err := repo.data.db.Competitor_List.Query().
+			Where(competitor_list.UserIDEQ(msg_submission.UserID)).
+			First(ctx)
+		if err != nil {
+			repo.log.Errorf("failed to query competitor list: %v", err)
+			return
+		}
+		if newRankScore > oldRank.TotalScore {
+			// update ranking info in competitor list
+			_, err = repo.data.db.Competitor_List.Update().
+				Where(competitor_list.UserIDEQ(msg_submission.UserID)).
+				SetTotalScore(newRankScore).
+				Save(ctx)
+			if err != nil {
+				repo.log.Errorf("failed to update competitor list: %v", err)
+				return
+			}
+		}
+
 		// skip save case if system error or compile error
-		if msg_submission.Status == gojudge.StatusToInt16(gojudge.SystemError) ||
-			msg_submission.Status == gojudge.StatusToInt16(gojudge.CompileError) {
+		if msg_submission.Status == util.StatusToInt16(util.SystemError) ||
+			msg_submission.Status == util.StatusToInt16(util.CompileError) {
 			return
 		}
 
@@ -164,7 +204,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 	fileID, result, err := repo.data.gojudge.Compile([]byte(msg_submission.Code), msg_submission.Language, msg_submission.UUID)
 	if err != nil {
 		if result != nil {
-			msg_submission.Status = gojudge.StatusToInt16(gojudge.CompileError)
+			msg_submission.Status = util.StatusToInt16(util.CompileError)
 			// default stderr message
 			msg_submission.Stderr = "Compile error without stderr message"
 			stderr, is_ok := result.Files["stderr"]
@@ -185,19 +225,19 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 
 	// begin judge
 	// pre set status to accepted, change when any case failed
-	msg_submission.Status = gojudge.StatusToInt16(gojudge.Accepted)
+	msg_submission.Status = util.StatusToInt16(util.Accepted)
 
 	// test each case
 	// fileManager get config, read caseGroup from config
 	for idx, caseGroup := range judgeConfig.CaseGroups {
-		var caseGroupStatus int16 = gojudge.StatusToInt16(gojudge.Accepted)
+		var caseGroupStatus int16 = util.StatusToInt16(util.Accepted)
 		var caseGroupScore int = 0
 		var totalTime uint64 = 0
 		var maxMemory uint64 = 0
 		caseBuilders := make([]*ent.CaseResultCreate, len(caseGroup.Cases))
 
 		caseGroupBuilder := repo.data.db.CaseGroupResult.Create().
-			SetStatus(gojudge.StatusToInt16(gojudge.Pending)).
+			SetStatus(util.StatusToInt16(util.Pending)).
 			SetTotalTimeCostMs(0).
 			SetMaxMemoryCostKB(0).
 			SetScore(0)
@@ -207,7 +247,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		for idx2, testCase := range caseGroup.Cases {
 			err := func() error {
 				caseBuilder := repo.data.db.CaseResult.Create().
-					SetStatus(gojudge.StatusToInt16(gojudge.Pending)).
+					SetStatus(util.StatusToInt16(util.Pending)).
 					SetTimeCostMs(0).
 					SetMemoryCostKB(0).
 					SetScore(0)
@@ -227,8 +267,9 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 				if err != nil {
 					return err
 				}
-				// TODO
 				// handle CRLF for both files
+				inputBytes = util.RemoveCR(inputBytes)
+				ansBytes = util.RemoveCR(ansBytes)
 
 				// judge case
 				result, err := repo.data.gojudge.CaseJudge(msg_submission.ProblemID,
@@ -243,41 +284,43 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 				)
 				if err != nil {
 					repo.log.Errorf("submission: %s runtime error: %v", msg_submission.UUID, err)
-					caseBuilder.SetStatus(gojudge.StatusToInt16(gojudge.RuntimeError))
+					caseBuilder.SetStatus(util.StatusToInt16(util.RuntimeError))
 					caseBuilder.SetStderr(util.ParseSignalToString(result.ExitStatus))
 					// the whole group is runtime error
-					caseGroupStatus = gojudge.StatusToInt16(gojudge.RuntimeError)
+					caseGroupStatus = util.StatusToInt16(util.RuntimeError)
 					return nil
 				}
 				repo.log.Infof("submission: %s case: %s result: %+v", msg_submission.UUID, testCase.InputFileLocation, result)
 
 				// check result status
-				resStatus := gojudge.ParseGojudgeStatus(result.Status)
+				resStatus := util.ParseGojudgeStatus(result.Status)
 				out := result.Files["stdout"]
-				if resStatus == gojudge.StatusToInt16(gojudge.Accepted) && out != nil {
+				caseBuilder.SetStdout(string(out))
+				if resStatus == util.StatusToInt16(util.Accepted) && out != nil {
 					// compare output
-					// TODO need util impl
-					// if util...
-					if !bytes.Equal(out, ansBytes) {
-						resStatus = gojudge.StatusToInt16(gojudge.WrongAnswer)
+					// TODO may need to support more comparison methods
+					if !util.BytesCompareIgnoreSpacesAndNewlines(out, ansBytes) {
+						resStatus = util.StatusToInt16(util.WrongAnswer)
 					}
 				}
 
 				// set caseBuilder metadata
+				resTime := result.Time / 1000 / 1000 // ns -> ms
+				resMemory := result.Memory / 1024    // Bytes -> KB
 				caseBuilder.SetStatus(resStatus)
-				caseBuilder.SetTimeCostMs(result.Time)
-				caseBuilder.SetMemoryCostKB(result.Memory)
+				caseBuilder.SetTimeCostMs(resTime)
+				caseBuilder.SetMemoryCostKB(resMemory)
 
 				// update case group info
-				totalTime += result.Time
-				maxMemory = max(maxMemory, result.Memory)
+				totalTime += resTime                  // ms
+				maxMemory = max(maxMemory, resMemory) // KB
 
 				// update submission info
-				msg_submission.TimeCost += result.Time
-				msg_submission.MemoryCost = max(msg_submission.MemoryCost, result.Memory)
+				msg_submission.TimeCost += resTime                                    // ms
+				msg_submission.MemoryCost = max(msg_submission.MemoryCost, resMemory) // KB
 
 				// set case score
-				if resStatus != gojudge.StatusToInt16(gojudge.Accepted) {
+				if resStatus != util.StatusToInt16(util.Accepted) {
 					caseBuilder.SetScore(0)
 					caseGroupStatus = resStatus
 				} else {
@@ -288,7 +331,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 				return nil
 			}()
 			if err != nil {
-				msg_submission.Status = gojudge.StatusToInt16(gojudge.SystemError)
+				msg_submission.Status = util.StatusToInt16(util.SystemError)
 				return err
 			}
 		}
@@ -297,8 +340,8 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		// calculate case group score
 		caseGroupBuilder.SetScore(caseGroupScore)
 		caseGroupBuilder.SetStatus(caseGroupStatus)
-		caseGroupBuilder.SetTotalTimeCostMs(totalTime)
-		caseGroupBuilder.SetMaxMemoryCostKB(maxMemory)
+		caseGroupBuilder.SetTotalTimeCostMs(totalTime) // ms
+		caseGroupBuilder.SetMaxMemoryCostKB(maxMemory) // KB
 		caseGroupBuilders[idx] = caseGroupBuilder
 
 		// fill cases array
@@ -306,8 +349,8 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 
 		// update submission info
 		msg_submission.Score += caseGroupScore
-		if msg_submission.Status == gojudge.StatusToInt16(gojudge.Accepted) &&
-			caseGroupStatus != gojudge.StatusToInt16(gojudge.Accepted) {
+		if msg_submission.Status == util.StatusToInt16(util.Accepted) &&
+			caseGroupStatus != util.StatusToInt16(util.Accepted) {
 			msg_submission.Status = caseGroupStatus
 		}
 	}
@@ -328,7 +371,7 @@ func (repo *judgeRepo) JudgeSelfTest(ctx context.Context, msg_self_test *mq.Self
 			repo.log.Errorf("failed to marshal self-test message: %v", err)
 			return
 		}
-		err = repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", SelfTestType, msg_self_test.UserID, msg_self_test.UUID), msg_marshal, 1*time.Hour).Err()
+		err = repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SelfTestType, msg_self_test.UserID, msg_self_test.UUID), msg_marshal, 1*time.Hour).Err()
 		if err != nil {
 			repo.log.Errorf("failed to update redis cache: %v", err)
 		}
@@ -383,8 +426,8 @@ func (repo *judgeRepo) JudgeSelfTest(ctx context.Context, msg_self_test *mq.Self
 	// update self-test info
 	msg_self_test.Stdout = string(result.Files["stdout"])
 	msg_self_test.Stderr = string(result.Files["stderr"])
-	msg_self_test.TimeCost = result.Time
-	msg_self_test.MemoryCost = result.Memory
+	msg_self_test.TimeCost = result.Time / 1000 / 1000 // ns -> ms
+	msg_self_test.MemoryCost = result.Memory / 1024    // Bytes -> KB
 	return nil
 }
 

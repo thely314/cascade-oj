@@ -1008,9 +1008,10 @@ func (x *GetSelfTestResultReply) GetMemoryCost() int32 {
 
 type PostSubmissionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProblemId     int64                  `protobuf:"varint,1,opt,name=problem_id,json=problemId,proto3" json:"problem_id,omitempty"` // Problem ID
-	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`                             // User Code
-	Language      string                 `protobuf:"bytes,3,opt,name=language,proto3" json:"language,omitempty"`                     // Programming Language
+	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
+	ProblemId     int64                  `protobuf:"varint,2,opt,name=problem_id,json=problemId,proto3" json:"problem_id,omitempty"` // Problem ID
+	Code          string                 `protobuf:"bytes,3,opt,name=code,proto3" json:"code,omitempty"`                             // User Code
+	Language      string                 `protobuf:"bytes,4,opt,name=language,proto3" json:"language,omitempty"`                     // Programming Language
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1043,6 +1044,13 @@ func (x *PostSubmissionRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use PostSubmissionRequest.ProtoReflect.Descriptor instead.
 func (*PostSubmissionRequest) Descriptor() ([]byte, []int) {
 	return file_user_v1_user_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *PostSubmissionRequest) GetContestId() int64 {
+	if x != nil {
+		return x.ContestId
+	}
+	return 0
 }
 
 func (x *PostSubmissionRequest) GetProblemId() int64 {
@@ -2230,12 +2238,14 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"\x06stderr\x18\x03 \x01(\tR\x06stderr\x12\x1b\n" +
 	"\ttime_cost\x18\x04 \x01(\x05R\btimeCost\x12\x1f\n" +
 	"\vmemory_cost\x18\x05 \x01(\x05R\n" +
-	"memoryCost\"f\n" +
+	"memoryCost\"\x85\x01\n" +
 	"\x15PostSubmissionRequest\x12\x1d\n" +
 	"\n" +
-	"problem_id\x18\x01 \x01(\x03R\tproblemId\x12\x12\n" +
-	"\x04code\x18\x02 \x01(\tR\x04code\x12\x1a\n" +
-	"\blanguage\x18\x03 \x01(\tR\blanguage\")\n" +
+	"contest_id\x18\x01 \x01(\x03R\tcontestId\x12\x1d\n" +
+	"\n" +
+	"problem_id\x18\x02 \x01(\x03R\tproblemId\x12\x12\n" +
+	"\x04code\x18\x03 \x01(\tR\x04code\x12\x1a\n" +
+	"\blanguage\x18\x04 \x01(\tR\blanguage\")\n" +
 	"\x13PostSubmissionReply\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"\xe0\x01\n" +
 	"\x12SubmissionMetadata\x12'\n" +
@@ -2313,13 +2323,13 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tR\x05token*A\n" +
 	"\vErrorReason\x12\x15\n" +
 	"\vUSER_BANNED\x10\x00\x1a\x04\xa8E\x91\x03\x12\x15\n" +
-	"\vCONTEST_END\x10\x01\x1a\x04\xa8E\x91\x03\x1a\x04\xa0E\xf4\x032\xdd\x10\n" +
+	"\vCONTEST_END\x10\x01\x1a\x04\xa8E\x91\x03\x1a\x04\xa0E\xf4\x032\xe6\x10\n" +
 	"\x04User\x12u\n" +
 	"\vGetContests\x12'.api.cascade.user.v1.GetContestsRequest\x1a%.api.cascade.user.v1.GetContestsReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/user/contests\x12\x91\x01\n" +
 	"\x10GetSingleContest\x12,.api.cascade.user.v1.GetSingleContestRequest\x1a*.api.cascade.user.v1.GetSingleContestReply\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/user/contests/{contest_id}\x12\x8a\x01\n" +
 	"\vJoinContest\x12'.api.cascade.user.v1.JoinContestRequest\x1a%.api.cascade.user.v1.JoinContestReply\"+\x82\xd3\xe4\x93\x02%:\x01*\" /user/contests/{contest_id}/join\x12\x87\x01\n" +
-	"\vQuitContest\x12'.api.cascade.user.v1.QuitContestRequest\x1a%.api.cascade.user.v1.QuitContestReply\"(\x82\xd3\xe4\x93\x02\"* /user/contests/{contest_id}/join\x12\x82\x01\n" +
-	"\vGetProblems\x12'.api.cascade.user.v1.GetProblemsRequest\x1a%.api.cascade.user.v1.GetProblemsReply\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/user/problems/{contest_id}\x12\x91\x01\n" +
+	"\vQuitContest\x12'.api.cascade.user.v1.QuitContestRequest\x1a%.api.cascade.user.v1.QuitContestReply\"(\x82\xd3\xe4\x93\x02\"* /user/contests/{contest_id}/join\x12\x8b\x01\n" +
+	"\vGetProblems\x12'.api.cascade.user.v1.GetProblemsRequest\x1a%.api.cascade.user.v1.GetProblemsReply\",\x82\xd3\xe4\x93\x02&\x12$/user/contests/{contest_id}/problems\x12\x91\x01\n" +
 	"\x10GetSingleProblem\x12,.api.cascade.user.v1.GetSingleProblemRequest\x1a*.api.cascade.user.v1.GetSingleProblemReply\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/user/problems/{problem_id}\x12t\n" +
 	"\fPostSelfTest\x12$.api.cascade.user.v1.SelfTestRequest\x1a\".api.cascade.user.v1.SelfTestReply\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/user/selftests\x12\x98\x01\n" +
 	"\x11GetSelfTestResult\x12-.api.cascade.user.v1.GetSelfTestResultRequest\x1a+.api.cascade.user.v1.GetSelfTestResultReply\"'\x82\xd3\xe4\x93\x02!\x12\x1f/user/selftests/{selftest_uuid}\x12\x84\x01\n" +

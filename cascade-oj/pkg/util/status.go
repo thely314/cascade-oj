@@ -1,4 +1,4 @@
-package gojudge
+package util
 
 import (
 	pbGojudge "github.com/criyle/go-judge/pb"

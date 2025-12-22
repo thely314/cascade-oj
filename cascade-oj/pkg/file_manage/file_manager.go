@@ -12,21 +12,21 @@ type JudgeConfigManager struct {
 }
 
 type JudgeConfig struct {
-	Score               int
-	TimeResourceLimit   int64
-	MemoryResourceLimit int64
-	CaseGroups          []CaseGroup
+	Score               int         `toml:"Score"`
+	TimeResourceLimit   int64       `toml:"TimeResourceLimit"`
+	MemoryResourceLimit int64       `toml:"MemoryResourceLimit"`
+	CaseGroups          []CaseGroup `toml:"CaseGroups"`
 }
 
 type TestCase struct {
-	SubScore           int
-	InputFileLocation  string
-	AnswerFileLocation string
+	SubScore           int    `toml:"SubScore"`
+	InputFileLocation  string `toml:"InputFileLocation"`
+	AnswerFileLocation string `toml:"AnswerFileLocation"`
 }
 
 type CaseGroup struct {
-	GroupScore int
-	Cases      []TestCase
+	GroupScore int        `toml:"GroupScore"`
+	Cases      []TestCase `toml:"Cases"`
 }
 
 func NewJudgeConfigManager(fileLocation string) *JudgeConfigManager {
