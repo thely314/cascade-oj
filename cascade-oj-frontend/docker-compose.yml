@@ -1,0 +1,21 @@
+services:
+  cascade_nginx:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: cascade-oj/nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/logs:/var/log/nginx
+    container_name: cascade_oj_nginx
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M

@@ -2,20 +2,18 @@ package service
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	pb "cascade-oj/api/cascade/user/v1"
 	"cascade-oj/app/services/user/internal/biz"
 	"cascade-oj/pkg/middleware/auth"
-
-	//TODO: need Crlf2lf in "cascade-oj/pkg/util"
+	"cascade-oj/pkg/util"
 
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (s *UserService) PostSubmission(ctx context.Context, req *pb.SubmissionRequest) (*pb.SubmissionReply, error) {
+func (s *UserService) PostSubmission(ctx context.Context, req *pb.PostSubmissionRequest) (*pb.PostSubmissionReply, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
 	// TODO: validate user not banned and contest/problem access
 	// exist, err := s.TODO.CheckBanned(ctx, userID)
@@ -30,28 +28,24 @@ func (s *UserService) PostSubmission(ctx context.Context, req *pb.SubmissionRequ
 	// 	return nil, pb.ErrorContestEnd("contest is end")
 	// }
 	id := uuid.NewString()
-	// TODO: get case version
-	// caseVer, err := s.getProblemCaseVer(ctx, req.ProblemId)
-	// if err != nil {
-	// 	return nil, err
-	// }
 	_, err := s.judgeUsecase.CreateSubmission(ctx, &biz.Submission{
-		UUID:        id,
-		UserID:      userID,
-		ProblemID:   req.ProblemId,
-		Code:        req.Code, // TODO: need Crlf2lf to achieve util.Crlf2lf(req.Code),
-		Language:    req.Language,
-		Status:      "",
-		Score:       0,
-		CreateTime:  time.Now(),
-		TimeCost:    0,
-		MemoryCost:  0,
-		CaseVersion: 0, //TODO: caseVer
+		UUID:         id,
+		UserID:       userID,
+		ProblemSetID: req.ContestId,
+		ProblemID:    req.ProblemId,
+		Code:         util.CRLF2LF(req.Code),
+		Language:     req.Language,
+		Status:       "",
+		CreateTime:   time.Now(),
+		Score:        0,
+		TimeCost:     0,
+		MemoryCost:   0,
+		CaseVersion:  0,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return &pb.SubmissionReply{Uuid: id}, nil
+	return &pb.PostSubmissionReply{Uuid: id}, nil
 }
 
 func (s *UserService) PostSelfTest(ctx context.Context, req *pb.SelfTestRequest) (*pb.SelfTestReply, error) {
@@ -66,12 +60,17 @@ func (s *UserService) PostSelfTest(ctx context.Context, req *pb.SelfTestRequest)
 	// }
 	id := uuid.NewString()
 	_, err := s.judgeUsecase.CreateSelfTest(ctx, &biz.SelfTest{
-		UUID:      id,
-		UserID:    userID,
-		ProblemID: req.ProblemId,
-		Code:      req.Code, // TODO: need Crlf2lf to achieve util.Crlf2lf(req.Code),
-		Language:  req.Language,
-		Input:     req.SelfCase, // TODO: need Crlf2lf to achieve util.Crlf2lf(req.SelfCase),
+		UUID:       id,
+		UserID:     userID,
+		ProblemID:  req.ProblemId,
+		Code:       util.CRLF2LF(req.Code),
+		Language:   req.Language,
+		Input:      util.CRLF2LF(req.Input),
+		IsCompiled: false,
+		Stdout:     "",
+		Stderr:     "",
+		TimeCost:   0,
+		MemoryCost: 0,
 	})
 	if err != nil {
 		return nil, err
@@ -80,26 +79,39 @@ func (s *UserService) PostSelfTest(ctx context.Context, req *pb.SelfTestRequest)
 }
 
 func (s *UserService) GetSingleSubmission(ctx context.Context, req *pb.GetSingleSubmissionRequest) (*pb.GetSingleSubmissionReply, error) {
-	submission, err := s.judgeUsecase.GetSingleSubmission(ctx, req.SubmissionId)
+	submission, err := s.judgeUsecase.GetSingleSubmission(ctx, req.SubmissionUuid)
 	if err != nil {
 		return nil, err
 	}
-	id, err := strconv.ParseInt(submission.UUID, 10, 64)
+	var casesResults []*pb.CaseMetadata
+	cases, err := s.judgeUsecase.GetCases(ctx, req.SubmissionUuid)
 	if err != nil {
 		return nil, err
+	}
+	for _, c := range cases {
+		casesResults = append(casesResults, &pb.CaseMetadata{
+			Score:      c.Score,
+			Status:     c.Status,
+			TimeCost:   int32(c.TimeCost),
+			MemoryCost: int32(c.MemoryCost),
+		})
 	}
 	return &pb.GetSingleSubmissionReply{
 		Metadata: &pb.SubmissionMetadata{
-			SubmissionId: id,
-			ProblemId:    submission.ProblemID,
-			UserId:       submission.UserID,
-			Status:       submission.Status,
-			Result:       "",
-			SubmitTime:   timestamppb.New(submission.CreateTime),
-			Score:        int32(submission.Score),
+			SubmissionUuid: submission.UUID,
+			ProblemId:      submission.ProblemID,
+			UserId:         submission.UserID,
+			Status:         submission.Status,
+			SubmitTime:     timestamppb.New(submission.CreateTime),
+			Score:          int32(submission.Score),
 		},
-		Code:     submission.Code,
-		Language: submission.Language,
+		Code:       submission.Code,
+		Language:   submission.Language,
+		TimeCost:   int32(submission.TimeCost),
+		MemoryCost: int32(submission.MemoryCost),
+		CaseResults: &pb.GetSingleSubmissionReply_CaseResults{
+			Cases: casesResults,
+		},
 	}, nil
 }
 
@@ -110,56 +122,28 @@ func (s *UserService) GetSubmissions(ctx context.Context, req *pb.GetSubmissions
 	}
 	var pbSubmissions []*pb.SubmissionMetadata
 	for _, submission := range submissions {
-		id, err := strconv.ParseInt(submission.UUID, 10, 64)
-		if err != nil {
-			return nil, err
-		}
 		pbSubmissions = append(pbSubmissions, &pb.SubmissionMetadata{
-			SubmissionId: id,
-			ProblemId:    submission.ProblemID,
-			UserId:       submission.UserID,
-			Status:       submission.Status,
-			Result:       "",
-			SubmitTime:   timestamppb.New(submission.CreateTime),
-			Score:        int32(submission.Score),
+			SubmissionUuid: submission.UUID,
+			ProblemId:      submission.ProblemID,
+			UserId:         submission.UserID,
+			Status:         submission.Status,
+			SubmitTime:     timestamppb.New(submission.CreateTime),
+			Score:          int32(submission.Score),
 		})
 	}
 	return &pb.GetSubmissionsReply{Submissions: pbSubmissions}, nil
 }
 
-// TODO: pb.GetSelfTestRequest and pb.GetSelfTestReply needed
-// func (s *UserService) GetSelfTest(ctx context.Context, req *pb.GetSelfTestRequest) (*pb.GetSelfTestReply, error) {
-// 	selfTest, err := s.judgeUsecase.GetSelfTest(ctx, req.GetSelfTestId())
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return &pb.GetSelfTestReply{
-// 		IsCompiled: selfTest.IsCompiled,
-// 		CompileMsg: selfTest.CompileMsg,
-// 		Stdout:     selfTest.Stdout,
-// 		Stderr:     selfTest.Stderr,
-// 		TimeCost:   selfTest.TimeCost,
-// 		MemoryCost: selfTest.MemoryCost,
-// 	}, nil
-// }
-
-// TODO: pb.GetCasesRequest and pb.GetCasesReply needed
-// func (s *UserService) GetCases(ctx context.Context, req *pb.GetCasesRequest) (*pb.GetCasesReply, error) {
-// 	cases, err := s.judgeUsecase.GetCases(ctx, req.GetSubmissionId())
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	var pbCases []*pb.GetCasesReply_Case
-// 	for _, c := range cases {
-// 		pbCases = append(pbCases, &pb.GetCasesReply_Case{
-// 			Index:      c.Index,
-// 			Score:      c.Score,
-// 			Status:     c.Status,
-// 			TimeCost:   c.TimeCost,
-// 			MemoryCost: c.MemoryCost,
-// 		})
-// 	}
-// 	return &pb.GetCasesReply{
-// 		Cases: pbCases,
-// 	}, nil
-// }
+func (s *UserService) GetSelfTestResult(ctx context.Context, req *pb.GetSelfTestResultRequest) (*pb.GetSelfTestResultReply, error) {
+	selfTest, err := s.judgeUsecase.GetSelfTest(ctx, req.SelftestUuid)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetSelfTestResultReply{
+		IsCompiled: selfTest.IsCompiled,
+		Stdout:     selfTest.Stdout,
+		Stderr:     selfTest.Stderr,
+		TimeCost:   int32(selfTest.TimeCost),
+		MemoryCost: int32(selfTest.MemoryCost),
+	}, nil
+}

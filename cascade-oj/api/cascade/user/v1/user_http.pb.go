@@ -59,7 +59,7 @@ func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r.GET("/user/contests/{contest_id}", _User_GetSingleContest0_HTTP_Handler(srv))
 	r.POST("/user/contests/{contest_id}/join", _User_JoinContest0_HTTP_Handler(srv))
 	r.DELETE("/user/contests/{contest_id}/join", _User_QuitContest0_HTTP_Handler(srv))
-	r.GET("/user/problems/{contest_id}", _User_GetProblems0_HTTP_Handler(srv))
+	r.GET("/user/contests/{contest_id}/problems", _User_GetProblems0_HTTP_Handler(srv))
 	r.GET("/user/problems/{problem_id}", _User_GetSingleProblem0_HTTP_Handler(srv))
 	r.POST("/user/selftests", _User_PostSelfTest0_HTTP_Handler(srv))
 	r.GET("/user/selftests/{selftest_uuid}", _User_GetSelfTestResult0_HTTP_Handler(srv))
@@ -453,7 +453,7 @@ func (c *UserHTTPClientImpl) GetContests(ctx context.Context, in *GetContestsReq
 
 func (c *UserHTTPClientImpl) GetProblems(ctx context.Context, in *GetProblemsRequest, opts ...http.CallOption) (*GetProblemsReply, error) {
 	var out GetProblemsReply
-	pattern := "/user/problems/{contest_id}"
+	pattern := "/user/contests/{contest_id}/problems"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetProblems))
 	opts = append(opts, http.PathTemplate(pattern))

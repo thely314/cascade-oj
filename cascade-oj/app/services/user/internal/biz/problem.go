@@ -10,7 +10,6 @@ import (
 type Problem struct {
 	ID            int64
 	Title         string
-	ProblemType   string
 	TimeLimitMs   int32
 	MemoryLimitMb int32
 }
@@ -48,9 +47,8 @@ func (problemUsecase *ProblemUsecase) GetProblems(ctx context.Context, contestID
 		problems = append(problems, &Problem{
 			ID:            entProblems[i].ID,
 			Title:         entProblems[i].Title,
-			ProblemType:   entProblems[i].ProblemType.String(),
-			TimeLimitMs:   int32(entProblems[i].TimeLimit),
-			MemoryLimitMb: int32(entProblems[i].MemoryLimit),
+			TimeLimitMs:   int32(entProblems[i].TimeLimitMs),
+			MemoryLimitMb: int32(entProblems[i].MemoryLimitKB),
 		})
 	}
 	return problems, nil
@@ -65,9 +63,8 @@ func (problemUsecase *ProblemUsecase) GetSingleProblem(ctx context.Context, prob
 		Problem: Problem{
 			ID:            entProblem.ID,
 			Title:         entProblem.Title,
-			ProblemType:   entProblem.ProblemType.String(),
-			TimeLimitMs:   int32(entProblem.TimeLimit),
-			MemoryLimitMb: int32(entProblem.MemoryLimit),
+			TimeLimitMs:   int32(entProblem.TimeLimitMs),
+			MemoryLimitMb: int32(entProblem.MemoryLimitKB),
 		},
 		CreatorUsername: entProblem.Edges.Creator.Username,
 		Description:     entProblem.Description,

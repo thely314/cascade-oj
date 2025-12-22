@@ -17,7 +17,6 @@ func (userService *UserService) GetProblems(ctx context.Context, req *pb.GetProb
 			&pb.ProblemMetadata{
 				Id:            problems[i].ID,
 				Title:         problems[i].Title,
-				ProblemType:   problems[i].ProblemType,
 				TimeLimitMs:   problems[i].TimeLimitMs,
 				MemoryLimitMb: problems[i].MemoryLimitMb,
 			},
@@ -37,7 +36,6 @@ func (userService *UserService) GetSingleProblem(ctx context.Context, req *pb.Ge
 		Metadata: &pb.ProblemMetadata{
 			Id:            detailedProblem.Problem.ID,
 			Title:         detailedProblem.Problem.Title,
-			ProblemType:   detailedProblem.Problem.ProblemType,
 			TimeLimitMs:   detailedProblem.Problem.TimeLimitMs,
 			MemoryLimitMb: detailedProblem.Problem.MemoryLimitMb,
 		},

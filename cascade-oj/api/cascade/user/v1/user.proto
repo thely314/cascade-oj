@@ -32,7 +32,7 @@ service User {
     };
     rpc GetProblems(GetProblemsRequest) returns (GetProblemsReply) {
         option (google.api.http) = {
-            get: "/user/problems/{contest_id}"
+            get: "/user/contests/{contest_id}/problems"
         };
     };
     rpc GetSingleProblem(GetSingleProblemRequest) returns (GetSingleProblemReply) {
@@ -177,9 +177,10 @@ message GetSelfTestResultReply {
 }
 
 message PostSubmissionRequest {
-    int64 problem_id = 1; // Problem ID
-    string code = 2; // User Code
-    string language = 3; // Programming Language
+    int64 contest_id = 1; // Contest ID
+    int64 problem_id = 2; // Problem ID
+    string code = 3; // User Code
+    string language = 4; // Programming Language
 }
 message PostSubmissionReply {
     string uuid = 1;
@@ -204,6 +205,12 @@ message GetSubmissionsReply {
     repeated SubmissionMetadata submissions = 1; // List of submissions metadata
 }
 
+message CaseMetadata {
+    int32 score = 1; // Test Case Score
+    string status = 2; // Test Case Status
+    int32 time_cost = 3; // Time Cost
+    int32 memory_cost = 4; // Memory Cost
+}
 message GetSingleSubmissionRequest {
     string submission_uuid = 1; // Submission UUID
 }
@@ -213,6 +220,10 @@ message GetSingleSubmissionReply {
     string language = 3; // Programming Language
     int32 time_cost = 4; // Time Cost
     int32 memory_cost = 5; // Memory Cost
+    message CaseResults {
+        repeated CaseMetadata cases = 1; // List of test cases metadata
+    }
+    CaseResults case_results = 6; // Test Cases Results
 }
 
 message GetRanksRequest {
