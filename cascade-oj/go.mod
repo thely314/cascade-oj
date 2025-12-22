@@ -10,6 +10,7 @@ require (
 	github.com/go-kratos/kratos/v2 v2.9.1
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
 	github.com/pelletier/go-toml/v2 v2.2.4
@@ -44,11 +45,13 @@ require (
 	github.com/go-openapi/inflect v0.19.0 // indirect
 	github.com/go-playground/form/v4 v4.2.1 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
+	github.com/google/subcommands v1.2.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
 	github.com/hashicorp/hcl/v2 v2.18.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/tx7do/kratos-transport/transport/keepalive v1.0.6 // indirect
 	github.com/zclconf/go-cty v1.14.4 // indirect
 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
@@ -66,6 +69,7 @@ require (
 	golang.org/x/sync v0.18.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
+	golang.org/x/tools v0.38.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251110190251-83f479183930 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

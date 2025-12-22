@@ -1,11 +1,12 @@
 package data
 
 import (
+	"context"
+
 	"cascade-oj/app/services/user/internal/biz"
 	"cascade-oj/ent"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset_includes"
-	"context"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -45,6 +46,7 @@ func (problemRepo *ProblemRepo) GetSingleProblem(ctx context.Context, problemID 
 	if err != nil {
 		return nil, err
 	}
+
 	return queryProblem, nil
 }
 
