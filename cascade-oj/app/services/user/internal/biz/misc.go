@@ -54,9 +54,11 @@ func (u *MiscUsecase) GetAnnouncements(ctx context.Context) ([]*Announcement, er
 }
 
 func (u *MiscUsecase) GetUserInfoByID(ctx context.Context, userID int64) (*UserInfo, error) {
+	// TODO check user permissions (check invalid userID with JWT)
 	return u.repo.GetUserInfoByID(ctx, userID)
 }
 
 func (u *MiscUsecase) UpdateUserInfo(ctx context.Context, userID int64, username, email string) error {
+	// TODO check user permissions (check invalid userID with JWT)
 	return u.repo.UpdateUserInfo(ctx, userID, username, email)
 }

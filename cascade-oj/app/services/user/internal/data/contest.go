@@ -3,8 +3,8 @@ package data
 import (
 	"cascade-oj/app/services/user/internal/biz"
 	"cascade-oj/ent"
+	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/problemset"
-	"cascade-oj/ent/problemset_user"
 	"context"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -16,7 +16,7 @@ type ContestRepo struct {
 }
 
 func (contestRepo *ContestRepo) GetContests(ctx context.Context) ([]*ent.ProblemSet, error) {
-	queryContests, err := contestRepo.data.db.ProblemSet.Query().Select(problemset.FieldID, problemset.FieldName, problemset.FieldStartTime, problemset.FieldEndTime, problemset.FieldStatus).All(ctx)
+	queryContests, err := contestRepo.data.db.ProblemSet.Query().All(ctx)
 
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func (contestRepo *ContestRepo) GetContests(ctx context.Context) ([]*ent.Problem
 }
 
 func (contestRepo *ContestRepo) GetSingleContest(ctx context.Context, contestID int64) (*ent.ProblemSet, error) {
-	queryContest, err := contestRepo.data.db.ProblemSet.Query().Select(problemset.FieldID, problemset.FieldName, problemset.FieldStartTime, problemset.FieldEndTime, problemset.FieldStatus).Where(problemset.IDEQ(contestID)).Only(ctx)
+	queryContest, err := contestRepo.data.db.ProblemSet.Query().Where(problemset.IDEQ(contestID)).Only(ctx)
 
 	if err != nil {
 		return nil, err
@@ -36,7 +36,9 @@ func (contestRepo *ContestRepo) GetSingleContest(ctx context.Context, contestID 
 }
 
 func (contestRepo *ContestRepo) JoinContest(ctx context.Context, contestID int64, userID int64) (bool, error) {
-	queryContestRecord, err := contestRepo.data.db.ProblemSet_User.Query().Where(problemset_user.And(problemset_user.ProblemSetIDEQ(contestID), problemset_user.UserIDEQ(userID))).Exist(ctx)
+	queryContestRecord, err := contestRepo.data.db.Competitor_List.Query().
+		Where(competitor_list.And(competitor_list.ProblemSetIDEQ(contestID), competitor_list.UserIDEQ(userID))).
+		Exist(ctx)
 	if err != nil {
 		return false, nil
 	}
@@ -44,7 +46,7 @@ func (contestRepo *ContestRepo) JoinContest(ctx context.Context, contestID int64
 		contestRepo.log.Errorf("failed to join contest because user has already joined the same contest")
 		return false, nil
 	}
-	_, err = contestRepo.data.db.ProblemSet_User.Create().SetUserID(userID).SetProblemSetID(contestID).Save(ctx)
+	_, err = contestRepo.data.db.Competitor_List.Create().SetUserID(userID).SetProblemSetID(contestID).Save(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -52,19 +54,23 @@ func (contestRepo *ContestRepo) JoinContest(ctx context.Context, contestID int64
 }
 
 func (contestRepo *ContestRepo) QuitContest(ctx context.Context, contestID int64, userID int64) (bool, error) {
-	queryContestRecord, err := contestRepo.data.db.ProblemSet_User.Query().Where(problemset_user.And(problemset_user.ProblemSetIDEQ(contestID), problemset_user.UserIDEQ(userID))).Exist(ctx)
+	queryContestRecord, err := contestRepo.data.db.Competitor_List.Query().
+		Where(competitor_list.And(competitor_list.ProblemSetIDEQ(contestID), competitor_list.UserIDEQ(userID))).
+		Exist(ctx)
 	if err != nil {
-		return false, nil
+		return true, nil
 	}
 	if !queryContestRecord {
 		contestRepo.log.Errorf("failed to quit contest because user has not joined the contest yet")
 		return false, nil
 	}
-	_, err = contestRepo.data.db.ProblemSet_User.Delete().Where(problemset_user.And(problemset_user.ProblemSetIDEQ(contestID), problemset_user.UserIDEQ(userID))).Exec(ctx)
+	_, err = contestRepo.data.db.Competitor_List.Delete().
+		Where(competitor_list.And(competitor_list.ProblemSetIDEQ(contestID), competitor_list.UserIDEQ(userID))).
+		Exec(ctx)
 	if err != nil {
-		return false, err
+		return true, err
 	}
-	return true, nil
+	return false, nil
 }
 
 func NewContestRepo(data *Data, logger log.Logger) biz.ContestRepo {

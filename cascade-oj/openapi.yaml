@@ -196,7 +196,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
-  '/user/problems/{contestId}':
+  '/user/contests/{contestId}/problems':
     get:
       tags:
         - User
@@ -1331,6 +1331,8 @@ components:
     PostSubmissionRequest:
       type: object
       properties:
+        contestId:
+          type: string
         problemId:
           type: string
         code:

@@ -2121,6 +2121,8 @@ func (m *PostSubmissionRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for ContestId
+
 	// no validation rules for ProblemId
 
 	// no validation rules for Code

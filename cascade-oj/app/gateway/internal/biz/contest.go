@@ -23,7 +23,6 @@ type ContestDetail struct {
 type ProblemMetadata struct {
 	ID            int64
 	Title         string
-	ProblemType   string
 	TimeLimitMs   int32
 	MemoryLimitMb int32
 }

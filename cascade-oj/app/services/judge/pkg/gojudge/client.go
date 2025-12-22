@@ -19,6 +19,8 @@ type GoJudge struct {
 //
 // The first return value is the fileID of the compiled target file,
 // fileID will be used in case judge, by requestCached(fileID string)
+//
+// *pbGojudge.Response_Result.Time is ns, *pbGojudge.Response_Result.Memory is Bytes
 func (gj *GoJudge) Compile(code []byte, language string, requestUUID string) (string, *pbGojudge.Response_Result, error) {
 	command, is_ok := (*gj.Commands)[language]
 	if !is_ok {

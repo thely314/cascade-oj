@@ -75,7 +75,6 @@ func (repo *contestRepo) GetProblems(ctx context.Context, contestID int64) ([]*b
 		res = append(res, &biz.ProblemMetadata{
 			ID:            v.Id,
 			Title:         v.Title,
-			ProblemType:   v.ProblemType,
 			TimeLimitMs:   v.TimeLimitMs,
 			MemoryLimitMb: v.MemoryLimitMb,
 		})
@@ -92,7 +91,6 @@ func (repo *contestRepo) GetSingleProblem(ctx context.Context, contestID int64, 
 		Metadata: biz.ProblemMetadata{
 			ID:            problem.Metadata.Id,
 			Title:         problem.Metadata.Title,
-			ProblemType:   problem.Metadata.ProblemType,
 			TimeLimitMs:   problem.Metadata.TimeLimitMs,
 			MemoryLimitMb: problem.Metadata.MemoryLimitMb,
 		},
