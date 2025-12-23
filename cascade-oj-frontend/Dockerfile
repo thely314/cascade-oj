@@ -13,6 +13,10 @@ RUN mkdir -p /var/cache/nginx && \
 # 复制静态资源（构建产物）
 COPY dist/ /usr/share/nginx/html/
 
+# 删除官方 default.conf 和 index.html，避免被预设配置覆盖
+RUN rm -f /etc/nginx/conf.d/default.conf && \
+    rm -f /usr/share/nginx/html/index.html
+
 # 复制 Nginx 配置
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/conf.d/* /etc/nginx/conf.d/

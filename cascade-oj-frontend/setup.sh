@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # 用法:
-#   ./setup.sh [options] [service1 service2 ...]
+#   ./setup.sh [options]
 # 选项:
 #   -h, --help       显示帮助
 #   -f, --file FILE  使用自定义主 compose 文件（默认 ./docker-compose.yml）
@@ -24,7 +24,7 @@ DRY_RUN=false
 print_help() {
 		cat <<'HELP'
 用法:
-  ./setup.sh [options] [service1 service2 ...]
+  ./setup.sh [options]
 选项:
   -h, --help       显示帮助
   -f, --file FILE  使用自定义主 compose 文件（默认 ./docker-compose.yml）
