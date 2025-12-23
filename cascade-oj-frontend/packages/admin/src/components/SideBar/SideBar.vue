@@ -1,8 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 
-const menuItems = [
+type MenuItem = { label: string; to: string }
+
+const menuItems: MenuItem[] = [
   { label: 'Overview', to: '/' },
   { label: 'Contests', to: '/contests' },
   { label: 'Problems', to: '/problems' },

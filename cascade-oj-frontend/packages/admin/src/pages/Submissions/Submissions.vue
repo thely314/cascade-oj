@@ -1,14 +1,40 @@
-<script setup>
-const submissions = [
-  { uuid: 'c1a2', problemId: 401, userId: 18, status: 'Accepted', time: '2025-12-15 21:10', score: 100 },
-  { uuid: 'd3b4', problemId: 402, userId: 25, status: 'Pending', time: '2025-12-15 21:08', score: 0 },
-  { uuid: 'e5f6', problemId: 403, userId: 42, status: 'Wrong Answer', time: '2025-12-15 21:05', score: 30 },
-]
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { getSubmissions } from '../../api/admin'
+import type { SubmissionMetadata } from '../../api/types'
 
-const statusTone = {
+const submissions = ref<SubmissionMetadata[]>([])
+const loading = ref(false)
+const error = ref('')
+
+const fetchSubmissions = async () => {
+  loading.value = true
+  error.value = ''
+  try {
+    const response = await getSubmissions({})
+    submissions.value = response.submissions || []
+  } catch (err) {
+    error.value = 'Failed to load submissions'
+    console.error(err)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchSubmissions()
+})
+
+const statusTone: Record<string, string> = {
   Accepted: 'badge-live',
   Pending: 'badge-muted',
   'Wrong Answer': 'badge-dim',
+  // Add other statuses as needed
+}
+
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return ''
+  return new Date(dateStr).toLocaleString()
 }
 </script>
 
@@ -21,7 +47,9 @@ const statusTone = {
       </div>
       <div class="actions">
         <button class="ghost">Rejudge Pending</button>
-        <button class="primary">Refresh</button>
+        <button class="primary" @click="fetchSubmissions" :disabled="loading">
+          {{ loading ? 'Loading...' : 'Refresh' }}
+        </button>
       </div>
     </header>
 
@@ -30,14 +58,15 @@ const statusTone = {
         <h2>Latest Submissions</h2>
         <a href="#">View all</a>
       </header>
-      <ul class="list">
-        <li v-for="sub in submissions" :key="sub.uuid" class="list-item">
+      <div v-if="error" class="error-message">{{ error }}</div>
+      <ul v-else class="list">
+        <li v-for="sub in submissions" :key="sub.submission_uuid" class="list-item">
           <div class="list-main">
-            <p class="list-title">Submission {{ sub.uuid }}</p>
-            <p class="list-meta">Problem {{ sub.problemId }} · User {{ sub.userId }} · {{ sub.time }}</p>
+            <p class="list-title">Submission {{ sub.submission_uuid }}</p>
+            <p class="list-meta">Problem {{ sub.problem_id }} · User {{ sub.user_id }} · {{ formatDate(sub.submit_time) }}</p>
           </div>
           <div class="list-right">
-            <span class="badge" :class="statusTone[sub.status]">{{ sub.status }}</span>
+            <span class="badge" :class="statusTone[sub.status] || 'badge-muted'">{{ sub.status }}</span>
             <span class="score">{{ sub.score }}</span>
             <button class="ghost">Open</button>
           </div>

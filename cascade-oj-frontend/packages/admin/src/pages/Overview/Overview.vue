@@ -1,4 +1,7 @@
-<script setup>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { getAnnouncements } from '../../api/admin'
+import type { Announcement } from '../../api/types'
 
 const stats = [
 	{ label: '正在进行', value: '1,248' },
@@ -7,11 +10,24 @@ const stats = [
 	{ label: '总提交数', value: '5,421' },
 ]
 
-const recent = [
-	{ title: 'System maintenance window', time: 'Today 14:00-15:00' },
-	{ title: 'New contest onboarding', time: 'Tomorrow 09:00' },
-	{ title: 'Weekly log review', time: 'Fri 10:00' },
-]
+const announcements = ref<Announcement[]>([])
+const loading = ref(false)
+
+const fetchAnnouncements = async () => {
+  loading.value = true
+  try {
+    const response = await getAnnouncements()
+    announcements.value = response.announcements || []
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchAnnouncements()
+})
 </script>
 
 <template>
@@ -50,14 +66,14 @@ const recent = [
 
 		<section class="panel">
 			<header class="panel-header">
-				<h2>Recent Items</h2>
+				<h2>Announcements</h2>
 				<a href="#">View all</a>
 			</header>
 			<ul class="list">
-				<li v-for="item in recent" :key="item.title" class="list-item">
+				<li v-for="item in announcements" :key="item.id" class="list-item">
 					<div>
 						<p class="list-title">{{ item.title }}</p>
-						<p class="list-meta">{{ item.time }}</p>
+						<p class="list-meta">{{ item.publisher_name }}</p>
 					</div>
 					<button class="ghost">Open</button>
 				</li>
