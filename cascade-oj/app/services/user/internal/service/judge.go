@@ -15,14 +15,7 @@ import (
 
 func (s *UserService) PostSubmission(ctx context.Context, req *pb.PostSubmissionRequest) (*pb.PostSubmissionReply, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
-	// TODO: validate user not banned and contest/problem access
-	// exist, err := s.TODO.CheckBanned(ctx, userID)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// if exist {
-	// 	return nil, pb.ErrorUserBanned("user is banned")
-	// }
+	// TODO: check if contest is ended
 	// _, err = s.TODO.Find(ctx, req.ContestId)
 	// if err != nil {
 	// 	return nil, pb.ErrorContestEnd("contest is end")
@@ -50,13 +43,10 @@ func (s *UserService) PostSubmission(ctx context.Context, req *pb.PostSubmission
 
 func (s *UserService) PostSelfTest(ctx context.Context, req *pb.SelfTestRequest) (*pb.SelfTestReply, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
-	// TODO: Add ban check
-	// exist, err := s.TODO.CheckBanned(ctx, userID)
+	// TODO: check if contest is ended
+	// _, err = s.TODO.Find(ctx, req.ContestId)
 	// if err != nil {
-	// 	return nil, err
-	// }
-	// if exist {
-	// 	return nil, pb.ErrorUserBanned("user is banned")
+	// 	return nil, pb.ErrorContestEnd("contest is end")
 	// }
 	id := uuid.NewString()
 	_, err := s.judgeUsecase.CreateSelfTest(ctx, &biz.SelfTest{

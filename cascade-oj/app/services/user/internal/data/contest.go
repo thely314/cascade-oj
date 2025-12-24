@@ -44,7 +44,7 @@ func (contestRepo *ContestRepo) JoinContest(ctx context.Context, contestID int64
 	}
 	if queryContestRecord {
 		contestRepo.log.Errorf("failed to join contest because user has already joined the same contest")
-		return false, nil
+		return true, nil
 	}
 	_, err = contestRepo.data.db.Competitor_List.Create().SetUserID(userID).SetProblemSetID(contestID).Save(ctx)
 	if err != nil {

@@ -97,6 +97,7 @@ func (problemRepo *ProblemRepo) PostProblem(ctx context.Context, problemCreateIn
 		SetTitle(problemCreateInfo.Title).
 		SetTimeLimitMs(int(problemCreateInfo.TimeLimitMs)).
 		SetMemoryLimitKB(int(problemCreateInfo.MemoryLimitKB)).
+		SetJudgeConfigID(1). // TODO default go-judge engine config
 		SetDescription(problemCreateInfo.Description).
 		SetCreatorID(creator.ID).
 		Save(ctx)

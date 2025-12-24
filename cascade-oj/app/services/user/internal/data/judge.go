@@ -222,6 +222,7 @@ func (repo *judgeRepo) GetSingleSubmission(ctx context.Context, submissionUUID s
 		po, err := repo.data.db.SubmissionRecord.Query().
 			Where(submissionrecord.HasJudgeWith(judgerecord.UUIDEQ(submissionUUID))).
 			WithJudge().
+			WithProblem().
 			Only(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("no submission found: %s", submissionUUID)

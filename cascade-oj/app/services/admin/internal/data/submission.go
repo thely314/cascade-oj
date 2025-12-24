@@ -1,15 +1,19 @@
 package data
 
 import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"time"
+
 	"cascade-oj/app/services/admin/internal/biz"
 	"cascade-oj/ent"
 	"cascade-oj/ent/casegroupresult"
 	"cascade-oj/ent/judgerecord"
+	"cascade-oj/ent/problem"
 	"cascade-oj/ent/submissionrecord"
+	"cascade-oj/pkg/mq"
 	"cascade-oj/pkg/util"
-	"context"
-	"encoding/json"
-	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/uuid"
@@ -86,6 +90,7 @@ func (submissionRepo *SubmissionRepo) GetSubmissions(ctx context.Context, reques
 	}
 	return submissions, nil
 }
+
 func (submissionRepo *SubmissionRepo) GetSingleSubmission(ctx context.Context, submissionUUID string) (*biz.DetailedSubmission, error) {
 	entSubmission, err := submissionRepo.data.db.SubmissionRecord.
 		Query().
@@ -153,17 +158,19 @@ func (submissionRepo *SubmissionRepo) GetSingleSubmission(ctx context.Context, s
 		TestCases:  testCases,
 	}, nil
 }
+
 func (submissionRepo *SubmissionRepo) RejudgeSubmission(ctx context.Context, submissionUUID string) (string, error) {
-	// TODO
-	// _, err := submissionRepo.data.redis.
-	// Get(ctx, "user:contest:problem:"+strconv.FormatInt(submission.ProblemID, 10)).Result()
+	// get from redis first
+	// TODO get userID
+	// submissionMsg, err := submissionRepo.data.redis.Get(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, userID, submissionUUID)).Result()
 	// if err != nil {
-	// 	return "", err
+	// 	// get from db
 	// }
 	entSubmission, err := submissionRepo.data.db.SubmissionRecord.
 		Query().
 		Select(
 			submissionrecord.FieldProblemID,
+			submissionrecord.FieldProblemSetID,
 			submissionrecord.FieldSubmissionTime,
 			submissionrecord.FieldScore,
 		).
@@ -199,32 +206,43 @@ func (submissionRepo *SubmissionRepo) RejudgeSubmission(ctx context.Context, sub
 		return "", err
 	}
 	q, err := submissionRepo.data.mq_channel.QueueDeclare(
-		"submission_queue", // TODO: name may be wrong
-		false,              // durable
-		false,              // delete when unused
-		false,              // exclusive
-		false,              // no-wait
-		nil,                // arguments
+		mq.GojudgeSubmissionQueueName, // name
+		true,                          // durable
+		false,                         // delete when unused
+		false,                         // exclusive
+		false,                         // no-wait
+		nil,                           // arguments
 	)
 	if err != nil {
 		return "", err
 	}
+	// get case version from problemTarget
+	problemTarget, err := submissionRepo.data.db.Problem.Query().
+		Select(problem.FieldCaseVersion).
+		Where(problem.IDEQ(entSubmission.ProblemID)).
+		Only(ctx)
+	if err != nil {
+		return "", err
+	}
 	newUUID := uuid.New().String()
-	sDTO := &submissionDTO{
-		UUID:       newUUID,
-		UserID:     entSubmission.Edges.Judge.UserID,
-		ProblemID:  entSubmission.ProblemID,
-		Code:       entSubmission.Edges.Judge.Code,
-		Language:   entSubmission.Edges.Judge.Language,
-		Status:     "Waiting",
-		Score:      0,
-		CreateTime: time.Now(),
-		TimeCost:   0,
-		MemoryCost: 0,
-		Token:      "",
+	submissionMsg := &mq.SubmissionMessage{
+		UUID:         newUUID,
+		UserID:       entSubmission.Edges.Judge.UserID,
+		ProblemID:    entSubmission.ProblemID,
+		ProblemSetID: entSubmission.ProblemSetID,
+		Code:         entSubmission.Edges.Judge.Code,
+		Status:       0, // Pending
+		Score:        0,
+		CreateTime:   time.Now(),
+		TimeCost:     0,
+		MemoryCost:   0,
+		Language:     entSubmission.Edges.Judge.Language,
+		Stderr:       "",
+		CaseVersion:  problemTarget.CaseVersion,
+		Token:        "",
 	}
 	// 结构体 slice 转为 JSON
-	jsonBody, err := json.Marshal(sDTO)
+	jsonBody, err := json.Marshal(submissionMsg)
 	if err != nil {
 		return "", err
 	}
@@ -244,9 +262,9 @@ func (submissionRepo *SubmissionRepo) RejudgeSubmission(ctx context.Context, sub
 		return "", err
 	}
 	// TODO
-	// set := submissionRepo.data.redis.Set(ctx, fmt.Sprintf("submission:%d:%s", submission.UserID, submission.UUID), jsonBody, 2*time.Hour)
-	// if set.Err() != nil {
-	// 	return "", set.Err()
-	// }
+	set := submissionRepo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, submissionMsg.UserID, submissionMsg.UUID), jsonBody, 2*time.Hour)
+	if set.Err() != nil {
+		return "", set.Err()
+	}
 	return newUUID, nil
 }
