@@ -85,8 +85,12 @@ func Auth(secret string, defaultRule string, customApiMap map[string]string) mid
 				role = customApiMap[operation]
 			}
 			switch role {
-			case RoleCompetitor, RoleCreator, RoleAdmin:
+			case RoleAdmin:
 				if !strings.HasPrefix(claimsInfo.Role.String(), role) {
+					return nil, errors.Unauthorized("PERMISSION_DENIED", "Wrong role")
+				}
+			case RoleCompetitor, RoleCreator:
+				if !strings.HasPrefix(claimsInfo.Role.String(), role) && claimsInfo.Role.String() != RoleAdmin {
 					return nil, errors.Unauthorized("PERMISSION_DENIED", "Wrong role")
 				}
 			default:

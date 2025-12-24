@@ -3,7 +3,11 @@ package biz
 import (
 	"cascade-oj/ent"
 	"context"
+	"errors"
+	"fmt"
 	"time"
+
+	"cascade-oj/pkg/middleware/auth"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -79,9 +83,15 @@ func (contestUsecase *ContestUsecase) GetSingleContest(ctx context.Context, cont
 }
 
 func (contestUsecase *ContestUsecase) JoinContest(ctx context.Context, contestID int64, userID int64) (bool, error) {
+	if userID != ctx.Value("userInfo").(*auth.Claims).UserID {
+		return false, errors.New(fmt.Sprintf("user %d trying to join contest as user %d", ctx.Value("userInfo").(*auth.Claims).UserID, userID))
+	}
 	return contestUsecase.contestRepo.JoinContest(ctx, contestID, userID)
 }
 
 func (contestUsecase *ContestUsecase) QuitContest(ctx context.Context, contestID int64, userID int64) (bool, error) {
+	if userID != ctx.Value("userInfo").(*auth.Claims).UserID {
+		return false, errors.New(fmt.Sprintf("user %d trying to quit contest as user %d", ctx.Value("userInfo").(*auth.Claims).UserID, userID))
+	}
 	return contestUsecase.contestRepo.QuitContest(ctx, contestID, userID)
 }

@@ -88,6 +88,7 @@ services:
     depends_on:
       - cascade_mysql
       - cascade_rabbitmq
+      - cascade_redis
     ports:
       - "8300:8000"
     volumes:

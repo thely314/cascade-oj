@@ -62,42 +62,29 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		return nil, nil, err
 	}
 
-	// TODO: connect to redis
-	// redisClient := redis.NewClient(&redis.Options{
-	// 	Addr: c.Redis.Addr,
-	// 	DB:   int(c.Redis.Db),
-	// })
-	// if err := redisClient.Ping(context.Background()).Err(); err != nil {
-	// 	log.Errorf("failed connecting to redis: %v", err)
-	// 	return nil, nil, err
-	// }
-	// TODO: connect to mq
-	// conn, err := amqp.Dial(c.Mq)
-	// if err != nil {
-	// 	log.Errorf("failed connecting to mq: %v", err)
-	// 	return nil, nil, err
-	// }
-	// ch, err := conn.Channel()
-	// if err != nil {
-	// 	log.Errorf("failed opening a channel")
-	// 	return nil, nil, err
-	// }
-	// chanMap := make(map[string]*mq.OjChannel)
-	// for _, problemType := range client.ProblemType.Query().AllX(context.Background()) {
-	// 	sCh, err := mq.NewChannel(ch, problemType.SubmissionChannelName)
-	// 	if err != nil {
-	// 		log.Errorf("failed creating a submission channel")
-	// 		return nil, nil, err
-	// 	}
-	// 	chanMap[problemType.SubmissionChannelName] = sCh
-	// 	stCh, err := mq.NewChannel(ch, problemType.SelfTestChannelName)
-	// 	if err != nil {
-	// 		log.Errorf("failed creating a self-test channel")
-	// 		return nil, nil, err
-	// 	}
-	// 	chanMap[problemType.SelfTestChannelName] = stCh
-	// }
-	// return &Data{client, redisClient, chanMap}, cleanup, nil
-	// TODO: temporarily return nil redis client
-	return &Data{db: client, redis: nil}, cleanup, nil
+	// connect to redis
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: c.Redis.Addr,
+		DB:   int(c.Redis.Db),
+	})
+	if err := redisClient.Ping(context.Background()).Err(); err != nil {
+		log.Errorf("failed connecting to redis: %v", err)
+		return nil, nil, err
+	}
+	// connect to mq
+	conn, err := amqp.Dial(c.Mq)
+	if err != nil {
+		log.Errorf("failed connecting to mq: %v", err)
+		return nil, nil, err
+	}
+	ch, err := conn.Channel()
+	if err != nil {
+		log.Errorf("failed opening a channel")
+		return nil, nil, err
+	}
+	return &Data{
+		db:         client,
+		redis:      redisClient,
+		mq_channel: ch,
+	}, cleanup, nil
 }

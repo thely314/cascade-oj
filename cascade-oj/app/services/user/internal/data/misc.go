@@ -78,10 +78,13 @@ func (repo *miscRepo) GetUserInfoByID(ctx context.Context, userID int64) (*biz.U
 }
 
 func (repo *miscRepo) UpdateUserInfo(ctx context.Context, userID int64, username, email string) error {
-	_, err := repo.data.db.User.Update().
-		Where(user.IDEQ(userID)).
+	err := repo.data.db.User.
+		UpdateOneID(userID).
 		SetUsername(username).
 		SetEmail(email).
-		Save(ctx)
-	return err
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
 }
