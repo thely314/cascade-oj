@@ -60,10 +60,10 @@ const formatDate = (dateStr: string) => {
       </header>
       <div v-if="error" class="error-message">{{ error }}</div>
       <ul v-else class="list">
-        <li v-for="sub in submissions" :key="sub.submission_uuid" class="list-item">
+        <li v-for="sub in submissions" :key="sub.submissionUuid" class="list-item">
           <div class="list-main">
-            <p class="list-title">Submission {{ sub.submission_uuid }}</p>
-            <p class="list-meta">Problem {{ sub.problem_id }} · User {{ sub.user_id }} · {{ formatDate(sub.submit_time) }}</p>
+            <p class="list-title">Submission {{ sub.submissionUuid }}</p>
+            <p class="list-meta">Problem {{ sub.problemId }} · User {{ sub.userId }} · {{ formatDate(sub.submitTime) }}</p>
           </div>
           <div class="list-right">
             <span class="badge" :class="statusTone[sub.status] || 'badge-muted'">{{ sub.status }}</span>

@@ -1,36 +1,36 @@
 export interface ContestMetadata {
     id: number;
     title: string;
-    start_time: string; // ISO string or timestamp
-    end_time: string;
+    startTime: string; // ISO string or timestamp
+    endTime: string;
     status: string;
 }
 
 export interface ProblemMetadata {
     id: number;
     title: string;
-    time_limit_ms: number;
-    memory_limit_mb: number;
+    timeLimitMs: number;
+    memoryLimitMb: number;
 }
 
 export interface SubmissionMetadata {
-    submission_uuid: string;
-    problem_id: number;
-    user_id: number;
+    submissionUuid: string;
+    problemId: number;
+    userId: number;
     status: string;
-    submit_time: string;
+    submitTime: string;
     score: number;
 }
 
 export interface CaseMetadata {
     score: number;
     status: string;
-    time_cost: number;
-    memory_cost: number;
+    timeCost: number;
+    memoryCost: number;
 }
 
 export interface RankItem {
-    user_id: number;
+    userId: number;
     username: string;
     rank: number;
     score: number;
@@ -38,13 +38,13 @@ export interface RankItem {
 
 export interface Announcement {
     id: number;
-    publisher_name: string;
+    publisherName: string;
     title: string;
     content: string;
 }
 
 export interface UserInfo {
-    user_id: number;
+    userId: number;
     username: string;
     email: string;
 }
@@ -70,30 +70,30 @@ export interface GetSingleContestReply {
 export interface PostContestRequest {
     title: string;
     description: string;
-    start_time: string;
-    end_time: string;
+    startTime: string;
+    endTime: string;
     problems: {
-        problem_ids: number[];
+        problemIds: number[];
     };
 }
 
 export interface PostContestReply {
-    contest_id: number;
+    contestId: number;
 }
 
 export interface PutContestRequest {
     title: string;
     description: string;
-    start_time: string;
-    end_time: string;
+    startTime: string;
+    endTime: string;
 }
 
 export interface PutContestReply {
-    is_updated: boolean;
+    isUpdated: boolean;
 }
 
 export interface DeleteContestReply {
-    is_deleted: boolean;
+    isDeleted: boolean;
 }
 
 // Problems
@@ -114,7 +114,7 @@ export interface PostProblemRequest {
 }
 
 export interface PostProblemReply {
-    problem_id: number;
+    problemId: number;
 }
 
 export interface PutProblemRequest {
@@ -123,24 +123,24 @@ export interface PutProblemRequest {
 }
 
 export interface PutProblemReply {
-    is_updated: boolean;
+    isUpdated: boolean;
 }
 
 export interface DeleteProblemReply {
-    is_deleted: boolean;
+    isDeleted: boolean;
 }
 
 export interface PublishProblemReply {
-    is_success: boolean;
+    isSuccess: boolean;
 }
 
 // Submissions
 export interface GetSubmissionsRequest {
-    problem_id?: number;
-    contest_id?: number;
-    user_id?: number;
+    problemId?: number;
+    contestId?: number;
+    userId?: number;
     page?: number;
-    page_size?: number;
+    pageSize?: number;
 }
 
 export interface GetSubmissionsReply {
@@ -151,15 +151,15 @@ export interface GetSingleSubmissionReply {
     metadata: SubmissionMetadata;
     code: string;
     language: string;
-    time_cost: number;
-    memory_cost: number;
-    case_results: {
+    timeCost: number;
+    memoryCost: number;
+    caseResults: {
         cases: CaseMetadata[];
     };
 }
 
 export interface RejudgeSubmissionReply {
-    new_submission_uuid: string;
+    newSubmissionUuid: string;
 }
 
 // Ranks
@@ -173,13 +173,13 @@ export interface GetAnnouncementsReply {
 }
 
 export interface PostAnnouncementRequest {
-    publisher_name: string;
+    publisherName: string;
     title: string;
     content: string;
 }
 
 export interface PostAnnouncementReply {
-    announcement_id: number;
+    announcementId: number;
 }
 
 export interface PutAnnouncementRequest {
@@ -188,17 +188,17 @@ export interface PutAnnouncementRequest {
 }
 
 export interface PutAnnouncementReply {
-    is_updated: boolean;
+    isUpdated: boolean;
 }
 
 export interface DeleteAnnouncementReply {
-    is_deleted: boolean;
+    isDeleted: boolean;
 }
 
 // Users
 export interface GetUsersRequest {
     page?: number;
-    page_size?: number;
+    pageSize?: number;
 }
 
 export interface GetUsersReply {
@@ -211,22 +211,22 @@ export interface UpdateUserInfoRequest {
 }
 
 export interface UpdateUserInfoReply {
-    is_updated: boolean;
+    isUpdated: boolean;
 }
 
 export interface DeleteUserReply {
-    is_deleted: boolean;
+    isDeleted: boolean;
 }
 
 // Statistics
 export interface GetContestStatisticsReply {
-    statistics_json: string;
+    statisticsJson: string;
 }
 
 // Logs
 export interface GetLogsRequest {
     page?: number;
-    page_size?: number;
+    pageSize?: number;
 }
 
 export interface GetLogsReply {

@@ -51,7 +51,7 @@ onMounted(() => {
         <li v-for="problem in problems" :key="problem.id" class="list-item">
           <div class="list-main">
             <p class="list-title">{{ problem.title }}</p>
-            <p class="list-meta">ID {{ problem.id }} · {{ problem.time_limit_ms }}ms · {{ problem.memory_limit_mb }}MB</p>
+            <p class="list-meta">ID {{ problem.id }} · {{ problem.timeLimitMs }}ms · {{ problem.memoryLimitMb }}MB</p>
           </div>
           <div class="list-right">
             <button class="ghost">Edit</button>

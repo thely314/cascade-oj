@@ -63,7 +63,7 @@ const formatDate = (dateStr: string) => {
         <li v-for="contest in contests" :key="contest.id" class="list-item">
           <div class="list-main">
             <p class="list-title">{{ contest.title }}</p>
-            <p class="list-meta">ID {{ contest.id }} · {{ formatDate(contest.start_time) }} → {{ formatDate(contest.end_time) }}</p>
+            <p class="list-meta">ID {{ contest.id }} · {{ formatDate(contest.startTime) }} → {{ formatDate(contest.endTime) }}</p>
           </div>
           <div class="list-right">
             <span class="badge" :class="statusTone[contest.status] || 'badge-muted'">{{ contest.status }}</span>
