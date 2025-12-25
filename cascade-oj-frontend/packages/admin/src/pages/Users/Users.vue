@@ -48,10 +48,10 @@ onMounted(() => {
       </header>
       <div v-if="error" class="error-message">{{ error }}</div>
       <ul v-else class="list">
-        <li v-for="user in users" :key="user.user_id" class="list-item">
+        <li v-for="user in users" :key="user.userId" class="list-item">
           <div class="list-main">
             <p class="list-title">{{ user.username }}</p>
-            <p class="list-meta">ID {{ user.user_id }} · {{ user.email }}</p>
+            <p class="list-meta">ID {{ user.userId }} · {{ user.email }}</p>
           </div>
           <div class="list-right">
             <button class="ghost">Edit</button>

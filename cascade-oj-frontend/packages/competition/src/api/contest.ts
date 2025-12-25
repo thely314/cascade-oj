@@ -11,6 +11,7 @@ export async function getContest(contestId: string): Promise<GetSingleContestRep
   return client.get(`/user/contests/${contestId}`)
 }
 
+// TODO fix API
 export async function getContestProblems(contestId: string): Promise<{ problems: ProblemMetadata[] }> {
   return client.get(`/user/problems/${contestId}`)
 }

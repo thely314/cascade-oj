@@ -73,7 +73,7 @@ onMounted(() => {
 				<li v-for="item in announcements" :key="item.id" class="list-item">
 					<div>
 						<p class="list-title">{{ item.title }}</p>
-						<p class="list-meta">{{ item.publisher_name }}</p>
+						<p class="list-meta">{{ item.publisherName }}</p>
 					</div>
 					<button class="ghost">Open</button>
 				</li>
