@@ -6,6 +6,7 @@ import (
 	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/problemset"
 	"context"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -17,25 +18,59 @@ type ContestRepo struct {
 
 func (contestRepo *ContestRepo) GetContests(ctx context.Context) ([]*ent.ProblemSet, error) {
 	queryContests, err := contestRepo.data.db.ProblemSet.Query().All(ctx)
-
 	if err != nil {
 		return nil, err
+	}
+
+	now := time.Now()
+	for _, contest := range queryContests {
+		calculatedStatus := CalculateContestStatus(now, contest.StartTime, contest.EndTime)
+		if contest.Status.String() != calculatedStatus {
+			contest.Status = problemset.Status(calculatedStatus)
+			EnqueueStatusUpdate(contest.ID, calculatedStatus)
+		}
 	}
 
 	return queryContests, nil
 }
 
 func (contestRepo *ContestRepo) GetSingleContest(ctx context.Context, contestID int64) (*ent.ProblemSet, error) {
-	queryContest, err := contestRepo.data.db.ProblemSet.Query().Where(problemset.IDEQ(contestID)).Only(ctx)
-
+	queryContest, err := contestRepo.data.db.ProblemSet.Query().
+		Where(problemset.IDEQ(contestID)).
+		Only(ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	now := time.Now()
+	calculatedStatus := CalculateContestStatus(now, queryContest.StartTime, queryContest.EndTime)
+	if queryContest.Status.String() != calculatedStatus {
+		queryContest.Status = problemset.Status(calculatedStatus)
+		EnqueueStatusUpdate(queryContest.ID, calculatedStatus)
 	}
 
 	return queryContest, nil
 }
 
 func (contestRepo *ContestRepo) JoinContest(ctx context.Context, contestID int64, userID int64) (bool, error) {
+	// check if contest ended
+	queryContest, err := contestRepo.data.db.ProblemSet.Query().
+		Where(problemset.IDEQ(contestID)).
+		Only(ctx)
+	if err != nil {
+		return false, err
+	}
+	now := time.Now()
+	calculatedStatus := CalculateContestStatus(now, queryContest.StartTime, queryContest.EndTime)
+	if queryContest.Status.String() != calculatedStatus {
+		queryContest.Status = problemset.Status(calculatedStatus)
+		EnqueueStatusUpdate(queryContest.ID, calculatedStatus)
+	}
+	if queryContest.Status == problemset.StatusEnded {
+		contestRepo.log.Errorf("failed to join contest because contest has already ended")
+		return false, nil
+	}
+
 	queryContestRecord, err := contestRepo.data.db.Competitor_List.Query().
 		Where(competitor_list.And(competitor_list.ProblemSetIDEQ(contestID), competitor_list.UserIDEQ(userID))).
 		Exist(ctx)
@@ -54,6 +89,25 @@ func (contestRepo *ContestRepo) JoinContest(ctx context.Context, contestID int64
 }
 
 func (contestRepo *ContestRepo) QuitContest(ctx context.Context, contestID int64, userID int64) (bool, error) {
+	// check if contest started or ended
+	queryContest, err := contestRepo.data.db.ProblemSet.Query().
+		Where(problemset.IDEQ(contestID)).
+		Only(ctx)
+	if err != nil {
+		contestRepo.log.Errorf("failed to quit contest because cannot find contest %d: %v", contestID, err)
+		return false, err
+	}
+	now := time.Now()
+	calculatedStatus := CalculateContestStatus(now, queryContest.StartTime, queryContest.EndTime)
+	if queryContest.Status.String() != calculatedStatus {
+		queryContest.Status = problemset.Status(calculatedStatus)
+		EnqueueStatusUpdate(queryContest.ID, calculatedStatus)
+	}
+	if queryContest.Status == problemset.StatusOngoing || queryContest.Status == problemset.StatusEnded {
+		contestRepo.log.Errorf("failed to quit contest because contest has already started or ended")
+		return true, nil
+	}
+
 	queryContestRecord, err := contestRepo.data.db.Competitor_List.Query().
 		Where(competitor_list.And(competitor_list.ProblemSetIDEQ(contestID), competitor_list.UserIDEQ(userID))).
 		Exist(ctx)

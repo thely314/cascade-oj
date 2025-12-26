@@ -82,9 +82,14 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		log.Errorf("failed opening a channel")
 		return nil, nil, err
 	}
-	return &Data{
+
+	// start up status updater
+	var dataInstance *Data = &Data{
 		db:         client,
 		redis:      redisClient,
 		mq_channel: ch,
-	}, cleanup, nil
+	}
+	InitStatusUpdater(context.Background(), dataInstance, logger)
+
+	return dataInstance, cleanup, nil
 }
