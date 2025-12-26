@@ -26,6 +26,7 @@ const (
 	User_GetProblems_FullMethodName         = "/api.cascade.user.v1.User/GetProblems"
 	User_GetSingleProblem_FullMethodName    = "/api.cascade.user.v1.User/GetSingleProblem"
 	User_PostSelfTest_FullMethodName        = "/api.cascade.user.v1.User/PostSelfTest"
+	User_GetSelfTestResult_FullMethodName   = "/api.cascade.user.v1.User/GetSelfTestResult"
 	User_PostSubmission_FullMethodName      = "/api.cascade.user.v1.User/PostSubmission"
 	User_GetSubmissions_FullMethodName      = "/api.cascade.user.v1.User/GetSubmissions"
 	User_GetSingleSubmission_FullMethodName = "/api.cascade.user.v1.User/GetSingleSubmission"
@@ -47,13 +48,15 @@ type UserClient interface {
 	GetProblems(ctx context.Context, in *GetProblemsRequest, opts ...grpc.CallOption) (*GetProblemsReply, error)
 	GetSingleProblem(ctx context.Context, in *GetSingleProblemRequest, opts ...grpc.CallOption) (*GetSingleProblemReply, error)
 	PostSelfTest(ctx context.Context, in *SelfTestRequest, opts ...grpc.CallOption) (*SelfTestReply, error)
-	PostSubmission(ctx context.Context, in *SubmissionRequest, opts ...grpc.CallOption) (*SubmissionReply, error)
+	GetSelfTestResult(ctx context.Context, in *GetSelfTestResultRequest, opts ...grpc.CallOption) (*GetSelfTestResultReply, error)
+	PostSubmission(ctx context.Context, in *PostSubmissionRequest, opts ...grpc.CallOption) (*PostSubmissionReply, error)
 	GetSubmissions(ctx context.Context, in *GetSubmissionsRequest, opts ...grpc.CallOption) (*GetSubmissionsReply, error)
 	GetSingleSubmission(ctx context.Context, in *GetSingleSubmissionRequest, opts ...grpc.CallOption) (*GetSingleSubmissionReply, error)
 	GetRanks(ctx context.Context, in *GetRanksRequest, opts ...grpc.CallOption) (*GetRanksReply, error)
 	GetAnnouncements(ctx context.Context, in *GetAnnouncementsRequest, opts ...grpc.CallOption) (*GetAnnouncementsReply, error)
 	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoReply, error)
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoReply, error)
+	// Used for registering gateway clients
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 }
 
@@ -135,9 +138,19 @@ func (c *userClient) PostSelfTest(ctx context.Context, in *SelfTestRequest, opts
 	return out, nil
 }
 
-func (c *userClient) PostSubmission(ctx context.Context, in *SubmissionRequest, opts ...grpc.CallOption) (*SubmissionReply, error) {
+func (c *userClient) GetSelfTestResult(ctx context.Context, in *GetSelfTestResultRequest, opts ...grpc.CallOption) (*GetSelfTestResultReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SubmissionReply)
+	out := new(GetSelfTestResultReply)
+	err := c.cc.Invoke(ctx, User_GetSelfTestResult_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) PostSubmission(ctx context.Context, in *PostSubmissionRequest, opts ...grpc.CallOption) (*PostSubmissionReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PostSubmissionReply)
 	err := c.cc.Invoke(ctx, User_PostSubmission_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -226,13 +239,15 @@ type UserServer interface {
 	GetProblems(context.Context, *GetProblemsRequest) (*GetProblemsReply, error)
 	GetSingleProblem(context.Context, *GetSingleProblemRequest) (*GetSingleProblemReply, error)
 	PostSelfTest(context.Context, *SelfTestRequest) (*SelfTestReply, error)
-	PostSubmission(context.Context, *SubmissionRequest) (*SubmissionReply, error)
+	GetSelfTestResult(context.Context, *GetSelfTestResultRequest) (*GetSelfTestResultReply, error)
+	PostSubmission(context.Context, *PostSubmissionRequest) (*PostSubmissionReply, error)
 	GetSubmissions(context.Context, *GetSubmissionsRequest) (*GetSubmissionsReply, error)
 	GetSingleSubmission(context.Context, *GetSingleSubmissionRequest) (*GetSingleSubmissionReply, error)
 	GetRanks(context.Context, *GetRanksRequest) (*GetRanksReply, error)
 	GetAnnouncements(context.Context, *GetAnnouncementsRequest) (*GetAnnouncementsReply, error)
 	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoReply, error)
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoReply, error)
+	// Used for registering gateway clients
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	mustEmbedUnimplementedUserServer()
 }
@@ -265,7 +280,10 @@ func (UnimplementedUserServer) GetSingleProblem(context.Context, *GetSingleProbl
 func (UnimplementedUserServer) PostSelfTest(context.Context, *SelfTestRequest) (*SelfTestReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method PostSelfTest not implemented")
 }
-func (UnimplementedUserServer) PostSubmission(context.Context, *SubmissionRequest) (*SubmissionReply, error) {
+func (UnimplementedUserServer) GetSelfTestResult(context.Context, *GetSelfTestResultRequest) (*GetSelfTestResultReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSelfTestResult not implemented")
+}
+func (UnimplementedUserServer) PostSubmission(context.Context, *PostSubmissionRequest) (*PostSubmissionReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method PostSubmission not implemented")
 }
 func (UnimplementedUserServer) GetSubmissions(context.Context, *GetSubmissionsRequest) (*GetSubmissionsReply, error) {
@@ -436,8 +454,26 @@ func _User_PostSelfTest_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetSelfTestResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSelfTestResultRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetSelfTestResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetSelfTestResult_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetSelfTestResult(ctx, req.(*GetSelfTestResultRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _User_PostSubmission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubmissionRequest)
+	in := new(PostSubmissionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -449,7 +485,7 @@ func _User_PostSubmission_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: User_PostSubmission_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).PostSubmission(ctx, req.(*SubmissionRequest))
+		return srv.(UserServer).PostSubmission(ctx, req.(*PostSubmissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -614,6 +650,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PostSelfTest",
 			Handler:    _User_PostSelfTest_Handler,
+		},
+		{
+			MethodName: "GetSelfTestResult",
+			Handler:    _User_GetSelfTestResult_Handler,
 		},
 		{
 			MethodName: "PostSubmission",

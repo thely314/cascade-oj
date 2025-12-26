@@ -26,7 +26,7 @@ type Data struct {
 	grpcUserClient pb.UserClient
 }
 
-// Cache store maps
+// TODO Cache store maps in memory
 type Cache struct {
 	// TODO cache fields
 	token string

@@ -7,6 +7,7 @@ import (
 
 	pb "cascade-oj/api/cascade/user/v1"
 	"cascade-oj/app/gateway/internal/biz"
+	"cascade-oj/pkg/mq"
 
 	"github.com/go-kratos/kratos/v2/log"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -42,31 +43,37 @@ type submissionDTO struct {
 
 // create self test record
 func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTest) (string, error) {
-	// store into mq
 	q, err := repo.data.mq_channel.QueueDeclare(
-		"self_test_queue", // name
-		false,             // durable
-		false,             // delete when unused
-		false,             // exclusive
-		false,             // no-wait
-		nil,               // arguments
+		mq.GojudgeSelfTestQueueName, // name
+		false,                       // durable
+		false,                       // delete when unused
+		false,                       // exclusive
+		false,                       // no-wait
+		nil,                         // arguments
 	)
 	if err != nil {
 		return "", err
 	}
-	sDTO := &selfTestDTO{
-		UUID:     selfTest.UUID,
-		UserID:   selfTest.UserID,
-		Code:     selfTest.Code,
-		Language: selfTest.Language,
-		Input:    selfTest.Input,
-		Token:    repo.data.cache.token,
+	selfTestMsg := &mq.SelfTestMessage{
+		UUID:       selfTest.UUID,
+		UserID:     selfTest.UserID,
+		ProblemID:  selfTest.ProblemID,
+		Code:       selfTest.Code,
+		Language:   selfTest.Language,
+		Input:      selfTest.Input,
+		IsCompiled: false,
+		Stdout:     "",
+		Stderr:     "",
+		TimeCost:   0,
+		MemoryCost: 0,
+		Token:      "",
 	}
 	// 结构体 slice 转为 JSON
-	jsonBody, err := json.Marshal(sDTO)
+	jsonBody, err := json.Marshal(selfTestMsg)
 	if err != nil {
 		return "", err
 	}
+	log.Infof("publish message: %s", jsonBody)
 	err = repo.data.mq_channel.PublishWithContext(
 		ctx,
 		"",     // exchange
@@ -81,42 +88,54 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 	if err != nil {
 		return "", err
 	}
-	// update cache if needed
+	// judge microservice is responsible for updating cache
 	return selfTest.UUID, nil
 }
 
 // create submission record
 func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Submission) (string, error) {
-	// store into mq
 	q, err := repo.data.mq_channel.QueueDeclare(
-		"submission_queue", // name
-		false,              // durable
-		false,              // delete when unused
-		false,              // exclusive
-		false,              // no-wait
-		nil,                // arguments
+		mq.GojudgeSubmissionQueueName, // name
+		false,                         // durable
+		false,                         // delete when unused
+		false,                         // exclusive
+		false,                         // no-wait
+		nil,                           // arguments
 	)
 	if err != nil {
 		return "", err
 	}
-	sDTO := &submissionDTO{
-		UUID:       submission.UUID,
-		UserID:     submission.UserID,
-		ProblemID:  submission.ProblemID,
-		Code:       submission.Code,
-		Language:   submission.Language,
-		Status:     submission.Status,
-		CreateTime: submission.CreateTime,
-		Score:      submission.Score,
-		TimeCost:   submission.TimeCost,
-		MemoryCost: submission.MemoryCost,
-		Token:      repo.data.cache.token,
+	// TODO
+	// cant get case version from problemTarget
+	// problemTarget, err := repo.data.db.Problem.Query().
+	// 	Select(problem.FieldCaseVersion).
+	// 	Where(problem.IDEQ(submission.ProblemID)).
+	// 	Only(ctx)
+	// if err != nil {
+	// 	return "", err
+	// }
+	submissionMsg := &mq.SubmissionMessage{
+		UUID:         submission.UUID,
+		UserID:       submission.UserID,
+		ProblemID:    submission.ProblemID,
+		ProblemSetID: 0, // TODO: need problem set id
+		Code:         submission.Code,
+		Status:       0, // Pending
+		Score:        0,
+		CreateTime:   submission.CreateTime,
+		TimeCost:     0,
+		MemoryCost:   0,
+		Language:     submission.Language,
+		Stderr:       "",
+		CaseVersion:  0,
+		Token:        "",
 	}
 	// 结构体 slice 转为 JSON
-	jsonBody, err := json.Marshal(sDTO)
+	jsonBody, err := json.Marshal(submissionMsg)
 	if err != nil {
 		return "", err
 	}
+	log.Infof("publish message: %s", jsonBody)
 	err = repo.data.mq_channel.PublishWithContext(
 		ctx,
 		"",     // exchange
@@ -131,7 +150,7 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 	if err != nil {
 		return "", err
 	}
-	// update cache if needed
+	// judge microservice is responsible for updating cache
 	return submission.UUID, nil
 }
 
@@ -157,25 +176,54 @@ func (repo *judgeRepo) GetSubmissions(ctx context.Context, userID int64, problem
 	return res, nil
 }
 
-func (repo *judgeRepo) GetSingleSubmission(ctx context.Context, submissionID string) (*biz.Submission, error) {
+func (repo *judgeRepo) GetSingleSubmission(ctx context.Context, submissionID string) (*biz.SingleSubmissionDTO, error) {
 	submission, err := repo.data.grpcUserClient.GetSingleSubmission(ctx, &pb.GetSingleSubmissionRequest{
-		SubmissionId: submissionID,
+		SubmissionUuid: submissionID,
 	})
 	if err != nil {
 		return nil, err
 	}
-	var res = &biz.Submission{
-		UUID:       submissionID,
-		UserID:     submission.Metadata.UserId,
-		ProblemID:  submission.Metadata.ProblemId,
-		Code:       submission.Code,
-		Language:   submission.Language,
-		Status:     submission.Metadata.Status,
-		CreateTime: submission.Metadata.SubmitTime.AsTime(),
-		Score:      int64(submission.Metadata.Score),
-		// TODO refactor the proto and add these fields
-		// TimeCost:   submission.TimeCost,
-		// MemoryCost: submission.MemoryCost,
+	var casesResults []*biz.Case
+	for i, v := range submission.CaseResults.Cases {
+		casesResults = append(casesResults, &biz.Case{
+			Index:      int32(i),
+			Score:      v.Score,
+			Status:     v.Status,
+			TimeCost:   uint64(v.TimeCost),
+			MemoryCost: uint64(v.MemoryCost),
+		})
+	}
+	var res = &biz.SingleSubmissionDTO{
+		Submission: &biz.Submission{
+			UUID:       submissionID,
+			UserID:     submission.Metadata.UserId,
+			ProblemID:  submission.Metadata.ProblemId,
+			Code:       submission.Code,
+			Language:   submission.Language,
+			Status:     submission.Metadata.Status,
+			CreateTime: submission.Metadata.SubmitTime.AsTime(),
+			Score:      int(submission.Metadata.Score),
+			TimeCost:   int64(submission.TimeCost),
+			MemoryCost: int64(submission.MemoryCost),
+		},
+		CasesResults: casesResults,
+	}
+	return res, nil
+}
+
+func (repo *judgeRepo) GetSelfTest(ctx context.Context, selfTestUUID string) (*biz.SelfTest, error) {
+	selfTest, err := repo.data.grpcUserClient.GetSelfTestResult(ctx, &pb.GetSelfTestResultRequest{
+		SelftestUuid: selfTestUUID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	var res = &biz.SelfTest{
+		IsCompiled: selfTest.IsCompiled,
+		Stdout:     selfTest.Stdout,
+		Stderr:     selfTest.Stderr,
+		TimeCost:   int64(selfTest.TimeCost),
+		MemoryCost: int64(selfTest.MemoryCost),
 	}
 	return res, nil
 }

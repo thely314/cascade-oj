@@ -11,15 +11,17 @@ export interface ProblemFile {
 export interface ProblemDetail {
   id: string;
   title: string;
+  creator?: string;
   timeLimit: string;
   memoryLimit: string;
   description: string;
   codeTemplates: {
-    [lang: string]: ProblemFile[]; 
+    [lang: string]: any; 
   };
 }
 
 export interface SubmissionResult {
+  uuid?: string;
   status: string; // 原本是'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Compile Error' | 'Running' | 'System Error';
   time?: string;
   memory?: string;
@@ -33,9 +35,10 @@ export interface ProblemSimple {
 }
 
 export interface SubmitRequest {
+  contestId: string;
   problemId: string;
   language: string;
-  files: { name: string; content: string }[]; 
+  code: string;      // 原：files: { name: string; content: string }[]; 
   type: 'submit' | 'test';
   input?: string;
 }
@@ -53,10 +56,13 @@ export interface BackendSubmissionReply {
   metadata: BackendSubmissionMetadata;
   code: string;
   language: string;
-  time_cost: string; 
-  memory_cost: string;
+  // 修正：proto里是int32，所以这里是number
+  time_cost: number;   
+  memory_cost: number;
 
   // TODO: 等待后端添加这些字段
+  // 队友说 stdout/stderr 被遗漏了，所以这里暂时没有
+  // 我们不需要定义它们，直接在 adapter 里处理
   stdout?: string; 
   stderr?: string; 
 }
@@ -65,7 +71,7 @@ export interface BackendSubmissionReply {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // 开关：是否使用模拟数据
-const IS_MOCK = true;
+const IS_MOCK = false;
 
 // --- 3. API 方法 ---
 
@@ -101,52 +107,104 @@ export const fetchProblemDetail = async (id: string): Promise<ProblemDetail> => 
     };
   }
   // 真实接口
-  const res = await request.get(`/problems/${id}`);
-  return res.data;
-};
+  // 注意：确保 request.ts 里的 baseURL 已经包含了 /api (或根据后端代理配置)
+  const res = await request.get(`/user/problems/${id}`); 
+  const backendData = res.data; // 假设对应 GetSingleProblemReply
 
-// B. 提交代码 (或测试运行)
-export const submitCode = async (data: SubmitRequest): Promise<SubmissionResult> => {
-  
-  // --- Mock 模式 ---
-  if (IS_MOCK) {
-    await delay(800);
-    
-    if (data.type === 'test') {
-      return {
-        status: 'Accepted',
-        time: '2ms',
-        memory: '9216KB',
-        output: 'Cuboid Information:\nlength: 3\nwidth: 4\nheight: 5\narea: 94\nvolume: 60'
-      };
-    } 
-    
-    return { status: 'Accepted', time: '12ms', memory: '1.2MB', output: 'Mock Output' };
-  }
-
-  // --- 真实请求 ---
-  // 组装请求体 (根据后端要求，可能需要把 files 数组转成后端需要的格式)
-  // 假设后端目前只接受单文件 code，或者接受 files 数组
-  // 这里暂时假设后端接受我们 SubmitRequest 定义的结构
-  const res = await request.post('/submissions', data);
-  
-  const backendData = res.data as BackendSubmissionReply;
-
-  // --- 响应适配 (Adapter) ---
   return {
-    status: backendData.metadata?.status || 'Unknown',
-    time: backendData.time_cost || '-',
-    memory: backendData.memory_cost || '-',
-    
-    // TODO: 目前后端缺失 stdout，暂时给个占位符，等后端加上后这里会自动生效
-    output: backendData.stdout || '(后端暂未返回标准输出)',
-    
-    // TODO: 错误信息同理
-    errorMsg: backendData.stderr || ''
+    id: String(backendData.metadata.id),
+    title: backendData.metadata.title,
+    creator: backendData.creator || 'Admin', 
+    timeLimit: `${backendData.metadata.time_limit_ms}ms`,
+    memoryLimit: `${backendData.metadata.memory_limit_mb}MB`,
+    description: backendData.description,
+    codeTemplates: {} // 后端暂无模板，留空
   };
 };
 
-// C.获取简易题目列表
+// B. 获取测试运行结果
+export const getSelfTestResult = async (uuid: string): Promise<SubmissionResult> => {
+  if (IS_MOCK) {
+    // 模拟：随机返回 Running 或 完成
+    // 实际 Mock 时，为了效果，我们可以第一次调用返回 Running，第二次返回成功
+    // 这里简单处理：直接返回成功
+    return {
+      status: 'Accepted',
+      time: '2ms',
+      memory: '9216KB',
+      output: 'Mock Output: Hello World',
+      errorMsg: ''
+    };
+  }
+
+  const res = await request.get(`/user/selftests/${uuid}`);
+  const data = res.data; // 对应 GetSelfTestResultReply
+
+  // 适配器 logic
+  // 注意：proto 里 SelfTest 只有一个 is_compiled 字段
+  // 我们假设：如果 !is_compiled 且无报错，算 Running；否则算结束
+  // *具体状态判断可能需要跟后端确认，这里暂且认为只要有返回就是结束*
+  
+  return {
+    status: 'Finished', 
+    time: data.time_cost ? `${data.time_cost}ms` : '0ms',
+    memory: data.memory_cost ? `${data.memory_cost}KB` : '0KB',
+    output: data.stdout || '',
+    errorMsg: data.stderr || ''
+  };
+};
+
+
+// C. 查询正式提交结果
+export const getSubmissionResult = async (uuid: string): Promise<SubmissionResult> => {
+  if (IS_MOCK) {
+    return { status: 'Accepted', time: '12ms', memory: '1.2MB' };
+  }
+
+  const res = await request.get(`/user/submissions/${uuid}`);
+  const data = res.data; // 对应 GetSingleSubmissionReply
+
+  return {
+    status: data.metadata?.status || 'Unknown',
+    time: data.time_cost ? `${data.time_cost}ms` : '0ms',
+    memory: data.memory_cost ? `${data.memory_cost}KB` : '0KB',
+    output: '', // 正式提交通常不看 output
+    errorMsg: '' // 如果有编译错误，可能在 metadata.status 或其他字段
+  };
+};
+
+// D. 提交代码 (或测试运行)
+export const submitCode = async (data: SubmitRequest): Promise<SubmissionResult> => {
+  
+  if (IS_MOCK) {
+    await delay(500);
+    return { 
+      uuid: 'mock-uuid-12345', 
+      status: 'Running', 
+      output: '正在提交...' 
+    };
+  }
+
+  const payload = {
+    contest_id: Number(data.contestId),
+    problem_id: Number(data.problemId),
+    code: data.code,
+    language: data.language
+  };
+
+  const res = await request.post(
+    data.type === 'test' ? '/user/selftests' : '/user/submissions', 
+    payload
+  );
+  
+  return {
+    uuid: res.data.uuid,
+    status: 'Running', 
+    output: '请求已发送，等待结果...'
+  };
+};
+
+// E. 获取简易题目列表
 export const fetchProblemList = async (): Promise<ProblemSimple[]> => {
   if (IS_MOCK) {
     return [
@@ -161,6 +219,8 @@ export const fetchProblemList = async (): Promise<ProblemSimple[]> => {
     ];
   }
   // 真实接口
-  const res = await request.get('/problems/simple-list');
-  return res.data;
+  // 注意：GetProblems 需要 contest_id。这里如果做公共题库，需确认 contest_id 传什么
+  // 假设暂时获取 ID=1 的比赛题目列表
+  const res = await request.get('/user/contests/1/problems'); 
+  return res.data.problems; // 假设返回结构里有 problems 数组
 };

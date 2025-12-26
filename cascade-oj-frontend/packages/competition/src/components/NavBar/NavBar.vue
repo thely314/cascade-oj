@@ -54,7 +54,22 @@
 </template>
 
 <script setup>
-// 暂时不添加任何功能
+import { useRouter } from 'vue-router'; 
+
+const router = useRouter(); 
+
+const handleLogout = () => {
+  // 1. 清除 LocalStorage
+  localStorage.removeItem('cascade_token');
+  
+  // 2.以此类推，清除用户信息状态
+  
+  // 3. 跳转回登录页或首页
+  router.push('/login');
+  
+  // 4. (可选) 调用后端 logout 接口让 token 失效
+  // request.post('/auth/logout'); 
+};
 </script>
 
 <style scoped src="./NavBar.css"></style>

@@ -7,6 +7,8 @@ import {
   fetchProblemDetail, 
   fetchProblemList,
   submitCode, 
+  getSelfTestResult, 
+  getSubmissionResult,
   type ProblemDetail,
   type ProblemSimple,
   type SubmissionResult
@@ -16,9 +18,13 @@ export function useProblemDetail() {
   const route = useRoute();
   const router = useRouter();
 
+  // 获取 URL 参数 (注意：如果用户直接输 URL 进来，这两个可能是 undefined，最好做个兜底)
+  const contestId = computed(() => route.params.contestId as string || '1');
+  const problemId = computed(() => route.params.id as string || '1');
+
   // --- 配置 marked 使用 KaTeX ---
   marked.use(markedKatex({ 
-    throwOnError: false, // 如果公式写错，不要报错崩掉页面，而是显示源码
+    throwOnError: false, 
     output: 'html' 
   } as any));
 
@@ -47,8 +53,43 @@ export function useProblemDetail() {
   // 测试运行的详细结果状态
   const runStats = reactive({
     time: '-',
-    memory: '-'
+    memory: '-',
+    stderr: '' // 确保有这个字段
   });
+
+  // 通用轮询函数
+  const pollResult = async (
+    uuid: string, 
+    apiFunc: (id: string) => Promise<SubmissionResult>,
+    onSuccess: (res: SubmissionResult) => void,
+    onError: (err: any) => void
+  ) => {
+    const MAX_RETRIES = 20; // 最大轮询次数 (防止死循环)
+    let count = 0;
+
+    const intervalId = setInterval(async () => {
+      count++;
+      try {
+        const res = await apiFunc(uuid);
+        
+        // 判断是否结束 (后端状态不是 Running 或 Pending)
+        // 注意：根据后端实际返回的状态字符串调整这里
+        if (res.status !== 'Running' && res.status !== 'Pending') {
+          clearInterval(intervalId); // 停止轮询
+          onSuccess(res); // 回调成功
+        }
+      } catch (e) {
+        clearInterval(intervalId);
+        onError(e);
+      }
+
+      // 超时处理
+      if (count >= MAX_RETRIES) {
+        clearInterval(intervalId);
+        onError(new Error("请求超时，请稍后重试"));
+      }
+    }, 1000); // 每 1 秒查一次
+  };
 
   // 题目数据
   const problemData = ref<ProblemDetail>({
@@ -69,8 +110,19 @@ export function useProblemDetail() {
     isReadOnly: boolean;
   }
   
-  // filesMap 定义结构
-  const filesMap = reactive<Record<string, CodeFile[]>>({});
+  // [修改点1] filesMap 硬编码初始化 (仿洛谷/CF风格)
+  // 既然后端暂时不给模板，这里写死默认状态
+  const filesMap = reactive<Record<string, CodeFile[]>>({
+    'C++': [
+      { name: 'main.cpp', lang: 'cpp', content: '', isReadOnly: false }
+    ],
+    'Java': [
+      { name: 'Main.java', lang: 'java', content: 'public class Main {\n    public static void main(String[] args) {\n\n    }\n}', isReadOnly: false }
+    ],
+    'Python3': [
+      { name: 'solution.py', lang: 'python', content: '', isReadOnly: false }
+    ]
+  });
 
   // 代码快照，用于检测未保存的更改
   const originalCodeSnapshot = reactive<Record<string, string>>({});
@@ -79,7 +131,7 @@ export function useProblemDetail() {
   const currentFiles = computed(() => filesMap[currentLanguage.value] || []);
   
   // 当前选中的文件名 (切换语言时默认选中第一个)
-  const currentFileName = ref(''); 
+  const currentFileName = ref('main.cpp'); // 给个默认值防止为空
   
   // 监听语言变化，自动选中第一个文件
   watch(currentLanguage, (newLang) => {
@@ -115,22 +167,21 @@ export function useProblemDetail() {
 
   // --- 辅助方法：快照管理 ---
   
-  // 更新代码快照 (在加载完成或提交成功后调用)
+  // 更新代码快照
   const updateCodeSnapshot = () => {
     for (const lang of Object.keys(filesMap)) {
       for (const file of filesMap[lang]) {
-        // 记录唯一 Key: 语言_文件名
         originalCodeSnapshot[`${lang}_${file.name}`] = file.content;
       }
     }
   };
+  
   // 检查是否有未保存的更改
   const hasUnsavedChanges = () => {
     for (const lang of Object.keys(filesMap)) {
       for (const file of filesMap[lang]) {
         const key = `${lang}_${file.name}`;
         const originalContent = originalCodeSnapshot[key];
-        // 如果快照存在且内容不一致 (排除只读文件)
         if (!file.isReadOnly && originalContent !== undefined && file.content !== originalContent) {
           return true;
         }
@@ -142,7 +193,6 @@ export function useProblemDetail() {
   // 抽离统一的检查逻辑
   const checkUnsavedChange = (next: Function, cancel: Function) => {
     if (hasUnsavedChanges()) {
-      // 暂时还是用 confirm，美化警告比较复杂，建议功能跑通后再做
       const confirmLeave = globalThis.confirm('您有未保存的代码更改。确定要切题/离开吗？更改将丢失。');
       if (confirmLeave) next();
       else cancel();
@@ -170,37 +220,13 @@ export function useProblemDetail() {
       const data = await fetchProblemDetail(id);
       problemData.value = data;
 
-      // 清空旧文件映射
-      for (const key in filesMap) delete filesMap[key];
-
-      // 将后端返回的文件列表映射到前端结构
-      if (data.codeTemplates) {
-        for (const lang of Object.keys(data.codeTemplates)) {
-          const apiFiles = data.codeTemplates[lang];
-          
-          filesMap[lang] = apiFiles.map(f => ({
-            name: f.name,
-            // 简单的语言映射逻辑
-            lang: lang.toLowerCase().includes('python') ? 'python' : lang.toLowerCase(),
-            content: f.content,
-            isReadOnly: f.isReadOnly
-          }));
-        }
-        
-        // 刷新当前视图：确保有文件显示
-        if (!filesMap[currentLanguage.value]) {
-           // 如果当前语言没有模板，切换到第一个可用的语言
-           const firstLang = Object.keys(filesMap)[0];
-           if (firstLang) currentLanguage.value = firstLang;
-        }
-        // 选中第一个文件
-        if (filesMap[currentLanguage.value] && filesMap[currentLanguage.value].length > 0) {
-           currentFileName.value = filesMap[currentLanguage.value][0].name;
-        }
-
-        // 加载完成后，立即更新快照
-        updateCodeSnapshot();
-      }
+      // [修改点2] 删除了后端模板覆盖逻辑
+      // 因为后端没做这个功能，保留原有的硬编码 filesMap 即可
+      // 只需更新快照，视为当前状态就是“初始状态”
+      
+      // 加载完成后，立即更新快照
+      updateCodeSnapshot();
+      
     } catch (error) {
       console.error("题目加载失败", error);
       problemData.value.title = "题目加载失败";
@@ -209,11 +235,12 @@ export function useProblemDetail() {
     }
   };
 
-  // 加载题目列表 (用于左下角抽屉)
+  // 加载题目列表
   const loadProblemList = async () => {
     try {
       const list = await fetchProblemList();
       problemList.value = list;
+      totalProblems.value = list.length; // 让总题数动态化
     } catch (e) {
       console.error("题目列表加载失败", e);
     }
@@ -222,10 +249,18 @@ export function useProblemDetail() {
   // 跳转到指定题目
   const jumpToProblem = (id: string) => {
     showProblemDrawer.value = false; 
-    router.push(`/problem/${id}`);
+    // [修改点3] 修正路由跳转，必须带上 contestId
+    // 假设路由名配置为 'ProblemDetail'
+    router.push({
+      name: 'ProblemDetail',
+      params: { 
+        contestId: contestId.value, 
+        id: id 
+      }
+    });
   };
 
-// 假设总题数，未来从 API 获取
+  // 假设总题数
   const totalProblems = ref(8); 
 
   const isFirstProblem = computed(() => Number(problemData.value.id) <= 1);
@@ -245,71 +280,111 @@ export function useProblemDetail() {
     jumpToProblem(String(currentId + 1));
   };
 
-  // 测试运行
+  // 测试运行 (集成轮询)
   const handleTestRun = async () => {
     if (isRunning.value) return;
     isRunning.value = true;
-    playgroundOutput.value = "正在运行...";
-    // 重置统计数据
+    playgroundOutput.value = "正在提交代码...";
     runStats.time = '-';
     runStats.memory = '-';
+    runStats.stderr = '';
 
     try {
-      const filesToSend = filesMap[currentLanguage.value].map(f => ({
-         name: f.name,
-         content: f.content
-      }));
+      const codeToSend = activeFile.value?.content || '';
 
+      // 1. 发起提交，获取 UUID
       const res = await submitCode({
+        contestId: contestId.value, // 使用 computed
         problemId: problemData.value.id,
+        code: codeToSend,
         language: currentLanguage.value,
-        files: filesToSend, // 发送所有文件
         type: 'test',
         input: playgroundInput.value
       });
-      
-      if (res.status === 'Compile Error') {
-         playgroundOutput.value = `=== 编译错误 ===\n${res.errorMsg}`;
+
+      if (res.uuid) {
+        playgroundOutput.value = "正在运行中...";
+        
+        // 2. 开始轮询
+        await pollResult(
+          res.uuid,
+          getSelfTestResult, // 使用查询自测的 API
+          (finalRes) => {
+            // 轮询结束，更新 UI
+            isRunning.value = false;
+            runStats.time = finalRes.time || '0ms';
+            runStats.memory = finalRes.memory || '0KB';
+            runStats.stderr = finalRes.errorMsg || ''; // 这里假设 errorMsg 存的是 stderr
+            
+            if (finalRes.status === 'Compile Error') {
+               playgroundOutput.value = `=== 编译错误 ===\n${finalRes.errorMsg}`;
+            } else {
+               playgroundOutput.value = finalRes.output || '程序无输出';
+            }
+          },
+          (err) => {
+            isRunning.value = false;
+            playgroundOutput.value = "查询结果失败: " + err.message;
+          }
+        );
       } else {
-         // 填充时间和内存
-         runStats.time = res.time || '0ms';
-         runStats.memory = res.memory || '0KB';
-         playgroundOutput.value = res.output || '程序无输出';
+        // 如果没有 UUID，可能是 Mock 模式或者出错了
+        isRunning.value = false;
+        playgroundOutput.value = "未获取到运行 ID";
       }
+
     } catch (e) {
       console.error("测试运行出错:", e);
       playgroundOutput.value = "系统错误";
-    } finally {
       isRunning.value = false;
     }
   };
 
-  // 提交代码
+  // 提交代码(集成轮询)
   const handleSubmit = async () => {
     if (isSubmitting.value) return;
-    isSubmitting.value = true; 
+    isSubmitting.value = true;
+    
     try {
-      const filesToSend = currentFiles.value.map(f => ({
-         name: f.name,
-         content: f.content
-      }));
+      const codeToSend = activeFile.value?.content || '';
 
+      // 1. 发起提交
       const res = await submitCode({
+        contestId: contestId.value, 
         problemId: problemData.value.id,
+        code: codeToSend,
         language: currentLanguage.value,
-        files: filesToSend,
         type: 'submit'
       });
       
-      // 提交成功后，视为已保存，更新快照
       updateCodeSnapshot();
 
-      submissionResult.value = res;
-      showResultModal.value = true;
+      if (res.uuid) {
+        // 2. 开始轮询
+        // 这里我们可以做一个简单的 UI 反馈，比如按钮上显示 "判题中..."
+        // 或者直接弹窗显示 "Waiting..."
+        
+        await pollResult(
+          res.uuid,
+          getSubmissionResult, // 使用查询提交的 API
+          (finalRes) => {
+            isSubmitting.value = false;
+            submissionResult.value = finalRes;
+            showResultModal.value = true;
+          },
+          (err) => {
+            isSubmitting.value = false;
+            alert("判题超时或失败: " + err.message);
+          }
+        );
+      } else {
+        isSubmitting.value = false;
+        alert("提交失败，未获取到 ID");
+      }
+
     } catch (e) {
       console.error("提交代码出错:", e);
       alert("提交失败，网络错误");
-    } finally {
       isSubmitting.value = false;
     }
   };
@@ -341,21 +416,12 @@ export function useProblemDetail() {
 
   // --- [新增] 路由守卫与事件监听 ---
   
-  // 1. 路由拦截 (Vue Router)
+  // 路由拦截
   onBeforeRouteLeave((to, from, next) => {
-    if (hasUnsavedChanges()) {
-      const confirmLeave = globalThis.confirm('您有未保存的代码更改。确定要离开吗？您的更改将会丢失。');
-      if (confirmLeave) {
-        next(); 
-      } else {
-        next(false); 
-      }
-    } else {
-      next(); 
-    }
+    checkUnsavedChange(() => next(), () => next(false));
   });
 
-  // 2. 浏览器刷新/关闭拦截
+  // 浏览器刷新/关闭拦截
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     if (hasUnsavedChanges()) {
       e.preventDefault(); 
@@ -365,29 +431,24 @@ export function useProblemDetail() {
 
   // --- 生命周期 ---
   onMounted(() => {
-    const id = route.params.id as string || '1';
+    const id = problemId.value; // 从 computed 取值
     loadProblem(id);
-    loadProblemList(); // 获取列表数据
+    loadProblemList(); 
     globalThis.addEventListener('mousemove', onMouseMove);
-    // [新增] 监听浏览器关闭/刷新
     globalThis.addEventListener('beforeunload', handleBeforeUnload);
   });
   
   onBeforeUnmount(() => {
-    // [新增] 销毁监听器
     globalThis.removeEventListener('beforeunload', handleBeforeUnload);
   });
 
-  // 监听路由变化 (题目 ID 变化)
+  // 监听题目 ID 变化
   watch(() => route.params.id, (newId) => {
     if (newId) {
-      // 路由切换时，onBeforeRouteLeave 已经处理了确认逻辑
-      // 这里只需要直接加载新题目即可
       loadProblem(newId as string);
     }
   });
 
-  // 导出给模板使用
   return {
     leftTabs, currentLeftTab, isPlaygroundOpen, loading, isSubmitting, isRunning,
     problemData, descriptionHtml,
@@ -399,6 +460,6 @@ export function useProblemDetail() {
     showProblemDrawer, problemList,
     jumpToProblem, handlePrevProblem, handleNextProblem,isFirstProblem, isLastProblem, totalProblems,
     showResultModal, submissionResult,
-    runStats // 导出统计数据
+    runStats
   };
 }

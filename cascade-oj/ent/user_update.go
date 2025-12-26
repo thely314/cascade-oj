@@ -3,12 +3,12 @@
 package ent
 
 import (
-	"cascade-oj/ent/adminproblemset"
 	"cascade-oj/ent/announcement"
+	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/predicate"
 	"cascade-oj/ent/problem"
-	"cascade-oj/ent/problemset_user"
+	"cascade-oj/ent/problemsetmanager"
 	"cascade-oj/ent/user"
 	"context"
 	"errors"
@@ -133,34 +133,34 @@ func (_u *UserUpdate) AddAnnouncements(v ...*Announcement) *UserUpdate {
 	return _u.AddAnnouncementIDs(ids...)
 }
 
-// AddAdminProblemSetIDs adds the "admin_problem_sets" edge to the AdminProblemSet entity by IDs.
-func (_u *UserUpdate) AddAdminProblemSetIDs(ids ...int64) *UserUpdate {
-	_u.mutation.AddAdminProblemSetIDs(ids...)
+// AddProblemSetManagerIDs adds the "problem_set_manager" edge to the ProblemSetManager entity by IDs.
+func (_u *UserUpdate) AddProblemSetManagerIDs(ids ...int64) *UserUpdate {
+	_u.mutation.AddProblemSetManagerIDs(ids...)
 	return _u
 }
 
-// AddAdminProblemSets adds the "admin_problem_sets" edges to the AdminProblemSet entity.
-func (_u *UserUpdate) AddAdminProblemSets(v ...*AdminProblemSet) *UserUpdate {
+// AddProblemSetManager adds the "problem_set_manager" edges to the ProblemSetManager entity.
+func (_u *UserUpdate) AddProblemSetManager(v ...*ProblemSetManager) *UserUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddAdminProblemSetIDs(ids...)
+	return _u.AddProblemSetManagerIDs(ids...)
 }
 
-// AddProblemSetUserIDs adds the "problem_set_users" edge to the ProblemSet_User entity by IDs.
-func (_u *UserUpdate) AddProblemSetUserIDs(ids ...int64) *UserUpdate {
-	_u.mutation.AddProblemSetUserIDs(ids...)
+// AddCompetitorListIDs adds the "competitor_list" edge to the Competitor_List entity by IDs.
+func (_u *UserUpdate) AddCompetitorListIDs(ids ...int64) *UserUpdate {
+	_u.mutation.AddCompetitorListIDs(ids...)
 	return _u
 }
 
-// AddProblemSetUsers adds the "problem_set_users" edges to the ProblemSet_User entity.
-func (_u *UserUpdate) AddProblemSetUsers(v ...*ProblemSet_User) *UserUpdate {
+// AddCompetitorList adds the "competitor_list" edges to the Competitor_List entity.
+func (_u *UserUpdate) AddCompetitorList(v ...*Competitor_List) *UserUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddProblemSetUserIDs(ids...)
+	return _u.AddCompetitorListIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -231,46 +231,46 @@ func (_u *UserUpdate) RemoveAnnouncements(v ...*Announcement) *UserUpdate {
 	return _u.RemoveAnnouncementIDs(ids...)
 }
 
-// ClearAdminProblemSets clears all "admin_problem_sets" edges to the AdminProblemSet entity.
-func (_u *UserUpdate) ClearAdminProblemSets() *UserUpdate {
-	_u.mutation.ClearAdminProblemSets()
+// ClearProblemSetManager clears all "problem_set_manager" edges to the ProblemSetManager entity.
+func (_u *UserUpdate) ClearProblemSetManager() *UserUpdate {
+	_u.mutation.ClearProblemSetManager()
 	return _u
 }
 
-// RemoveAdminProblemSetIDs removes the "admin_problem_sets" edge to AdminProblemSet entities by IDs.
-func (_u *UserUpdate) RemoveAdminProblemSetIDs(ids ...int64) *UserUpdate {
-	_u.mutation.RemoveAdminProblemSetIDs(ids...)
+// RemoveProblemSetManagerIDs removes the "problem_set_manager" edge to ProblemSetManager entities by IDs.
+func (_u *UserUpdate) RemoveProblemSetManagerIDs(ids ...int64) *UserUpdate {
+	_u.mutation.RemoveProblemSetManagerIDs(ids...)
 	return _u
 }
 
-// RemoveAdminProblemSets removes "admin_problem_sets" edges to AdminProblemSet entities.
-func (_u *UserUpdate) RemoveAdminProblemSets(v ...*AdminProblemSet) *UserUpdate {
+// RemoveProblemSetManager removes "problem_set_manager" edges to ProblemSetManager entities.
+func (_u *UserUpdate) RemoveProblemSetManager(v ...*ProblemSetManager) *UserUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveAdminProblemSetIDs(ids...)
+	return _u.RemoveProblemSetManagerIDs(ids...)
 }
 
-// ClearProblemSetUsers clears all "problem_set_users" edges to the ProblemSet_User entity.
-func (_u *UserUpdate) ClearProblemSetUsers() *UserUpdate {
-	_u.mutation.ClearProblemSetUsers()
+// ClearCompetitorList clears all "competitor_list" edges to the Competitor_List entity.
+func (_u *UserUpdate) ClearCompetitorList() *UserUpdate {
+	_u.mutation.ClearCompetitorList()
 	return _u
 }
 
-// RemoveProblemSetUserIDs removes the "problem_set_users" edge to ProblemSet_User entities by IDs.
-func (_u *UserUpdate) RemoveProblemSetUserIDs(ids ...int64) *UserUpdate {
-	_u.mutation.RemoveProblemSetUserIDs(ids...)
+// RemoveCompetitorListIDs removes the "competitor_list" edge to Competitor_List entities by IDs.
+func (_u *UserUpdate) RemoveCompetitorListIDs(ids ...int64) *UserUpdate {
+	_u.mutation.RemoveCompetitorListIDs(ids...)
 	return _u
 }
 
-// RemoveProblemSetUsers removes "problem_set_users" edges to ProblemSet_User entities.
-func (_u *UserUpdate) RemoveProblemSetUsers(v ...*ProblemSet_User) *UserUpdate {
+// RemoveCompetitorList removes "competitor_list" edges to Competitor_List entities.
+func (_u *UserUpdate) RemoveCompetitorList(v ...*Competitor_List) *UserUpdate {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveProblemSetUserIDs(ids...)
+	return _u.RemoveCompetitorListIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -484,28 +484,28 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.AdminProblemSetsCleared() {
+	if _u.mutation.ProblemSetManagerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.AdminProblemSetsTable,
-			Columns: []string{user.AdminProblemSetsColumn},
+			Table:   user.ProblemSetManagerTable,
+			Columns: []string{user.ProblemSetManagerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedAdminProblemSetsIDs(); len(nodes) > 0 && !_u.mutation.AdminProblemSetsCleared() {
+	if nodes := _u.mutation.RemovedProblemSetManagerIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetManagerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.AdminProblemSetsTable,
-			Columns: []string{user.AdminProblemSetsColumn},
+			Table:   user.ProblemSetManagerTable,
+			Columns: []string{user.ProblemSetManagerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -513,15 +513,15 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.AdminProblemSetsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProblemSetManagerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.AdminProblemSetsTable,
-			Columns: []string{user.AdminProblemSetsColumn},
+			Table:   user.ProblemSetManagerTable,
+			Columns: []string{user.ProblemSetManagerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -529,28 +529,28 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ProblemSetUsersCleared() {
+	if _u.mutation.CompetitorListCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ProblemSetUsersTable,
-			Columns: []string{user.ProblemSetUsersColumn},
+			Table:   user.CompetitorListTable,
+			Columns: []string{user.CompetitorListColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedProblemSetUsersIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetUsersCleared() {
+	if nodes := _u.mutation.RemovedCompetitorListIDs(); len(nodes) > 0 && !_u.mutation.CompetitorListCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ProblemSetUsersTable,
-			Columns: []string{user.ProblemSetUsersColumn},
+			Table:   user.CompetitorListTable,
+			Columns: []string{user.CompetitorListColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -558,15 +558,15 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ProblemSetUsersIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.CompetitorListIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ProblemSetUsersTable,
-			Columns: []string{user.ProblemSetUsersColumn},
+			Table:   user.CompetitorListTable,
+			Columns: []string{user.CompetitorListColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -695,34 +695,34 @@ func (_u *UserUpdateOne) AddAnnouncements(v ...*Announcement) *UserUpdateOne {
 	return _u.AddAnnouncementIDs(ids...)
 }
 
-// AddAdminProblemSetIDs adds the "admin_problem_sets" edge to the AdminProblemSet entity by IDs.
-func (_u *UserUpdateOne) AddAdminProblemSetIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.AddAdminProblemSetIDs(ids...)
+// AddProblemSetManagerIDs adds the "problem_set_manager" edge to the ProblemSetManager entity by IDs.
+func (_u *UserUpdateOne) AddProblemSetManagerIDs(ids ...int64) *UserUpdateOne {
+	_u.mutation.AddProblemSetManagerIDs(ids...)
 	return _u
 }
 
-// AddAdminProblemSets adds the "admin_problem_sets" edges to the AdminProblemSet entity.
-func (_u *UserUpdateOne) AddAdminProblemSets(v ...*AdminProblemSet) *UserUpdateOne {
+// AddProblemSetManager adds the "problem_set_manager" edges to the ProblemSetManager entity.
+func (_u *UserUpdateOne) AddProblemSetManager(v ...*ProblemSetManager) *UserUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddAdminProblemSetIDs(ids...)
+	return _u.AddProblemSetManagerIDs(ids...)
 }
 
-// AddProblemSetUserIDs adds the "problem_set_users" edge to the ProblemSet_User entity by IDs.
-func (_u *UserUpdateOne) AddProblemSetUserIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.AddProblemSetUserIDs(ids...)
+// AddCompetitorListIDs adds the "competitor_list" edge to the Competitor_List entity by IDs.
+func (_u *UserUpdateOne) AddCompetitorListIDs(ids ...int64) *UserUpdateOne {
+	_u.mutation.AddCompetitorListIDs(ids...)
 	return _u
 }
 
-// AddProblemSetUsers adds the "problem_set_users" edges to the ProblemSet_User entity.
-func (_u *UserUpdateOne) AddProblemSetUsers(v ...*ProblemSet_User) *UserUpdateOne {
+// AddCompetitorList adds the "competitor_list" edges to the Competitor_List entity.
+func (_u *UserUpdateOne) AddCompetitorList(v ...*Competitor_List) *UserUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddProblemSetUserIDs(ids...)
+	return _u.AddCompetitorListIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -793,46 +793,46 @@ func (_u *UserUpdateOne) RemoveAnnouncements(v ...*Announcement) *UserUpdateOne 
 	return _u.RemoveAnnouncementIDs(ids...)
 }
 
-// ClearAdminProblemSets clears all "admin_problem_sets" edges to the AdminProblemSet entity.
-func (_u *UserUpdateOne) ClearAdminProblemSets() *UserUpdateOne {
-	_u.mutation.ClearAdminProblemSets()
+// ClearProblemSetManager clears all "problem_set_manager" edges to the ProblemSetManager entity.
+func (_u *UserUpdateOne) ClearProblemSetManager() *UserUpdateOne {
+	_u.mutation.ClearProblemSetManager()
 	return _u
 }
 
-// RemoveAdminProblemSetIDs removes the "admin_problem_sets" edge to AdminProblemSet entities by IDs.
-func (_u *UserUpdateOne) RemoveAdminProblemSetIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.RemoveAdminProblemSetIDs(ids...)
+// RemoveProblemSetManagerIDs removes the "problem_set_manager" edge to ProblemSetManager entities by IDs.
+func (_u *UserUpdateOne) RemoveProblemSetManagerIDs(ids ...int64) *UserUpdateOne {
+	_u.mutation.RemoveProblemSetManagerIDs(ids...)
 	return _u
 }
 
-// RemoveAdminProblemSets removes "admin_problem_sets" edges to AdminProblemSet entities.
-func (_u *UserUpdateOne) RemoveAdminProblemSets(v ...*AdminProblemSet) *UserUpdateOne {
+// RemoveProblemSetManager removes "problem_set_manager" edges to ProblemSetManager entities.
+func (_u *UserUpdateOne) RemoveProblemSetManager(v ...*ProblemSetManager) *UserUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveAdminProblemSetIDs(ids...)
+	return _u.RemoveProblemSetManagerIDs(ids...)
 }
 
-// ClearProblemSetUsers clears all "problem_set_users" edges to the ProblemSet_User entity.
-func (_u *UserUpdateOne) ClearProblemSetUsers() *UserUpdateOne {
-	_u.mutation.ClearProblemSetUsers()
+// ClearCompetitorList clears all "competitor_list" edges to the Competitor_List entity.
+func (_u *UserUpdateOne) ClearCompetitorList() *UserUpdateOne {
+	_u.mutation.ClearCompetitorList()
 	return _u
 }
 
-// RemoveProblemSetUserIDs removes the "problem_set_users" edge to ProblemSet_User entities by IDs.
-func (_u *UserUpdateOne) RemoveProblemSetUserIDs(ids ...int64) *UserUpdateOne {
-	_u.mutation.RemoveProblemSetUserIDs(ids...)
+// RemoveCompetitorListIDs removes the "competitor_list" edge to Competitor_List entities by IDs.
+func (_u *UserUpdateOne) RemoveCompetitorListIDs(ids ...int64) *UserUpdateOne {
+	_u.mutation.RemoveCompetitorListIDs(ids...)
 	return _u
 }
 
-// RemoveProblemSetUsers removes "problem_set_users" edges to ProblemSet_User entities.
-func (_u *UserUpdateOne) RemoveProblemSetUsers(v ...*ProblemSet_User) *UserUpdateOne {
+// RemoveCompetitorList removes "competitor_list" edges to Competitor_List entities.
+func (_u *UserUpdateOne) RemoveCompetitorList(v ...*Competitor_List) *UserUpdateOne {
 	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveProblemSetUserIDs(ids...)
+	return _u.RemoveCompetitorListIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1076,28 +1076,28 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.AdminProblemSetsCleared() {
+	if _u.mutation.ProblemSetManagerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.AdminProblemSetsTable,
-			Columns: []string{user.AdminProblemSetsColumn},
+			Table:   user.ProblemSetManagerTable,
+			Columns: []string{user.ProblemSetManagerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedAdminProblemSetsIDs(); len(nodes) > 0 && !_u.mutation.AdminProblemSetsCleared() {
+	if nodes := _u.mutation.RemovedProblemSetManagerIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetManagerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.AdminProblemSetsTable,
-			Columns: []string{user.AdminProblemSetsColumn},
+			Table:   user.ProblemSetManagerTable,
+			Columns: []string{user.ProblemSetManagerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1105,15 +1105,15 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.AdminProblemSetsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProblemSetManagerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.AdminProblemSetsTable,
-			Columns: []string{user.AdminProblemSetsColumn},
+			Table:   user.ProblemSetManagerTable,
+			Columns: []string{user.ProblemSetManagerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(adminproblemset.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(problemsetmanager.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1121,28 +1121,28 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ProblemSetUsersCleared() {
+	if _u.mutation.CompetitorListCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ProblemSetUsersTable,
-			Columns: []string{user.ProblemSetUsersColumn},
+			Table:   user.CompetitorListTable,
+			Columns: []string{user.CompetitorListColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedProblemSetUsersIDs(); len(nodes) > 0 && !_u.mutation.ProblemSetUsersCleared() {
+	if nodes := _u.mutation.RemovedCompetitorListIDs(); len(nodes) > 0 && !_u.mutation.CompetitorListCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ProblemSetUsersTable,
-			Columns: []string{user.ProblemSetUsersColumn},
+			Table:   user.CompetitorListTable,
+			Columns: []string{user.CompetitorListColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1150,15 +1150,15 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.ProblemSetUsersIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.CompetitorListIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ProblemSetUsersTable,
-			Columns: []string{user.ProblemSetUsersColumn},
+			Table:   user.CompetitorListTable,
+			Columns: []string{user.CompetitorListColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(problemset_user.FieldID, field.TypeInt64),
+				IDSpec: sqlgraph.NewFieldSpec(competitor_list.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

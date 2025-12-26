@@ -63,6 +63,7 @@
           <div class="problem-content-placeholder">
             <h1>{{ problemData.title }}</h1>
             <div class="meta-info">
+              <span>作者: {{ problemData.creator || 'Admin' }}</span> 
               <span>时间限制: {{ problemData.timeLimit }}</span>
               <span>内存限制: {{ problemData.memoryLimit }}</span>
             </div>

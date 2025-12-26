@@ -15,3 +15,51 @@ services:
       - ./data/mysql:/var/lib/mysql
       - ./data/mysql_conf:/etc/mysql/mysql.conf.d
     container_name: cascade_oj_mysql
+    networks:
+      - backend-network
+
+  cascade_redis:
+    image: redis:7.0
+    restart: always
+    ports:
+      - "6379:6379"
+    container_name: cascade_oj_redis
+    networks:
+      - backend-network
+
+  cascade_rabbitmq:
+    image: rabbitmq:3.11-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: cascade_oj
+      RABBITMQ_DEFAULT_PASS: 123456
+    container_name: cascade_oj_rabbitmq
+    networks:
+      - backend-network
+
+  # https://docs.goj.ac/cn/configuration
+  cascade_go_judge:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: cascade-oj/go-judge:latest
+    restart: always
+    ports:
+      - "5051:5051"
+    environment:
+      - ES_ENABLE_GRPC=true
+    privileged: true
+    shm_size: 512m
+    volumes:
+      - ./cases:/cases
+    container_name: cascade_oj_go_judge
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+    name: cascade-oj-backend-network

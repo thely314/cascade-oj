@@ -11,10 +11,14 @@ services:
     restart: unless-stopped
     depends_on:
       - cascade_mysql
+      - cascade_rabbitmq
     ports:
       - "8080:8080"
     volumes:
       - ./config/gateway:/data/conf
+    container_name: cascade_oj_gateway
+    networks:
+      - backend-network
 
   public:
     build:
@@ -30,7 +34,70 @@ services:
       - "8100:8000"
     volumes:
       - ./config/public:/data/conf
+    container_name: cascade_oj_public
+    networks:
+      - backend-network
+
+  user:
+    build:
+      context: ./
+      dockerfile: app/services/user/Dockerfile
+      args: 
+        VERSION : 0.1.0
+    image: cascade-oj/user:latest
+    restart: unless-stopped
+    depends_on:
+      - cascade_mysql
+      - cascade_rabbitmq
+      - cascade_redis
+    ports:
+      - "8200:8000"
+    volumes:
+      - ./config/user:/data/conf
+    container_name: cascade_oj_user
+    networks:
+      - backend-network
+
+  judge:
+    build:
+      context: ./
+      dockerfile: app/services/judge/Dockerfile
+      args: 
+        VERSION : 0.1.0
+    image: cascade-oj/judge:latest
+    restart: unless-stopped
+    depends_on:
+      - cascade_mysql
+      - cascade_rabbitmq
+      - cascade_go_judge
+    volumes:
+      - ./config/judge:/data/conf
+      - ./cases:/cases
+    container_name: cascade_oj_judge
+    networks:
+      - backend-network
+
+  admin:
+    build:
+      context: ./
+      dockerfile: app/services/admin/Dockerfile
+      args: 
+        VERSION : 0.1.0
+    image: cascade-oj/admin:latest
+    restart: unless-stopped
+    depends_on:
+      - cascade_mysql
+      - cascade_rabbitmq
+      - cascade_redis
+    ports:
+      - "8300:8000"
+    volumes:
+      - ./config/admin:/data/conf
+    container_name: cascade_oj_admin
+    networks:
+      - backend-network
 
 networks:
-  default:
+  backend-network:
     driver: bridge
+    name: cascade-oj-backend-network

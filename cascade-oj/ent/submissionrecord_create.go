@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"cascade-oj/ent/casegroupresult"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset"
@@ -46,12 +47,6 @@ func (_c *SubmissionRecordCreate) SetNillableProblemSetID(v *int64) *SubmissionR
 	if v != nil {
 		_c.SetProblemSetID(*v)
 	}
-	return _c
-}
-
-// SetResult sets the "result" field.
-func (_c *SubmissionRecordCreate) SetResult(v submissionrecord.Result) *SubmissionRecordCreate {
-	_c.mutation.SetResult(v)
 	return _c
 }
 
@@ -102,6 +97,21 @@ func (_c *SubmissionRecordCreate) SetProblem(v *Problem) *SubmissionRecordCreate
 // SetProblemSet sets the "problem_set" edge to the ProblemSet entity.
 func (_c *SubmissionRecordCreate) SetProblemSet(v *ProblemSet) *SubmissionRecordCreate {
 	return _c.SetProblemSetID(v.ID)
+}
+
+// AddCaseGroupResultIDs adds the "case_group_results" edge to the CaseGroupResult entity by IDs.
+func (_c *SubmissionRecordCreate) AddCaseGroupResultIDs(ids ...int64) *SubmissionRecordCreate {
+	_c.mutation.AddCaseGroupResultIDs(ids...)
+	return _c
+}
+
+// AddCaseGroupResults adds the "case_group_results" edges to the CaseGroupResult entity.
+func (_c *SubmissionRecordCreate) AddCaseGroupResults(v ...*CaseGroupResult) *SubmissionRecordCreate {
+	ids := make([]int64, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddCaseGroupResultIDs(ids...)
 }
 
 // Mutation returns the SubmissionRecordMutation object of the builder.
@@ -167,14 +177,6 @@ func (_c *SubmissionRecordCreate) check() error {
 			return &ValidationError{Name: "problem_id", err: fmt.Errorf(`ent: validator failed for field "SubmissionRecord.problem_id": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.Result(); !ok {
-		return &ValidationError{Name: "result", err: errors.New(`ent: missing required field "SubmissionRecord.result"`)}
-	}
-	if v, ok := _c.mutation.Result(); ok {
-		if err := submissionrecord.ResultValidator(v); err != nil {
-			return &ValidationError{Name: "result", err: fmt.Errorf(`ent: validator failed for field "SubmissionRecord.result": %w`, err)}
-		}
-	}
 	if _, ok := _c.mutation.SubmissionTime(); !ok {
 		return &ValidationError{Name: "submission_time", err: errors.New(`ent: missing required field "SubmissionRecord.submission_time"`)}
 	}
@@ -223,10 +225,6 @@ func (_c *SubmissionRecordCreate) createSpec() (*SubmissionRecord, *sqlgraph.Cre
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
-	}
-	if value, ok := _c.mutation.Result(); ok {
-		_spec.SetField(submissionrecord.FieldResult, field.TypeEnum, value)
-		_node.Result = value
 	}
 	if value, ok := _c.mutation.SubmissionTime(); ok {
 		_spec.SetField(submissionrecord.FieldSubmissionTime, field.TypeTime, value)
@@ -285,6 +283,22 @@ func (_c *SubmissionRecordCreate) createSpec() (*SubmissionRecord, *sqlgraph.Cre
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.ProblemSetID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.CaseGroupResultsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   submissionrecord.CaseGroupResultsTable,
+			Columns: []string{submissionrecord.CaseGroupResultsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(casegroupresult.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -8,9 +8,9 @@
 			<div class="contest-grid">
 				<div class="left">
 					<div class="problem-list">
-						<router-link v-for="p in problems" :key="p.code" class="card problem-item card-link" :to="`/competition/${idStr.value}/problem/${p.code}`">
-							<h3>{{ p.code }}. {{ p.title }}</h3>
-							<p>{{ p.desc }}</p>
+							<router-link v-for="p in problems" :key="p.id" class="card problem-item card-link" :to="`/competition/${idStr.value}/problem/${p.id}`">
+								<h3>{{ p.title }}</h3>
+								<p>时间限制：{{ p.timeLimitMs }}ms · 内存限制：{{ p.memoryLimitMb }}MB</p>
 						</router-link>
 					</div>
 				</div>
@@ -26,21 +26,38 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import Rank from '../rank/rank.vue'
+import { getContest, getContestProblems, type GetSingleContestReply, type ProblemMetadata } from '../../api/contest'
 
 const route = useRoute()
 const id = computed(() => String(route.params.id ?? '未知'))
 // 字符串形式，用于在表达式中安全构建 URL
 const idStr = computed(() => String(id.value))
 
-const problems = ref([
-	{ code: 'A', title: 'Two Sums', desc: '简单 - 哈希表' },
-	{ code: 'B', title: 'Reverse String', desc: '简单 - 字符串操作' },
-	{ code: 'C', title: 'Linked List Cycle', desc: '中等 - 链表' },
-	{ code: 'D', title: 'Binary Search', desc: '中等 - 搜索' },
-	{ code: 'E', title: 'Graph Paths', desc: '困难 - 图论' }
+const contest = ref<GetSingleContestReply | null>(null)
+// 预置一个静态示例题目，后续可删除
+const problems = ref<ProblemMetadata[]>([
+	{ id: 'example', title: '示例题目（静态）', timeLimitMs: 1000, memoryLimitMb: 256 }
 ])
+const loading = ref(false)
+const error = ref<string | null>(null)
+
+onMounted(async () => {
+	loading.value = true
+	try {
+		const [contestRes, problemsRes] = await Promise.all([
+			getContest(idStr.value),
+			getContestProblems(idStr.value),
+		])
+		contest.value = contestRes
+		problems.value = [problems.value[0], ...problemsRes.problems]
+	} catch (e: any) {
+		error.value = e?.message ?? '加载比赛信息失败'
+	} finally {
+		loading.value = false
+	}
+})
 </script>
 
 <style scoped>
