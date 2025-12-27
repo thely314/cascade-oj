@@ -19,16 +19,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in list" :key="item.submission_uuid">
+        <tr v-for="item in list" :key="item.submissionUuid">
           <!-- 状态：根据不同结果显示不同颜色 -->
           <td>
             <span :class="getStatusClass(item.status)">{{ item.status }}</span>
           </td>
           <td>{{ item.score }}</td>
           <td>{{ item.language || '-' }}</td>
-          <td>{{ item.time_cost ? item.time_cost + 'ms' : '-' }}</td>
-          <td>{{ item.memory_cost ? (item.memory_cost / 1024).toFixed(1) + 'MB' : '-' }}</td>
-          <td class="time-col">{{ formatTime(item.submit_time) }}</td>
+          <td>{{ item.timeCost ? item.timeCost + 'ms' : '-' }}</td>
+          <td>{{ item.memoryCost ? (item.memoryCost / 1024).toFixed(1) + 'MB' : '-' }}</td>
+          <td class="time-col">{{ formatTime(item.submitTime) }}</td>
         </tr>
       </tbody>
     </table>
@@ -52,6 +52,8 @@ const loadData = async () => {
   loading.value = true;
   try {
     list.value = await fetchSubmissions(props.contestId, props.problemId);
+    // debug
+    // console.log("加载提交记录:", list);
   } catch (e) {
     console.error(e);
   } finally {
@@ -65,8 +67,8 @@ defineExpose({
 });
 
 const getStatusClass = (status: string) => {
-  if (status === 'Accepted') return 'status-ac';
-  if (status === 'Running') return 'status-run';
+  if (status === 'accepted') return 'status-ac';
+  if (status === 'pending') return 'status-run';
   return 'status-wa';
 };
 

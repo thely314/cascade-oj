@@ -11,8 +11,8 @@
           <button @click="showResultModal = false">✕</button>
         </div>
         <div class="modal-body">
-          <div class="stat-item"><span>时间:</span> {{ submissionResult?.time || '-' }}</div>
-          <div class="stat-item"><span>内存:</span> {{ submissionResult?.memory || '-' }}</div>
+          <div class="stat-item"><span>时间:</span> {{ submissionResult?.timeCost || '-' }}</div>
+          <div class="stat-item"><span>内存:</span> {{ submissionResult?.memoryCost || '-' }}</div>
         </div>
         <div class="modal-footer">
           <button class="btn-primary" @click="showResultModal = false">确定</button>
@@ -109,7 +109,7 @@
             </button>         
 
             <!-- 页码显示 -->
-            <span class="page-num">{{ problemData.id }} / {{ totalProblems }}</span>
+            <span class="page-num">{{ currentIndex }} / {{ totalProblems }}</span>
 
             <!-- 下一题按钮 -->
             <button 
@@ -249,7 +249,8 @@ const {
   leftWidth, startDrag, stopDrag,
   handleTestRun, handleSubmit,
   showProblemDrawer, problemList,
-  jumpToProblem, handlePrevProblem, handleNextProblem,isFirstProblem, isLastProblem, totalProblems,
+  jumpToProblem, handlePrevProblem, handleNextProblem,
+  currentIndex, isFirstProblem, isLastProblem, totalProblems,
   showResultModal, submissionResult,
   runStats,
   contestId,

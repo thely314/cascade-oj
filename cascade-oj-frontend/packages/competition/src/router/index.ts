@@ -4,7 +4,6 @@ import About from '../pages/about/about.vue'
 import ErrorPage from '../pages/error/error.vue'
 import ContestsList from '../pages/contests-list/contests-list.vue'
 import Contest from '../pages/contest/contest.vue'
-import Login from '../../../login/src/views/AuthPage.vue'
 
 const routes = [
     { path: '/', redirect: '/contest/1/problem/1' },
@@ -12,7 +11,7 @@ const routes = [
     { path: '/competition', name: 'ContestsList', component: ContestsList },
     { path: '/competition/:id', name: 'Contest', component: Contest },
     { path: '/about', name: 'About', component: About },
-    { path: '/login', name: 'Login', component: Login, meta: { hideNav: true } },
+    { path: '/login', name: 'Login', component: () => import('../../../login/src/views/AuthPage.vue'), meta: { hideNav: true } },
     {
         path: '/contest/:contestId/problem/:id', 
         name: 'ProblemDetail',

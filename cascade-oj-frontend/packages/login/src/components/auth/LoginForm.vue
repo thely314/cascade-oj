@@ -85,10 +85,8 @@ const handleLogin = async () => {
   try {
     const encryptedPwd = md5.md5(form.password);
     
-    // TODO: 确认登录接口的准确 URL 和参数名
-    // 假设接口是 POST /auth/login
-    const res = await request.post('/auth/login', {
-      username: form.username,
+    const res = await request.post('/public/login', {
+      usernameOrEmail: form.username,
       password: encryptedPwd
     });
 

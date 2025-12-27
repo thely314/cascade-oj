@@ -47,8 +47,8 @@ export function useProblemDetail() {
   const submissionResult = ref<SubmissionResult | null>(null);
 
   // 支持的语言列表
-  const supportedLanguages = ['C++', 'Java', 'Python3'];
-  const currentLanguage = ref('C++');
+  const supportedLanguages = ['c', 'c++11', 'c++11(O2)'];
+  const currentLanguage = ref('c');
 
   // 测试运行的详细结果状态
   const runStats = reactive({
@@ -72,9 +72,9 @@ export function useProblemDetail() {
       try {
         const res = await apiFunc(uuid);
         
-        // 判断是否结束 (后端状态不是 Running 或 Pending)
+        // 判断是否结束 (后端状态不是 pending 或 judging)
         // 注意：根据后端实际返回的状态字符串调整这里
-        if (res.status !== 'Running' && res.status !== 'Pending') {
+        if (res.status !== 'pending' && res.status !== 'judging') {
           clearInterval(intervalId); // 停止轮询
           onSuccess(res); // 回调成功
         }
@@ -113,8 +113,14 @@ export function useProblemDetail() {
   // [修改点1] filesMap 硬编码初始化 (仿洛谷/CF风格)
   // 既然后端暂时不给模板，这里写死默认状态
   const filesMap = reactive<Record<string, CodeFile[]>>({
-    'C++': [
-      { name: 'main.cpp', lang: 'cpp', content: '', isReadOnly: false }
+    'c': [
+      { name: 'main.c', lang: 'c', content: '', isReadOnly: false }
+    ],
+    'c++11': [
+      { name: 'main.cpp', lang: 'c++11', content: '', isReadOnly: false }
+    ],
+    'c++11(O2)': [
+      { name: 'main.cpp', lang: 'c++11(O2)', content: '', isReadOnly: false }
     ],
     'Java': [
       { name: 'Main.java', lang: 'java', content: 'public class Main {\n    public static void main(String[] args) {\n\n    }\n}', isReadOnly: false }
@@ -237,6 +243,8 @@ export function useProblemDetail() {
 
   // 新增一个 map 来存储 序号 -> 真实ID 的映射
   const problemIndexMap = reactive<Record<string, string>>({});
+  // 反向映射
+  const problemIdToIndex = reactive<Record<string, string>>({});
 
   // 加载题目列表
   const loadProblemList = async () => {
@@ -249,6 +257,7 @@ export function useProblemDetail() {
         // 假设 URL 里的 1 代表数组第 0 个
         const routeIndex = String(index + 1); 
         problemIndexMap[routeIndex] = p.id;
+        problemIdToIndex[p.id] = routeIndex;
       });
       
       // 如果当前路由参数是序号，转化为真实 ID 后再加载详情
@@ -283,22 +292,27 @@ export function useProblemDetail() {
 
   // 假设总题数
   const totalProblems = ref(8); 
+  const currentIndex = computed(() => Number(problemIdToIndex[problemData.value.id]) || 1);
 
-  const isFirstProblem = computed(() => Number(problemData.value.id) <= 1);
-  const isLastProblem = computed(() => Number(problemData.value.id) >= totalProblems.value);
+  const isFirstProblem = computed(() => currentIndex.value <= 1);
+  const isLastProblem = computed(() => currentIndex.value >= totalProblems.value);
 
   // 上一题
   const handlePrevProblem = () => {
     if (isFirstProblem.value) return;
-    const currentId = Number.parseInt(problemData.value.id);
-    jumpToProblem(String(currentId - 1));
+    // const currentId = Number.parseInt(problemData.value.id);
+    // const currentIndex = Number.parseInt(problemIdToIndex[problemData.value.id]);
+    // jumpToProblem(String(currentId - 1));
+    jumpToProblem(problemIndexMap[String(currentIndex.value - 1)]);
   };
 
   // 下一题
   const handleNextProblem = () => {
     if (isLastProblem.value) return;
-    const currentId = Number.parseInt(problemData.value.id);
-    jumpToProblem(String(currentId + 1));
+    // const currentId = Number.parseInt(problemData.value.id);
+    // const currentIndex = Number.parseInt(problemIdToIndex[problemData.value.id]);
+    // jumpToProblem(String(currentId + 1));
+    jumpToProblem(problemIndexMap[String(currentIndex.value + 1)]);
   };
 
   // 测试运行 (集成轮询)
@@ -333,18 +347,17 @@ export function useProblemDetail() {
           (finalRes) => {
             // 轮询结束，更新 UI
             isRunning.value = false;
-            runStats.time = finalRes.time || '0ms';
-            runStats.memory = finalRes.memory || '0KB';
-            runStats.stderr = finalRes.errorMsg || ''; // 这里假设 errorMsg 存的是 stderr
-            
-            if (finalRes.status === 'Compile Error') {
-               playgroundOutput.value = `=== 编译错误 ===\n${finalRes.errorMsg}`;
+            runStats.time = finalRes.timeCost || '0ms';
+            runStats.memory = finalRes.memoryCost || '0KB';
+            runStats.stderr = finalRes.stderr || ''; // 这里假设 errorMsg 存的是 stderr
+            if (finalRes.status === 'compile_error') {
+              playgroundOutput.value = `=== 编译错误 ===\n${finalRes.stderr}`;
             } else {
-              runStats.time = res.time || '0ms';
-              runStats.memory = res.memory || '0KB';
+              runStats.time = finalRes.timeCost || '0ms';
+              runStats.memory = finalRes.memoryCost || '0KB';
               // 填充 stderr 注：api/problem.ts 的 submitCode 适配器里，把 backendData.stderr 映射到了 errorMsg，所以这里取 res.errorMsg
-              runStats.stderr = res.errorMsg || ''; 
-               playgroundOutput.value = finalRes.output || '程序无输出';
+              runStats.stderr = finalRes.stderr || ''; 
+              playgroundOutput.value = finalRes.output || '程序无输出';
             }
           },
           (err) => {
@@ -502,7 +515,8 @@ export function useProblemDetail() {
     leftWidth, startDrag, stopDrag,
     handleTestRun, handleSubmit,
     showProblemDrawer, problemList,
-    jumpToProblem, handlePrevProblem, handleNextProblem,isFirstProblem, isLastProblem, totalProblems,
+    jumpToProblem, handlePrevProblem, handleNextProblem,
+    currentIndex, isFirstProblem, isLastProblem, totalProblems,
     showResultModal, submissionResult,
     runStats,
     contestId,

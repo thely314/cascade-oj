@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
-import AuthPage from '../views/AuthPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
-  { path: '/', component: AuthPage }, // 根路径显示认证页面（登录/注册）
+  { path: '/', component: () => import('../views/AuthPage.vue') }, // 根路径显示认证页面（登录/注册）
 ];
 
 const router = createRouter({

@@ -121,9 +121,7 @@ const handleRegister = async () => {
   try {
     const encryptedPwd = md5.md5(form.password);
     
-    // TODO: 确认注册接口 URL
-    // 你的 user.proto 里的 RegisterRequest 参数不对，这里按常规写
-    await request.post('/auth/register', {
+    await request.post('/public/signup', {
       username: form.username,
       email: form.email,
       password: encryptedPwd

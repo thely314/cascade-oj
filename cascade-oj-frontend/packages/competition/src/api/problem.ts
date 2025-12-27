@@ -22,11 +22,11 @@ export interface ProblemDetail {
 
 export interface SubmissionResult {
   uuid?: string;
-  status: string; // 原本是'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Compile Error' | 'Running' | 'System Error';
-  time?: string;
-  memory?: string;
+  status: string; // 原本是'accepted' | 'wrong_answer' | 'time_limit_exceeded' | 'compile_error' | 'running' | 'system_error';
+  timeCost?: string;
+  memoryCost?: string;
   output?: string; 
-  errorMsg?: string;
+  stderr?: string;
 }
 
 export interface ProblemSimple {
@@ -44,12 +44,12 @@ export interface SubmitRequest {
 }
 
 export interface BackendSubmissionMetadata {
-  submission_uuid: string;
-  problem_id: number;
-  user_id: number;
+  submissionUuid: string;
+  problemId: number;
+  userId: number;
   status: string; 
   score: number;
-  submit_time: any; 
+  submitTime: any; 
 }
 
 export interface BackendSubmissionReply {
@@ -57,8 +57,8 @@ export interface BackendSubmissionReply {
   code: string;
   language: string;
   // 修正：proto里是int32，所以这里是number
-  time_cost: number;   
-  memory_cost: number;
+  timeCost: number;   
+  memoryCost: number;
 
   // TODO: 等待后端添加这些字段
   // 队友说 stdout/stderr 被遗漏了，所以这里暂时没有
@@ -71,7 +71,7 @@ export interface BackendSubmissionReply {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // 开关：是否使用模拟数据
-const IS_MOCK = true;
+const IS_MOCK = false;
 
 // --- 3. API 方法 ---
 
@@ -115,8 +115,8 @@ export const fetchProblemDetail = async (id: string): Promise<ProblemDetail> => 
     id: String(backendData.metadata.id),
     title: backendData.metadata.title,
     creator: backendData.creator || 'Admin', 
-    timeLimit: `${backendData.metadata.time_limit_ms}ms`,
-    memoryLimit: `${backendData.metadata.memory_limit_mb}MB`,
+    timeLimit: `${backendData.metadata.timeLimitMs}ms`,
+    memoryLimit: `${backendData.metadata.memoryLimitMb}MB`,
     description: backendData.description,
     codeTemplates: {} // 后端暂无模板，留空
   };
@@ -130,10 +130,10 @@ export const getSelfTestResult = async (uuid: string): Promise<SubmissionResult>
     // 这里简单处理：直接返回成功
     return {
       status: 'Accepted',
-      time: '2ms',
-      memory: '9216KB',
+      timeCost: '2ms',
+      memoryCost: '9216KB',
       output: 'Mock Output: Hello World',
-      errorMsg: ''
+      stderr: ''
     };
   }
 
@@ -147,10 +147,10 @@ export const getSelfTestResult = async (uuid: string): Promise<SubmissionResult>
   
   return {
     status: 'Finished', 
-    time: data.time_cost ? `${data.time_cost}ms` : '0ms',
-    memory: data.memory_cost ? `${data.memory_cost}KB` : '0KB',
+    timeCost: data.timeCost ? `${data.timeCost}ms` : '0ms',
+    memoryCost: data.memoryCost ? `${data.memoryCost}KB` : '0KB',
     output: data.stdout || '',
-    errorMsg: data.stderr || ''
+    stderr: data.stderr || ''
   };
 };
 
@@ -158,7 +158,7 @@ export const getSelfTestResult = async (uuid: string): Promise<SubmissionResult>
 // C. 查询正式提交结果
 export const getSubmissionResult = async (uuid: string): Promise<SubmissionResult> => {
   if (IS_MOCK) {
-    return { status: 'Accepted', time: '12ms', memory: '1.2MB' };
+    return { status: 'Accepted', timeCost: '12ms', memoryCost: '1.2MB' };
   }
 
   const res = await request.get(`/user/submissions/${uuid}`);
@@ -166,10 +166,10 @@ export const getSubmissionResult = async (uuid: string): Promise<SubmissionResul
 
   return {
     status: data.metadata?.status || 'Unknown',
-    time: data.time_cost ? `${data.time_cost}ms` : '0ms',
-    memory: data.memory_cost ? `${data.memory_cost}KB` : '0KB',
+    timeCost: data.timeCost ? `${data.timeCost}ms` : '0ms',
+    memoryCost: data.memoryCost ? `${data.memoryCost}KB` : '0KB',
     output: '', // 正式提交通常不看 output
-    errorMsg: '' // 如果有编译错误，可能在 metadata.status 或其他字段
+    stderr: '' // 如果有编译错误，可能在 metadata.status 或其他字段
   };
 };
 
@@ -185,21 +185,40 @@ export const submitCode = async (data: SubmitRequest): Promise<SubmissionResult>
     };
   }
 
-  const payload = {
-    contest_id: Number(data.contestId),
-    problem_id: Number(data.problemId),
-    code: data.code,
-    language: data.language
-  };
+  let res;
+  if (data.type === 'test') {
+    const payload = {
+      problemId: Number(data.problemId),
+      code: data.code,
+      language: data.language,
+      input: data.input ? data.input : ""
+    };
+    res = await request.post('/user/selftests', payload);
+  } else {
+    const payload = {
+      contestId: Number(data.contestId),
+      problemId: Number(data.problemId),
+      code: data.code,
+      language: data.language,
+    };
+    res = await request.post('/user/submissions', payload);
+  }
+  // const payload = {
+  //   // contest_id: Number(data.contestId),
+  //   problemId: Number(data.problemId),
+  //   code: data.code,
+  //   language: data.language,
+  //   input: data.input ? data.input : ""
+  // };
 
-  const res = await request.post(
-    data.type === 'test' ? '/user/selftests' : '/user/submissions', 
-    payload
-  );
+  // const res = await request.post(
+  //   data.type === 'test' ? '/user/selftests' : '/user/submissions', 
+  //   payload
+  // );
   
   return {
-    uuid: res.data.uuid,
-    status: 'Running', 
+    uuid: res ? res.data.uuid : '',
+    status: 'pending', 
     output: '请求已发送，等待结果...'
   };
 };
@@ -221,7 +240,7 @@ export const fetchProblemList = async (contestId: string): Promise<ProblemSimple
   // 真实接口
   // 注意：GetProblems 需要 contest_id。这里如果做公共题库，需确认 contest_id 传什么
   // 假设暂时获取 ID=1 的比赛题目列表
-  const res = await request.get('/user/contests/${contestId}/problems'); 
+  const res = await request.get(`/user/contests/${contestId}/problems`); 
   return res.data.problems; // 假设返回结构里有 problems 数组
 };
 
@@ -230,17 +249,17 @@ export const fetchProblemList = async (contestId: string): Promise<ProblemSimple
 
 // 提交记录列表项 (对应后端 SubmissionMetadata)
 export interface SubmissionItem {
-  submission_uuid: string;
+  submissionUuid: string;
   status: string;      
-  submit_time: string; // ISO 时间字符串
+  submitTime: string; // ISO 时间字符串
   score: number; 
   //TODO:      
   // 后端 proto 里 GetSubmissionsReply 列表项似乎没有 time/memory/language？
   // 如果没有，暂时只能展示状态。如果有扩展，这里补上。
   // 通常列表页也需要展示语言、耗时、内存，假设后端之后会补，我们先 Mock 出来
   language?: string;
-  time_cost?: number;
-  memory_cost?: number;
+  timeCost?: number;
+  memoryCost?: number;
 }
 
 // 获取提交记录列表
@@ -249,9 +268,9 @@ export const fetchSubmissions = async (contestId: string, problemId: string): Pr
     await delay(300);
     // Mock 数据
     return [
-      { submission_uuid: 'sub-001', status: 'Accepted', score: 100, submit_time: '2023-10-01T12:00:00Z', language: 'C++', time_cost: 12, memory_cost: 1024 },
-      { submission_uuid: 'sub-002', status: 'Wrong Answer', score: 0, submit_time: '2023-10-01T11:55:00Z', language: 'Python3', time_cost: 20, memory_cost: 2048 },
-      { submission_uuid: 'sub-003', status: 'Time Limit Exceeded', score: 0, submit_time: '2023-10-01T11:50:00Z', language: 'Java', time_cost: 1000, memory_cost: 5000 },
+      { submissionUuid: 'sub-001', status: 'Accepted', score: 100, submitTime: '2023-10-01T12:00:00Z', language: 'C++', timeCost: 12, memoryCost: 1024 },
+      { submissionUuid: 'sub-002', status: 'Wrong Answer', score: 0, submitTime: '2023-10-01T11:55:00Z', language: 'Python3', timeCost: 20, memoryCost: 2048 },
+      { submissionUuid: 'sub-003', status: 'Time Limit Exceeded', score: 0, submitTime: '2023-10-01T11:50:00Z', language: 'Java', timeCost: 1000, memoryCost: 5000 },
     ];
   }
 
@@ -259,10 +278,10 @@ export const fetchSubmissions = async (contestId: string, problemId: string): Pr
   // query 参数: problem_id, contest_id
   const res = await request.get('/user/submissions', {
     params: {
-      problem_id: problemId,
-      contest_id: contestId,
+      problemId: problemId,
+      contestId: contestId,
       page: 1,      // 暂时写死第一页
-      page_size: 20
+      pageSize: 20
     }
   });
   
