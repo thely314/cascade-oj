@@ -5,7 +5,7 @@
       <label>用户名或邮箱</label>
       <input 
         type="text" 
-        v-model="form.usernameOrEmail" 
+        v-model="form.username" 
         placeholder="请输入用户名或邮箱" 
         class="input-field"
         required
@@ -43,7 +43,9 @@
       <a href="#" class="forgot-link">忘记密码?</a>
     </div>
     
-    <button type="submit" class="btn-primary">登录</button>
+    <button type="submit" class="btn-primary" :disabled="loading">
+      {{ loading ? '登录中...' : '登录' }}
+    </button>
     
     <div class="or-separator">或者</div>
     
@@ -56,25 +58,63 @@
         <span>GH</span> GitHub 登录 
       </button>
     </div>
+
   </form>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import md5 from 'js-md5';
+import request from '../../utils/request'; 
+
+const router = useRouter();
+const loading = ref(false);
+const showPassword = ref(false);
 
 const form = reactive({
-  usernameOrEmail: '',
+  username: '', 
   password: '',
   remember: false,
 });
 
-const showPassword = ref(false);
+const handleLogin = async () => {
+  if (loading.value) return;
+  loading.value = true;
 
-const handleLogin = () => {
-  console.log('登录提交：', form);
-  const encryptedPwd = md5.md5(form.password);
-  console.log('加密后的密码：', encryptedPwd);
+  try {
+    const encryptedPwd = md5.md5(form.password);
+    
+    // TODO: 确认登录接口的准确 URL 和参数名
+    // 假设接口是 POST /auth/login
+    const res = await request.post('/auth/login', {
+      username: form.username,
+      password: encryptedPwd
+    });
+
+    // 假设后端返回结构: { token: "..." }
+    const token = res.data.token || res.data.data?.token;
+
+    if (token) {
+      // 1. 存储 Token
+      localStorage.setItem('cascade_token', token);
+      
+      // 2. (可选) 存储用户信息
+      // localStorage.setItem('user_info', JSON.stringify(res.data.user));
+
+      // 3. 跳转到比赛主页
+      router.push('/competition'); 
+    } else {
+      alert('登录失败：未获取到 Token');
+    }
+  } catch (e: any) {
+    console.error(e);
+    // 如果后端返回了错误信息，显示出来
+    const msg = e.response?.data?.message || '登录失败，请检查账号密码';
+    alert(msg);
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 

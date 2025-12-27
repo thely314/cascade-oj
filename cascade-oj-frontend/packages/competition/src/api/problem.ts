@@ -71,7 +71,7 @@ export interface BackendSubmissionReply {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // 开关：是否使用模拟数据
-const IS_MOCK = false;
+const IS_MOCK = true;
 
 // --- 3. API 方法 ---
 
@@ -205,7 +205,7 @@ export const submitCode = async (data: SubmitRequest): Promise<SubmissionResult>
 };
 
 // E. 获取简易题目列表
-export const fetchProblemList = async (): Promise<ProblemSimple[]> => {
+export const fetchProblemList = async (contestId: string): Promise<ProblemSimple[]> => {
   if (IS_MOCK) {
     return [
       { id: '1', title: '两数之和' },
@@ -221,6 +221,51 @@ export const fetchProblemList = async (): Promise<ProblemSimple[]> => {
   // 真实接口
   // 注意：GetProblems 需要 contest_id。这里如果做公共题库，需确认 contest_id 传什么
   // 假设暂时获取 ID=1 的比赛题目列表
-  const res = await request.get('/user/contests/1/problems'); 
+  const res = await request.get('/user/contests/${contestId}/problems'); 
   return res.data.problems; // 假设返回结构里有 problems 数组
+};
+
+
+// F. 提交记录相关 
+
+// 提交记录列表项 (对应后端 SubmissionMetadata)
+export interface SubmissionItem {
+  submission_uuid: string;
+  status: string;      
+  submit_time: string; // ISO 时间字符串
+  score: number; 
+  //TODO:      
+  // 后端 proto 里 GetSubmissionsReply 列表项似乎没有 time/memory/language？
+  // 如果没有，暂时只能展示状态。如果有扩展，这里补上。
+  // 通常列表页也需要展示语言、耗时、内存，假设后端之后会补，我们先 Mock 出来
+  language?: string;
+  time_cost?: number;
+  memory_cost?: number;
+}
+
+// 获取提交记录列表
+export const fetchSubmissions = async (contestId: string, problemId: string): Promise<SubmissionItem[]> => {
+  if (IS_MOCK) {
+    await delay(300);
+    // Mock 数据
+    return [
+      { submission_uuid: 'sub-001', status: 'Accepted', score: 100, submit_time: '2023-10-01T12:00:00Z', language: 'C++', time_cost: 12, memory_cost: 1024 },
+      { submission_uuid: 'sub-002', status: 'Wrong Answer', score: 0, submit_time: '2023-10-01T11:55:00Z', language: 'Python3', time_cost: 20, memory_cost: 2048 },
+      { submission_uuid: 'sub-003', status: 'Time Limit Exceeded', score: 0, submit_time: '2023-10-01T11:50:00Z', language: 'Java', time_cost: 1000, memory_cost: 5000 },
+    ];
+  }
+
+  // 真实请求
+  // query 参数: problem_id, contest_id
+  const res = await request.get('/user/submissions', {
+    params: {
+      problem_id: problemId,
+      contest_id: contestId,
+      page: 1,      // 暂时写死第一页
+      page_size: 20
+    }
+  });
+  
+  // 适配器：如果有字段不一致，在这里转换
+  return res.data.submissions || [];
 };

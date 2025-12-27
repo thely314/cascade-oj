@@ -36,7 +36,10 @@
           </div>
 
           <Transition name="fade" mode="out-in">
-            <component :is="isLogin ? LoginForm : RegisterForm" />
+            <component 
+              :is="isLogin ? LoginForm : RegisterForm" 
+              @success="isLogin = true" 
+            />
           </Transition>
         </div>
       </div>

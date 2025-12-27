@@ -29,7 +29,7 @@ export function useProblemDetail() {
   } as any));
 
   // --- 状态管理 ---
-  const leftTabs = ['描述', '提交', '成绩', /*'笔记',*/ '排名', '答案'];
+  const leftTabs = ['描述', '提交', /*'成绩', '笔记',*/ '排名'/*, '答案'*/];
   const currentLeftTab = ref(0);
   
   // 界面状态
@@ -54,7 +54,7 @@ export function useProblemDetail() {
   const runStats = reactive({
     time: '-',
     memory: '-',
-    stderr: '' // 确保有这个字段
+    stderr: '' 
   });
 
   // 通用轮询函数
@@ -235,12 +235,33 @@ export function useProblemDetail() {
     }
   };
 
+  // 新增一个 map 来存储 序号 -> 真实ID 的映射
+  const problemIndexMap = reactive<Record<string, string>>({});
+
   // 加载题目列表
   const loadProblemList = async () => {
     try {
-      const list = await fetchProblemList();
+      const list = await fetchProblemList(contestId.value); 
       problemList.value = list;
-      totalProblems.value = list.length; // 让总题数动态化
+      totalProblems.value = list.length;
+      
+      list.forEach((p, index) => {
+        // 假设 URL 里的 1 代表数组第 0 个
+        const routeIndex = String(index + 1); 
+        problemIndexMap[routeIndex] = p.id;
+      });
+      
+      // 如果当前路由参数是序号，转化为真实 ID 后再加载详情
+      const routeId = route.params.id as string;
+      const realId = problemIndexMap[routeId];
+      
+      if (realId) {
+        loadProblem(realId); // 用真实 ID 去查
+      } else {
+        // 可能是直接传了真实 ID，或者是无效序号
+        loadProblem(routeId);
+      }
+      
     } catch (e) {
       console.error("题目列表加载失败", e);
     }
@@ -292,7 +313,7 @@ export function useProblemDetail() {
     try {
       const codeToSend = activeFile.value?.content || '';
 
-      // 1. 发起提交，获取 UUID
+      // 发起提交，获取 UUID
       const res = await submitCode({
         contestId: contestId.value, // 使用 computed
         problemId: problemData.value.id,
@@ -305,7 +326,7 @@ export function useProblemDetail() {
       if (res.uuid) {
         playgroundOutput.value = "正在运行中...";
         
-        // 2. 开始轮询
+        // 开始轮询
         await pollResult(
           res.uuid,
           getSelfTestResult, // 使用查询自测的 API
@@ -319,6 +340,10 @@ export function useProblemDetail() {
             if (finalRes.status === 'Compile Error') {
                playgroundOutput.value = `=== 编译错误 ===\n${finalRes.errorMsg}`;
             } else {
+              runStats.time = res.time || '0ms';
+              runStats.memory = res.memory || '0KB';
+              // 填充 stderr 注：api/problem.ts 的 submitCode 适配器里，把 backendData.stderr 映射到了 errorMsg，所以这里取 res.errorMsg
+              runStats.stderr = res.errorMsg || ''; 
                playgroundOutput.value = finalRes.output || '程序无输出';
             }
           },
@@ -432,7 +457,6 @@ export function useProblemDetail() {
   // --- 生命周期 ---
   onMounted(() => {
     const id = problemId.value; // 从 computed 取值
-    loadProblem(id);
     loadProblemList(); 
     globalThis.addEventListener('mousemove', onMouseMove);
     globalThis.addEventListener('beforeunload', handleBeforeUnload);
@@ -449,6 +473,26 @@ export function useProblemDetail() {
     }
   });
 
+  // [新增] 复制代码
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(activeFile.value.content);
+      alert('代码已复制到剪贴板'); // 这里可以用个 Toast，暂时用 alert 替代
+    } catch (err) {
+      console.error('复制失败', err);
+    }
+  };
+
+  // [新增] 重置代码
+  const resetCode = () => {
+    if (confirm('确定要重置当前文件代码吗？您的修改将丢失。')) {
+      // 简单粗暴：直接清空，或者恢复成特定模板
+      // 如果之前 filesMap 初始化时有默认模板，这里可以恢复成那个值
+      // 目前我们就置空，或者给个基础框架
+      activeFile.value.content = ''; 
+    }
+  };
+
   return {
     leftTabs, currentLeftTab, isPlaygroundOpen, loading, isSubmitting, isRunning,
     problemData, descriptionHtml,
@@ -460,6 +504,9 @@ export function useProblemDetail() {
     showProblemDrawer, problemList,
     jumpToProblem, handlePrevProblem, handleNextProblem,isFirstProblem, isLastProblem, totalProblems,
     showResultModal, submissionResult,
-    runStats
+    runStats,
+    contestId,
+    copyCode, 
+    resetCode 
   };
 }

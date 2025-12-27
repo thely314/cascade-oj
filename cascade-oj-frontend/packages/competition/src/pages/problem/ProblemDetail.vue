@@ -58,9 +58,11 @@
           </div>
         </div>
 
-        <!-- 3. 题目内容 -->
+        <!-- 3. 内容区域 -->
         <div class="pane-body scrollable">
-          <div class="problem-content-placeholder">
+
+          <!-- Tab 0: 题目描述 -->
+          <div v-if="currentLeftTab === 0" class="problem-content-placeholder">
             <h1>{{ problemData.title }}</h1>
             <div class="meta-info">
               <span>作者: {{ problemData.creator || 'Admin' }}</span> 
@@ -71,6 +73,22 @@
             <div class="markdown-body" v-html="descriptionHtml"></div>
             <br><br>
           </div>
+
+          <!-- Tab 1: 提交记录 (新增) -->
+          <!-- 注意：这里使用了 key，强制在切换 tab 或题目时重新渲染组件 -->
+          <SubmissionTab 
+            ref="submissionTabRef" 
+            v-else-if="currentLeftTab === 1" 
+            :contest-id="contestId" 
+            :problem-id="problemData.id" 
+            :key="`sub-${problemData.id}`"
+          />
+
+          <!-- Tab 2: 成绩 (占位) -->
+          <div v-else-if="currentLeftTab === 2" style="padding: 20px; color:#888">
+            成绩功能开发中...
+          </div>
+
         </div>
 
         <!-- 4. 底部切题栏 -->
@@ -130,7 +148,11 @@
                 {{ lang }}
               </option>
             </select>
-            <span class="settings-icon">⚙️</span>
+            <!-- 工具栏按钮 -->
+            <span class="action-icon" @click="resetCode" title="重置代码">↺</span>
+            <span class="action-icon" @click="copyCode" title="复制代码">📋</span>
+            <span class="action-icon settings-icon" title="设置">⚙️</span>
+            <span class="action-icon fullscreen-icon" title="全屏">⛶</span>
           </div>
         </div>
 
@@ -159,18 +181,28 @@
               
               <!-- 运行结果容器 -->
               <div class="output-container">
-                <!-- 1. 顶部统计信息栏 (仅当有数据时显示) -->
+                
+                <!-- 1. 顶部统计信息栏 -->
                 <div v-if="runStats.time !== '-'" class="run-meta">
                   <div class="meta-status">===== 运行成功 =====</div>
                   <div class="meta-detail">
                     <span>CPU 时间: {{ runStats.time }}</span>
                     <span>内存占用: {{ runStats.memory }}</span>
                   </div>
-                  <div class="meta-divider">===== 程序输出 =====</div>
                 </div>
 
-                <!-- 2. 实际输出内容 -->
-                <div class="output-view">{{ playgroundOutput }}</div>
+                <!-- 2. 调试/错误信息 (Stderr) -->
+                <div v-if="runStats.stderr" class="stderr-view">
+                  <div class="meta-divider text-red">===== 调试/错误信息 =====</div>
+                  <pre>{{ runStats.stderr }}</pre>
+                </div>
+
+                <!-- 3. 实际输出内容 (Stdout) -->
+                <div class="output-view-wrapper">
+                  <div v-if="runStats.time !== '-'" class="meta-divider">===== 标准输出 =====</div>
+                  <div class="output-view">{{ playgroundOutput }}</div>
+                </div>
+                
               </div>
             </div>
           </div>
@@ -203,6 +235,8 @@
 
 <script setup lang="ts">
 import CodeEditor from '@/components/CodeEditor/CodeEditor.vue';
+import SubmissionTab from '@/components/SubmissionTab/SubmissionTab.vue';
+import { ref, watch, nextTick } from 'vue';
 import { useProblemDetail } from './ProblemDetail'; // 引入抽离的逻辑
 
 // 解构逻辑层导出的状态与方法
@@ -217,8 +251,30 @@ const {
   showProblemDrawer, problemList,
   jumpToProblem, handlePrevProblem, handleNextProblem,isFirstProblem, isLastProblem, totalProblems,
   showResultModal, submissionResult,
-  runStats
+  runStats,
+  contestId,
+  copyCode,
+  resetCode 
 } = useProblemDetail();
+
+// 引用提交列表组件
+const submissionTabRef = ref();
+
+// 监听提交结果，一旦有新结果(提交成功)，刷新列表
+watch(submissionResult, (newVal) => {
+  if (newVal) {
+    // 如果当前没在“提交”Tab，自动切过去（可选，看体验偏好）
+    // currentLeftTab.value = 1; 
+    
+    // 等待 DOM 更新后刷新列表
+    nextTick(() => {
+      if (currentLeftTab.value === 1 && submissionTabRef.value) {
+        submissionTabRef.value.refresh();
+      }
+    });
+  }
+});
+
 </script>
 
 <style scoped src="./ProblemDetail.css"></style> 

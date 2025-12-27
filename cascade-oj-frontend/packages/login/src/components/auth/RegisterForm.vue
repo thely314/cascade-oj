@@ -82,9 +82,9 @@
     <button 
       type="submit" 
       class="btn-primary" 
-      :disabled="!form.agree"
+      :disabled="!form.agree || loading"
     >
-      注册
+      {{ loading ? '注册中...' : '注册' }}
     </button>
   </form>
 </template>
@@ -92,6 +92,14 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import md5 from 'js-md5';
+import request from '../../utils/request';
+
+// 定义 emit，注册成功后切换到登录 tab
+const emit = defineEmits(['success']);
+
+const loading = ref(false);
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
 const form = reactive({
   username: '',
@@ -101,17 +109,39 @@ const form = reactive({
   agree: false,
 });
 
-const showPassword = ref(false);
-const showConfirmPassword = ref(false); // 新增状态
-
-const handleRegister = () => {
+const handleRegister = async () => {
   if (form.password !== form.confirmPassword) {
     alert('两次密码输入不一致');
     return;
   }
-  console.log('注册提交：', form);
-  const encryptedPwd = md5.md5(form.password);
-  console.log('加密后的密码：', encryptedPwd);
+
+  if (loading.value) return;
+  loading.value = true;
+
+  try {
+    const encryptedPwd = md5.md5(form.password);
+    
+    // TODO: 确认注册接口 URL
+    // 你的 user.proto 里的 RegisterRequest 参数不对，这里按常规写
+    await request.post('/auth/register', {
+      username: form.username,
+      email: form.email,
+      password: encryptedPwd
+    });
+
+    alert('注册成功，请登录');
+    
+    // 触发父组件切换到登录 Tab (需要在 AuthPage.vue 监听这个事件)
+    // 或者直接 location.reload() 简单粗暴
+    emit('success'); 
+    
+  } catch (e: any) {
+    console.error(e);
+    const msg = e.response?.data?.message || '注册失败，请稍后重试';
+    alert(msg);
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 
