@@ -1,30 +1,47 @@
+<!-- src/views/AuthPage.vue -->
 <template>
   <div class="auth-container">
-    <AuthLeft />
-    <div class="right-section">
-      <div class="auth-card">
-        <h2>欢迎来到 Cascade OJ</h2>
-        <p class="sub-title">开始您的编程之旅</p>
-        
-        <div class="tab-buttons">
-          <button 
-            :class="{ active: isLogin }" 
-            @click="isLogin = true"
-          >
-            登录
-          </button>
-          
-          <button 
-            :class="{ active: !isLogin }" 
-            @click="isLogin = false"
-          >
-            注册
-          </button>
+    <div class="auth-wrapper">
+      <!-- 左侧只负责显示 Logo 和文字 -->
+      <AuthLeft class="auth-left-col" />
+      
+      <!-- 右侧表单 -->
+      <div class="auth-right-col">
+        <div class="auth-box">
+          <div class="auth-header">
+            <h2>{{ isLogin ? '欢迎来到 Cascade' : '加入 Cascade' }}</h2>
+            <p class="sub-title">
+              {{ isLogin ? '登录以继续您的编程之旅' : '注册账号，开启您的编程之旅' }}
+            </p>
+          </div>
+
+          <!-- Tab 切换 -->
+          <div class="auth-tabs">
+            <div 
+              class="tab-item" 
+              :class="{ active: isLogin }" 
+              @click="isLogin = true"
+            >
+              登录
+            </div>
+            <div 
+              class="tab-item" 
+              :class="{ active: !isLogin }" 
+              @click="isLogin = false"
+            >
+              注册
+            </div>
+            <!-- 滑动滑块 -->
+            <div class="tab-slider" :class="{ right: !isLogin }"></div>
+          </div>
+
+          <Transition name="fade" mode="out-in">
+            <component 
+              :is="isLogin ? LoginForm : RegisterForm" 
+              @success="isLogin = true" 
+            />
+          </Transition>
         </div>
-        
-        <component 
-          :is="isLogin ? LoginForm : RegisterForm" 
-        />
       </div>
     </div>
   </div>
@@ -41,68 +58,122 @@ const isLogin = ref(true);
 
 <style scoped>
 .auth-container {
-  display: flex;
   min-height: 100vh;
-  background: #161616; /* 与 home 页面一致的深色背景 */
-  color: #cbd5c0;
-}
-
-.right-section {
-  width: 480px; /* 稍微加大 auth 页右侧最大宽度 */
+  width: 100vw;
+  /* 核心修改：将背景移到这里，并铺满全屏 */
+  background-color: #0c1110;
+  background-image: url('https://assets.codepen.io/1462889/pat-back.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; /* 确保波浪线覆盖整个屏幕 */
+  
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  padding: 40px 24px;
-  box-sizing: border-box; /* include padding in width to prevent overflow */
 }
 
-.auth-card {
+.auth-wrapper {
+  display: flex;
   width: 100%;
-  background: #141816; /* 卡片深色 */
-  border-radius: 10px;
-  padding: 28px;
-  box-shadow: 0 6px 18px rgba(22, 163, 142, 0.06);
-  border: 1px solid rgba(30,134,68,0.06);
-  box-sizing: border-box; /* ensure padding doesn't enlarge card beyond container */
+  height: 100vh;
+  overflow: hidden;
 }
 
-.auth-card h2 {
-  font-size: 22px;
-  margin: 0 0 6px 0;
-  color: #1dad80; /* 主色绿 */
+.auth-left-col {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* 背景透明，让父组件的波浪透过来 */
+  background: transparent; 
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.auth-right-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  /* 核心修改：右侧背景改为非常淡的透明黑，或者完全透明，消除割裂感 */
+  background: rgba(12, 17, 16, 0.3); 
+  backdrop-filter: blur(10px); /* 稍微加一点毛玻璃，防止文字和波浪线重叠看不清 */
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-header {
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.auth-header h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #e3ece9;
+  margin: 0 0 8px 0;
 }
 
 .sub-title {
-  font-size: 13px;
-  color: #9fbebb;
-  margin-bottom: 20px;
-}
-
-.tab-buttons {
-  display: flex;
-  margin-bottom: 20px;
-  gap: 8px;
-}
-
-.tab-buttons button {
-  padding: 8px 16px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: #cbd5c0;
+  color: #6c7c7a;
   font-size: 15px;
-  cursor: pointer;
-  border-radius: 6px;
 }
 
-.tab-buttons button.active {
-  background: rgba(29,173,128,0.12);
-  color: #1dad80;
-  border-color: rgba(29,173,128,0.16);
+/* Tab 样式保持不变 */
+.auth-tabs {
+  position: relative;
+  display: flex;
+  background: #151b19;
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
   font-weight: 600;
+  color: #6c7c7a;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s;
 }
 
-.tab-buttons button:hover {
-  background: rgba(255,255,255,0.02);
+.tab-item.active {
+  color: #e3ece9;
+}
+
+.tab-slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: #23aa8f;
+  border-radius: 8px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+  box-shadow: 0 2px 10px rgba(35, 170, 143, 0.3);
+}
+
+.tab-slider.right {
+  transform: translateX(100%);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

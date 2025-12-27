@@ -8,7 +8,7 @@
 			<div class="contest-grid">
 				<div class="left">
 					<div class="problem-list">
-							<router-link v-for="p in problems" :key="p.id" class="card problem-item card-link" :to="`/competition/${idStr.value}/problem/${p.id}`">
+							<router-link v-for="p in problems" :key="p.id" class="card problem-item card-link" :to="`/competition/${idStr.valueOf()}/problem/${p.id}`">
 								<h3>{{ p.title }}</h3>
 								<p>时间限制：{{ p.timeLimitMs }}ms · 内存限制：{{ p.memoryLimitMb }}MB</p>
 						</router-link>
@@ -16,7 +16,7 @@
 				</div>
 
 				<div class="right">
-					<Rank :contestId="idStr.value" />
+					<Rank :contestId="idStr.valueOf()" />
 				</div>
 			</div>
 

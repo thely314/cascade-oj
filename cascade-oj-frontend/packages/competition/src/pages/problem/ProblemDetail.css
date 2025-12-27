@@ -319,6 +319,20 @@
   padding: 0;
 }
 
+/* 编辑器工具栏 */
+.action-icon {
+  margin-left: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #888;
+  transition: color 0.2s;
+  user-select: none;
+}
+
+.action-icon:hover {
+  color: #fff;
+}
+
 /* --- Playground 面板 --- */
 .playground-panel {
   height: 0;
@@ -406,9 +420,60 @@
   color: #a0a0a0;
 }
 
+/* 分割线标题 */
 .meta-divider {
   color: #666;
-  margin-top: 4px;
+  font-size: 12px;
+  padding: 4px 10px;
+  background: #252526;
+  margin-top: 0; /* 修正可能存在的 margin */
+}
+
+/* Stderr 错误区域样式 */
+.stderr-view {
+  padding: 8px 10px;
+  background-color: rgba(231, 76, 60, 0.1); 
+  border-bottom: 1px solid #442222;
+  color: #ff9b9b; 
+  font-family: 'Consolas', monospace;
+  font-size: 13px;
+  flex-shrink: 0;
+  max-height: 150px; /* 限制高度，防止错误信息太长占满屏幕 */
+  overflow-y: auto;
+}
+
+.stderr-view pre {
+  margin: 5px 0 0 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: inherit;
+}
+
+.text-red {
+  color: #e74c3c; 
+  font-weight: bold;
+}
+
+/* Stdout 输出区域 */
+.output-view-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 让内部的 output-view 负责滚动 */
+}
+
+.output-view {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #ccc;
+  padding: 10px;
+  resize: none;
+  font-family: 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-y: auto;
 }
 
 /* --- 底部操作栏 --- */
