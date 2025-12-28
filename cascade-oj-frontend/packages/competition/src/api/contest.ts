@@ -1,4 +1,6 @@
-import client from './client'
+// import client from './client'
+import request from '@/utils/request';
+
 import type { ContestMetadata, ProblemMetadata } from './types'
 export type { ContestMetadata, ProblemMetadata } from './types'
 
@@ -8,25 +10,26 @@ export type GetSingleContestReply = {
 }
 
 export async function getContest(contestId: string): Promise<GetSingleContestReply> {
-  return client.get(`/user/contests/${contestId}`)
+  return (await request.get(`/user/contests/${contestId}`))?.data;
 }
 
 // 获取比赛题目列表
 export async function getContestProblems(contestId: string): Promise<{ problems: ProblemMetadata[] }> {
-  return client.get(`/user/contests/${contestId}/problems`)
+  return (await request.get(`/user/contests/${contestId}/problems`))?.data;
 }
 
+// TODO adjust API according to proto definition
 export async function joinContest(contestId: string, userId?: string): Promise<{ isJoin: boolean }>{
   const body: Record<string, any> = { contestId }
   if (typeof userId !== 'undefined') body.userId = userId
-  return client.post(`/user/contests/${contestId}/join`, body)
+  return (await request.post(`/user/contests/${contestId}/join`, body))?.data;
 }
 
 export async function quitContest(contestId: string, userId?: string): Promise<{ isJoin: boolean }>{
-  return client.delete(`/user/contests/${contestId}/join`, { params: { userId } })
+  return (await request.delete(`/user/contests/${contestId}/join`, { params: { userId } }))?.data;
 }
 
 // 占位：查询是否已加入比赛（后端将提供该接口）
 export async function getJoinStatus(contestId: string, userId?: string): Promise<{ isJoin: boolean }>{
-  return client.get(`/user/contests/${contestId}/join/status`, { params: { userId } })
+  return (await request.get(`/user/contests/${contestId}/join`, { params: { userId } }))?.data;
 }

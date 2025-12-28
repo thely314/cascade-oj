@@ -35,6 +35,8 @@ service.interceptors.response.use(
     return response;
   },
   (error) => {
+    // TODO 目前的错误信息对用户不友好
+    // 如错误将未登录等信息作为 internal error 处理
     // 处理 HTTP 错误状态码
     if (error.response) {
       const status = error.response.status;
