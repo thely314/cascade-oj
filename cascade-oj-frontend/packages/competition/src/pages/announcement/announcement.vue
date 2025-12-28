@@ -19,9 +19,7 @@
 import { ref, onMounted } from 'vue'
 import { getAnnouncements, type Announcement } from '../../api/announcement'
 
-const items = ref<Array<Announcement & { date?: string }>>([
-  { id: 'static-announce-1', publisherName: '系统', title: '示例公告（静态）', content: '这是一个静态示例公告，后续可删除。', date: '2025-12-01' }
-])
+const items = ref<Array<Announcement & { date?: string }>>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 
@@ -31,7 +29,7 @@ onMounted(async () => {
     const res = await getAnnouncements()
     // 后端目前无日期字段，这里用占位或从内容中解析；若后端增加 createdAt 可直接映射
     const dynamic = res.announcements.map(a => ({ ...a, date: '' }))
-    items.value = [items.value[0], ...dynamic]
+    items.value = dynamic
   } catch (e: any) {
     error.value = e?.message ?? '加载公告失败'
   } finally {

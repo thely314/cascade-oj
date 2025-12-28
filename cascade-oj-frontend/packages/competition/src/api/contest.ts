@@ -28,5 +28,5 @@ export async function quitContest(contestId: string, userId?: string): Promise<{
 
 // 占位：查询是否已加入比赛（后端将提供该接口）
 export async function getJoinStatus(contestId: string, userId?: string): Promise<{ isJoin: boolean }>{
-  return client.get(`/user/contests/${contestId}/join/status`, { params: { userId } })
+  return client.get(`/user/contests/${contestId}/join`, { params: { userId } })
 }
