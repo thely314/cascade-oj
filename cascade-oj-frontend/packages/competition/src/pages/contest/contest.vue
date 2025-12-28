@@ -8,7 +8,15 @@
 			<div class="contest-grid">
 				<div class="left">
 					<div class="problem-list">
-							<router-link v-for="p in problems" :key="p.id" class="card problem-item card-link" :to="`/competition/${idStr.valueOf()}/problem/${p.id}`">
+							<template v-if="loading">
+								<div class="card problem-item" v-for="i in 3" :key="i" style="opacity:.6">
+									<h3>加载中...</h3>
+									<p>正在获取题目列表</p>
+								</div>
+							</template>
+							<p v-else-if="error" class="error-text">{{ error }}</p>
+							<p v-else-if="!problems.length" class="empty-text">暂无题目</p>
+							<router-link v-else v-for="p in problems" :key="p.id" class="card problem-item card-link" :to="`/contest/${idStr.valueOf()}/problem/${p.id}`">
 								<h3>{{ p.title }}</h3>
 								<p>时间限制：{{ p.timeLimitMs }}ms · 内存限制：{{ p.memoryLimitMb }}MB</p>
 						</router-link>
@@ -16,7 +24,24 @@
 				</div>
 
 				<div class="right">
-					<Rank :contestId="idStr.valueOf()" />
+					<div class="side-list">
+						<div class="card join-card">
+							<h3>加入比赛</h3>
+							<p v-if="joined">已加入该比赛，祝你取得好成绩！</p>
+							<p v-else>成功加入比赛后，即可参与排名与提交。</p>
+							<div class="actions">
+								<button v-if="!joined" class="action-btn" :disabled="joinLoading" @click="handleJoin">
+									{{ joinLoading ? '加入中...' : '加入比赛' }}
+								</button>
+								<button v-else class="action-btn secondary" :disabled="quitLoading" @click="handleQuit">
+									{{ quitLoading ? '退出中...' : '退出比赛' }}
+								</button>
+							</div>
+							<p v-if="joinError" class="error-text">{{ joinError }}</p>
+						</div>
+
+						<Rank :contestId="idStr.valueOf()" />
+					</div>
 				</div>
 			</div>
 
@@ -25,10 +50,10 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { computed, ref, onMounted } from 'vue'
 import Rank from '../rank/rank.vue'
-import { getContest, getContestProblems, type GetSingleContestReply, type ProblemMetadata } from '../../api/contest'
+import { getContest, getContestProblems, joinContest, quitContest, getJoinStatus, type GetSingleContestReply, type ProblemMetadata } from '../../api/contest'
 
 const route = useRoute()
 const id = computed(() => String(route.params.id ?? '未知'))
@@ -36,12 +61,59 @@ const id = computed(() => String(route.params.id ?? '未知'))
 const idStr = computed(() => String(id.value))
 
 const contest = ref<GetSingleContestReply | null>(null)
-// 预置一个静态示例题目，后续可删除
-const problems = ref<ProblemMetadata[]>([
-	{ id: 'example', title: '示例题目（静态）', timeLimitMs: 1000, memoryLimitMb: 256 }
-])
+const problems = ref<ProblemMetadata[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
+
+// 加入比赛相关状态
+const joined = ref(false)
+const joinLoading = ref(false)
+const quitLoading = ref(false)
+const joinError = ref<string | null>(null)
+const router = useRouter()
+
+async function handleJoin() {
+	joinError.value = null
+	joinLoading.value = true
+	try {
+		// 若未登录，引导到登录页
+		const token = localStorage.getItem('cascade_token')
+		if (!token) {
+			joinLoading.value = false
+			router.push('/login')
+			return
+		}
+
+		const res = await joinContest(idStr.value)
+		joined.value = Boolean(res?.isJoin)
+		if (joined.value) {
+			localStorage.setItem(`cascade_joined_${idStr.value}`, '1')
+		}
+		if (!joined.value) {
+			joinError.value = '加入失败，请稍后重试'
+		}
+	} catch (e: any) {
+		joinError.value = e?.message ?? '加入比赛失败'
+	} finally {
+		joinLoading.value = false
+	}
+}
+
+async function handleQuit() {
+	joinError.value = null
+	quitLoading.value = true
+	try {
+		const res = await quitContest(idStr.value)
+		joined.value = Boolean(res?.isJoin)
+		if (!joined.value) {
+			localStorage.removeItem(`cascade_joined_${idStr.value}`)
+		}
+	} catch (e: any) {
+		joinError.value = e?.message ?? '退出比赛失败'
+	} finally {
+		quitLoading.value = false
+	}
+}
 
 onMounted(async () => {
 	loading.value = true
@@ -51,7 +123,19 @@ onMounted(async () => {
 			getContestProblems(idStr.value),
 		])
 		contest.value = contestRes
-		problems.value = [problems.value[0], ...problemsRes.problems]
+			problems.value = problemsRes.problems || []
+		// 先尝试服务端查询加入状态（占位接口），失败则回退到本地存储
+		try {
+			const status = await getJoinStatus(idStr.value)
+			joined.value = Boolean(status?.isJoin)
+			if (joined.value) {
+				localStorage.setItem(`cascade_joined_${idStr.value}`, '1')
+			} else {
+				localStorage.removeItem(`cascade_joined_${idStr.value}`)
+			}
+		} catch {
+			joined.value = localStorage.getItem(`cascade_joined_${idStr.value}`) === '1'
+		}
 	} catch (e: any) {
 		error.value = e?.message ?? '加载比赛信息失败'
 	} finally {
@@ -156,6 +240,12 @@ p {
 }
 .left { flex: 2; }
 .right { flex: 1; min-width: 260px; }
+.side-list { display: flex; flex-direction: column; gap: 12px; }
+.actions { margin-top: 12px; display: flex; gap: 8px; justify-content: center; }
+.action-btn { padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(30, 134, 68, 0.2); background: #1dad80; color: #0b0f0d; cursor: pointer; }
+.action-btn.secondary { background: #141816; color: #cbd5c0; }
+.action-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.error-text { color: #e57373; margin-top: 8px; }
 .problem-list { display: flex; flex-direction: column; gap: 12px; }
 .problem-item { text-align: left; }
 

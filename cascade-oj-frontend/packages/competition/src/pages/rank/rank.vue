@@ -17,10 +17,7 @@ import { getRanks, type RankItem } from '../../api/rank'
 
 const props = defineProps<{ contestId?: string }>()
 
-// 预置一个静态示例排名，后续可删除
-const entries = ref<RankItem[]>([
-	{ userId: 'example-user', username: '示例用户（静态）', rank: 1, score: 500 }
-])
+const entries = ref<RankItem[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 
@@ -29,7 +26,7 @@ async function fetchRanking(contestId?: string) {
 	loading.value = true
 	try {
 		const res = await getRanks(contestId)
-		entries.value = [entries.value[0], ...res.ranks]
+		entries.value = res.ranks || []
 	} catch (e: any) {
 		error.value = e?.message ?? '加载排名失败'
 	} finally {
