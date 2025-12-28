@@ -220,10 +220,10 @@ export function useProblemDetail() {
   // --- 核心方法 ---
 
   // 加载单题详情
-  const loadProblem = async (id: string) => {
+  const loadProblem = async (index: string) => {
     try {
       loading.value = true;
-      const data = await fetchProblemDetail(id);
+      const data = await fetchProblemDetail(problemIndexMap[index]);
       problemData.value = data;
 
       // [修改点2] 删除了后端模板覆盖逻辑
@@ -249,7 +249,7 @@ export function useProblemDetail() {
   // 加载题目列表
   const loadProblemList = async () => {
     try {
-      const list = await fetchProblemList(contestId.value); 
+      const list = await fetchProblemList(contestId.value);
       problemList.value = list;
       totalProblems.value = list.length;
       
@@ -260,16 +260,9 @@ export function useProblemDetail() {
         problemIdToIndex[p.id] = routeIndex;
       });
       
-      // 如果当前路由参数是序号，转化为真实 ID 后再加载详情
       const routeId = route.params.id as string;
-      const realId = problemIndexMap[routeId];
-      
-      if (realId) {
-        loadProblem(realId); // 用真实 ID 去查
-      } else {
-        // 可能是直接传了真实 ID，或者是无效序号
-        loadProblem(routeId);
-      }
+      // 现在直接接受 index，在函数内部通过映射转换到真实 ID
+      loadProblem(routeId);
       
     } catch (e) {
       console.error("题目列表加载失败", e);
@@ -279,19 +272,19 @@ export function useProblemDetail() {
   // 跳转到指定题目
   const jumpToProblem = (id: string) => {
     showProblemDrawer.value = false; 
-    // [修改点3] 修正路由跳转，必须带上 contestId
-    // 假设路由名配置为 'ProblemDetail'
+    // 路由名配置为 'ProblemDetail'
+    // 使用题目序号路由
     router.push({
       name: 'ProblemDetail',
       params: { 
-        contestId: contestId.value, 
-        id: id 
+        contestId: contestId.value,
+        id: problemIdToIndex[id]
       }
     });
   };
 
   // 总题数：以接口返回为准，初始为 0
-  const totalProblems = ref(0); 
+  const totalProblems = ref(0);
   const currentIndex = computed(() => Number(problemIdToIndex[problemData.value.id]) || 1);
 
   const isFirstProblem = computed(() => currentIndex.value <= 1);
@@ -300,18 +293,12 @@ export function useProblemDetail() {
   // 上一题
   const handlePrevProblem = () => {
     if (isFirstProblem.value) return;
-    // const currentId = Number.parseInt(problemData.value.id);
-    // const currentIndex = Number.parseInt(problemIdToIndex[problemData.value.id]);
-    // jumpToProblem(String(currentId - 1));
     jumpToProblem(problemIndexMap[String(currentIndex.value - 1)]);
   };
 
   // 下一题
   const handleNextProblem = () => {
     if (isLastProblem.value) return;
-    // const currentId = Number.parseInt(problemData.value.id);
-    // const currentIndex = Number.parseInt(problemIdToIndex[problemData.value.id]);
-    // jumpToProblem(String(currentId + 1));
     jumpToProblem(problemIndexMap[String(currentIndex.value + 1)]);
   };
 

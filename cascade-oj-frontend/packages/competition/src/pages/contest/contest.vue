@@ -16,7 +16,7 @@
 							</template>
 							<p v-else-if="error" class="error-text">{{ error }}</p>
 							<p v-else-if="!problems.length" class="empty-text">暂无题目</p>
-							<router-link v-else v-for="p in problems" :key="p.id" class="card problem-item card-link" :to="`/contest/${idStr.valueOf()}/problem/${p.id}`">
+							<router-link v-else v-for="p in problems" :key="p.id" class="card problem-item card-link" :to="`/contest/${idStr.valueOf()}/problem/${String(problemIDToIndexMap[p.id])}`">
 								<h3>{{ p.title }}</h3>
 								<p>时间限制：{{ p.timeLimitMs }}ms · 内存限制：{{ p.memoryLimitMb }}MB</p>
 						</router-link>
@@ -72,6 +72,11 @@ const quitLoading = ref(false)
 const joinError = ref<string | null>(null)
 const router = useRouter()
 
+// 题目ID与题目序号的映射
+const problemIDToIndexMap = ref<Record<string, number>>({})
+// 反向映射
+const problemIndexToIDMap = ref<Record<number, string>>({})
+
 async function handleJoin() {
 	joinError.value = null
 	joinLoading.value = true
@@ -123,7 +128,14 @@ onMounted(async () => {
 			getContestProblems(idStr.value),
 		])
 		contest.value = contestRes
-			problems.value = problemsRes.problems || []
+		problems.value = problemsRes.problems || []
+		problems.value.forEach((p, index) => {
+			// URL 里的 1 代表数组第 0 个
+			const routeIndex = index + 1
+			problemIDToIndexMap.value[p.id] = routeIndex
+			problemIndexToIDMap.value[routeIndex] = p.id
+		});
+
 		// 先尝试服务端查询加入状态（占位接口），失败则回退到本地存储
 		try {
 			const status = await getJoinStatus(idStr.value)
