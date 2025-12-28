@@ -4,7 +4,6 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import monacoEditorPlugin from 'vite-plugin-monaco-editor' // <--- 引入插件
-import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -33,10 +32,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        // TODO nginx docker 代理
-        target: 'http://localhost:80', // 这里填你队友后端的真实地址 (IP+端口)
+        // nginx docker 代理
+        target: 'http://localhost:80',
         changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\/api/, '') // 如果后端接口不带 /api 前缀，就把这就行取消注释
+        // rewrite: (path) => path.replace(/^\/api/, '') // 如果后端接口不带 /api 前缀，且 nginx 未处理，就把这就行取消注释
       }
     }
   }
