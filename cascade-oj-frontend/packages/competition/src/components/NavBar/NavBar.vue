@@ -47,20 +47,54 @@
       
       <!-- 用户功能区 -->
       <div class="nav-user">
-        <router-link class="login-btn" to="/login">登录/注册</router-link>
+        <router-link v-if="!isLoggedIn" class="login-btn" to="/login">登录/注册</router-link>
+        <button v-else class="logout-btn" @click="handleLogout">退出登录</button>
       </div>
     </div>
   </nav>
 </template>
 
 <script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'; 
 import { useRouter } from 'vue-router'; 
 
 const router = useRouter(); 
+const isLoggedIn = ref(Boolean(localStorage.getItem('cascade_token')));
+
+const checkAuth = () => {
+  isLoggedIn.value = Boolean(localStorage.getItem('cascade_token'));
+};
+
+let onStorage;
+
+onMounted(() => {
+  // 初始化登录状态
+  checkAuth();
+
+  // 跨标签页同步登录状态
+  onStorage = (e) => {
+    if (e.key === 'cascade_token') {
+      checkAuth();
+    }
+  };
+  window.addEventListener('storage', onStorage);
+
+  // 路由切换时更新登录状态（同标签页登录后可即时反映）
+  router.afterEach(() => {
+    checkAuth();
+  });
+});
+
+onBeforeUnmount(() => {
+  if (onStorage) {
+    window.removeEventListener('storage', onStorage);
+  }
+});
 
 const handleLogout = () => {
   // 1. 清除 LocalStorage
   localStorage.removeItem('cascade_token');
+  checkAuth();
   
   // 2.以此类推，清除用户信息状态
   

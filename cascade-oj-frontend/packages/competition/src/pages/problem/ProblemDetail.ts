@@ -290,8 +290,8 @@ export function useProblemDetail() {
     });
   };
 
-  // 假设总题数
-  const totalProblems = ref(8); 
+  // 总题数：以接口返回为准，初始为 0
+  const totalProblems = ref(0); 
   const currentIndex = computed(() => Number(problemIdToIndex[problemData.value.id]) || 1);
 
   const isFirstProblem = computed(() => currentIndex.value <= 1);

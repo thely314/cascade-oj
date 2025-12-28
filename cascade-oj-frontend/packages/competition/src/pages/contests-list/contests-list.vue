@@ -3,14 +3,19 @@
 	<div class="home-container">
 		<main class="main-content">
 			<h1>正在进行的比赛</h1>
-			<p>示例比赛卡片，点击进入对应比赛详情。</p>
+			<p>选择一个比赛进入详情。</p>
 
 			<div class="feature-cards">
-				<!-- 保留一个静态示例比赛卡片 -->
-				<router-link class="card card-link" to="/competition/1"><h3>示例比赛（静态）</h3><p>这是一个静态示例，后续可删除。</p></router-link>
-
 				<!-- 动态比赛列表 -->
-				<router-link v-for="c in contests" :key="c.id" class="card card-link" :to="`/competition/${c.id}`">
+				<template v-if="loading">
+					<div class="card" v-for="i in 3" :key="i" style="opacity:.6">
+						<h3>加载中...</h3>
+						<p>正在获取比赛列表</p>
+					</div>
+				</template>
+				<p v-else-if="error" class="error-text">{{ error }}</p>
+				<p v-else-if="!contests.length" class="empty-text">暂无比赛</p>
+				<router-link v-else v-for="c in contests" :key="c.id" class="card card-link" :to="`/competition/${c.id}`">
 					<h3>{{ c.title }}</h3>
 					<p>{{ c.status }} · {{ c.startTime }} — {{ c.endTime }}</p>
 				</router-link>
