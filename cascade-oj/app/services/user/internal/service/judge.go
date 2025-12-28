@@ -15,11 +15,9 @@ import (
 
 func (s *UserService) PostSubmission(ctx context.Context, req *pb.PostSubmissionRequest) (*pb.PostSubmissionReply, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
-	// TODO: check if contest is ended
-	// _, err = s.TODO.Find(ctx, req.ContestId)
-	// if err != nil {
-	// 	return nil, pb.ErrorContestEnd("contest is end")
-	// }
+	// TODO
+	// check if user has joined the contest
+	// check if contest is ongoing at data layer
 	id := uuid.NewString()
 	_, err := s.judgeUsecase.CreateSubmission(ctx, &biz.Submission{
 		UUID:         id,
@@ -43,11 +41,8 @@ func (s *UserService) PostSubmission(ctx context.Context, req *pb.PostSubmission
 
 func (s *UserService) PostSelfTest(ctx context.Context, req *pb.SelfTestRequest) (*pb.SelfTestReply, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
-	// TODO: check if contest is ended
-	// _, err = s.TODO.Find(ctx, req.ContestId)
-	// if err != nil {
-	// 	return nil, pb.ErrorContestEnd("contest is end")
-	// }
+	// TODO
+	// temporarily allow self test for login users at any time
 	id := uuid.NewString()
 	_, err := s.judgeUsecase.CreateSelfTest(ctx, &biz.SelfTest{
 		UUID:       id,
@@ -110,15 +105,16 @@ func (s *UserService) GetSubmissions(ctx context.Context, req *pb.GetSubmissions
 	if err != nil {
 		return nil, err
 	}
-	var pbSubmissions []*pb.SubmissionMetadata
+	var pbSubmissions []*pb.GetSubmissionsReply_SubmissionResult
 	for _, submission := range submissions {
-		pbSubmissions = append(pbSubmissions, &pb.SubmissionMetadata{
+		pbSubmissions = append(pbSubmissions, &pb.GetSubmissionsReply_SubmissionResult{
 			SubmissionUuid: submission.UUID,
-			ProblemId:      submission.ProblemID,
-			UserId:         submission.UserID,
 			Status:         submission.Status,
 			SubmitTime:     timestamppb.New(submission.CreateTime),
 			Score:          int32(submission.Score),
+			Language:       submission.Language,
+			TimeCost:       int32(submission.TimeCost),
+			MemoryCost:     int32(submission.MemoryCost),
 		})
 	}
 	return &pb.GetSubmissionsReply{Submissions: pbSubmissions}, nil

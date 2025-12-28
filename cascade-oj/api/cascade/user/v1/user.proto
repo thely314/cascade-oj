@@ -30,6 +30,11 @@ service User {
             delete: "/user/contests/{contest_id}/join"
         };
     };
+    rpc GetJoinStatus(GetJoinStatusRequest) returns (GetJoinStatusReply) {
+        option (google.api.http) = {
+            get: "/user/contests/{contest_id}/join"
+        };
+    };
     rpc GetProblems(GetProblemsRequest) returns (GetProblemsReply) {
         option (google.api.http) = {
             get: "/user/contests/{contest_id}/problems"
@@ -83,12 +88,12 @@ service User {
 
     rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoReply) {
         option (google.api.http) = {
-            get: "/users/{user_id}"
+            get: "/user/users"
         };
     };
     rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoReply) {
         option (google.api.http) = {
-            put: "/users/{user_id}"
+            put: "/user/users"
             body: "*"
         };
     };
@@ -119,7 +124,6 @@ message GetSingleContestReply {
 
 message JoinContestRequest {
     int64 contest_id = 1; // Contest ID
-    int64 user_id = 2; // User ID
 }
 message JoinContestReply {
     bool is_join = 1; // Whether the user has joined the contest
@@ -127,9 +131,15 @@ message JoinContestReply {
 
 message QuitContestRequest {
     int64 contest_id = 1; // Contest ID
-    int64 user_id = 2; // User ID
 }
 message QuitContestReply {
+    bool is_join = 1; // Whether the user has joined the contest
+}
+
+message GetJoinStatusRequest {
+    int64 contest_id = 1; // Contest ID
+}
+message GetJoinStatusReply {
     bool is_join = 1; // Whether the user has joined the contest
 }
 
@@ -202,7 +212,16 @@ message GetSubmissionsRequest {
     int32 page_size = 5; // Page size
 }
 message GetSubmissionsReply {
-    repeated SubmissionMetadata submissions = 1; // List of submissions metadata
+    message SubmissionResult {
+        string submission_uuid = 1; // Submission UUID
+        string status = 2; // Submission Status
+        google.protobuf.Timestamp submit_time = 3; // Submission Time
+        int32 score = 4; // Submission Score
+        string language = 5; // Programming Language
+        int32 time_cost = 6; // Time Cost
+        int32 memory_cost = 7; // Memory Cost
+    }
+    repeated SubmissionResult submissions = 1; // List of submissions metadata
 }
 
 message CaseMetadata {
@@ -250,9 +269,7 @@ message GetAnnouncementsReply {
     repeated Announcement announcements = 1; // List of announcements
 }
 
-message GetUserInfoRequest {
-    int64 user_id = 1; // User ID
-}
+message GetUserInfoRequest {}
 message GetUserInfoReply {
     int64 user_id = 1; // User ID
     string username = 2; // Username
@@ -260,9 +277,8 @@ message GetUserInfoReply {
 }
 
 message UpdateUserInfoRequest {
-    int64 user_id = 1; // User ID
-    string username = 2; // Username
-    string email = 3; // Email
+    string username = 1; // Username
+    string email = 2; // Email
 }
 message UpdateUserInfoReply {
     bool is_updated = 1; // Whether the user info is updated

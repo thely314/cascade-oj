@@ -5,7 +5,7 @@
     <div v-if="showResultModal" class="modal-overlay" @click="showResultModal = false">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3 :class="submissionResult?.status === 'Accepted' ? 'text-green' : 'text-red'">
+          <h3 :class="submissionResult?.status === 'accepted' ? 'text-green' : 'text-red'">
             {{ submissionResult?.status }}
           </h3>
           <button @click="showResultModal = false">✕</button>

@@ -140,6 +140,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/Status'
   '/user/contests/{contestId}/join':
+    get:
+      tags:
+        - User
+      operationId: User_GetJoinStatus
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetJoinStatusReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
     post:
       tags:
         - User
@@ -177,10 +200,6 @@ paths:
         - name: contestId
           in: path
           required: true
-          schema:
-            type: string
-        - name: userId
-          in: query
           schema:
             type: string
       responses:
@@ -380,6 +399,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
+  /user/users:
+    get:
+      tags:
+        - User
+      operationId: User_GetUserInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserInfoReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    put:
+      tags:
+        - User
+      operationId: User_UpdateUserInfo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserInfoRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUserInfoReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
   '/user/{contestId}/ranks':
     get:
       tags:
@@ -398,59 +458,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetRanksReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/users/{userId}':
-    get:
-      tags:
-        - User
-      operationId: User_GetUserInfo
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetUserInfoReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    put:
-      tags:
-        - User
-      operationId: User_UpdateUserInfo
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserInfoRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UpdateUserInfoReply'
         default:
           description: Default error response
           content:
@@ -907,7 +914,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSubmissionsReply'
+                $ref: '#/components/schemas/GetSubmissionsReply1'
         default:
           description: Default error response
           content:
@@ -1012,7 +1019,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUserInfoRequest'
+              $ref: '#/components/schemas/UpdateUserInfoRequest1'
         required: true
       responses:
         '200':
@@ -1213,6 +1220,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ContestMetadata'
+    GetJoinStatusReply:
+      type: object
+      properties:
+        isJoin:
+          type: boolean
     GetProblemsReply:
       type: object
       properties:
@@ -1301,7 +1313,28 @@ components:
         submissions:
           type: array
           items:
-            $ref: '#/components/schemas/SubmissionMetadata'
+            $ref: '#/components/schemas/GetSubmissionsReply_SubmissionResult'
+    GetSubmissionsReply_SubmissionResult:
+      type: object
+      properties:
+        submissionUuid:
+          type: string
+        status:
+          type: string
+        submitTime:
+          type: string
+          format: date-time
+        score:
+          type: integer
+          format: int32
+        language:
+          type: string
+        timeCost:
+          type: integer
+          format: int32
+        memoryCost:
+          type: integer
+          format: int32
     GetUserInfoReply:
       type: object
       properties:
@@ -1320,8 +1353,6 @@ components:
       type: object
       properties:
         contestId:
-          type: string
-        userId:
           type: string
     PostSubmissionReply:
       type: object
@@ -1398,8 +1429,6 @@ components:
     UpdateUserInfoRequest:
       type: object
       properties:
-        userId:
-          type: string
         username:
           type: string
         email:
@@ -1447,6 +1476,13 @@ components:
         timestamp:
           type: string
           format: date-time
+    GetSubmissionsReply1:
+      type: object
+      properties:
+        submissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubmissionMetadata'
     GetUsersReply:
       type: object
       properties:
@@ -1576,6 +1612,15 @@ components:
       type: object
       properties:
         submissionUuid:
+          type: string
+    UpdateUserInfoRequest1:
+      type: object
+      properties:
+        userId:
+          type: string
+        username:
+          type: string
+        email:
           type: string
     UserInfo:
       type: object

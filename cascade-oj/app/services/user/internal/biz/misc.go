@@ -2,8 +2,6 @@ package biz
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	"cascade-oj/pkg/middleware/auth"
 
@@ -57,16 +55,12 @@ func (u *MiscUsecase) GetAnnouncements(ctx context.Context) ([]*Announcement, er
 	return u.repo.GetAnnouncements(ctx)
 }
 
-func (u *MiscUsecase) GetUserInfoByID(ctx context.Context, userID int64) (*UserInfo, error) {
-	if userID != ctx.Value("userInfo").(*auth.Claims).UserID {
-		return nil, errors.New(fmt.Sprintf("user %d trying to get user info as user %d", ctx.Value("userInfo").(*auth.Claims).UserID, userID))
-	}
+func (u *MiscUsecase) GetUserInfo(ctx context.Context) (*UserInfo, error) {
+	userID := ctx.Value("userInfo").(*auth.Claims).UserID
 	return u.repo.GetUserInfoByID(ctx, userID)
 }
 
-func (u *MiscUsecase) UpdateUserInfo(ctx context.Context, userID int64, username, email string) error {
-	if userID != ctx.Value("userInfo").(*auth.Claims).UserID {
-		return errors.New(fmt.Sprintf("user %d trying to update user info as user %d", ctx.Value("userInfo").(*auth.Claims).UserID, userID))
-	}
+func (u *MiscUsecase) UpdateUserInfo(ctx context.Context, username, email string) error {
+	userID := ctx.Value("userInfo").(*auth.Claims).UserID
 	return u.repo.UpdateUserInfo(ctx, userID, username, email)
 }

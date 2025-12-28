@@ -26,8 +26,8 @@
           </td>
           <td>{{ item.score }}</td>
           <td>{{ item.language || '-' }}</td>
-          <td>{{ item.timeCost ? item.timeCost + 'ms' : '-' }}</td>
-          <td>{{ item.memoryCost ? (item.memoryCost / 1024).toFixed(1) + 'MB' : '-' }}</td>
+          <td>{{ item.timeCost ? item.timeCost + 'ms' : '0ms' }}</td>
+          <td>{{ item.memoryCost ? (item.memoryCost / 1024).toFixed(1) + 'MB' : '0MB' }}</td>
           <td class="time-col">{{ formatTime(item.submitTime) }}</td>
         </tr>
       </tbody>
@@ -52,8 +52,6 @@ const loadData = async () => {
   loading.value = true;
   try {
     list.value = await fetchSubmissions(props.contestId, props.problemId);
-    // debug
-    // console.log("加载提交记录:", list);
   } catch (e) {
     console.error(e);
   } finally {

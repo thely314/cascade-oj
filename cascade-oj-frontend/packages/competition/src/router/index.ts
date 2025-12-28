@@ -6,7 +6,7 @@ import ContestsList from '../pages/contests-list/contests-list.vue'
 import Contest from '../pages/contest/contest.vue'
 
 const routes = [
-    { path: '/', redirect: '/contest/1/problem/1' },
+    { path: '/', redirect: '/home' },
     { path: '/home', name: 'Home', component: Home },
     { path: '/competition', name: 'ContestsList', component: ContestsList },
     { path: '/competition/:id', name: 'Contest', component: Contest },

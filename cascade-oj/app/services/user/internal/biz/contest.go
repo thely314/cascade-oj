@@ -3,8 +3,6 @@ package biz
 import (
 	"cascade-oj/ent"
 	"context"
-	"errors"
-	"fmt"
 	"time"
 
 	"cascade-oj/pkg/middleware/auth"
@@ -30,6 +28,7 @@ type ContestRepo interface {
 	GetSingleContest(ctx context.Context, contestID int64) (*ent.ProblemSet, error)
 	JoinContest(ctx context.Context, contestID int64, userID int64) (bool, error)
 	QuitContest(ctx context.Context, contestID int64, userID int64) (bool, error)
+	GetJoinStatus(ctx context.Context, contestID int64, userID int64) (bool, error)
 }
 
 type ContestUsecase struct {
@@ -82,16 +81,17 @@ func (contestUsecase *ContestUsecase) GetSingleContest(ctx context.Context, cont
 	}, nil
 }
 
-func (contestUsecase *ContestUsecase) JoinContest(ctx context.Context, contestID int64, userID int64) (bool, error) {
-	if userID != ctx.Value("userInfo").(*auth.Claims).UserID {
-		return false, errors.New(fmt.Sprintf("user %d trying to join contest as user %d", ctx.Value("userInfo").(*auth.Claims).UserID, userID))
-	}
+func (contestUsecase *ContestUsecase) JoinContest(ctx context.Context, contestID int64) (bool, error) {
+	userID := ctx.Value("userInfo").(*auth.Claims).UserID
 	return contestUsecase.contestRepo.JoinContest(ctx, contestID, userID)
 }
 
-func (contestUsecase *ContestUsecase) QuitContest(ctx context.Context, contestID int64, userID int64) (bool, error) {
-	if userID != ctx.Value("userInfo").(*auth.Claims).UserID {
-		return false, errors.New(fmt.Sprintf("user %d trying to quit contest as user %d", ctx.Value("userInfo").(*auth.Claims).UserID, userID))
-	}
+func (contestUsecase *ContestUsecase) QuitContest(ctx context.Context, contestID int64) (bool, error) {
+	userID := ctx.Value("userInfo").(*auth.Claims).UserID
 	return contestUsecase.contestRepo.QuitContest(ctx, contestID, userID)
+}
+
+func (contestUsecase *ContestUsecase) GetJoinStatus(ctx context.Context, contestID int64) (bool, error) {
+	userID := ctx.Value("userInfo").(*auth.Claims).UserID
+	return contestUsecase.contestRepo.GetJoinStatus(ctx, contestID, userID)
 }

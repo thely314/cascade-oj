@@ -21,6 +21,7 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationUserGetAnnouncements = "/api.cascade.user.v1.User/GetAnnouncements"
 const OperationUserGetContests = "/api.cascade.user.v1.User/GetContests"
+const OperationUserGetJoinStatus = "/api.cascade.user.v1.User/GetJoinStatus"
 const OperationUserGetProblems = "/api.cascade.user.v1.User/GetProblems"
 const OperationUserGetRanks = "/api.cascade.user.v1.User/GetRanks"
 const OperationUserGetSelfTestResult = "/api.cascade.user.v1.User/GetSelfTestResult"
@@ -38,6 +39,7 @@ const OperationUserUpdateUserInfo = "/api.cascade.user.v1.User/UpdateUserInfo"
 type UserHTTPServer interface {
 	GetAnnouncements(context.Context, *GetAnnouncementsRequest) (*GetAnnouncementsReply, error)
 	GetContests(context.Context, *GetContestsRequest) (*GetContestsReply, error)
+	GetJoinStatus(context.Context, *GetJoinStatusRequest) (*GetJoinStatusReply, error)
 	GetProblems(context.Context, *GetProblemsRequest) (*GetProblemsReply, error)
 	GetRanks(context.Context, *GetRanksRequest) (*GetRanksReply, error)
 	GetSelfTestResult(context.Context, *GetSelfTestResultRequest) (*GetSelfTestResultReply, error)
@@ -59,6 +61,7 @@ func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r.GET("/user/contests/{contest_id}", _User_GetSingleContest0_HTTP_Handler(srv))
 	r.POST("/user/contests/{contest_id}/join", _User_JoinContest0_HTTP_Handler(srv))
 	r.DELETE("/user/contests/{contest_id}/join", _User_QuitContest0_HTTP_Handler(srv))
+	r.GET("/user/contests/{contest_id}/join", _User_GetJoinStatus0_HTTP_Handler(srv))
 	r.GET("/user/contests/{contest_id}/problems", _User_GetProblems0_HTTP_Handler(srv))
 	r.GET("/user/problems/{problem_id}", _User_GetSingleProblem0_HTTP_Handler(srv))
 	r.POST("/user/selftests", _User_PostSelfTest0_HTTP_Handler(srv))
@@ -68,8 +71,8 @@ func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r.GET("/user/submissions/{submission_uuid}", _User_GetSingleSubmission0_HTTP_Handler(srv))
 	r.GET("/user/{contest_id}/ranks", _User_GetRanks0_HTTP_Handler(srv))
 	r.GET("/user/announcements", _User_GetAnnouncements0_HTTP_Handler(srv))
-	r.GET("/users/{user_id}", _User_GetUserInfo0_HTTP_Handler(srv))
-	r.PUT("/users/{user_id}", _User_UpdateUserInfo0_HTTP_Handler(srv))
+	r.GET("/user/users", _User_GetUserInfo0_HTTP_Handler(srv))
+	r.PUT("/user/users", _User_UpdateUserInfo0_HTTP_Handler(srv))
 }
 
 func _User_GetContests0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
@@ -156,6 +159,28 @@ func _User_QuitContest0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) 
 			return err
 		}
 		reply := out.(*QuitContestReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _User_GetJoinStatus0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetJoinStatusRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserGetJoinStatus)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetJoinStatus(ctx, req.(*GetJoinStatusRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetJoinStatusReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -358,9 +383,6 @@ func _User_GetUserInfo0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) 
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
 		http.SetOperation(ctx, OperationUserGetUserInfo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.GetUserInfo(ctx, req.(*GetUserInfoRequest))
@@ -383,9 +405,6 @@ func _User_UpdateUserInfo0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Contex
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
 		http.SetOperation(ctx, OperationUserUpdateUserInfo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.UpdateUserInfo(ctx, req.(*UpdateUserInfoRequest))
@@ -402,6 +421,7 @@ func _User_UpdateUserInfo0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Contex
 type UserHTTPClient interface {
 	GetAnnouncements(ctx context.Context, req *GetAnnouncementsRequest, opts ...http.CallOption) (rsp *GetAnnouncementsReply, err error)
 	GetContests(ctx context.Context, req *GetContestsRequest, opts ...http.CallOption) (rsp *GetContestsReply, err error)
+	GetJoinStatus(ctx context.Context, req *GetJoinStatusRequest, opts ...http.CallOption) (rsp *GetJoinStatusReply, err error)
 	GetProblems(ctx context.Context, req *GetProblemsRequest, opts ...http.CallOption) (rsp *GetProblemsReply, err error)
 	GetRanks(ctx context.Context, req *GetRanksRequest, opts ...http.CallOption) (rsp *GetRanksReply, err error)
 	GetSelfTestResult(ctx context.Context, req *GetSelfTestResultRequest, opts ...http.CallOption) (rsp *GetSelfTestResultReply, err error)
@@ -443,6 +463,19 @@ func (c *UserHTTPClientImpl) GetContests(ctx context.Context, in *GetContestsReq
 	pattern := "/user/contests"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetContests))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *UserHTTPClientImpl) GetJoinStatus(ctx context.Context, in *GetJoinStatusRequest, opts ...http.CallOption) (*GetJoinStatusReply, error) {
+	var out GetJoinStatusReply
+	pattern := "/user/contests/{contest_id}/join"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationUserGetJoinStatus))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -544,7 +577,7 @@ func (c *UserHTTPClientImpl) GetSubmissions(ctx context.Context, in *GetSubmissi
 
 func (c *UserHTTPClientImpl) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...http.CallOption) (*GetUserInfoReply, error) {
 	var out GetUserInfoReply
-	pattern := "/users/{user_id}"
+	pattern := "/user/users"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetUserInfo))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -609,7 +642,7 @@ func (c *UserHTTPClientImpl) QuitContest(ctx context.Context, in *QuitContestReq
 
 func (c *UserHTTPClientImpl) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...http.CallOption) (*UpdateUserInfoReply, error) {
 	var out UpdateUserInfoReply
-	pattern := "/users/{user_id}"
+	pattern := "/user/users"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserUpdateUserInfo))
 	opts = append(opts, http.PathTemplate(pattern))

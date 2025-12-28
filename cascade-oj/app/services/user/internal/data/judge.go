@@ -9,8 +9,10 @@ import (
 
 	"cascade-oj/app/services/user/internal/biz"
 	"cascade-oj/ent"
+	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
+	"cascade-oj/ent/problemset"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/pkg/middleware/auth"
 	"cascade-oj/pkg/mq"
@@ -86,6 +88,34 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 }
 
 func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Submission) (string, error) {
+	// check if user has joined the contest
+	_, err := repo.data.db.Competitor_List.Query().
+		Where(competitor_list.And(
+			competitor_list.ProblemSetIDEQ(submission.ProblemSetID),
+			competitor_list.UserIDEQ(submission.UserID),
+		)).
+		Only(ctx)
+	if err != nil {
+		return "", errors.New("user has not joined the contest")
+	}
+
+	// check if contest is ongoing
+	queryContest, err := repo.data.db.ProblemSet.Query().
+		Where(problemset.IDEQ(submission.ProblemSetID)).
+		Only(ctx)
+	if err != nil {
+		return "", err
+	}
+	now := time.Now()
+	calculatedStatus := CalculateContestStatus(now, queryContest.StartTime, queryContest.EndTime)
+	if queryContest.Status.String() != calculatedStatus {
+		queryContest.Status = problemset.Status(calculatedStatus)
+		EnqueueStatusUpdate(queryContest.ID, calculatedStatus)
+	}
+	if calculatedStatus != "ongoing" {
+		return "", errors.New("contest is not ongoing")
+	}
+
 	q, err := repo.data.mq_channel.QueueDeclare(
 		mq.GojudgeSubmissionQueueName, // name
 		true,                          // durable

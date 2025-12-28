@@ -349,13 +349,12 @@ export function useProblemDetail() {
             isRunning.value = false;
             runStats.time = finalRes.timeCost || '0ms';
             runStats.memory = finalRes.memoryCost || '0KB';
-            runStats.stderr = finalRes.stderr || ''; // 这里假设 errorMsg 存的是 stderr
+            runStats.stderr = finalRes.stderr || '';
             if (finalRes.status === 'compile_error') {
               playgroundOutput.value = `=== 编译错误 ===\n${finalRes.stderr}`;
             } else {
               runStats.time = finalRes.timeCost || '0ms';
               runStats.memory = finalRes.memoryCost || '0KB';
-              // 填充 stderr 注：api/problem.ts 的 submitCode 适配器里，把 backendData.stderr 映射到了 errorMsg，所以这里取 res.errorMsg
               runStats.stderr = finalRes.stderr || ''; 
               playgroundOutput.value = finalRes.output || '程序无输出';
             }

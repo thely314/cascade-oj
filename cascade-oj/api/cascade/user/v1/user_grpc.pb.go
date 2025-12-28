@@ -23,6 +23,7 @@ const (
 	User_GetSingleContest_FullMethodName    = "/api.cascade.user.v1.User/GetSingleContest"
 	User_JoinContest_FullMethodName         = "/api.cascade.user.v1.User/JoinContest"
 	User_QuitContest_FullMethodName         = "/api.cascade.user.v1.User/QuitContest"
+	User_GetJoinStatus_FullMethodName       = "/api.cascade.user.v1.User/GetJoinStatus"
 	User_GetProblems_FullMethodName         = "/api.cascade.user.v1.User/GetProblems"
 	User_GetSingleProblem_FullMethodName    = "/api.cascade.user.v1.User/GetSingleProblem"
 	User_PostSelfTest_FullMethodName        = "/api.cascade.user.v1.User/PostSelfTest"
@@ -45,6 +46,7 @@ type UserClient interface {
 	GetSingleContest(ctx context.Context, in *GetSingleContestRequest, opts ...grpc.CallOption) (*GetSingleContestReply, error)
 	JoinContest(ctx context.Context, in *JoinContestRequest, opts ...grpc.CallOption) (*JoinContestReply, error)
 	QuitContest(ctx context.Context, in *QuitContestRequest, opts ...grpc.CallOption) (*QuitContestReply, error)
+	GetJoinStatus(ctx context.Context, in *GetJoinStatusRequest, opts ...grpc.CallOption) (*GetJoinStatusReply, error)
 	GetProblems(ctx context.Context, in *GetProblemsRequest, opts ...grpc.CallOption) (*GetProblemsReply, error)
 	GetSingleProblem(ctx context.Context, in *GetSingleProblemRequest, opts ...grpc.CallOption) (*GetSingleProblemReply, error)
 	PostSelfTest(ctx context.Context, in *SelfTestRequest, opts ...grpc.CallOption) (*SelfTestReply, error)
@@ -102,6 +104,16 @@ func (c *userClient) QuitContest(ctx context.Context, in *QuitContestRequest, op
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(QuitContestReply)
 	err := c.cc.Invoke(ctx, User_QuitContest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) GetJoinStatus(ctx context.Context, in *GetJoinStatusRequest, opts ...grpc.CallOption) (*GetJoinStatusReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetJoinStatusReply)
+	err := c.cc.Invoke(ctx, User_GetJoinStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -236,6 +248,7 @@ type UserServer interface {
 	GetSingleContest(context.Context, *GetSingleContestRequest) (*GetSingleContestReply, error)
 	JoinContest(context.Context, *JoinContestRequest) (*JoinContestReply, error)
 	QuitContest(context.Context, *QuitContestRequest) (*QuitContestReply, error)
+	GetJoinStatus(context.Context, *GetJoinStatusRequest) (*GetJoinStatusReply, error)
 	GetProblems(context.Context, *GetProblemsRequest) (*GetProblemsReply, error)
 	GetSingleProblem(context.Context, *GetSingleProblemRequest) (*GetSingleProblemReply, error)
 	PostSelfTest(context.Context, *SelfTestRequest) (*SelfTestReply, error)
@@ -270,6 +283,9 @@ func (UnimplementedUserServer) JoinContest(context.Context, *JoinContestRequest)
 }
 func (UnimplementedUserServer) QuitContest(context.Context, *QuitContestRequest) (*QuitContestReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method QuitContest not implemented")
+}
+func (UnimplementedUserServer) GetJoinStatus(context.Context, *GetJoinStatusRequest) (*GetJoinStatusReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetJoinStatus not implemented")
 }
 func (UnimplementedUserServer) GetProblems(context.Context, *GetProblemsRequest) (*GetProblemsReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProblems not implemented")
@@ -396,6 +412,24 @@ func _User_QuitContest_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).QuitContest(ctx, req.(*QuitContestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_GetJoinStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetJoinStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetJoinStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetJoinStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetJoinStatus(ctx, req.(*GetJoinStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -638,6 +672,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QuitContest",
 			Handler:    _User_QuitContest_Handler,
+		},
+		{
+			MethodName: "GetJoinStatus",
+			Handler:    _User_GetJoinStatus_Handler,
 		},
 		{
 			MethodName: "GetProblems",

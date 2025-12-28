@@ -47,7 +47,7 @@ func (userService *UserService) GetSingleContest(ctx context.Context, req *pb.Ge
 }
 
 func (userService *UserService) JoinContest(ctx context.Context, req *pb.JoinContestRequest) (*pb.JoinContestReply, error) {
-	result, err := userService.contestUseCase.JoinContest(ctx, req.ContestId, req.UserId)
+	result, err := userService.contestUseCase.JoinContest(ctx, req.ContestId)
 	if err != nil {
 		return nil, err
 	}
@@ -58,12 +58,23 @@ func (userService *UserService) JoinContest(ctx context.Context, req *pb.JoinCon
 }
 
 func (userService *UserService) QuitContest(ctx context.Context, req *pb.QuitContestRequest) (*pb.QuitContestReply, error) {
-	result, err := userService.contestUseCase.QuitContest(ctx, req.ContestId, req.UserId)
+	result, err := userService.contestUseCase.QuitContest(ctx, req.ContestId)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.QuitContestReply{
+		IsJoin: result,
+	}, nil
+}
+
+func (userService *UserService) GetJoinStatus(ctx context.Context, req *pb.GetJoinStatusRequest) (*pb.GetJoinStatusReply, error) {
+	result, err := userService.contestUseCase.GetJoinStatus(ctx, req.ContestId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetJoinStatusReply{
 		IsJoin: result,
 	}, nil
 }
