@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <main class="main-content">
-      <h1>欢迎来到CasCade平台</h1>
+      <h1>欢迎来到Cascade平台</h1>
       <p>这是一个在线判题系统</p>
       <div class="feature-cards">
 

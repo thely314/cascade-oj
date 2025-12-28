@@ -29,7 +29,7 @@ export async function quitContest(contestId: string, userId?: string): Promise<{
   return (await request.delete(`/user/contests/${contestId}/join`, { params: { userId } }))?.data;
 }
 
-// 占位：查询是否已加入比赛（后端将提供该接口）
+// 查询是否已加入比赛（后端将提供该接口）
 export async function getJoinStatus(contestId: string, userId?: string): Promise<{ isJoin: boolean }>{
   return (await request.get(`/user/contests/${contestId}/join`, { params: { userId } }))?.data;
 }

@@ -7,22 +7,31 @@ import Contest from '../pages/contest/contest.vue'
 
 const routes = [
     { path: '/', redirect: '/home' },
-    { path: '/home', name: 'Home', component: Home },
-    { path: '/competition', name: 'ContestsList', component: ContestsList },
-    { path: '/competition/:id', name: 'Contest', component: Contest },
-    { path: '/about', name: 'About', component: About },
-    { path: '/login', name: 'Login', component: () => import('../../../login/src/views/AuthPage.vue'), meta: { hideNav: true } },
+    { path: '/home', name: 'Home', component: Home, meta: { title: '主页 - CasCade' } },
+    { path: '/competition', name: 'ContestsList', component: ContestsList, meta: { title: '比赛列表 - CasCade' } },
+    { path: '/competition/:id', name: 'Contest', component: Contest, meta: { title: '比赛详情 - CasCade' } },
+    { path: '/about', name: 'About', component: About, meta: { title: '关于我们 - CasCade' } },
+    { path: '/login', name: 'Login', component: () => import('../../../login/src/views/AuthPage.vue'), meta: { hideNav: true, title: '登录 - CasCade' } },
     {
         path: '/contest/:contestId/problem/:id', 
         name: 'ProblemDetail',
-        component: () => import('../pages/problem/ProblemDetail.vue')
+        component: () => import('../pages/problem/ProblemDetail.vue'),
+        meta: { title: '题目详情 - CasCade' }
     },
-    { path: '/:pathMatch(.*)*', name: 'NotFound', component: ErrorPage }
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: ErrorPage, meta: { title: '未找到 - CasCade' } }
 ]
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
+})
+
+// 同步路由标题到标签页标题
+router.afterEach((to) => {
+    const title = (to.meta && (to.meta as Record<string, any>).title) || 'CasCade'
+    if (typeof title === 'string') {
+        document.title = title
+    }
 })
 
 export default router
