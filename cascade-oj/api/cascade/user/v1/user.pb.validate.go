@@ -696,8 +696,6 @@ func (m *JoinContestRequest) validate(all bool) error {
 
 	// no validation rules for ContestId
 
-	// no validation rules for UserId
-
 	if len(errors) > 0 {
 		return JoinContestRequestMultiError(errors)
 	}
@@ -904,8 +902,6 @@ func (m *QuitContestRequest) validate(all bool) error {
 
 	// no validation rules for ContestId
 
-	// no validation rules for UserId
-
 	if len(errors) > 0 {
 		return QuitContestRequestMultiError(errors)
 	}
@@ -1087,6 +1083,214 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = QuitContestReplyValidationError{}
+
+// Validate checks the field values on GetJoinStatusRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetJoinStatusRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetJoinStatusRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetJoinStatusRequestMultiError, or nil if none found.
+func (m *GetJoinStatusRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetJoinStatusRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ContestId
+
+	if len(errors) > 0 {
+		return GetJoinStatusRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetJoinStatusRequestMultiError is an error wrapping multiple validation
+// errors returned by GetJoinStatusRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetJoinStatusRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetJoinStatusRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetJoinStatusRequestMultiError) AllErrors() []error { return m }
+
+// GetJoinStatusRequestValidationError is the validation error returned by
+// GetJoinStatusRequest.Validate if the designated constraints aren't met.
+type GetJoinStatusRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetJoinStatusRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetJoinStatusRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetJoinStatusRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetJoinStatusRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetJoinStatusRequestValidationError) ErrorName() string {
+	return "GetJoinStatusRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetJoinStatusRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetJoinStatusRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetJoinStatusRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetJoinStatusRequestValidationError{}
+
+// Validate checks the field values on GetJoinStatusReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetJoinStatusReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetJoinStatusReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetJoinStatusReplyMultiError, or nil if none found.
+func (m *GetJoinStatusReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetJoinStatusReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for IsJoin
+
+	if len(errors) > 0 {
+		return GetJoinStatusReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetJoinStatusReplyMultiError is an error wrapping multiple validation errors
+// returned by GetJoinStatusReply.ValidateAll() if the designated constraints
+// aren't met.
+type GetJoinStatusReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetJoinStatusReplyMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetJoinStatusReplyMultiError) AllErrors() []error { return m }
+
+// GetJoinStatusReplyValidationError is the validation error returned by
+// GetJoinStatusReply.Validate if the designated constraints aren't met.
+type GetJoinStatusReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetJoinStatusReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetJoinStatusReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetJoinStatusReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetJoinStatusReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetJoinStatusReplyValidationError) ErrorName() string {
+	return "GetJoinStatusReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetJoinStatusReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetJoinStatusReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetJoinStatusReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetJoinStatusReplyValidationError{}
 
 // Validate checks the field values on ProblemMetadata with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -3577,8 +3781,6 @@ func (m *GetUserInfoRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserId
-
 	if len(errors) > 0 {
 		return GetUserInfoRequestMultiError(errors)
 	}
@@ -3786,8 +3988,6 @@ func (m *UpdateUserInfoRequest) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for UserId
 
 	// no validation rules for Username
 
@@ -4182,6 +4382,152 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RegisterReplyValidationError{}
+
+// Validate checks the field values on GetSubmissionsReply_SubmissionResult
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *GetSubmissionsReply_SubmissionResult) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetSubmissionsReply_SubmissionResult
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// GetSubmissionsReply_SubmissionResultMultiError, or nil if none found.
+func (m *GetSubmissionsReply_SubmissionResult) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetSubmissionsReply_SubmissionResult) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SubmissionUuid
+
+	// no validation rules for Status
+
+	if all {
+		switch v := interface{}(m.GetSubmitTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetSubmissionsReply_SubmissionResultValidationError{
+					field:  "SubmitTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetSubmissionsReply_SubmissionResultValidationError{
+					field:  "SubmitTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSubmitTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetSubmissionsReply_SubmissionResultValidationError{
+				field:  "SubmitTime",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Score
+
+	// no validation rules for Language
+
+	// no validation rules for TimeCost
+
+	// no validation rules for MemoryCost
+
+	if len(errors) > 0 {
+		return GetSubmissionsReply_SubmissionResultMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetSubmissionsReply_SubmissionResultMultiError is an error wrapping multiple
+// validation errors returned by
+// GetSubmissionsReply_SubmissionResult.ValidateAll() if the designated
+// constraints aren't met.
+type GetSubmissionsReply_SubmissionResultMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetSubmissionsReply_SubmissionResultMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetSubmissionsReply_SubmissionResultMultiError) AllErrors() []error { return m }
+
+// GetSubmissionsReply_SubmissionResultValidationError is the validation error
+// returned by GetSubmissionsReply_SubmissionResult.Validate if the designated
+// constraints aren't met.
+type GetSubmissionsReply_SubmissionResultValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetSubmissionsReply_SubmissionResultValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetSubmissionsReply_SubmissionResultValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetSubmissionsReply_SubmissionResultValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetSubmissionsReply_SubmissionResultValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetSubmissionsReply_SubmissionResultValidationError) ErrorName() string {
+	return "GetSubmissionsReply_SubmissionResultValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetSubmissionsReply_SubmissionResultValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetSubmissionsReply_SubmissionResult.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetSubmissionsReply_SubmissionResultValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetSubmissionsReply_SubmissionResultValidationError{}
 
 // Validate checks the field values on GetSingleSubmissionReply_CaseResults
 // with the rules defined in the proto definition for this message. If any

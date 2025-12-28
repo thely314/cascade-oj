@@ -22,6 +22,7 @@ func NewHTTPServer(c *conf.Server, user *service.UserService, logger log.Logger)
 				Path(
 					"/api.cascade.user.v1.User/JoinContest",
 					"/api.cascade.user.v1.User/QuitContest",
+					"/api.cascade.user.v1.User/GetJoinStatus",
 					"/api.cascade.user.v1.User/PostSelfTest",
 					"/api.cascade.user.v1.User/GetSelfTestResult",
 					"/api.cascade.user.v1.User/PostSubmission",

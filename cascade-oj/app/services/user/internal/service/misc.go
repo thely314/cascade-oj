@@ -46,7 +46,7 @@ func (userService *UserService) GetAnnouncements(ctx context.Context, req *pb.Ge
 }
 
 func (userService *UserService) GetUserInfo(ctx context.Context, req *pb.GetUserInfoRequest) (*pb.GetUserInfoReply, error) {
-	ret, err := userService.miscUsecase.GetUserInfoByID(ctx, req.UserId)
+	ret, err := userService.miscUsecase.GetUserInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (userService *UserService) GetUserInfo(ctx context.Context, req *pb.GetUser
 }
 
 func (userService *UserService) UpdateUserInfo(ctx context.Context, req *pb.UpdateUserInfoRequest) (*pb.UpdateUserInfoReply, error) {
-	err := userService.miscUsecase.UpdateUserInfo(ctx, req.UserId, req.Username, req.Email)
+	err := userService.miscUsecase.UpdateUserInfo(ctx, req.Username, req.Email)
 	return &pb.UpdateUserInfoReply{
 		IsUpdated: err == nil,
 	}, nil

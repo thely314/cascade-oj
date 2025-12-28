@@ -127,6 +127,16 @@ func (contestRepo *ContestRepo) QuitContest(ctx context.Context, contestID int64
 	return false, nil
 }
 
+func (contestRepo *ContestRepo) GetJoinStatus(ctx context.Context, contestID int64, userID int64) (bool, error) {
+	isJoinedExist, err := contestRepo.data.db.Competitor_List.Query().
+		Where(competitor_list.And(competitor_list.ProblemSetIDEQ(contestID), competitor_list.UserIDEQ(userID))).
+		Exist(ctx)
+	if err != nil {
+		return false, err
+	}
+	return isJoinedExist, nil
+}
+
 func NewContestRepo(data *Data, logger log.Logger) biz.ContestRepo {
 	return &ContestRepo{
 		data: data,

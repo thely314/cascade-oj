@@ -325,7 +325,6 @@ func (x *GetSingleContestReply) GetDescription() string {
 type JoinContestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`          // User ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -363,13 +362,6 @@ func (*JoinContestRequest) Descriptor() ([]byte, []int) {
 func (x *JoinContestRequest) GetContestId() int64 {
 	if x != nil {
 		return x.ContestId
-	}
-	return 0
-}
-
-func (x *JoinContestRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -421,7 +413,6 @@ func (x *JoinContestReply) GetIsJoin() bool {
 type QuitContestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`          // User ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -459,13 +450,6 @@ func (*QuitContestRequest) Descriptor() ([]byte, []int) {
 func (x *QuitContestRequest) GetContestId() int64 {
 	if x != nil {
 		return x.ContestId
-	}
-	return 0
-}
-
-func (x *QuitContestRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -514,6 +498,94 @@ func (x *QuitContestReply) GetIsJoin() bool {
 	return false
 }
 
+type GetJoinStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetJoinStatusRequest) Reset() {
+	*x = GetJoinStatusRequest{}
+	mi := &file_user_v1_user_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetJoinStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetJoinStatusRequest) ProtoMessage() {}
+
+func (x *GetJoinStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetJoinStatusRequest.ProtoReflect.Descriptor instead.
+func (*GetJoinStatusRequest) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetJoinStatusRequest) GetContestId() int64 {
+	if x != nil {
+		return x.ContestId
+	}
+	return 0
+}
+
+type GetJoinStatusReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	IsJoin        bool                   `protobuf:"varint,1,opt,name=is_join,json=isJoin,proto3" json:"is_join,omitempty"` // Whether the user has joined the contest
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetJoinStatusReply) Reset() {
+	*x = GetJoinStatusReply{}
+	mi := &file_user_v1_user_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetJoinStatusReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetJoinStatusReply) ProtoMessage() {}
+
+func (x *GetJoinStatusReply) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetJoinStatusReply.ProtoReflect.Descriptor instead.
+func (*GetJoinStatusReply) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetJoinStatusReply) GetIsJoin() bool {
+	if x != nil {
+		return x.IsJoin
+	}
+	return false
+}
+
 type ProblemMetadata struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                              // Problem ID
@@ -526,7 +598,7 @@ type ProblemMetadata struct {
 
 func (x *ProblemMetadata) Reset() {
 	*x = ProblemMetadata{}
-	mi := &file_user_v1_user_proto_msgTypes[9]
+	mi := &file_user_v1_user_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -538,7 +610,7 @@ func (x *ProblemMetadata) String() string {
 func (*ProblemMetadata) ProtoMessage() {}
 
 func (x *ProblemMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[9]
+	mi := &file_user_v1_user_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -551,7 +623,7 @@ func (x *ProblemMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProblemMetadata.ProtoReflect.Descriptor instead.
 func (*ProblemMetadata) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{9}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ProblemMetadata) GetId() int64 {
@@ -591,7 +663,7 @@ type GetProblemsRequest struct {
 
 func (x *GetProblemsRequest) Reset() {
 	*x = GetProblemsRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[10]
+	mi := &file_user_v1_user_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -603,7 +675,7 @@ func (x *GetProblemsRequest) String() string {
 func (*GetProblemsRequest) ProtoMessage() {}
 
 func (x *GetProblemsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[10]
+	mi := &file_user_v1_user_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -616,7 +688,7 @@ func (x *GetProblemsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProblemsRequest.ProtoReflect.Descriptor instead.
 func (*GetProblemsRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{10}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetProblemsRequest) GetContestId() int64 {
@@ -635,7 +707,7 @@ type GetProblemsReply struct {
 
 func (x *GetProblemsReply) Reset() {
 	*x = GetProblemsReply{}
-	mi := &file_user_v1_user_proto_msgTypes[11]
+	mi := &file_user_v1_user_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -647,7 +719,7 @@ func (x *GetProblemsReply) String() string {
 func (*GetProblemsReply) ProtoMessage() {}
 
 func (x *GetProblemsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[11]
+	mi := &file_user_v1_user_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -660,7 +732,7 @@ func (x *GetProblemsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProblemsReply.ProtoReflect.Descriptor instead.
 func (*GetProblemsReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{11}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetProblemsReply) GetProblems() []*ProblemMetadata {
@@ -679,7 +751,7 @@ type GetSingleProblemRequest struct {
 
 func (x *GetSingleProblemRequest) Reset() {
 	*x = GetSingleProblemRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[12]
+	mi := &file_user_v1_user_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -691,7 +763,7 @@ func (x *GetSingleProblemRequest) String() string {
 func (*GetSingleProblemRequest) ProtoMessage() {}
 
 func (x *GetSingleProblemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[12]
+	mi := &file_user_v1_user_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -704,7 +776,7 @@ func (x *GetSingleProblemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleProblemRequest.ProtoReflect.Descriptor instead.
 func (*GetSingleProblemRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{12}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetSingleProblemRequest) GetProblemId() int64 {
@@ -725,7 +797,7 @@ type GetSingleProblemReply struct {
 
 func (x *GetSingleProblemReply) Reset() {
 	*x = GetSingleProblemReply{}
-	mi := &file_user_v1_user_proto_msgTypes[13]
+	mi := &file_user_v1_user_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -737,7 +809,7 @@ func (x *GetSingleProblemReply) String() string {
 func (*GetSingleProblemReply) ProtoMessage() {}
 
 func (x *GetSingleProblemReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[13]
+	mi := &file_user_v1_user_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -750,7 +822,7 @@ func (x *GetSingleProblemReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleProblemReply.ProtoReflect.Descriptor instead.
 func (*GetSingleProblemReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{13}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetSingleProblemReply) GetMetadata() *ProblemMetadata {
@@ -786,7 +858,7 @@ type SelfTestRequest struct {
 
 func (x *SelfTestRequest) Reset() {
 	*x = SelfTestRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[14]
+	mi := &file_user_v1_user_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -798,7 +870,7 @@ func (x *SelfTestRequest) String() string {
 func (*SelfTestRequest) ProtoMessage() {}
 
 func (x *SelfTestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[14]
+	mi := &file_user_v1_user_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -811,7 +883,7 @@ func (x *SelfTestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SelfTestRequest.ProtoReflect.Descriptor instead.
 func (*SelfTestRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{14}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *SelfTestRequest) GetProblemId() int64 {
@@ -851,7 +923,7 @@ type SelfTestReply struct {
 
 func (x *SelfTestReply) Reset() {
 	*x = SelfTestReply{}
-	mi := &file_user_v1_user_proto_msgTypes[15]
+	mi := &file_user_v1_user_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -863,7 +935,7 @@ func (x *SelfTestReply) String() string {
 func (*SelfTestReply) ProtoMessage() {}
 
 func (x *SelfTestReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[15]
+	mi := &file_user_v1_user_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -876,7 +948,7 @@ func (x *SelfTestReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SelfTestReply.ProtoReflect.Descriptor instead.
 func (*SelfTestReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{15}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *SelfTestReply) GetUuid() string {
@@ -895,7 +967,7 @@ type GetSelfTestResultRequest struct {
 
 func (x *GetSelfTestResultRequest) Reset() {
 	*x = GetSelfTestResultRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[16]
+	mi := &file_user_v1_user_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -907,7 +979,7 @@ func (x *GetSelfTestResultRequest) String() string {
 func (*GetSelfTestResultRequest) ProtoMessage() {}
 
 func (x *GetSelfTestResultRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[16]
+	mi := &file_user_v1_user_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -920,7 +992,7 @@ func (x *GetSelfTestResultRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSelfTestResultRequest.ProtoReflect.Descriptor instead.
 func (*GetSelfTestResultRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{16}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetSelfTestResultRequest) GetSelftestUuid() string {
@@ -943,7 +1015,7 @@ type GetSelfTestResultReply struct {
 
 func (x *GetSelfTestResultReply) Reset() {
 	*x = GetSelfTestResultReply{}
-	mi := &file_user_v1_user_proto_msgTypes[17]
+	mi := &file_user_v1_user_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -955,7 +1027,7 @@ func (x *GetSelfTestResultReply) String() string {
 func (*GetSelfTestResultReply) ProtoMessage() {}
 
 func (x *GetSelfTestResultReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[17]
+	mi := &file_user_v1_user_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -968,7 +1040,7 @@ func (x *GetSelfTestResultReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSelfTestResultReply.ProtoReflect.Descriptor instead.
 func (*GetSelfTestResultReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{17}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetSelfTestResultReply) GetIsCompiled() bool {
@@ -1018,7 +1090,7 @@ type PostSubmissionRequest struct {
 
 func (x *PostSubmissionRequest) Reset() {
 	*x = PostSubmissionRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[18]
+	mi := &file_user_v1_user_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1030,7 +1102,7 @@ func (x *PostSubmissionRequest) String() string {
 func (*PostSubmissionRequest) ProtoMessage() {}
 
 func (x *PostSubmissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[18]
+	mi := &file_user_v1_user_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1043,7 +1115,7 @@ func (x *PostSubmissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PostSubmissionRequest.ProtoReflect.Descriptor instead.
 func (*PostSubmissionRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{18}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *PostSubmissionRequest) GetContestId() int64 {
@@ -1083,7 +1155,7 @@ type PostSubmissionReply struct {
 
 func (x *PostSubmissionReply) Reset() {
 	*x = PostSubmissionReply{}
-	mi := &file_user_v1_user_proto_msgTypes[19]
+	mi := &file_user_v1_user_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1095,7 +1167,7 @@ func (x *PostSubmissionReply) String() string {
 func (*PostSubmissionReply) ProtoMessage() {}
 
 func (x *PostSubmissionReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[19]
+	mi := &file_user_v1_user_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1108,7 +1180,7 @@ func (x *PostSubmissionReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PostSubmissionReply.ProtoReflect.Descriptor instead.
 func (*PostSubmissionReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{19}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *PostSubmissionReply) GetUuid() string {
@@ -1132,7 +1204,7 @@ type SubmissionMetadata struct {
 
 func (x *SubmissionMetadata) Reset() {
 	*x = SubmissionMetadata{}
-	mi := &file_user_v1_user_proto_msgTypes[20]
+	mi := &file_user_v1_user_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1144,7 +1216,7 @@ func (x *SubmissionMetadata) String() string {
 func (*SubmissionMetadata) ProtoMessage() {}
 
 func (x *SubmissionMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[20]
+	mi := &file_user_v1_user_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1157,7 +1229,7 @@ func (x *SubmissionMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmissionMetadata.ProtoReflect.Descriptor instead.
 func (*SubmissionMetadata) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{20}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *SubmissionMetadata) GetSubmissionUuid() string {
@@ -1215,7 +1287,7 @@ type GetSubmissionsRequest struct {
 
 func (x *GetSubmissionsRequest) Reset() {
 	*x = GetSubmissionsRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[21]
+	mi := &file_user_v1_user_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1227,7 +1299,7 @@ func (x *GetSubmissionsRequest) String() string {
 func (*GetSubmissionsRequest) ProtoMessage() {}
 
 func (x *GetSubmissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[21]
+	mi := &file_user_v1_user_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1240,7 +1312,7 @@ func (x *GetSubmissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSubmissionsRequest.ProtoReflect.Descriptor instead.
 func (*GetSubmissionsRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{21}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetSubmissionsRequest) GetProblemId() int64 {
@@ -1279,15 +1351,15 @@ func (x *GetSubmissionsRequest) GetPageSize() int32 {
 }
 
 type GetSubmissionsReply struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Submissions   []*SubmissionMetadata  `protobuf:"bytes,1,rep,name=submissions,proto3" json:"submissions,omitempty"` // List of submissions metadata
+	state         protoimpl.MessageState                  `protogen:"open.v1"`
+	Submissions   []*GetSubmissionsReply_SubmissionResult `protobuf:"bytes,1,rep,name=submissions,proto3" json:"submissions,omitempty"` // List of submissions metadata
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetSubmissionsReply) Reset() {
 	*x = GetSubmissionsReply{}
-	mi := &file_user_v1_user_proto_msgTypes[22]
+	mi := &file_user_v1_user_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1299,7 +1371,7 @@ func (x *GetSubmissionsReply) String() string {
 func (*GetSubmissionsReply) ProtoMessage() {}
 
 func (x *GetSubmissionsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[22]
+	mi := &file_user_v1_user_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1312,10 +1384,10 @@ func (x *GetSubmissionsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSubmissionsReply.ProtoReflect.Descriptor instead.
 func (*GetSubmissionsReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{22}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *GetSubmissionsReply) GetSubmissions() []*SubmissionMetadata {
+func (x *GetSubmissionsReply) GetSubmissions() []*GetSubmissionsReply_SubmissionResult {
 	if x != nil {
 		return x.Submissions
 	}
@@ -1334,7 +1406,7 @@ type CaseMetadata struct {
 
 func (x *CaseMetadata) Reset() {
 	*x = CaseMetadata{}
-	mi := &file_user_v1_user_proto_msgTypes[23]
+	mi := &file_user_v1_user_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1346,7 +1418,7 @@ func (x *CaseMetadata) String() string {
 func (*CaseMetadata) ProtoMessage() {}
 
 func (x *CaseMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[23]
+	mi := &file_user_v1_user_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1359,7 +1431,7 @@ func (x *CaseMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CaseMetadata.ProtoReflect.Descriptor instead.
 func (*CaseMetadata) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{23}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *CaseMetadata) GetScore() int32 {
@@ -1399,7 +1471,7 @@ type GetSingleSubmissionRequest struct {
 
 func (x *GetSingleSubmissionRequest) Reset() {
 	*x = GetSingleSubmissionRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[24]
+	mi := &file_user_v1_user_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1411,7 +1483,7 @@ func (x *GetSingleSubmissionRequest) String() string {
 func (*GetSingleSubmissionRequest) ProtoMessage() {}
 
 func (x *GetSingleSubmissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[24]
+	mi := &file_user_v1_user_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1424,7 +1496,7 @@ func (x *GetSingleSubmissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleSubmissionRequest.ProtoReflect.Descriptor instead.
 func (*GetSingleSubmissionRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{24}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *GetSingleSubmissionRequest) GetSubmissionUuid() string {
@@ -1448,7 +1520,7 @@ type GetSingleSubmissionReply struct {
 
 func (x *GetSingleSubmissionReply) Reset() {
 	*x = GetSingleSubmissionReply{}
-	mi := &file_user_v1_user_proto_msgTypes[25]
+	mi := &file_user_v1_user_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1460,7 +1532,7 @@ func (x *GetSingleSubmissionReply) String() string {
 func (*GetSingleSubmissionReply) ProtoMessage() {}
 
 func (x *GetSingleSubmissionReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[25]
+	mi := &file_user_v1_user_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1473,7 +1545,7 @@ func (x *GetSingleSubmissionReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleSubmissionReply.ProtoReflect.Descriptor instead.
 func (*GetSingleSubmissionReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{25}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *GetSingleSubmissionReply) GetMetadata() *SubmissionMetadata {
@@ -1527,7 +1599,7 @@ type GetRanksRequest struct {
 
 func (x *GetRanksRequest) Reset() {
 	*x = GetRanksRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[26]
+	mi := &file_user_v1_user_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1539,7 +1611,7 @@ func (x *GetRanksRequest) String() string {
 func (*GetRanksRequest) ProtoMessage() {}
 
 func (x *GetRanksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[26]
+	mi := &file_user_v1_user_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1552,7 +1624,7 @@ func (x *GetRanksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRanksRequest.ProtoReflect.Descriptor instead.
 func (*GetRanksRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{26}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *GetRanksRequest) GetContestId() int64 {
@@ -1571,7 +1643,7 @@ type GetRanksReply struct {
 
 func (x *GetRanksReply) Reset() {
 	*x = GetRanksReply{}
-	mi := &file_user_v1_user_proto_msgTypes[27]
+	mi := &file_user_v1_user_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1583,7 +1655,7 @@ func (x *GetRanksReply) String() string {
 func (*GetRanksReply) ProtoMessage() {}
 
 func (x *GetRanksReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[27]
+	mi := &file_user_v1_user_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1596,7 +1668,7 @@ func (x *GetRanksReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRanksReply.ProtoReflect.Descriptor instead.
 func (*GetRanksReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{27}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *GetRanksReply) GetRanks() []*GetRanksReply_RankItem {
@@ -1614,7 +1686,7 @@ type GetAnnouncementsRequest struct {
 
 func (x *GetAnnouncementsRequest) Reset() {
 	*x = GetAnnouncementsRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[28]
+	mi := &file_user_v1_user_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1626,7 +1698,7 @@ func (x *GetAnnouncementsRequest) String() string {
 func (*GetAnnouncementsRequest) ProtoMessage() {}
 
 func (x *GetAnnouncementsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[28]
+	mi := &file_user_v1_user_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1639,7 +1711,7 @@ func (x *GetAnnouncementsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAnnouncementsRequest.ProtoReflect.Descriptor instead.
 func (*GetAnnouncementsRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{28}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{30}
 }
 
 type GetAnnouncementsReply struct {
@@ -1651,7 +1723,7 @@ type GetAnnouncementsReply struct {
 
 func (x *GetAnnouncementsReply) Reset() {
 	*x = GetAnnouncementsReply{}
-	mi := &file_user_v1_user_proto_msgTypes[29]
+	mi := &file_user_v1_user_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1663,7 +1735,7 @@ func (x *GetAnnouncementsReply) String() string {
 func (*GetAnnouncementsReply) ProtoMessage() {}
 
 func (x *GetAnnouncementsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[29]
+	mi := &file_user_v1_user_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1676,7 +1748,7 @@ func (x *GetAnnouncementsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAnnouncementsReply.ProtoReflect.Descriptor instead.
 func (*GetAnnouncementsReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{29}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetAnnouncementsReply) GetAnnouncements() []*GetAnnouncementsReply_Announcement {
@@ -1688,14 +1760,13 @@ func (x *GetAnnouncementsReply) GetAnnouncements() []*GetAnnouncementsReply_Anno
 
 type GetUserInfoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // User ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetUserInfoRequest) Reset() {
 	*x = GetUserInfoRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[30]
+	mi := &file_user_v1_user_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1707,7 +1778,7 @@ func (x *GetUserInfoRequest) String() string {
 func (*GetUserInfoRequest) ProtoMessage() {}
 
 func (x *GetUserInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[30]
+	mi := &file_user_v1_user_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1720,14 +1791,7 @@ func (x *GetUserInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetUserInfoRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{30}
-}
-
-func (x *GetUserInfoRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
+	return file_user_v1_user_proto_rawDescGZIP(), []int{32}
 }
 
 type GetUserInfoReply struct {
@@ -1741,7 +1805,7 @@ type GetUserInfoReply struct {
 
 func (x *GetUserInfoReply) Reset() {
 	*x = GetUserInfoReply{}
-	mi := &file_user_v1_user_proto_msgTypes[31]
+	mi := &file_user_v1_user_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1753,7 +1817,7 @@ func (x *GetUserInfoReply) String() string {
 func (*GetUserInfoReply) ProtoMessage() {}
 
 func (x *GetUserInfoReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[31]
+	mi := &file_user_v1_user_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1766,7 +1830,7 @@ func (x *GetUserInfoReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserInfoReply.ProtoReflect.Descriptor instead.
 func (*GetUserInfoReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{31}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *GetUserInfoReply) GetUserId() int64 {
@@ -1792,16 +1856,15 @@ func (x *GetUserInfoReply) GetEmail() string {
 
 type UpdateUserInfoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // User ID
-	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`            // Username
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`                  // Email
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"` // Username
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`       // Email
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateUserInfoRequest) Reset() {
 	*x = UpdateUserInfoRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[32]
+	mi := &file_user_v1_user_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1813,7 +1876,7 @@ func (x *UpdateUserInfoRequest) String() string {
 func (*UpdateUserInfoRequest) ProtoMessage() {}
 
 func (x *UpdateUserInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[32]
+	mi := &file_user_v1_user_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1826,14 +1889,7 @@ func (x *UpdateUserInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserInfoRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserInfoRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{32}
-}
-
-func (x *UpdateUserInfoRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
+	return file_user_v1_user_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *UpdateUserInfoRequest) GetUsername() string {
@@ -1859,7 +1915,7 @@ type UpdateUserInfoReply struct {
 
 func (x *UpdateUserInfoReply) Reset() {
 	*x = UpdateUserInfoReply{}
-	mi := &file_user_v1_user_proto_msgTypes[33]
+	mi := &file_user_v1_user_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1871,7 +1927,7 @@ func (x *UpdateUserInfoReply) String() string {
 func (*UpdateUserInfoReply) ProtoMessage() {}
 
 func (x *UpdateUserInfoReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[33]
+	mi := &file_user_v1_user_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1884,7 +1940,7 @@ func (x *UpdateUserInfoReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserInfoReply.ProtoReflect.Descriptor instead.
 func (*UpdateUserInfoReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{33}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *UpdateUserInfoReply) GetIsUpdated() bool {
@@ -1905,7 +1961,7 @@ type RegisterRequest struct {
 
 func (x *RegisterRequest) Reset() {
 	*x = RegisterRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[34]
+	mi := &file_user_v1_user_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1917,7 +1973,7 @@ func (x *RegisterRequest) String() string {
 func (*RegisterRequest) ProtoMessage() {}
 
 func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[34]
+	mi := &file_user_v1_user_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1930,7 +1986,7 @@ func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
 func (*RegisterRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{34}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *RegisterRequest) GetEndpoint() string {
@@ -1956,7 +2012,7 @@ type RegisterReply struct {
 
 func (x *RegisterReply) Reset() {
 	*x = RegisterReply{}
-	mi := &file_user_v1_user_proto_msgTypes[35]
+	mi := &file_user_v1_user_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1968,7 +2024,7 @@ func (x *RegisterReply) String() string {
 func (*RegisterReply) ProtoMessage() {}
 
 func (x *RegisterReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[35]
+	mi := &file_user_v1_user_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1981,7 +2037,7 @@ func (x *RegisterReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterReply.ProtoReflect.Descriptor instead.
 func (*RegisterReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{35}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *RegisterReply) GetToken() string {
@@ -1989,6 +2045,98 @@ func (x *RegisterReply) GetToken() string {
 		return x.Token
 	}
 	return ""
+}
+
+type GetSubmissionsReply_SubmissionResult struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	SubmissionUuid string                 `protobuf:"bytes,1,opt,name=submission_uuid,json=submissionUuid,proto3" json:"submission_uuid,omitempty"` // Submission UUID
+	Status         string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`                                       // Submission Status
+	SubmitTime     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=submit_time,json=submitTime,proto3" json:"submit_time,omitempty"`             // Submission Time
+	Score          int32                  `protobuf:"varint,4,opt,name=score,proto3" json:"score,omitempty"`                                        // Submission Score
+	Language       string                 `protobuf:"bytes,5,opt,name=language,proto3" json:"language,omitempty"`                                   // Programming Language
+	TimeCost       int32                  `protobuf:"varint,6,opt,name=time_cost,json=timeCost,proto3" json:"time_cost,omitempty"`                  // Time Cost
+	MemoryCost     int32                  `protobuf:"varint,7,opt,name=memory_cost,json=memoryCost,proto3" json:"memory_cost,omitempty"`            // Memory Cost
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *GetSubmissionsReply_SubmissionResult) Reset() {
+	*x = GetSubmissionsReply_SubmissionResult{}
+	mi := &file_user_v1_user_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSubmissionsReply_SubmissionResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSubmissionsReply_SubmissionResult) ProtoMessage() {}
+
+func (x *GetSubmissionsReply_SubmissionResult) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSubmissionsReply_SubmissionResult.ProtoReflect.Descriptor instead.
+func (*GetSubmissionsReply_SubmissionResult) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{24, 0}
+}
+
+func (x *GetSubmissionsReply_SubmissionResult) GetSubmissionUuid() string {
+	if x != nil {
+		return x.SubmissionUuid
+	}
+	return ""
+}
+
+func (x *GetSubmissionsReply_SubmissionResult) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *GetSubmissionsReply_SubmissionResult) GetSubmitTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.SubmitTime
+	}
+	return nil
+}
+
+func (x *GetSubmissionsReply_SubmissionResult) GetScore() int32 {
+	if x != nil {
+		return x.Score
+	}
+	return 0
+}
+
+func (x *GetSubmissionsReply_SubmissionResult) GetLanguage() string {
+	if x != nil {
+		return x.Language
+	}
+	return ""
+}
+
+func (x *GetSubmissionsReply_SubmissionResult) GetTimeCost() int32 {
+	if x != nil {
+		return x.TimeCost
+	}
+	return 0
+}
+
+func (x *GetSubmissionsReply_SubmissionResult) GetMemoryCost() int32 {
+	if x != nil {
+		return x.MemoryCost
+	}
+	return 0
 }
 
 type GetSingleSubmissionReply_CaseResults struct {
@@ -2000,7 +2148,7 @@ type GetSingleSubmissionReply_CaseResults struct {
 
 func (x *GetSingleSubmissionReply_CaseResults) Reset() {
 	*x = GetSingleSubmissionReply_CaseResults{}
-	mi := &file_user_v1_user_proto_msgTypes[36]
+	mi := &file_user_v1_user_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2012,7 +2160,7 @@ func (x *GetSingleSubmissionReply_CaseResults) String() string {
 func (*GetSingleSubmissionReply_CaseResults) ProtoMessage() {}
 
 func (x *GetSingleSubmissionReply_CaseResults) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[36]
+	mi := &file_user_v1_user_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2025,7 +2173,7 @@ func (x *GetSingleSubmissionReply_CaseResults) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use GetSingleSubmissionReply_CaseResults.ProtoReflect.Descriptor instead.
 func (*GetSingleSubmissionReply_CaseResults) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{25, 0}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{27, 0}
 }
 
 func (x *GetSingleSubmissionReply_CaseResults) GetCases() []*CaseMetadata {
@@ -2047,7 +2195,7 @@ type GetRanksReply_RankItem struct {
 
 func (x *GetRanksReply_RankItem) Reset() {
 	*x = GetRanksReply_RankItem{}
-	mi := &file_user_v1_user_proto_msgTypes[37]
+	mi := &file_user_v1_user_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2059,7 +2207,7 @@ func (x *GetRanksReply_RankItem) String() string {
 func (*GetRanksReply_RankItem) ProtoMessage() {}
 
 func (x *GetRanksReply_RankItem) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[37]
+	mi := &file_user_v1_user_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2072,7 +2220,7 @@ func (x *GetRanksReply_RankItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRanksReply_RankItem.ProtoReflect.Descriptor instead.
 func (*GetRanksReply_RankItem) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{27, 0}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{29, 0}
 }
 
 func (x *GetRanksReply_RankItem) GetUserId() int64 {
@@ -2115,7 +2263,7 @@ type GetAnnouncementsReply_Announcement struct {
 
 func (x *GetAnnouncementsReply_Announcement) Reset() {
 	*x = GetAnnouncementsReply_Announcement{}
-	mi := &file_user_v1_user_proto_msgTypes[38]
+	mi := &file_user_v1_user_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2127,7 +2275,7 @@ func (x *GetAnnouncementsReply_Announcement) String() string {
 func (*GetAnnouncementsReply_Announcement) ProtoMessage() {}
 
 func (x *GetAnnouncementsReply_Announcement) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[38]
+	mi := &file_user_v1_user_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2140,7 +2288,7 @@ func (x *GetAnnouncementsReply_Announcement) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use GetAnnouncementsReply_Announcement.ProtoReflect.Descriptor instead.
 func (*GetAnnouncementsReply_Announcement) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{29, 0}
+	return file_user_v1_user_proto_rawDescGZIP(), []int{31, 0}
 }
 
 func (x *GetAnnouncementsReply_Announcement) GetId() int64 {
@@ -2191,18 +2339,21 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"contest_id\x18\x01 \x01(\x03R\tcontestId\"{\n" +
 	"\x15GetSingleContestReply\x12@\n" +
 	"\bmetadata\x18\x01 \x01(\v2$.api.cascade.user.v1.ContestMetadataR\bmetadata\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\"L\n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\"3\n" +
 	"\x12JoinContestRequest\x12\x1d\n" +
 	"\n" +
-	"contest_id\x18\x01 \x01(\x03R\tcontestId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"+\n" +
+	"contest_id\x18\x01 \x01(\x03R\tcontestId\"+\n" +
 	"\x10JoinContestReply\x12\x17\n" +
-	"\ais_join\x18\x01 \x01(\bR\x06isJoin\"L\n" +
+	"\ais_join\x18\x01 \x01(\bR\x06isJoin\"3\n" +
 	"\x12QuitContestRequest\x12\x1d\n" +
 	"\n" +
-	"contest_id\x18\x01 \x01(\x03R\tcontestId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"+\n" +
+	"contest_id\x18\x01 \x01(\x03R\tcontestId\"+\n" +
 	"\x10QuitContestReply\x12\x17\n" +
+	"\ais_join\x18\x01 \x01(\bR\x06isJoin\"5\n" +
+	"\x14GetJoinStatusRequest\x12\x1d\n" +
+	"\n" +
+	"contest_id\x18\x01 \x01(\x03R\tcontestId\"-\n" +
+	"\x12GetJoinStatusReply\x12\x17\n" +
 	"\ais_join\x18\x01 \x01(\bR\x06isJoin\"\x83\x01\n" +
 	"\x0fProblemMetadata\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
@@ -2264,9 +2415,19 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"contest_id\x18\x02 \x01(\x03R\tcontestId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04page\x18\x04 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x05 \x01(\x05R\bpageSize\"`\n" +
-	"\x13GetSubmissionsReply\x12I\n" +
-	"\vsubmissions\x18\x01 \x03(\v2'.api.cascade.user.v1.SubmissionMetadataR\vsubmissions\"z\n" +
+	"\tpage_size\x18\x05 \x01(\x05R\bpageSize\"\xf5\x02\n" +
+	"\x13GetSubmissionsReply\x12[\n" +
+	"\vsubmissions\x18\x01 \x03(\v29.api.cascade.user.v1.GetSubmissionsReply.SubmissionResultR\vsubmissions\x1a\x80\x02\n" +
+	"\x10SubmissionResult\x12'\n" +
+	"\x0fsubmission_uuid\x18\x01 \x01(\tR\x0esubmissionUuid\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12;\n" +
+	"\vsubmit_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"submitTime\x12\x14\n" +
+	"\x05score\x18\x04 \x01(\x05R\x05score\x12\x1a\n" +
+	"\blanguage\x18\x05 \x01(\tR\blanguage\x12\x1b\n" +
+	"\ttime_cost\x18\x06 \x01(\x05R\btimeCost\x12\x1f\n" +
+	"\vmemory_cost\x18\a \x01(\x05R\n" +
+	"memoryCost\"z\n" +
 	"\fCaseMetadata\x12\x14\n" +
 	"\x05score\x18\x01 \x01(\x05R\x05score\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12\x1b\n" +
@@ -2302,17 +2463,15 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12%\n" +
 	"\x0epublisher_name\x18\x02 \x01(\tR\rpublisherName\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12\x18\n" +
-	"\acontent\x18\x04 \x01(\tR\acontent\"-\n" +
-	"\x12GetUserInfoRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"]\n" +
+	"\acontent\x18\x04 \x01(\tR\acontent\"\x14\n" +
+	"\x12GetUserInfoRequest\"]\n" +
 	"\x10GetUserInfoReply\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\"b\n" +
-	"\x15UpdateUserInfoRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\"4\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\"I\n" +
+	"\x15UpdateUserInfoRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\"4\n" +
 	"\x13UpdateUserInfoReply\x12\x1d\n" +
 	"\n" +
 	"is_updated\x18\x01 \x01(\bR\tisUpdated\"F\n" +
@@ -2323,12 +2482,13 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tR\x05token*A\n" +
 	"\vErrorReason\x12\x15\n" +
 	"\vUSER_BANNED\x10\x00\x1a\x04\xa8E\x91\x03\x12\x15\n" +
-	"\vCONTEST_END\x10\x01\x1a\x04\xa8E\x91\x03\x1a\x04\xa0E\xf4\x032\xe6\x10\n" +
+	"\vCONTEST_END\x10\x01\x1a\x04\xa8E\x91\x03\x1a\x04\xa0E\xf4\x032\xeb\x11\n" +
 	"\x04User\x12u\n" +
 	"\vGetContests\x12'.api.cascade.user.v1.GetContestsRequest\x1a%.api.cascade.user.v1.GetContestsReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/user/contests\x12\x91\x01\n" +
 	"\x10GetSingleContest\x12,.api.cascade.user.v1.GetSingleContestRequest\x1a*.api.cascade.user.v1.GetSingleContestReply\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/user/contests/{contest_id}\x12\x8a\x01\n" +
 	"\vJoinContest\x12'.api.cascade.user.v1.JoinContestRequest\x1a%.api.cascade.user.v1.JoinContestReply\"+\x82\xd3\xe4\x93\x02%:\x01*\" /user/contests/{contest_id}/join\x12\x87\x01\n" +
-	"\vQuitContest\x12'.api.cascade.user.v1.QuitContestRequest\x1a%.api.cascade.user.v1.QuitContestReply\"(\x82\xd3\xe4\x93\x02\"* /user/contests/{contest_id}/join\x12\x8b\x01\n" +
+	"\vQuitContest\x12'.api.cascade.user.v1.QuitContestRequest\x1a%.api.cascade.user.v1.QuitContestReply\"(\x82\xd3\xe4\x93\x02\"* /user/contests/{contest_id}/join\x12\x8d\x01\n" +
+	"\rGetJoinStatus\x12).api.cascade.user.v1.GetJoinStatusRequest\x1a'.api.cascade.user.v1.GetJoinStatusReply\"(\x82\xd3\xe4\x93\x02\"\x12 /user/contests/{contest_id}/join\x12\x8b\x01\n" +
 	"\vGetProblems\x12'.api.cascade.user.v1.GetProblemsRequest\x1a%.api.cascade.user.v1.GetProblemsReply\",\x82\xd3\xe4\x93\x02&\x12$/user/contests/{contest_id}/problems\x12\x91\x01\n" +
 	"\x10GetSingleProblem\x12,.api.cascade.user.v1.GetSingleProblemRequest\x1a*.api.cascade.user.v1.GetSingleProblemReply\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/user/problems/{problem_id}\x12t\n" +
 	"\fPostSelfTest\x12$.api.cascade.user.v1.SelfTestRequest\x1a\".api.cascade.user.v1.SelfTestReply\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/user/selftests\x12\x98\x01\n" +
@@ -2337,9 +2497,9 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"\x0eGetSubmissions\x12*.api.cascade.user.v1.GetSubmissionsRequest\x1a(.api.cascade.user.v1.GetSubmissionsReply\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/user/submissions\x12\xa2\x01\n" +
 	"\x13GetSingleSubmission\x12/.api.cascade.user.v1.GetSingleSubmissionRequest\x1a-.api.cascade.user.v1.GetSingleSubmissionReply\"+\x82\xd3\xe4\x93\x02%\x12#/user/submissions/{submission_uuid}\x12v\n" +
 	"\bGetRanks\x12$.api.cascade.user.v1.GetRanksRequest\x1a\".api.cascade.user.v1.GetRanksReply\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/user/{contest_id}/ranks\x12\x89\x01\n" +
-	"\x10GetAnnouncements\x12,.api.cascade.user.v1.GetAnnouncementsRequest\x1a*.api.cascade.user.v1.GetAnnouncementsReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/user/announcements\x12w\n" +
-	"\vGetUserInfo\x12'.api.cascade.user.v1.GetUserInfoRequest\x1a%.api.cascade.user.v1.GetUserInfoReply\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/users/{user_id}\x12\x83\x01\n" +
-	"\x0eUpdateUserInfo\x12*.api.cascade.user.v1.UpdateUserInfoRequest\x1a(.api.cascade.user.v1.UpdateUserInfoReply\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\x1a\x10/users/{user_id}\x12V\n" +
+	"\x10GetAnnouncements\x12,.api.cascade.user.v1.GetAnnouncementsRequest\x1a*.api.cascade.user.v1.GetAnnouncementsReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/user/announcements\x12r\n" +
+	"\vGetUserInfo\x12'.api.cascade.user.v1.GetUserInfoRequest\x1a%.api.cascade.user.v1.GetUserInfoReply\"\x13\x82\xd3\xe4\x93\x02\r\x12\v/user/users\x12~\n" +
+	"\x0eUpdateUserInfo\x12*.api.cascade.user.v1.UpdateUserInfoRequest\x1a(.api.cascade.user.v1.UpdateUserInfoReply\"\x16\x82\xd3\xe4\x93\x02\x10:\x01*\x1a\v/user/users\x12V\n" +
 	"\bRegister\x12$.api.cascade.user.v1.RegisterRequest\x1a\".api.cascade.user.v1.RegisterReply\"\x00B\xb6\x01\n" +
 	"\x17com.api.cascade.user.v1B\tUserProtoP\x01Z!cascade-oj/api/cascade/user/v1;v1\xa2\x02\x03ACU\xaa\x02\x13Api.Cascade.User.V1\xca\x02\x13Api\\Cascade\\User\\V1\xe2\x02\x1fApi\\Cascade\\User\\V1\\GPBMetadata\xea\x02\x16Api::Cascade::User::V1b\x06proto3"
 
@@ -2356,7 +2516,7 @@ func file_user_v1_user_proto_rawDescGZIP() []byte {
 }
 
 var file_user_v1_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
+var file_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
 var file_user_v1_user_proto_goTypes = []any{
 	(ErrorReason)(0),                             // 0: api.cascade.user.v1.ErrorReason
 	(*ContestMetadata)(nil),                      // 1: api.cascade.user.v1.ContestMetadata
@@ -2368,89 +2528,95 @@ var file_user_v1_user_proto_goTypes = []any{
 	(*JoinContestReply)(nil),                     // 7: api.cascade.user.v1.JoinContestReply
 	(*QuitContestRequest)(nil),                   // 8: api.cascade.user.v1.QuitContestRequest
 	(*QuitContestReply)(nil),                     // 9: api.cascade.user.v1.QuitContestReply
-	(*ProblemMetadata)(nil),                      // 10: api.cascade.user.v1.ProblemMetadata
-	(*GetProblemsRequest)(nil),                   // 11: api.cascade.user.v1.GetProblemsRequest
-	(*GetProblemsReply)(nil),                     // 12: api.cascade.user.v1.GetProblemsReply
-	(*GetSingleProblemRequest)(nil),              // 13: api.cascade.user.v1.GetSingleProblemRequest
-	(*GetSingleProblemReply)(nil),                // 14: api.cascade.user.v1.GetSingleProblemReply
-	(*SelfTestRequest)(nil),                      // 15: api.cascade.user.v1.SelfTestRequest
-	(*SelfTestReply)(nil),                        // 16: api.cascade.user.v1.SelfTestReply
-	(*GetSelfTestResultRequest)(nil),             // 17: api.cascade.user.v1.GetSelfTestResultRequest
-	(*GetSelfTestResultReply)(nil),               // 18: api.cascade.user.v1.GetSelfTestResultReply
-	(*PostSubmissionRequest)(nil),                // 19: api.cascade.user.v1.PostSubmissionRequest
-	(*PostSubmissionReply)(nil),                  // 20: api.cascade.user.v1.PostSubmissionReply
-	(*SubmissionMetadata)(nil),                   // 21: api.cascade.user.v1.SubmissionMetadata
-	(*GetSubmissionsRequest)(nil),                // 22: api.cascade.user.v1.GetSubmissionsRequest
-	(*GetSubmissionsReply)(nil),                  // 23: api.cascade.user.v1.GetSubmissionsReply
-	(*CaseMetadata)(nil),                         // 24: api.cascade.user.v1.CaseMetadata
-	(*GetSingleSubmissionRequest)(nil),           // 25: api.cascade.user.v1.GetSingleSubmissionRequest
-	(*GetSingleSubmissionReply)(nil),             // 26: api.cascade.user.v1.GetSingleSubmissionReply
-	(*GetRanksRequest)(nil),                      // 27: api.cascade.user.v1.GetRanksRequest
-	(*GetRanksReply)(nil),                        // 28: api.cascade.user.v1.GetRanksReply
-	(*GetAnnouncementsRequest)(nil),              // 29: api.cascade.user.v1.GetAnnouncementsRequest
-	(*GetAnnouncementsReply)(nil),                // 30: api.cascade.user.v1.GetAnnouncementsReply
-	(*GetUserInfoRequest)(nil),                   // 31: api.cascade.user.v1.GetUserInfoRequest
-	(*GetUserInfoReply)(nil),                     // 32: api.cascade.user.v1.GetUserInfoReply
-	(*UpdateUserInfoRequest)(nil),                // 33: api.cascade.user.v1.UpdateUserInfoRequest
-	(*UpdateUserInfoReply)(nil),                  // 34: api.cascade.user.v1.UpdateUserInfoReply
-	(*RegisterRequest)(nil),                      // 35: api.cascade.user.v1.RegisterRequest
-	(*RegisterReply)(nil),                        // 36: api.cascade.user.v1.RegisterReply
-	(*GetSingleSubmissionReply_CaseResults)(nil), // 37: api.cascade.user.v1.GetSingleSubmissionReply.CaseResults
-	(*GetRanksReply_RankItem)(nil),               // 38: api.cascade.user.v1.GetRanksReply.RankItem
-	(*GetAnnouncementsReply_Announcement)(nil),   // 39: api.cascade.user.v1.GetAnnouncementsReply.Announcement
-	(*timestamppb.Timestamp)(nil),                // 40: google.protobuf.Timestamp
+	(*GetJoinStatusRequest)(nil),                 // 10: api.cascade.user.v1.GetJoinStatusRequest
+	(*GetJoinStatusReply)(nil),                   // 11: api.cascade.user.v1.GetJoinStatusReply
+	(*ProblemMetadata)(nil),                      // 12: api.cascade.user.v1.ProblemMetadata
+	(*GetProblemsRequest)(nil),                   // 13: api.cascade.user.v1.GetProblemsRequest
+	(*GetProblemsReply)(nil),                     // 14: api.cascade.user.v1.GetProblemsReply
+	(*GetSingleProblemRequest)(nil),              // 15: api.cascade.user.v1.GetSingleProblemRequest
+	(*GetSingleProblemReply)(nil),                // 16: api.cascade.user.v1.GetSingleProblemReply
+	(*SelfTestRequest)(nil),                      // 17: api.cascade.user.v1.SelfTestRequest
+	(*SelfTestReply)(nil),                        // 18: api.cascade.user.v1.SelfTestReply
+	(*GetSelfTestResultRequest)(nil),             // 19: api.cascade.user.v1.GetSelfTestResultRequest
+	(*GetSelfTestResultReply)(nil),               // 20: api.cascade.user.v1.GetSelfTestResultReply
+	(*PostSubmissionRequest)(nil),                // 21: api.cascade.user.v1.PostSubmissionRequest
+	(*PostSubmissionReply)(nil),                  // 22: api.cascade.user.v1.PostSubmissionReply
+	(*SubmissionMetadata)(nil),                   // 23: api.cascade.user.v1.SubmissionMetadata
+	(*GetSubmissionsRequest)(nil),                // 24: api.cascade.user.v1.GetSubmissionsRequest
+	(*GetSubmissionsReply)(nil),                  // 25: api.cascade.user.v1.GetSubmissionsReply
+	(*CaseMetadata)(nil),                         // 26: api.cascade.user.v1.CaseMetadata
+	(*GetSingleSubmissionRequest)(nil),           // 27: api.cascade.user.v1.GetSingleSubmissionRequest
+	(*GetSingleSubmissionReply)(nil),             // 28: api.cascade.user.v1.GetSingleSubmissionReply
+	(*GetRanksRequest)(nil),                      // 29: api.cascade.user.v1.GetRanksRequest
+	(*GetRanksReply)(nil),                        // 30: api.cascade.user.v1.GetRanksReply
+	(*GetAnnouncementsRequest)(nil),              // 31: api.cascade.user.v1.GetAnnouncementsRequest
+	(*GetAnnouncementsReply)(nil),                // 32: api.cascade.user.v1.GetAnnouncementsReply
+	(*GetUserInfoRequest)(nil),                   // 33: api.cascade.user.v1.GetUserInfoRequest
+	(*GetUserInfoReply)(nil),                     // 34: api.cascade.user.v1.GetUserInfoReply
+	(*UpdateUserInfoRequest)(nil),                // 35: api.cascade.user.v1.UpdateUserInfoRequest
+	(*UpdateUserInfoReply)(nil),                  // 36: api.cascade.user.v1.UpdateUserInfoReply
+	(*RegisterRequest)(nil),                      // 37: api.cascade.user.v1.RegisterRequest
+	(*RegisterReply)(nil),                        // 38: api.cascade.user.v1.RegisterReply
+	(*GetSubmissionsReply_SubmissionResult)(nil), // 39: api.cascade.user.v1.GetSubmissionsReply.SubmissionResult
+	(*GetSingleSubmissionReply_CaseResults)(nil), // 40: api.cascade.user.v1.GetSingleSubmissionReply.CaseResults
+	(*GetRanksReply_RankItem)(nil),               // 41: api.cascade.user.v1.GetRanksReply.RankItem
+	(*GetAnnouncementsReply_Announcement)(nil),   // 42: api.cascade.user.v1.GetAnnouncementsReply.Announcement
+	(*timestamppb.Timestamp)(nil),                // 43: google.protobuf.Timestamp
 }
 var file_user_v1_user_proto_depIdxs = []int32{
-	40, // 0: api.cascade.user.v1.ContestMetadata.start_time:type_name -> google.protobuf.Timestamp
-	40, // 1: api.cascade.user.v1.ContestMetadata.end_time:type_name -> google.protobuf.Timestamp
+	43, // 0: api.cascade.user.v1.ContestMetadata.start_time:type_name -> google.protobuf.Timestamp
+	43, // 1: api.cascade.user.v1.ContestMetadata.end_time:type_name -> google.protobuf.Timestamp
 	1,  // 2: api.cascade.user.v1.GetContestsReply.contests:type_name -> api.cascade.user.v1.ContestMetadata
 	1,  // 3: api.cascade.user.v1.GetSingleContestReply.metadata:type_name -> api.cascade.user.v1.ContestMetadata
-	10, // 4: api.cascade.user.v1.GetProblemsReply.problems:type_name -> api.cascade.user.v1.ProblemMetadata
-	10, // 5: api.cascade.user.v1.GetSingleProblemReply.metadata:type_name -> api.cascade.user.v1.ProblemMetadata
-	40, // 6: api.cascade.user.v1.SubmissionMetadata.submit_time:type_name -> google.protobuf.Timestamp
-	21, // 7: api.cascade.user.v1.GetSubmissionsReply.submissions:type_name -> api.cascade.user.v1.SubmissionMetadata
-	21, // 8: api.cascade.user.v1.GetSingleSubmissionReply.metadata:type_name -> api.cascade.user.v1.SubmissionMetadata
-	37, // 9: api.cascade.user.v1.GetSingleSubmissionReply.case_results:type_name -> api.cascade.user.v1.GetSingleSubmissionReply.CaseResults
-	38, // 10: api.cascade.user.v1.GetRanksReply.ranks:type_name -> api.cascade.user.v1.GetRanksReply.RankItem
-	39, // 11: api.cascade.user.v1.GetAnnouncementsReply.announcements:type_name -> api.cascade.user.v1.GetAnnouncementsReply.Announcement
-	24, // 12: api.cascade.user.v1.GetSingleSubmissionReply.CaseResults.cases:type_name -> api.cascade.user.v1.CaseMetadata
-	2,  // 13: api.cascade.user.v1.User.GetContests:input_type -> api.cascade.user.v1.GetContestsRequest
-	4,  // 14: api.cascade.user.v1.User.GetSingleContest:input_type -> api.cascade.user.v1.GetSingleContestRequest
-	6,  // 15: api.cascade.user.v1.User.JoinContest:input_type -> api.cascade.user.v1.JoinContestRequest
-	8,  // 16: api.cascade.user.v1.User.QuitContest:input_type -> api.cascade.user.v1.QuitContestRequest
-	11, // 17: api.cascade.user.v1.User.GetProblems:input_type -> api.cascade.user.v1.GetProblemsRequest
-	13, // 18: api.cascade.user.v1.User.GetSingleProblem:input_type -> api.cascade.user.v1.GetSingleProblemRequest
-	15, // 19: api.cascade.user.v1.User.PostSelfTest:input_type -> api.cascade.user.v1.SelfTestRequest
-	17, // 20: api.cascade.user.v1.User.GetSelfTestResult:input_type -> api.cascade.user.v1.GetSelfTestResultRequest
-	19, // 21: api.cascade.user.v1.User.PostSubmission:input_type -> api.cascade.user.v1.PostSubmissionRequest
-	22, // 22: api.cascade.user.v1.User.GetSubmissions:input_type -> api.cascade.user.v1.GetSubmissionsRequest
-	25, // 23: api.cascade.user.v1.User.GetSingleSubmission:input_type -> api.cascade.user.v1.GetSingleSubmissionRequest
-	27, // 24: api.cascade.user.v1.User.GetRanks:input_type -> api.cascade.user.v1.GetRanksRequest
-	29, // 25: api.cascade.user.v1.User.GetAnnouncements:input_type -> api.cascade.user.v1.GetAnnouncementsRequest
-	31, // 26: api.cascade.user.v1.User.GetUserInfo:input_type -> api.cascade.user.v1.GetUserInfoRequest
-	33, // 27: api.cascade.user.v1.User.UpdateUserInfo:input_type -> api.cascade.user.v1.UpdateUserInfoRequest
-	35, // 28: api.cascade.user.v1.User.Register:input_type -> api.cascade.user.v1.RegisterRequest
-	3,  // 29: api.cascade.user.v1.User.GetContests:output_type -> api.cascade.user.v1.GetContestsReply
-	5,  // 30: api.cascade.user.v1.User.GetSingleContest:output_type -> api.cascade.user.v1.GetSingleContestReply
-	7,  // 31: api.cascade.user.v1.User.JoinContest:output_type -> api.cascade.user.v1.JoinContestReply
-	9,  // 32: api.cascade.user.v1.User.QuitContest:output_type -> api.cascade.user.v1.QuitContestReply
-	12, // 33: api.cascade.user.v1.User.GetProblems:output_type -> api.cascade.user.v1.GetProblemsReply
-	14, // 34: api.cascade.user.v1.User.GetSingleProblem:output_type -> api.cascade.user.v1.GetSingleProblemReply
-	16, // 35: api.cascade.user.v1.User.PostSelfTest:output_type -> api.cascade.user.v1.SelfTestReply
-	18, // 36: api.cascade.user.v1.User.GetSelfTestResult:output_type -> api.cascade.user.v1.GetSelfTestResultReply
-	20, // 37: api.cascade.user.v1.User.PostSubmission:output_type -> api.cascade.user.v1.PostSubmissionReply
-	23, // 38: api.cascade.user.v1.User.GetSubmissions:output_type -> api.cascade.user.v1.GetSubmissionsReply
-	26, // 39: api.cascade.user.v1.User.GetSingleSubmission:output_type -> api.cascade.user.v1.GetSingleSubmissionReply
-	28, // 40: api.cascade.user.v1.User.GetRanks:output_type -> api.cascade.user.v1.GetRanksReply
-	30, // 41: api.cascade.user.v1.User.GetAnnouncements:output_type -> api.cascade.user.v1.GetAnnouncementsReply
-	32, // 42: api.cascade.user.v1.User.GetUserInfo:output_type -> api.cascade.user.v1.GetUserInfoReply
-	34, // 43: api.cascade.user.v1.User.UpdateUserInfo:output_type -> api.cascade.user.v1.UpdateUserInfoReply
-	36, // 44: api.cascade.user.v1.User.Register:output_type -> api.cascade.user.v1.RegisterReply
-	29, // [29:45] is the sub-list for method output_type
-	13, // [13:29] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	12, // 4: api.cascade.user.v1.GetProblemsReply.problems:type_name -> api.cascade.user.v1.ProblemMetadata
+	12, // 5: api.cascade.user.v1.GetSingleProblemReply.metadata:type_name -> api.cascade.user.v1.ProblemMetadata
+	43, // 6: api.cascade.user.v1.SubmissionMetadata.submit_time:type_name -> google.protobuf.Timestamp
+	39, // 7: api.cascade.user.v1.GetSubmissionsReply.submissions:type_name -> api.cascade.user.v1.GetSubmissionsReply.SubmissionResult
+	23, // 8: api.cascade.user.v1.GetSingleSubmissionReply.metadata:type_name -> api.cascade.user.v1.SubmissionMetadata
+	40, // 9: api.cascade.user.v1.GetSingleSubmissionReply.case_results:type_name -> api.cascade.user.v1.GetSingleSubmissionReply.CaseResults
+	41, // 10: api.cascade.user.v1.GetRanksReply.ranks:type_name -> api.cascade.user.v1.GetRanksReply.RankItem
+	42, // 11: api.cascade.user.v1.GetAnnouncementsReply.announcements:type_name -> api.cascade.user.v1.GetAnnouncementsReply.Announcement
+	43, // 12: api.cascade.user.v1.GetSubmissionsReply.SubmissionResult.submit_time:type_name -> google.protobuf.Timestamp
+	26, // 13: api.cascade.user.v1.GetSingleSubmissionReply.CaseResults.cases:type_name -> api.cascade.user.v1.CaseMetadata
+	2,  // 14: api.cascade.user.v1.User.GetContests:input_type -> api.cascade.user.v1.GetContestsRequest
+	4,  // 15: api.cascade.user.v1.User.GetSingleContest:input_type -> api.cascade.user.v1.GetSingleContestRequest
+	6,  // 16: api.cascade.user.v1.User.JoinContest:input_type -> api.cascade.user.v1.JoinContestRequest
+	8,  // 17: api.cascade.user.v1.User.QuitContest:input_type -> api.cascade.user.v1.QuitContestRequest
+	10, // 18: api.cascade.user.v1.User.GetJoinStatus:input_type -> api.cascade.user.v1.GetJoinStatusRequest
+	13, // 19: api.cascade.user.v1.User.GetProblems:input_type -> api.cascade.user.v1.GetProblemsRequest
+	15, // 20: api.cascade.user.v1.User.GetSingleProblem:input_type -> api.cascade.user.v1.GetSingleProblemRequest
+	17, // 21: api.cascade.user.v1.User.PostSelfTest:input_type -> api.cascade.user.v1.SelfTestRequest
+	19, // 22: api.cascade.user.v1.User.GetSelfTestResult:input_type -> api.cascade.user.v1.GetSelfTestResultRequest
+	21, // 23: api.cascade.user.v1.User.PostSubmission:input_type -> api.cascade.user.v1.PostSubmissionRequest
+	24, // 24: api.cascade.user.v1.User.GetSubmissions:input_type -> api.cascade.user.v1.GetSubmissionsRequest
+	27, // 25: api.cascade.user.v1.User.GetSingleSubmission:input_type -> api.cascade.user.v1.GetSingleSubmissionRequest
+	29, // 26: api.cascade.user.v1.User.GetRanks:input_type -> api.cascade.user.v1.GetRanksRequest
+	31, // 27: api.cascade.user.v1.User.GetAnnouncements:input_type -> api.cascade.user.v1.GetAnnouncementsRequest
+	33, // 28: api.cascade.user.v1.User.GetUserInfo:input_type -> api.cascade.user.v1.GetUserInfoRequest
+	35, // 29: api.cascade.user.v1.User.UpdateUserInfo:input_type -> api.cascade.user.v1.UpdateUserInfoRequest
+	37, // 30: api.cascade.user.v1.User.Register:input_type -> api.cascade.user.v1.RegisterRequest
+	3,  // 31: api.cascade.user.v1.User.GetContests:output_type -> api.cascade.user.v1.GetContestsReply
+	5,  // 32: api.cascade.user.v1.User.GetSingleContest:output_type -> api.cascade.user.v1.GetSingleContestReply
+	7,  // 33: api.cascade.user.v1.User.JoinContest:output_type -> api.cascade.user.v1.JoinContestReply
+	9,  // 34: api.cascade.user.v1.User.QuitContest:output_type -> api.cascade.user.v1.QuitContestReply
+	11, // 35: api.cascade.user.v1.User.GetJoinStatus:output_type -> api.cascade.user.v1.GetJoinStatusReply
+	14, // 36: api.cascade.user.v1.User.GetProblems:output_type -> api.cascade.user.v1.GetProblemsReply
+	16, // 37: api.cascade.user.v1.User.GetSingleProblem:output_type -> api.cascade.user.v1.GetSingleProblemReply
+	18, // 38: api.cascade.user.v1.User.PostSelfTest:output_type -> api.cascade.user.v1.SelfTestReply
+	20, // 39: api.cascade.user.v1.User.GetSelfTestResult:output_type -> api.cascade.user.v1.GetSelfTestResultReply
+	22, // 40: api.cascade.user.v1.User.PostSubmission:output_type -> api.cascade.user.v1.PostSubmissionReply
+	25, // 41: api.cascade.user.v1.User.GetSubmissions:output_type -> api.cascade.user.v1.GetSubmissionsReply
+	28, // 42: api.cascade.user.v1.User.GetSingleSubmission:output_type -> api.cascade.user.v1.GetSingleSubmissionReply
+	30, // 43: api.cascade.user.v1.User.GetRanks:output_type -> api.cascade.user.v1.GetRanksReply
+	32, // 44: api.cascade.user.v1.User.GetAnnouncements:output_type -> api.cascade.user.v1.GetAnnouncementsReply
+	34, // 45: api.cascade.user.v1.User.GetUserInfo:output_type -> api.cascade.user.v1.GetUserInfoReply
+	36, // 46: api.cascade.user.v1.User.UpdateUserInfo:output_type -> api.cascade.user.v1.UpdateUserInfoReply
+	38, // 47: api.cascade.user.v1.User.Register:output_type -> api.cascade.user.v1.RegisterReply
+	31, // [31:48] is the sub-list for method output_type
+	14, // [14:31] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_user_v1_user_proto_init() }
@@ -2464,7 +2630,7 @@ func file_user_v1_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_v1_user_proto_rawDesc), len(file_user_v1_user_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   39,
+			NumMessages:   42,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
