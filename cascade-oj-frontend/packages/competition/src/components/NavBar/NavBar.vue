@@ -92,8 +92,15 @@ onBeforeUnmount(() => {
 });
 
 const handleLogout = () => {
-  // 1. 清除 LocalStorage
+  // 1. 清除 LocalStorage 中的登录与参赛状态
   localStorage.removeItem('cascade_token');
+  // 清除所有以 cascade_joined_ 开头的键，避免残留“已加入”状态
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('cascade_joined_')) {
+      localStorage.removeItem(key);
+    }
+  }
   checkAuth();
   
   // 2.以此类推，清除用户信息状态

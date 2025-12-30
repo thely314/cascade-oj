@@ -1,8 +1,12 @@
 <template>
   <div class="home-container">
     <main class="main-content">
-      <h1>欢迎来到Cascade平台</h1>
-      <p>这是一个在线判题系统</p>
+      <h1 class="hero-title">
+        欢迎来到 Cascade 平台<br />
+        <span class="highlight">The Art of Coding</span>
+      </h1>
+      <div class="hero-accent" />
+      <p class="lead">这是一个在线判题系统</p>
       <div class="feature-cards">
 
         <div class="card card-blue info">

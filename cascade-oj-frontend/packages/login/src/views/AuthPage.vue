@@ -13,6 +13,7 @@
             <p class="sub-title">
               {{ isLogin ? '登录以继续您的编程之旅' : '注册账号，开启您的编程之旅' }}
             </p>
+            <router-link to="/home" class="back-home-link">不想登录？先返回主页</router-link>
           </div>
 
           <!-- Tab 切换 -->
@@ -122,6 +123,19 @@ const isLogin = ref(true);
 .sub-title {
   color: #6c7c7a;
   font-size: 15px;
+}
+
+/* 返回主页链接（仿照“忘记密码？”样式，无下划线） */
+.back-home-link {
+  color: #1dad80;
+  text-decoration: none;
+  font-size: 14px;
+  display: block; /* 保证单独一行显示 */
+  margin-top: 12px; /* 增加与副标题的间距 */
+  transition: color 0.2s;
+}
+.back-home-link:hover {
+  color: #2ed1b1;
 }
 
 /* Tab 样式保持不变 */

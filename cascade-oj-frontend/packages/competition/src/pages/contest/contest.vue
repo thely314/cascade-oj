@@ -3,7 +3,7 @@
 	<div class="home-container">
 		<main class="main-content">
 			<h1>比赛详情</h1>
-			<p>当前比赛 ID：{{ idStr }}</p>
+			<p class="lead">{{ contest?.description || '暂无描述' }}</p>
 
 			<div class="contest-grid">
 				<div class="left">
@@ -25,17 +25,45 @@
 
 				<div class="right">
 					<div class="side-list">
-						<div class="card join-card">
+						<div class="card join-card" :class="statusClass">
 							<h3>加入比赛</h3>
-							<p v-if="joined">已加入该比赛，祝你取得好成绩！</p>
-							<p v-else>成功加入比赛后，即可参与排名与提交。</p>
+							<!-- 状态描述 -->
+							<template v-if="isEnded">
+								<p v-if="joined">比赛已结束，你已参与该比赛，当前无法退出。</p>
+								<p v-else>比赛已结束，当前无法加入。</p>
+							</template>
+							<template v-else-if="isOngoing">
+								<p v-if="joined">已加入该比赛（进行中），当前无法退出。</p>
+								<p v-else>比赛进行中，加入后即可参与排名与提交。</p>
+							</template>
+							<template v-else>
+								<p v-if="joined">已加入该比赛（未开始），你可以选择退出。</p>
+								<p v-else>成功加入比赛后，即可参与排名与提交。</p>
+							</template>
+
+							<!-- 动作按钮 -->
 							<div class="actions">
-								<button v-if="!joined" class="action-btn" :disabled="joinLoading" @click="handleJoin">
-									{{ joinLoading ? '加入中...' : '加入比赛' }}
-								</button>
-								<button v-else class="action-btn secondary" :disabled="quitLoading" @click="handleQuit">
-									{{ quitLoading ? '退出中...' : '退出比赛' }}
-								</button>
+								<!-- 已结束：两个按钮均不可交互 -->
+								<template v-if="isEnded">
+									<button v-if="!joined" class="action-btn" disabled>加入比赛</button>
+									<button v-else class="action-btn secondary" disabled>退出比赛</button>
+								</template>
+								<!-- 进行中：未加入可加入；已加入显示不可交互的退出按钮 -->
+								<template v-else-if="isOngoing">
+									<button v-if="!joined" class="action-btn" :disabled="joinLoading" @click="handleJoin">
+										{{ joinLoading ? '加入中...' : '马上加入' }}
+									</button>
+									<button v-else class="action-btn secondary" disabled>退出比赛</button>
+								</template>
+								<!-- 未开始：保持现有自由加入/退出逻辑 -->
+								<template v-else>
+									<button v-if="!joined" class="action-btn" :disabled="joinLoading" @click="handleJoin">
+										{{ joinLoading ? '加入中...' : '马上加入' }}
+									</button>
+									<button v-else class="action-btn secondary" :disabled="quitLoading" @click="handleQuit">
+										{{ quitLoading ? '退出中...' : '退出比赛' }}
+									</button>
+								</template>
 							</div>
 							<p v-if="joinError" class="error-text">{{ joinError }}</p>
 						</div>
@@ -77,10 +105,51 @@ const problemIDToIndexMap = ref<Record<string, number>>({})
 // 反向映射
 const problemIndexToIDMap = ref<Record<number, string>>({})
 
+// 时间解析与比赛状态计算
+function parseTime(input: any): number | null {
+	if (input == null) return null
+	if (typeof input === 'number') {
+		// 认为是毫秒或秒，统一转为毫秒
+		if (input > 1e12) return input // 毫秒
+		return input * 1000 // 秒
+	}
+	if (typeof input === 'string') {
+		const t = Date.parse(input)
+		return Number.isNaN(t) ? null : t
+	}
+	return null
+}
+
+const startMs = computed(() => parseTime(contest.value?.metadata?.startTime))
+const endMs = computed(() => parseTime(contest.value?.metadata?.endTime))
+const nowMs = computed(() => Date.now())
+const hasTimes = computed(() => startMs.value != null && endMs.value != null)
+
+const isFuture = computed(() => hasTimes.value ? (nowMs.value < (startMs.value as number)) : true)
+const isEnded = computed(() => hasTimes.value ? (nowMs.value >= (endMs.value as number)) : false)
+const isOngoing = computed(() => hasTimes.value ? (nowMs.value >= (startMs.value as number) && nowMs.value < (endMs.value as number)) : false)
+
+const statusLabel = computed(() => {
+	if (isEnded.value) return '已结束'
+	if (isOngoing.value) return '进行中'
+	return '未开始'
+})
+
+const statusClass = computed(() => {
+	if (isEnded.value) return 'ended'
+	if (isOngoing.value) return 'ongoing'
+	return 'future'
+})
+
 async function handleJoin() {
 	joinError.value = null
 	joinLoading.value = true
 	try {
+		// 前端拦截：已结束不可加入
+		if (isEnded.value) {
+			joinError.value = '比赛已结束，当前无法加入'
+			return
+		}
 		// 若未登录，引导到登录页
 		const token = localStorage.getItem('cascade_token')
 		if (!token) {
@@ -108,6 +177,11 @@ async function handleQuit() {
 	joinError.value = null
 	quitLoading.value = true
 	try {
+		// 前端拦截：进行中与已结束不可退出
+		if (isOngoing.value || isEnded.value) {
+			joinError.value = isOngoing.value ? '比赛进行中，当前无法退出' : '比赛已结束，当前无法退出'
+			return
+		}
 		const res = await quitContest(idStr.value)
 		joined.value = Boolean(res?.isJoin)
 		if (!joined.value) {
@@ -136,17 +210,24 @@ onMounted(async () => {
 			problemIndexToIDMap.value[routeIndex] = p.id
 		});
 
-		// 先尝试服务端查询加入状态（占位接口），失败则回退到本地存储
-		try {
-			const status = await getJoinStatus(idStr.value)
-			joined.value = Boolean(status?.isJoin)
-			if (joined.value) {
-				localStorage.setItem(`cascade_joined_${idStr.value}`, '1')
-			} else {
-				localStorage.removeItem(`cascade_joined_${idStr.value}`)
+		// 若未登录，强制视为未加入并清理本地缓存，避免使用本地回退造成“已加入”残留
+		const token = localStorage.getItem('cascade_token')
+		if (!token) {
+			joined.value = false
+			localStorage.removeItem(`cascade_joined_${idStr.value}`)
+		} else {
+			// 已登录：先尝试服务端查询加入状态，失败再回退到本地存储
+			try {
+				const status = await getJoinStatus(idStr.value)
+				joined.value = Boolean(status?.isJoin)
+				if (joined.value) {
+					localStorage.setItem(`cascade_joined_${idStr.value}`, '1')
+				} else {
+					localStorage.removeItem(`cascade_joined_${idStr.value}`)
+				}
+			} catch {
+				joined.value = localStorage.getItem(`cascade_joined_${idStr.value}`) === '1'
 			}
-		} catch {
-			joined.value = localStorage.getItem(`cascade_joined_${idStr.value}`) === '1'
 		}
 	} catch (e: any) {
 		error.value = e?.message ?? '加载比赛信息失败'
@@ -161,11 +242,8 @@ onMounted(async () => {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-	background: #202020;
-	/* 页面背景：稍微调亮的深色 */
-	/* 页面背景由纯黑(#000)调亮为 #0d1310 */
+	background: #0c0f0e;
 	color: #cbd5c0;
-	/* 全局文字：浅灰/米色，便于黑底阅读 */
 }
 
 .main-content {
@@ -178,17 +256,19 @@ onMounted(async () => {
 }
 
 h1 {
-	color: #1dad80;
-	/* 主色：绿色 */
-	margin-bottom: 40px;
-	font-size: 2.5rem;
+	color: #eafff8; /* 白色高亮标题 */
+	margin-bottom: 24px;
+	font-size: 2.6rem;
+	font-weight: 800;
+	letter-spacing: 0.5px;
 }
 
-p {
-	color: #ced7db;
-	/* 次要文字：浅灰 */
+.lead {
+	color: #23aa8f; /* 绿色艺术字 */
+	font-family: 'Georgia', serif;
+	font-style: italic;
 	font-size: 1.2rem;
-	margin-bottom: 60px;
+	margin-bottom: 24px;
 }
 
 .feature-cards {
@@ -223,7 +303,7 @@ p {
 }
 
 .card p {
-	color: #98cdda;
+	color: #71a6b3;
 	margin: 0;
 	font-size: 1rem;
 }
@@ -260,6 +340,19 @@ p {
 .error-text { color: #e57373; margin-top: 8px; }
 .problem-list { display: flex; flex-direction: column; gap: 12px; }
 .problem-item { text-align: left; }
+
+/* 加入卡片的状态样式 */
+.join-card .status-chip { margin: 0 0 8px 0; color: #98cdda; font-size: 0.95rem; }
+.join-card.future { border-color: rgba(35, 170, 143, 0.25); }
+.join-card.ongoing { border-color: rgba(29, 173, 128, 0.35); }
+.join-card.ended { border-color: rgba(229, 115, 115, 0.35); }
+
+/* 题目列表链接卡片采用温和CTA风格与悬停效果 */
+/* 通用卡片悬停效果（轻量发光） */
+.card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 6px 18px rgba(22, 163, 142, 0.12);
+}
 
 @media (max-width: 768px) {
 	.contest-grid { flex-direction: column; }

@@ -78,7 +78,8 @@
 }
 
 .login-btn,
-.register-btn {
+.register-btn,
+.logout-btn {
     padding: 6px 12px;
     border-radius: 4px;
     font-weight: 500;
@@ -86,7 +87,8 @@
     cursor: pointer;
 }
 
-.login-btn {
+.login-btn,
+.logout-btn {
     color: #cbd5c0;
     border: 1px solid rgba(203, 213, 192, 0.12);
     background: transparent;
@@ -101,7 +103,8 @@
 }
 
 .login-btn:hover,
-.register-btn:hover {
+.register-btn:hover,
+.logout-btn:hover {
     opacity: 0.95;
     transform: translateY(-1px);
 }

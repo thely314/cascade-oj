@@ -3,7 +3,7 @@
 	<div class="home-container">
 		<main class="main-content">
 			<h1>正在进行的比赛</h1>
-			<p>选择一个比赛进入详情。</p>
+			<p class="lead">选择一个比赛进入详情。</p>
 
 			<div class="feature-cards">
 				<!-- 动态比赛列表 -->
@@ -17,7 +17,7 @@
 				<p v-else-if="!contests.length" class="empty-text">暂无比赛</p>
 				<router-link v-else v-for="c in contests" :key="c.id" class="card card-link" :to="`/competition/${c.id}`">
 					<h3>{{ c.title }}</h3>
-					<p>{{ c.status }} · {{ c.startTime }} — {{ c.endTime }}</p>
+					<p>{{ c.status }} · {{ formatDateTime(c.startTime) }} — {{ formatDateTime(c.endTime) }}</p>
 				</router-link>
 			</div>
 
@@ -33,6 +33,10 @@ import { getContests, type ContestMetadata } from '../../api/contests'
 const contests = ref<ContestMetadata[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
+
+function formatDateTime(dt?: string): string {
+	return (dt || '').replace('T', ' ').replace(/Z$/, '')
+}
 
 onMounted(async () => {
 	loading.value = true
@@ -52,11 +56,8 @@ onMounted(async () => {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-	background: #202020;
-	/* 页面背景：稍微调亮的深色 */
-	/* 页面背景由纯黑(#000)调亮为 #0d1310 */
+	background: #0c0f0e;
 	color: #cbd5c0;
-	/* 全局文字：浅灰/米色，便于黑底阅读 */
 }
 
 .main-content {
@@ -69,15 +70,17 @@ onMounted(async () => {
 }
 
 h1 {
-	color: #1dad80;
-	/* 主色：绿色 */
+	color: #eafff8; /* 白色高亮标题 */
 	margin-bottom: 40px;
-	font-size: 2.5rem;
+	font-size: 2.6rem;
+	font-weight: 800;
+	letter-spacing: 0.5px;
 }
 
-p {
-	color: #ced7db;
-	/* 次要文字：浅灰 */
+.lead {
+	color: #23aa8f; /* 绿色艺术字 */
+	font-family: 'Georgia', serif;
+	font-style: italic;
 	font-size: 1.2rem;
 	margin-bottom: 60px;
 }
@@ -90,20 +93,20 @@ p {
 }
 
 .card {
-	background: #141816;
+    background: #141816;
 	/* 卡片背景：深色，和页面黑色区分 */
 	padding: 30px 20px;
 	border-radius: 8px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
-	border: 1px solid rgba(30, 134, 68, 0.06);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(30, 134, 68, 0.06);
 	/* 细微绿边，增强层次 */
 	transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* 通用卡片悬停效果（轻量发光） */
 .card:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 6px 18px rgba(22, 163, 142, 0.12);
-	/* hover 带绿色光晕 */
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(22, 163, 142, 0.12);
 }
 
 .card h3 {
@@ -114,7 +117,7 @@ p {
 }
 
 .card p {
-	color: #98cdda;
+	color: #71a6b3;
 	margin: 0;
 	font-size: 1rem;
 }

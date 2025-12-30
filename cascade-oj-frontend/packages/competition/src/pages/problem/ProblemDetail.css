@@ -3,8 +3,8 @@
 /* --- 1. 整体布局容器 & 变量定义  --- */
 .problem-container {
   /* 局部变量定义 */
-  --bg-dark: #121212;
-  --bg-panel: #1e1e1e;
+  --bg-dark: #0c0f0e;
+  --bg-panel: #121212; /* 中性深色，减少整体偏绿感 */
   --border-color: #2c2c2c;
   --primary-color: #1dad80; /* Cascade Green */
   --text-main: #e0e0e0;
@@ -20,6 +20,7 @@
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
   overflow: hidden;
+  position: relative;
 }
 
 /* --- 2. 滚动条优化 --- */
@@ -39,7 +40,13 @@
 }
 
 .problem-container ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: rgba(29, 173, 128, 0.6);
+}
+
+/* 文本选中高亮（轻度绿） */
+.problem-container ::selection {
+  background: rgba(29, 173, 128, 0.25);
+  color: #fff;
 }
 
 /* --- 3. 布局子元素 --- */
@@ -79,11 +86,11 @@
 /* --- 通用头部/内容/底部 --- */
 .pane-header {
   height: 40px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid rgba(29, 173, 128, 0.12);
   display: flex;
   align-items: center;
   padding: 0 10px;
-  background: #252526;
+  background: #141414; /* 更中性深色 */
   flex-shrink: 0;
 }
 
@@ -95,11 +102,11 @@
 
 .pane-footer {
   height: var(--footer-height);
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(29, 173, 128, 0.12);
   display: flex;
   align-items: center;
   padding: 0 15px;
-  background: #252526;
+  background: #141414; /* 更中性深色 */
   flex-shrink: 0;
   z-index: 30; 
   position: relative;
@@ -139,6 +146,7 @@
 
 .tab-nav span:hover {
   color: #ccc;
+  border-bottom-color: rgba(29, 173, 128, 0.35);
 }
 
 .problem-content-placeholder {
@@ -177,13 +185,24 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
 .nav-btn:hover,
 .list-btn:hover {
   background: #444;
   color: #fff;
+}
+
+.list-btn:focus-visible,
+.nav-btn:focus-visible,
+.btn-test:focus-visible,
+.btn-submit:focus-visible,
+.action-icon:focus-visible,
+.file-tab:focus-visible,
+.lang-select:focus-visible {
+  outline: 2px solid rgba(29, 173, 128, 0.65);
+  outline-offset: 2px;
 }
 
 .page-num {
@@ -199,13 +218,13 @@
   left: 0;
   width: 100%;
   bottom: 48px; 
-  background: #1e1e1e;
+  background: #121212; /* 中性深色 */
   z-index: 20;
   transform: translateY(100%); 
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  border-top: 1px solid #333;
+  border-top: 1px solid rgba(29, 173, 128, 0.12);
 }
 
 .problem-drawer.open {
@@ -218,8 +237,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #333;
-  background: #252526;
+  border-bottom: 1px solid rgba(29, 173, 128, 0.12);
+  background: #141414; /* 更中性深色 */
   font-size: 14px;
   font-weight: bold;
 }
@@ -254,12 +273,13 @@
 }
 
 .drawer-item:hover {
-  background: #2a2a2a;
+  background: #1a1a1a; /* 中性深色 hover */
 }
 
 .drawer-item.active {
   color: var(--primary-color);
   background: rgba(29, 173, 128, 0.1);
+  border-left: 2px solid var(--primary-color);
 }
 
 .drawer-item .id {
@@ -284,18 +304,24 @@
   padding: 0 15px;
   height: 39px;
   line-height: 39px;
-  background: #2d2d2d;
+  background: #1a1a1a; /* 中性深色 */
   color: #a0a0a0;
   font-size: 13px;
   cursor: pointer;
   border-top: 2px solid transparent;
   user-select: none;
+  transition: background 0.2s, color 0.2s, border-top-color 0.2s;
 }
 
 .file-tab.active {
-  background: #1e1e1e;
+  background: #121212; /* 中性深色 */
   color: #fff;
   border-top-color: var(--primary-color);
+}
+
+.file-tab:hover:not(.active) {
+  background: #252525;
+  color: #ddd;
 }
 
 .editor-actions {
@@ -336,8 +362,8 @@
 /* --- Playground 面板 --- */
 .playground-panel {
   height: 0;
-  background: #252526;
-  border-top: 1px solid #2c2c2c;
+  background: #141414; /* 更中性深色 */
+  border-top: 1px solid rgba(29, 173, 128, 0.12);
   transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   display: flex;
@@ -359,17 +385,17 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #1e1e1e;
-  border: 1px solid #333;
+  background: #121212; /* 中性深色 */
+  border: 1px solid rgba(29, 173, 128, 0.12);
   border-radius: 4px;
 }
 
 .io-header {
   padding: 5px 10px;
-  background: #2d2d2d;
+  background: #141414; /* 更中性深色 */
   font-size: 12px;
   color: #aaa;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid rgba(29, 173, 128, 0.12);
 }
 
 .io-box textarea,
@@ -393,14 +419,14 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #1e1e1e;
+  background: #121212; /* 中性深色 */
   overflow: hidden;
 }
 
 .run-meta {
-  background: #252526;
+  background: #141414; /* 更中性深色 */
   padding: 8px 10px;
-  border-bottom: 1px dashed #444;
+  border-bottom: 1px dashed rgba(29, 173, 128, 0.12);
   font-family: 'Consolas', monospace;
   font-size: 12px;
   color: #ccc;
@@ -523,6 +549,7 @@
 .btn-test:not(:disabled):hover {
   border-color: #fff;
   color: #fff;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.08) inset;
 }
 
 .btn-submit {
@@ -534,11 +561,12 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, box-shadow 0.2s;
 }
 
 .btn-submit:hover {
-  opacity: 0.9;
+  opacity: 0.92;
+  box-shadow: 0 0 0 2px rgba(29, 173, 128, 0.18) inset;
 }
 
 /* --- 语言下拉框优化 --- */
@@ -568,6 +596,11 @@
   border-color: var(--primary-color);
 }
 
+.lang-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(29, 173, 128, 0.18);
+}
+
 /* --- Markdown 内容样式 (v-html) --- */
 /* 使用 :deep() 让样式穿透 scoped */
 :deep(.markdown-body) {
@@ -586,6 +619,12 @@
   line-height: 1.25;
 }
 
+/* 轻度强调二级标题，下划线更柔和 */
+:deep(.markdown-body h2) {
+  border-bottom: 1px solid #2e2e2e;
+  padding-bottom: 6px;
+}
+
 :deep(.markdown-body h3) {
   font-size: 1.1em;
   border-bottom: 1px solid #333;
@@ -594,6 +633,15 @@
 
 :deep(.markdown-body p) {
   margin-bottom: 16px;
+}
+
+/* Markdown 链接采用主题绿，悬停出现下划线 */
+:deep(.markdown-body a) {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+:deep(.markdown-body a:hover) {
+  text-decoration: underline;
 }
 
 :deep(.markdown-body pre) {

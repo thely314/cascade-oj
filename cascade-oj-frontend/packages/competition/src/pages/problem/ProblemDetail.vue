@@ -84,9 +84,15 @@
             :key="`sub-${problemData.id}`"
           />
 
-          <!-- Tab 2: 成绩 (占位) -->
-          <div v-else-if="currentLeftTab === 2" style="padding: 20px; color:#888">
-            成绩功能开发中...
+          <!-- Tab 2: 成绩 (显示所属比赛的排名信息) -->
+          <div v-else-if="currentLeftTab === 2" class="rank-pane">
+            <h3>比赛排名</h3>
+            <p v-if="rankLoading">加载中...</p>
+            <p v-else-if="!rankLoading && rankEntries.length === 0">暂无排名数据</p>
+            <ol class="rank-list" v-else>
+              <li v-for="e in rankEntries" :key="e.userId">{{ (e as any).username || e.userId }} — {{ e.score }} 分</li>
+            </ol>
+            <p v-if="rankError" class="error-text">{{ rankError }}</p>
           </div>
 
         </div>
@@ -236,8 +242,9 @@
 <script setup lang="ts">
 import CodeEditor from '@/components/CodeEditor/CodeEditor.vue';
 import SubmissionTab from '@/components/SubmissionTab/SubmissionTab.vue';
-import { ref, watch, nextTick } from 'vue';
+import { ref, watch, nextTick, onMounted } from 'vue';
 import { useProblemDetail } from './ProblemDetail'; // 引入抽离的逻辑
+import { getRanks, type RankItem } from '../../api/rank';
 
 // 解构逻辑层导出的状态与方法
 const {
@@ -260,6 +267,30 @@ const {
 
 // 引用提交列表组件
 const submissionTabRef = ref();
+// 简单的比赛排名数据（文本列表）
+const rankEntries = ref<RankItem[]>([]);
+const rankLoading = ref(false);
+const rankError = ref<string | null>(null);
+
+async function fetchContestRank(id?: string) {
+  if (!id) return;
+  rankLoading.value = true;
+  rankError.value = null;
+  try {
+    const res = await getRanks(id);
+    rankEntries.value = res.ranks || [];
+  } catch (e: any) {
+    rankError.value = e?.message ?? '加载排名失败';
+  } finally {
+    rankLoading.value = false;
+  }
+}
+
+onMounted(() => {
+  const cid = (contestId as any)?.value ?? (contestId as any);
+  fetchContestRank(cid);
+});
+
 
 // 监听提交结果，一旦有新结果(提交成功)，刷新列表
 watch(submissionResult, (newVal) => {
@@ -273,9 +304,33 @@ watch(submissionResult, (newVal) => {
         submissionTabRef.value.refresh();
       }
     });
+
+    // 提交后刷新比赛排名数据
+    const cid = (contestId as any)?.value ?? (contestId as any);
+    fetchContestRank(cid);
   }
+});
+
+// 模块切换时刷新排名信息（无论切到哪个模块都更新一次）
+watch(currentLeftTab, () => {
+  const cid = (contestId as any)?.value ?? (contestId as any);
+  fetchContestRank(cid);
 });
 
 </script>
 
-<style scoped src="./ProblemDetail.css"></style> 
+<style scoped src="./ProblemDetail.css"></style>
+<style scoped>
+.rank-pane {
+  padding: 20px;
+  color: #cbd5c0;
+}
+.rank-list {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0 0 0;
+}
+.rank-list li {
+  margin: 6px 0;
+}
+.error-text { color: #e57373; }
+</style>
