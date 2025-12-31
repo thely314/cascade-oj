@@ -2,6 +2,9 @@
 FROM criyle/go-judge:v1.10.0
 FROM debian:latest
 
+# Debian apt-get 镜像源
+RUN sed -i 's@deb.debian.org@mirrors.ustc.edu.cn@g' /etc/apt/sources.list.d/debian.sources
+
 # 安装常用编译器
 RUN apt-get update && apt-get install -y --no-install-recommends \
         gcc g++ \
