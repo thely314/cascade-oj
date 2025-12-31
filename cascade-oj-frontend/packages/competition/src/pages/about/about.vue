@@ -2,13 +2,13 @@
 <template>
 	<div class="about-container">
 		<main class="main-content">
-			<h1 class="page-title">关于 CasCade</h1>
+			<h1 class="page-title">关于 Cascade</h1>
 			<p class="lead">一个轻量、开源的在线题库与竞赛平台。以下内容为示例，方便你快速替换成项目的实际信息。</p>
 
 			<div class="grid">
 				<section class="card">
 					<h3>简介</h3>
-					<p>CasCade 是一个面向算法学习与竞赛训练的平台。它的目标是降低搭建和维护竞赛系统的门槛，提供清晰的题库管理、比赛编排和排行榜功能。</p>
+					<p>Cascade 是一个面向算法学习与竞赛训练的平台。它的目标是降低搭建和维护竞赛系统的门槛，提供清晰的题库管理、比赛编排和排行榜功能。</p>
 				</section>
 
 				<section class="card">

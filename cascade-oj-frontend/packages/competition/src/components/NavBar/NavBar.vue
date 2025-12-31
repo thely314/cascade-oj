@@ -3,10 +3,10 @@
     <div class="nav-container">
       <!-- 网站Logo -->
       <div class="nav-logo">
-        <router-link class="logo-link" to="/home" aria-label="CasCade Home">
+        <router-link class="logo-link" to="/home" aria-label="Cascade Home">
           <!-- inline cascade svg -->
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 164 164">
-            <title>CasCade</title>
+            <title>Cascade</title>
             <defs/>
             <g>
               <g data-cell-id="0">
@@ -28,7 +28,7 @@
               </g>
             </g>
           </svg>
-          <span class="logo-text">CasCade</span>
+          <span class="logo-text">Cascade</span>
         </router-link>
       </div>
       
