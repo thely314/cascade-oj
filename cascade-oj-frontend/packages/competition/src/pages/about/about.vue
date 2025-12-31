@@ -2,51 +2,37 @@
 <template>
 	<div class="about-container">
 		<main class="main-content">
-			<h1 class="page-title">关于 CasCade</h1>
-			<p class="lead">一个轻量、开源的在线题库与竞赛平台。以下内容为示例，方便你快速替换成项目的实际信息。</p>
+			<h1 class="page-title">关于 Cascade</h1>
+			<p class="lead">Cascade 意为级联、连续传递，表达知识的持续传递与共享之意。</p>
 
 			<div class="grid">
 				<section class="card">
 					<h3>简介</h3>
-					<p>CasCade 是一个面向算法学习与竞赛训练的平台。它的目标是降低搭建和维护竞赛系统的门槛，提供清晰的题库管理、比赛编排和排行榜功能。</p>
+					<p>Cascade 是一个面向语言学习与算法学习的在线测评平台，基于 Kratos 微服务架构。提供题库管理、比赛编排和排行榜功能。</p>
 				</section>
 
 				<section class="card">
 					<h3>使命与愿景</h3>
 					<ul>
-						<li>为教师和竞赛组织者提供简单可靠的比赛工具。</li>
-						<li>为学习者提供高质量、有结构的练习路径。</li>
+						<li>用户友好的界面与体验。</li>
 						<li>通过开源协作推动题库与评测工具的共享。</li>
-					</ul>
-				</section>
-
-				<section class="card">
-					<h3>团队（或贡献者）</h3>
-					<ul class="team-list">
-						<li><strong>姓名 A</strong> — 项目维护、架构设计</li>
-						<li><strong>姓名 B</strong> — 前端与交互</li>
-						<li><strong>姓名 C</strong> — 后端与评测器</li>
+						<li>作为可供参考学习的开源项目，欢迎有兴趣的开发者、学习者参与。</li>
 					</ul>
 				</section>
 
 				<section class="card">
 					<h3>联系方式 & 仓库</h3>
-					<p>电子邮件: <a href="mailto:your-email@example.com">your-email@example.com</a></p>
-					<p>项目仓库: <a target="_blank" rel="noopener noreferrer" href="https://github.com/your/repo">https://github.com/your/repo</a></p>
+					<!-- <p>电子邮件: <a href="mailto:email">暂不提供</a></p> -->
+					<p>项目仓库: <a target="_blank" rel="noopener noreferrer" href="https://github.com/thely314/cascade-oj">https://github.com/thely314/cascade-oj</a></p>
+					<p>使用 go-judge 测评机: <a target="_blank" rel="noopener noreferrer" href="https://github.com/criyle/go-judge">https://github.com/criyle/go-judge</a></p>
+					<p>架构参考 SASTOJ: <a target="_blank" rel="noopener noreferrer" href="https://github.com/NJUPT-SAST/sastoj">https://github.com/NJUPT-SAST/sastoj</a></p>
 				</section>
 
 				<section class="card">
 					<h3>贡献与许可证</h3>
-					<p>欢迎贡献。请阅读仓库根目录的 <code>README.md</code> 以及贡献指南。许可示例：MIT / Apache-2.0。</p>
-				</section>
-
-				<section class="card">
-					<h3>快速编辑提示</h3>
-					<ol>
-						<li>替换“简介”和“使命”中的占位文字为团队的真实描述。</li>
-						<li>在“团队”部分加入头像与社交链接（可用 <code>&lt;img&gt;</code> 与 flex 布局）。</li>
-						<li>在“联系方式”中列出邮件、群组和 issue 路径，便于用户反馈。</li>
-					</ol>
+					<p>欢迎贡献。请阅读仓库的 <code>README.md</code> 以及贡献指南。</p>
+					<br></br>
+					<p>使用 MIT License。</p>
 				</section>
 			</div>
 

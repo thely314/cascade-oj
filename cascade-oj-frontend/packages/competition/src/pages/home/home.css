@@ -2,11 +2,34 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #202020;
-    /* 页面背景：稍微调亮的深色 */
-    /* 页面背景由纯黑(#000)调亮为 #0d1310 */
+    background: #0c0f0e; /* 更接近黑色的深绿基底 */
     color: #cbd5c0;
-    /* 全局文字：浅灰/米色，便于黑底阅读 */
+    position: relative;
+    overflow: hidden;
+}
+
+/* 背景光晕与层次感 */
+.home-container::before,
+.home-container::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    filter: blur(40px);
+    opacity: 0.65;
+}
+.home-container::before {
+    inset: -20% -10% auto -10%;
+    height: 60vh;
+    background:
+      radial-gradient(480px 360px at 15% 20%, rgba(35, 170, 143, 0.18), transparent 60%),
+      radial-gradient(360px 280px at 85% 10%, rgba(29, 173, 128, 0.12), transparent 65%);
+}
+.home-container::after {
+    inset: auto -10% -20% -10%;
+    height: 50vh;
+    background:
+      radial-gradient(520px 380px at 80% 85%, rgba(22, 163, 142, 0.16), transparent 60%),
+      radial-gradient(360px 280px at 10% 75%, rgba(35, 170, 143, 0.10), transparent 65%);
 }
 
 .main-content {
@@ -18,14 +41,35 @@
     width: 100%;
 }
 
-h1 {
-    color: #1dad80;
-    /* 主色：绿色 */
-    margin-bottom: 40px;
-    font-size: 2.5rem;
+/* 艺术字主标题 */
+.hero-title {
+    margin: 10px auto 16px;
+    font-size: 3.2rem;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #eafff8;
+}
+.hero-title .highlight {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-weight: 400;
+    display: inline-block;
+    margin-top: 10px;
+    color: #23aa8f; /* 对齐 AuthLeft 的高亮绿 */
 }
 
-p {
+/* 绿色渐变分隔线 */
+.hero-accent {
+    width: 140px;
+    height: 4px;
+    margin: 14px auto 28px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(29,173,128,0.0), #1dad80 35%, #23aa8f 65%, rgba(35,170,143,0.0));
+    box-shadow: 0 0 18px rgba(35,170,143,0.45), 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.lead, p {
     color: #ced7db;
     /* 次要文字：浅灰 */
     font-size: 1.2rem;
@@ -40,20 +84,57 @@ p {
 }
 
 .card {
-    background: #141816;
+    background: #121614;
     /* 卡片背景：深色，和页面黑色区分 */
     padding: 30px 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(30, 134, 68, 0.06);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(30, 134, 68, 0.10);
     /* 细微绿边，增强层次 */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* 强调：仅链接卡片（“马上开始！”）在默认状态就更醒目 */
+.card.card-link {
+    position: relative;
+    background: linear-gradient(180deg, rgba(18,22,20,1) 0%, rgba(18,22,20,0.94) 100%);
+    border-color: rgba(29, 173, 128, 0.28);
+    box-shadow: 0 5px 14px rgba(29, 173, 128, 0.10), 0 0 0 1px rgba(29, 173, 128, 0.20) inset;
+    overflow: hidden;
+}
+.card.card-link::before {
+    /* 斜向高光扫过 */
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.06), transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.8s ease;
+    pointer-events: none;
+}
+.card.card-link::after {
+    /* 顶部环境光晕，弱呼吸感 */
+    content: "";
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    top: -12%;
+    height: 60%;
+    border-radius: 50%;
+    background: radial-gradient(320px 140px at 50% 0%, rgba(35,170,143,0.12), transparent 70%);
+    filter: blur(10px);
+    pointer-events: none;
+}
+
 /* 超链接卡片悬停效果 */
 .card.card-link:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 18px rgba(22, 163, 142, 0.12);
+    transform: translateY(-8px);
+    border-color: rgba(29, 173, 128, 0.45);
+    box-shadow: 0 12px 28px rgba(22, 163, 142, 0.20), 0 0 0 1px rgba(29, 173, 128, 0.30) inset;
+}
+.card.card-link:hover::before {
+    transform: translateX(0%);
 }
 
 /* 信息展示卡片：不交互 */
@@ -112,7 +193,7 @@ p {
     text-decoration: none;
     display: block;
     height: 100%;
-    border-color: rgba(255, 255, 255, 0.603);
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .card-link .badge {
@@ -125,6 +206,12 @@ p {
     background: rgb(255, 255, 255);
     color: #b9ffef;
     border: 1px solid rgb(255, 255, 255);
+}
+.card.card-link .badge {
+    /* CTA 徽标采用绿调以进一步强调 */
+    background: rgba(35, 170, 143, 0.18);
+    color: #b9ffef;
+    border-color: rgba(35, 170, 143, 0.45);
 }
 .card-link:focus {
     outline: none;
@@ -141,3 +228,11 @@ p {
 .card-blue p { color: #58dcdc; }
 .card-white p { color: #b9ffef; }
 .card-purple p { color: #cd8bf1; }
+
+/* 去除非链接卡片的悬停效果，仅链接卡片具备悬停动效 */
+/* 统一悬停效果移除，效果收敛到 `.card.card-link:hover` 上 */
+
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.2rem; }
+    .lead { font-size: 1rem; }
+}

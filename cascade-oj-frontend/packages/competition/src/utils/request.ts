@@ -46,7 +46,6 @@ service.interceptors.response.use(
           // --- 关键点：401 未授权处理 ---
           // 1. 清除本地过期的 token
           localStorage.removeItem('cascade_token');
-          
           // 2. 只有当不在登录页时，才跳转，防止死循环
           if (router.currentRoute.value.path !== '/login') {
             alert('登录已过期，请重新登录'); // 或者使用更优雅的 Toast

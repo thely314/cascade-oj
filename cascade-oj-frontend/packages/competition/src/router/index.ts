@@ -7,18 +7,18 @@ import Contest from '../pages/contest/contest.vue'
 
 const routes = [
     { path: '/', redirect: '/home' },
-    { path: '/home', name: 'Home', component: Home, meta: { title: '主页 - CasCade' } },
-    { path: '/competition', name: 'ContestsList', component: ContestsList, meta: { title: '比赛列表 - CasCade' } },
-    { path: '/competition/:id', name: 'Contest', component: Contest, meta: { title: '比赛详情 - CasCade' } },
-    { path: '/about', name: 'About', component: About, meta: { title: '关于我们 - CasCade' } },
-    { path: '/login', name: 'Login', component: () => import('../../../login/src/views/AuthPage.vue'), meta: { hideNav: true, title: '登录 - CasCade' } },
+    { path: '/home', name: 'Home', component: Home, meta: { title: '主页 - Cascade' } },
+    { path: '/competition', name: 'ContestsList', component: ContestsList, meta: { title: '比赛列表 - Cascade' } },
+    { path: '/competition/:id', name: 'Contest', component: Contest, meta: { title: '比赛详情 - Cascade' } },
+    { path: '/about', name: 'About', component: About, meta: { title: '关于我们 - Cascade' } },
+    { path: '/login', name: 'Login', component: () => import('../../../login/src/views/AuthPage.vue'), meta: { hideNav: true, title: '登录 - Cascade' } },
     {
         path: '/contest/:contestId/problem/:id', 
         name: 'ProblemDetail',
         component: () => import('../pages/problem/ProblemDetail.vue'),
-        meta: { title: '题目详情 - CasCade' }
+        meta: { title: '题目详情 - Cascade' }
     },
-    { path: '/:pathMatch(.*)*', name: 'NotFound', component: ErrorPage, meta: { title: '未找到 - CasCade' } }
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: ErrorPage, meta: { title: '未找到 - Cascade' } }
 ]
 
 const router = createRouter({
@@ -28,7 +28,7 @@ const router = createRouter({
 
 // 同步路由标题到标签页标题
 router.afterEach((to) => {
-    const title = (to.meta && (to.meta as Record<string, any>).title) || 'CasCade'
+    const title = (to.meta && (to.meta as Record<string, any>).title) || 'Cascade'
     if (typeof title === 'string') {
         document.title = title
     }

@@ -69,6 +69,7 @@ services:
     depends_on:
       - cascade_mysql
       - cascade_rabbitmq
+      - cascade_redis
       - cascade_go_judge
     volumes:
       - ./config/judge:/data/conf

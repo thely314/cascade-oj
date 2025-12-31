@@ -4,8 +4,34 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #202020;
+    background: #0c0f0e; /* 深绿基底，与首页一致 */
     color: #cbd5c0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 背景柔和光晕，与首页相呼应但更克制 */
+.about-container::before,
+.about-container::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    filter: blur(36px);
+    opacity: 0.55;
+}
+.about-container::before {
+    inset: -20% -10% auto -10%;
+    height: 48vh;
+    background:
+      radial-gradient(440px 320px at 12% 18%, rgba(35, 170, 143, 0.16), transparent 60%),
+      radial-gradient(320px 240px at 85% 8%, rgba(29, 173, 128, 0.10), transparent 65%);
+}
+.about-container::after {
+    inset: auto -10% -20% -10%;
+    height: 42vh;
+    background:
+      radial-gradient(460px 340px at 80% 85%, rgba(22, 163, 142, 0.14), transparent 60%),
+      radial-gradient(300px 220px at 10% 75%, rgba(35, 170, 143, 0.08), transparent 65%);
 }
 
 .main-content {
@@ -18,15 +44,19 @@
 }
 
 .page-title {
-    color: #1dad80;
+    color: #eafff8; /* 白色高亮标题 */
     margin-bottom: 8px;
     font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
 }
 
 .lead {
-    color: #ced7db;
+    color: #23aa8f; /* 绿色艺术字 */
     margin-bottom: 24px;
     font-size: 1.05rem;
+    font-family: 'Georgia', serif;
+    font-style: italic;
 }
 
 .grid {

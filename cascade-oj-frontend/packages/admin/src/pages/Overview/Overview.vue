@@ -4,10 +4,10 @@ import { getAnnouncements } from '../../api/admin'
 import type { Announcement } from '../../api/types'
 
 const stats = [
-	{ label: '正在进行', value: '1,248' },
-	{ label: '已结束', value: '362' },
-	{ label: '题库题目数', value: '362' },
-	{ label: '总提交数', value: '5,421' },
+	{ label: '正在进行', value: '-' },
+	{ label: '已结束', value: '-' },
+	{ label: '题库题目数', value: '-' },
+	{ label: '总提交数', value: '-' },
 ]
 
 const announcements = ref<Announcement[]>([])

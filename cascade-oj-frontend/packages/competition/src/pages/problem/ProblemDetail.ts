@@ -121,13 +121,13 @@ export function useProblemDetail() {
     ],
     'c++11(O2)': [
       { name: 'main.cpp', lang: 'c++11(O2)', content: '', isReadOnly: false }
-    ],
-    'Java': [
-      { name: 'Main.java', lang: 'java', content: 'public class Main {\n    public static void main(String[] args) {\n\n    }\n}', isReadOnly: false }
-    ],
-    'Python3': [
-      { name: 'solution.py', lang: 'python', content: '', isReadOnly: false }
     ]
+    // 'Java': [
+    //   { name: 'Main.java', lang: 'java', content: 'public class Main {\n    public static void main(String[] args) {\n\n    }\n}', isReadOnly: false }
+    // ],
+    // 'Python3': [
+    //   { name: 'solution.py', lang: 'python', content: '', isReadOnly: false }
+    // ]
   });
 
   // 代码快照，用于检测未保存的更改

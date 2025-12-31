@@ -13,6 +13,13 @@ const props = defineProps({
   readOnly: { type: Boolean, default: false } 
 })
 
+// 语言与 Monaco 编辑器高亮映射
+const languageHighlightMap: Record<string, string> = {
+  'c': 'c',
+  'c++11': 'cpp',
+  'c++11(O2)': 'cpp'
+};
+
 const emit = defineEmits(['update:modelValue', 'change'])
 const editorContainer = ref<HTMLElement | null>(null)
 const editorInstance = shallowRef<monaco.editor.IStandaloneCodeEditor | null>(null) // 使用 shallowRef 存储 editor 实例，避免 Vue 深度代理导致性能问题
@@ -69,7 +76,9 @@ watch(() => props.language, (newLang) => {
   if (editorInstance.value) {
     const model = editorInstance.value.getModel()
     if (model) {
-      monaco.editor.setModelLanguage(model, newLang)
+      // console.log(monaco.languages.getLanguages());
+      const langHighlights = languageHighlightMap[newLang] || 'plaintext';
+      monaco.editor.setModelLanguage(model, langHighlights)
     }
   }
 })
