@@ -1,7 +1,6 @@
 package biz
 
 import (
-	"cascade-oj/ent"
 	"context"
 	"time"
 
@@ -24,8 +23,8 @@ type DetailedContest struct {
 }
 
 type ContestRepo interface {
-	GetContests(ctx context.Context) ([]*ent.ProblemSet, error)
-	GetSingleContest(ctx context.Context, contestID int64) (*ent.ProblemSet, error)
+	GetContests(ctx context.Context) ([]*Contest, error)
+	GetSingleContest(ctx context.Context, contestID int64) (*DetailedContest, error)
 	JoinContest(ctx context.Context, contestID int64, userID int64) (bool, error)
 	QuitContest(ctx context.Context, contestID int64, userID int64) (bool, error)
 	GetJoinStatus(ctx context.Context, contestID int64, userID int64) (bool, error)
@@ -44,41 +43,21 @@ func NewContestUsecase(repo ContestRepo, logger log.Logger) *ContestUsecase {
 }
 
 func (contestUsecase *ContestUsecase) GetContests(ctx context.Context) ([]*Contest, error) {
-	entContests, err := contestUsecase.contestRepo.GetContests(ctx)
+	contests, err := contestUsecase.contestRepo.GetContests(ctx)
 	if err != nil {
 		return nil, err
-	}
-
-	contests := make([]*Contest, 0, len(entContests))
-	for i := 0; i < len(entContests); i++ {
-		contests = append(contests, &Contest{
-			ID:        entContests[i].ID,
-			Title:     entContests[i].Name,
-			StartTime: entContests[i].StartTime,
-			EndTime:   entContests[i].EndTime,
-			Status:    string(entContests[i].Status),
-		})
 	}
 
 	return contests, nil
 }
 
 func (contestUsecase *ContestUsecase) GetSingleContest(ctx context.Context, contestID int64) (*DetailedContest, error) {
-	entContest, err := contestUsecase.contestRepo.GetSingleContest(ctx, contestID)
+	detailedContest, err := contestUsecase.contestRepo.GetSingleContest(ctx, contestID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &DetailedContest{
-		Contest: Contest{
-			ID:        entContest.ID,
-			Title:     entContest.Name,
-			StartTime: entContest.StartTime,
-			EndTime:   entContest.EndTime,
-			Status:    string(entContest.Status),
-		},
-		Description: entContest.Description,
-	}, nil
+	return detailedContest, nil
 }
 
 func (contestUsecase *ContestUsecase) JoinContest(ctx context.Context, contestID int64) (bool, error) {

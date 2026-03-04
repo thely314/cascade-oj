@@ -2,7 +2,6 @@ package data
 
 import (
 	"cascade-oj/app/services/user/internal/biz"
-	"cascade-oj/ent"
 	"cascade-oj/ent/competitor_list"
 	"cascade-oj/ent/problemset"
 	"context"
@@ -16,25 +15,27 @@ type ContestRepo struct {
 	log  *log.Helper
 }
 
-func (contestRepo *ContestRepo) GetContests(ctx context.Context) ([]*ent.ProblemSet, error) {
+func (contestRepo *ContestRepo) GetContests(ctx context.Context) ([]*biz.Contest, error) {
 	queryContests, err := contestRepo.data.db.ProblemSet.Query().All(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	now := time.Now()
-	for _, contest := range queryContests {
-		calculatedStatus := CalculateContestStatus(now, contest.StartTime, contest.EndTime)
-		if contest.Status.String() != calculatedStatus {
-			contest.Status = problemset.Status(calculatedStatus)
-			EnqueueStatusUpdate(contest.ID, calculatedStatus)
-		}
+	contests := make([]*biz.Contest, 0, len(queryContests))
+	for i := 0; i < len(queryContests); i++ {
+		contests = append(contests, &biz.Contest{
+			ID:        queryContests[i].ID,
+			Title:     queryContests[i].Name,
+			StartTime: queryContests[i].StartTime,
+			EndTime:   queryContests[i].EndTime,
+			Status:    string(queryContests[i].Status),
+		})
 	}
 
-	return queryContests, nil
+	return contests, nil
 }
 
-func (contestRepo *ContestRepo) GetSingleContest(ctx context.Context, contestID int64) (*ent.ProblemSet, error) {
+func (contestRepo *ContestRepo) GetSingleContest(ctx context.Context, contestID int64) (*biz.DetailedContest, error) {
 	queryContest, err := contestRepo.data.db.ProblemSet.Query().
 		Where(problemset.IDEQ(contestID)).
 		Only(ctx)
@@ -49,7 +50,16 @@ func (contestRepo *ContestRepo) GetSingleContest(ctx context.Context, contestID 
 		EnqueueStatusUpdate(queryContest.ID, calculatedStatus)
 	}
 
-	return queryContest, nil
+	return &biz.DetailedContest{
+		Contest: biz.Contest{
+			ID:        queryContest.ID,
+			Title:     queryContest.Name,
+			StartTime: queryContest.StartTime,
+			EndTime:   queryContest.EndTime,
+			Status:    string(queryContest.Status),
+		},
+		Description: queryContest.Description,
+	}, nil
 }
 
 func (contestRepo *ContestRepo) JoinContest(ctx context.Context, contestID int64, userID int64) (bool, error) {
