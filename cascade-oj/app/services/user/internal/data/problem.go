@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"cascade-oj/app/services/user/internal/biz"
-	"cascade-oj/ent"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset_includes"
 
@@ -16,7 +15,7 @@ type ProblemRepo struct {
 	log  *log.Helper
 }
 
-func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64) ([]*ent.Problem, error) {
+func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64) ([]*biz.Problem, error) {
 	queryProblemsID, err := problemRepo.data.db.ProblemSet_Includes.Query().
 		Select(problemset_includes.FieldProblemID).
 		Where(problemset_includes.ProblemSetIDEQ(contestID)).
@@ -25,7 +24,7 @@ func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64
 		return nil, err
 	}
 
-	problems := make([]*ent.Problem, 0, len(queryProblemsID))
+	problems := make([]*biz.Problem, 0, len(queryProblemsID))
 	for i := 0; i < len(queryProblemsID); i++ {
 		queryProblem, err := problemRepo.data.db.Problem.Query().
 			Where(problem.IDEQ(queryProblemsID[i].ProblemID)).
@@ -33,12 +32,17 @@ func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64
 		if err != nil {
 			return nil, err
 		}
-		problems = append(problems, queryProblem)
+		problems = append(problems, &biz.Problem{
+			ID:            queryProblem.ID,
+			Title:         queryProblem.Title,
+			TimeLimitMs:   int32(queryProblem.TimeLimitMs),
+			MemoryLimitMb: int32(queryProblem.MemoryLimitKB),
+		})
 	}
 	return problems, nil
 }
 
-func (problemRepo *ProblemRepo) GetSingleProblem(ctx context.Context, problemID int64) (*ent.Problem, error) {
+func (problemRepo *ProblemRepo) GetSingleProblem(ctx context.Context, problemID int64) (*biz.DetailedProblem, error) {
 	queryProblem, err := problemRepo.data.db.Problem.Query().
 		WithCreator().
 		Where(problem.IDEQ(problemID)).
@@ -47,7 +51,16 @@ func (problemRepo *ProblemRepo) GetSingleProblem(ctx context.Context, problemID 
 		return nil, err
 	}
 
-	return queryProblem, nil
+	return &biz.DetailedProblem{
+		Problem: biz.Problem{
+			ID:            queryProblem.ID,
+			Title:         queryProblem.Title,
+			TimeLimitMs:   int32(queryProblem.TimeLimitMs),
+			MemoryLimitMb: int32(queryProblem.MemoryLimitKB),
+		},
+		CreatorUsername: queryProblem.Edges.Creator.Username,
+		Description:     queryProblem.Description,
+	}, nil
 }
 
 func NewProblemRepo(data *Data, logger log.Logger) biz.ProblemRepo {

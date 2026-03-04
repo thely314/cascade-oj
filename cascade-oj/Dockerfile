@@ -1,5 +1,5 @@
 # Use the official Go-Judge image as the base image
-FROM criyle/go-judge:v1.10.0
+FROM criyle/go-judge:v1.11.0
 FROM debian:latest
 
 # Debian apt-get 镜像源
