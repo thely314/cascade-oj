@@ -395,6 +395,7 @@ func (repo *judgeRepo) JudgeSelfTest(ctx context.Context, msg_self_test *mq.Self
 				msg_self_test.Stderr = string(stderr)
 			}
 		}
+		repo.log.Errorf("failed to compiled self-test code: %v", err)
 		return err
 	}
 	msg_self_test.IsCompiled = true
