@@ -35,7 +35,15 @@ func NewJudgeRepo(data *Data, logger log.Logger) biz.JudgeRepo {
 }
 
 func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTest) (string, error) {
-	q, err := repo.data.mq_channel.QueueDeclare(
+	conn, err := repo.data.mq_channel.GetConnection()
+	if err != nil {
+		log.Errorf("failed to get mq connection: %v", err)
+		return "", err
+	}
+	ch, err := conn.Channel()
+	defer ch.Close()
+	// q, err := repo.data.mq_channel.QueueDeclare(
+	q, err := ch.QueueDeclare(
 		mq.GojudgeSelfTestQueueName, // name
 		true,                        // durable
 		false,                       // delete when unused
@@ -44,6 +52,7 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 		nil,                         // arguments
 	)
 	if err != nil {
+		log.Errorf("error from QueueDeclare: %v", err)
 		return "", err
 	}
 	selfTestMsg := &mq.SelfTestMessage{
@@ -63,10 +72,12 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 	// 结构体 slice 转为 JSON
 	jsonBody, err := json.Marshal(selfTestMsg)
 	if err != nil {
+		log.Errorf("error when marshaling selfTestMsg: %v", err)
 		return "", err
 	}
 	log.Infof("publish message: %s", jsonBody)
-	err = repo.data.mq_channel.PublishWithContext(
+	// err = repo.data.mq_channel.PublishWithContext(
+	err = ch.PublishWithContext(
 		ctx,
 		"",     // exchange
 		q.Name, // routing key
@@ -78,10 +89,12 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 		},
 	)
 	if err != nil {
+		log.Errorf("error from PublishWithContext: %v", err)
 		return "", err
 	}
 	set := repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SelfTestType, selfTest.UserID, selfTest.UUID), jsonBody, 2*time.Hour)
 	if set.Err() != nil {
+		log.Errorf("error from redis: %v", set.Err())
 		return "", set.Err()
 	}
 	return selfTest.UUID, nil
@@ -116,7 +129,15 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 		return "", errors.New("contest is not ongoing")
 	}
 
-	q, err := repo.data.mq_channel.QueueDeclare(
+	conn, err := repo.data.mq_channel.GetConnection()
+	if err != nil {
+		log.Errorf("failed to get mq connection: %v", err)
+		return "", err
+	}
+	ch, err := conn.Channel()
+	defer ch.Close()
+	// q, err := repo.data.mq_channel.QueueDeclare(
+	q, err := ch.QueueDeclare(
 		mq.GojudgeSubmissionQueueName, // name
 		true,                          // durable
 		false,                         // delete when unused
@@ -125,6 +146,7 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 		nil,                           // arguments
 	)
 	if err != nil {
+		log.Errorf("error from QueueDeclare: %v", err)
 		return "", err
 	}
 	// get case version from problemTarget
@@ -154,10 +176,12 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 	// 结构体 slice 转为 JSON
 	jsonBody, err := json.Marshal(submissionMsg)
 	if err != nil {
+		log.Errorf("error when marshaling submissionMsg: %v", err)
 		return "", err
 	}
 	log.Infof("publish message: %s", jsonBody)
-	err = repo.data.mq_channel.PublishWithContext(
+	// err = repo.data.mq_channel.PublishWithContext(
+	err = ch.PublishWithContext(
 		ctx,
 		"",     // exchange
 		q.Name, // routing key
@@ -169,10 +193,12 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 		},
 	)
 	if err != nil {
+		log.Errorf("error from PublishWithContext: %v", err)
 		return "", err
 	}
 	set := repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, submission.UserID, submission.UUID), jsonBody, 2*time.Hour)
 	if set.Err() != nil {
+		log.Errorf("error from redis: %v", set.Err())
 		return "", set.Err()
 	}
 	return submission.UUID, nil

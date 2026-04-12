@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"cascade-oj/app/services/judge/internal/biz"
@@ -14,6 +15,7 @@ import (
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/submissionrecord"
+	filemanage "cascade-oj/pkg/file_manage"
 	"cascade-oj/pkg/mq"
 	"cascade-oj/pkg/util"
 
@@ -230,8 +232,10 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 	// test each case
 	// fileManager get config, read caseGroup from config
 	for idx, caseGroup := range judgeConfig.CaseGroups {
+		// 需要原子操作更新
 		var caseGroupStatus int16 = util.StatusToInt16(util.Accepted)
-		var caseGroupScore int = 0
+		var atomicCaseGroupStatus int32 = int32(util.StatusToInt16(util.Accepted))
+		var caseGroupScore int32 = 0
 		var totalTime uint64 = 0
 		var maxMemory uint64 = 0
 		caseBuilders := make([]*ent.CaseResultCreate, len(caseGroup.Cases))
@@ -245,7 +249,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		wg := sync.WaitGroup{}
 		wg.Add(len(caseGroup.Cases))
 		for idx2, testCase := range caseGroup.Cases {
-			err := func() error {
+			go func(idx2 int, testCase *filemanage.TestCase) {
 				caseBuilder := repo.data.db.CaseResult.Create().
 					SetStatus(util.StatusToInt16(util.Pending)).
 					SetTimeCostMs(0).
@@ -265,7 +269,10 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 					testCase.AnswerFileLocation,
 				)
 				if err != nil {
-					return err
+					// goroutine 不能直接返回 error
+					caseBuilder.SetStatus(util.StatusToInt16(util.SystemError))
+					atomic.StoreInt32(&atomicCaseGroupStatus, int32(util.StatusToInt16(util.SystemError)))
+					return
 				}
 				// handle CRLF for both files
 				inputBytes = util.RemoveCR(inputBytes)
@@ -285,10 +292,14 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 				if err != nil {
 					repo.log.Errorf("submission: %s runtime error: %v", msg_submission.UUID, err)
 					caseBuilder.SetStatus(util.StatusToInt16(util.RuntimeError))
-					caseBuilder.SetStderr(util.ParseSignalToString(result.ExitStatus))
+					if result != nil {
+						caseBuilder.SetStderr(util.ParseSignalToString(result.ExitStatus))
+					} else {
+						caseBuilder.SetStderr("Runtime error without stderr message")
+					}
 					// the whole group is runtime error
-					caseGroupStatus = util.StatusToInt16(util.RuntimeError)
-					return nil
+					atomic.StoreInt32(&atomicCaseGroupStatus, int32(util.StatusToInt16(util.RuntimeError)))
+					return
 				}
 				repo.log.Infof("submission: %s case: %s result: %+v", msg_submission.UUID, testCase.InputFileLocation, result)
 
@@ -312,33 +323,54 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 				caseBuilder.SetMemoryCostKB(resMemory)
 
 				// update case group info
-				totalTime += resTime                  // ms
-				maxMemory = max(maxMemory, resMemory) // KB
+				atomic.AddUint64(&totalTime, resTime) // ms
+				// maxMemory 需要使用循环原子操作
+				// KB
+				for {
+					oldMax := atomic.LoadUint64(&maxMemory)
+					if resMemory <= oldMax {
+						break
+					}
+					if atomic.CompareAndSwapUint64(&maxMemory, oldMax, resMemory) {
+						break
+					}
+				}
 
 				// update submission info
-				msg_submission.TimeCost += resTime                                    // ms
-				msg_submission.MemoryCost = max(msg_submission.MemoryCost, resMemory) // KB
+				atomic.AddUint64(&msg_submission.TimeCost, resTime) // ms
+				// msg_submission.MemoryCost 需要使用循环原子操作
+				for {
+					oldMax := atomic.LoadUint64(&msg_submission.MemoryCost)
+					if resMemory <= oldMax {
+						break
+					}
+					if atomic.CompareAndSwapUint64(&msg_submission.MemoryCost, oldMax, resMemory) {
+						break
+					}
+				}
 
 				// set case score
 				if resStatus != util.StatusToInt16(util.Accepted) {
 					caseBuilder.SetScore(0)
-					caseGroupStatus = resStatus
+					// 原子地更新 caseGroupStatus
+					// 只有在当前状态是 AC 时才更新为第一个遇到的非 AC 状态
+					currentStatus := atomic.LoadInt32(&atomicCaseGroupStatus)
+					if currentStatus == int32(util.StatusToInt16(util.Accepted)) {
+						atomic.CompareAndSwapInt32(&atomicCaseGroupStatus, currentStatus, int32(resStatus))
+					}
 				} else {
 					caseBuilder.SetScore(testCase.SubScore)
-					caseGroupScore += testCase.SubScore
+					atomic.AddInt32(&caseGroupScore, int32(testCase.SubScore))
 				}
-
-				return nil
-			}()
-			if err != nil {
-				msg_submission.Status = util.StatusToInt16(util.SystemError)
-				return err
-			}
+			}(idx2, &testCase)
 		}
 		wg.Wait()
 
+		// 从原子变量读取最终状态
+		caseGroupStatus = int16(atomic.LoadInt32(&atomicCaseGroupStatus))
+
 		// calculate case group score
-		caseGroupBuilder.SetScore(caseGroupScore)
+		caseGroupBuilder.SetScore(int(caseGroupScore))
 		caseGroupBuilder.SetStatus(caseGroupStatus)
 		caseGroupBuilder.SetTotalTimeCostMs(totalTime) // ms
 		caseGroupBuilder.SetMaxMemoryCostKB(maxMemory) // KB
@@ -348,7 +380,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		casesArrays[idx] = caseBuilders
 
 		// update submission info
-		msg_submission.Score += caseGroupScore
+		msg_submission.Score += int(caseGroupScore)
 		if msg_submission.Status == util.StatusToInt16(util.Accepted) &&
 			caseGroupStatus != util.StatusToInt16(util.Accepted) {
 			msg_submission.Status = caseGroupStatus
@@ -395,6 +427,7 @@ func (repo *judgeRepo) JudgeSelfTest(ctx context.Context, msg_self_test *mq.Self
 				msg_self_test.Stderr = string(stderr)
 			}
 		}
+		repo.log.Errorf("failed to compiled self-test code: %v", err)
 		return err
 	}
 	msg_self_test.IsCompiled = true
