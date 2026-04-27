@@ -25,6 +25,10 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
     if (!headers.has('Content-Type') && !(init.body instanceof FormData)) {
         headers.set('Content-Type', 'application/json');
     }
+    const token = localStorage.getItem('cascade_token');
+    if (token && !headers.has('token')) {
+        headers.set('token', token);
+    }
 
     const config: RequestInit = {
         ...init,

@@ -3,9 +3,22 @@
 package v1
 
 import (
+	fmt "fmt"
 	errors "github.com/go-kratos/kratos/v2/errors"
 )
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the kratos package it is being compiled against.
 const _ = errors.SupportPackageIsVersion1
+
+func IsNotRegistered(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_NOT_REGISTERED.String() && e.Code == 401
+}
+
+func ErrorNotRegistered(format string, args ...interface{}) *errors.Error {
+	return errors.New(401, ErrorReason_NOT_REGISTERED.String(), fmt.Sprintf(format, args...))
+}

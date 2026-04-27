@@ -3,9 +3,34 @@
 package v1
 
 import (
+	fmt "fmt"
 	errors "github.com/go-kratos/kratos/v2/errors"
 )
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the kratos package it is being compiled against.
 const _ = errors.SupportPackageIsVersion1
+
+func IsUserBanned(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_USER_BANNED.String() && e.Code == 401
+}
+
+func ErrorUserBanned(format string, args ...interface{}) *errors.Error {
+	return errors.New(401, ErrorReason_USER_BANNED.String(), fmt.Sprintf(format, args...))
+}
+
+func IsContestEnd(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_CONTEST_END.String() && e.Code == 401
+}
+
+func ErrorContestEnd(format string, args ...interface{}) *errors.Error {
+	return errors.New(401, ErrorReason_CONTEST_END.String(), fmt.Sprintf(format, args...))
+}

@@ -218,6 +218,26 @@ export interface DeleteUserReply {
     isDeleted: boolean;
 }
 
+export interface GetContestUsersReply {
+    users: UserInfo[];
+}
+
+export interface AddContestUserReply {
+    isJoined: boolean;
+}
+
+export interface RemoveContestUserReply {
+    isJoined: boolean;
+}
+
+export interface UpdateUserPasswordRequest {
+    password: string;
+}
+
+export interface UpdateUserPasswordReply {
+    isUpdated: boolean;
+}
+
 // Statistics
 export interface GetContestStatisticsReply {
     statisticsJson: string;

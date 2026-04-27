@@ -132,6 +132,28 @@ service Admin {
             delete: "/admin/users/{user_id}"
         };
     };
+    rpc GetContestUsers(GetContestUsersRequest) returns (GetContestUsersReply) {
+        option (google.api.http) = {
+            get: "/admin/contests/{contest_id}/users"
+        };
+    };
+    rpc AddContestUser(AddContestUserRequest) returns (AddContestUserReply) {
+        option (google.api.http) = {
+            post: "/admin/contests/{contest_id}/users/{user_id}"
+            body: "*"
+        };
+    };
+    rpc RemoveContestUser(RemoveContestUserRequest) returns (RemoveContestUserReply) {
+        option (google.api.http) = {
+            delete: "/admin/contests/{contest_id}/users/{user_id}"
+        };
+    };
+    rpc UpdateUserPassword(UpdateUserPasswordRequest) returns (UpdateUserPasswordReply) {
+        option (google.api.http) = {
+            put: "/admin/users/{user_id}/password"
+            body: "*"
+        };
+    };
 
     rpc GetContestStatistics(GetContestStatisticsRequest) returns (GetContestStatisticsReply) {
         option (google.api.http) = {
@@ -375,6 +397,37 @@ message DeleteUserRequest {
 }
 message DeleteUserReply {
     bool is_deleted = 1; // Whether the user is deleted
+}
+
+message GetContestUsersRequest {
+    int64 contest_id = 1; // Contest ID
+}
+message GetContestUsersReply {
+    repeated UserInfo users = 1; // Users currently in the contest
+}
+
+message AddContestUserRequest {
+    int64 contest_id = 1; // Contest ID
+    int64 user_id = 2; // User ID
+}
+message AddContestUserReply {
+    bool is_joined = 1; // Whether the user is in contest after operation
+}
+
+message RemoveContestUserRequest {
+    int64 contest_id = 1; // Contest ID
+    int64 user_id = 2; // User ID
+}
+message RemoveContestUserReply {
+    bool is_joined = 1; // Whether the user is in contest after operation
+}
+
+message UpdateUserPasswordRequest {
+    int64 user_id = 1; // User ID
+    string password = 2; // Password payload (align with current login flow)
+}
+message UpdateUserPasswordReply {
+    bool is_updated = 1; // Whether the password is updated
 }
 
 message GetContestStatisticsRequest {

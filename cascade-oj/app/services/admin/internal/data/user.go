@@ -5,6 +5,8 @@ import (
 	"cascade-oj/ent/user"
 	"context"
 
+	"cascade-oj/pkg/util"
+
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -57,6 +59,22 @@ func (userRepo *UserRepo) UpdateUserInfo(ctx context.Context, userEditInfo biz.U
 		return true, nil
 	}
 }
+
+func (userRepo *UserRepo) UpdateUserPassword(ctx context.Context, userID int64, password string) (bool, error) {
+	bcryptPassword, err := util.GenerateHashPassword(password)
+	if err != nil {
+		return false, err
+	}
+	err = userRepo.data.db.User.
+		UpdateOneID(userID).
+		SetPasswordHash(bcryptPassword).
+		Exec(ctx)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 func (userRepo *UserRepo) DeleteUser(ctx context.Context, userID int64) (bool, error) {
 	err := userRepo.data.db.User.DeleteOneID(userID).Exec(ctx)
 	if err != nil {

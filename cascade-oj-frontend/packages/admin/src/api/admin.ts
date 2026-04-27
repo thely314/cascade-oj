@@ -31,6 +31,11 @@ import type {
     UpdateUserInfoRequest,
     UpdateUserInfoReply,
     DeleteUserReply,
+    GetContestUsersReply,
+    AddContestUserReply,
+    RemoveContestUserReply,
+    UpdateUserPasswordRequest,
+    UpdateUserPasswordReply,
     GetContestStatisticsReply,
     GetLogsRequest,
     GetLogsReply
@@ -107,6 +112,18 @@ export const updateUserInfo = (userId: number, data: UpdateUserInfoRequest) =>
 
 export const deleteUser = (userId: number) =>
     del<DeleteUserReply>(`/admin/users/${userId}`);
+
+export const getContestUsers = (contestId: number) =>
+    get<GetContestUsersReply>(`/admin/contests/${contestId}/users`);
+
+export const addContestUser = (contestId: number, userId: number) =>
+    post<AddContestUserReply>(`/admin/contests/${contestId}/users/${userId}`);
+
+export const removeContestUser = (contestId: number, userId: number) =>
+    del<RemoveContestUserReply>(`/admin/contests/${contestId}/users/${userId}`);
+
+export const updateUserPassword = (userId: number, data: UpdateUserPasswordRequest) =>
+    put<UpdateUserPasswordReply>(`/admin/users/${userId}/password`, data);
 
 // Statistics
 export const getContestStatistics = (contestId: number) =>
