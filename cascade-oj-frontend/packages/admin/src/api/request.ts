@@ -1,63 +1,90 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+import axios from 'axios';
+import router from '@/router';
 
-interface RequestOptions extends RequestInit {
-    params?: Record<string, string | number | boolean | undefined>;
-}
+// 1. 创建 axios 实例
+const service = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+    timeout: 10000
+});
 
-async function request<T>(url: string, options: RequestOptions = {}): Promise<T> {
-    const { params, ...init } = options;
+// 2. 请求拦截器 (Request Interceptor)
+service.interceptors.request.use(
+    (config) => {
+        // 从 localStorage 获取 token
+        const token = localStorage.getItem('cascade_token');
 
-    let fullUrl = `${BASE_URL}${url}`;
-    if (params) {
-        const searchParams = new URLSearchParams();
-        Object.entries(params).forEach(([key, value]) => {
-            if (value !== undefined) {
-                searchParams.append(key, String(value));
+        if (token) {
+            // 遵循队友要求的自定义 'token' 字段
+            config.headers['token'] = token;
+        }
+
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// 3. 响应拦截器 (Response Interceptor)
+service.interceptors.response.use(
+    (response) => {
+        // Axios 的响应对象中，后端返回的实际数据在 .data 中
+        // 之前使用 Fetch 时，.json() 返回的就是后端数据对象
+        // 为了保持 admin.ts 的泛型正常工作及 Users.vue 能拿到 response.users，
+        // 我们应该在这里直接返回 response.data
+        return response.data;
+    },
+    (error) => {
+        // 处理 HTTP 错误状态码
+        if (error.response) {
+            const status = error.response.status;
+
+            switch (status) {
+                case 401:
+                    // 401 未授权处理
+                    localStorage.removeItem('cascade_token');
+                    // 只有当不在登录页时，才跳转，防止死循环
+                    if (router.currentRoute.value.path !== '/login') {
+                        alert('登录已过期或权限不足，请重新登录');
+                        router.push('/login');
+                    }
+                    break;
+
+                case 403:
+                    alert('您没有权限执行此操作');
+                    break;
+
+                case 404:
+                    console.error('请求的资源不存在');
+                    break;
+
+                case 500:
+                    alert('服务器内部错误，请稍后重试');
+                    break;
+
+                default:
+                    console.error('网络请求错误:', error.message);
             }
-        });
-        const queryString = searchParams.toString();
-        if (queryString) {
-            fullUrl += `?${queryString}`;
+        } else {
+            // 断网或请求超时
+            alert('网络连接异常，请检查网络');
         }
-    }
 
-    const headers = new Headers(init.headers);
-    if (!headers.has('Content-Type') && !(init.body instanceof FormData)) {
-        headers.set('Content-Type', 'application/json');
+        return Promise.reject(error);
     }
-    const token = localStorage.getItem('cascade_token');
-    if (token && !headers.has('token')) {
-        headers.set('token', token);
-    }
+);
 
-    const config: RequestInit = {
-        ...init,
-        headers,
-    };
-
-    try {
-        const response = await fetch(fullUrl, config);
-        if (!response.ok) {
-            const errorBody = await response.text();
-            throw new Error(`Request failed with status ${response.status}: ${errorBody}`);
-        }
-        // Assuming JSON response
-        const data = await response.json();
-        return data as T;
-    } catch (error) {
-        console.error('API Request Error:', error);
-        throw error;
-    }
-}
-
+// 定义泛型请求方法，保持与原 admin 逻辑的兼容性
 export const get = <T>(url: string, params?: Record<string, any>) =>
-    request<T>(url, { method: 'GET', params });
+    service.get<any, T>(url, { params });
 
 export const post = <T>(url: string, body?: any) =>
-    request<T>(url, { method: 'POST', body: JSON.stringify(body) });
+    service.post<any, T>(url, body);
 
 export const put = <T>(url: string, body?: any) =>
-    request<T>(url, { method: 'PUT', body: JSON.stringify(body) });
+    service.put<any, T>(url, body);
 
 export const del = <T>(url: string) =>
-    request<T>(url, { method: 'DELETE' });
+    service.delete<any, T>(url);
+
+export default service;
