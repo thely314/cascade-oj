@@ -1,59 +1,42 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+import axios from 'axios';
+import router from '@/router';
 
-interface RequestOptions extends RequestInit {
-    params?: Record<string, string | number | boolean | undefined>;
-}
+const service = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  timeout: 10000
+});
 
-async function request<T>(url: string, options: RequestOptions = {}): Promise<T> {
-    const { params, ...init } = options;
+service.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('cascade_token');
+    if (token) {
+      config.headers['token'] = token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-    let fullUrl = `${BASE_URL}${url}`;
-    if (params) {
-        const searchParams = new URLSearchParams();
-        Object.entries(params).forEach(([key, value]) => {
-            if (value !== undefined) {
-                searchParams.append(key, String(value));
-            }
-        });
-        const queryString = searchParams.toString();
-        if (queryString) {
-            fullUrl += `?${queryString}`;
+service.interceptors.response.use(
+  (response) => {
+    // 直接返回 `response.data`，简化调用方处理
+    return response.data;
+  },
+  (error) => {
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 401) {
+        localStorage.removeItem('cascade_token');
+        if (router.currentRoute.value.name !== 'Login') {
+          router.push({ name: 'Login', params: { sourceApp: 'admin' } });
         }
+      }
     }
+    // 对于非 401 错误，直接将原始错误抛出，让调用方处理
+    return Promise.reject(error);
+  }
+);
 
-    const headers = new Headers(init.headers);
-    if (!headers.has('Content-Type') && !(init.body instanceof FormData)) {
-        headers.set('Content-Type', 'application/json');
-    }
-
-    const config: RequestInit = {
-        ...init,
-        headers,
-    };
-
-    try {
-        const response = await fetch(fullUrl, config);
-        if (!response.ok) {
-            const errorBody = await response.text();
-            throw new Error(`Request failed with status ${response.status}: ${errorBody}`);
-        }
-        // Assuming JSON response
-        const data = await response.json();
-        return data as T;
-    } catch (error) {
-        console.error('API Request Error:', error);
-        throw error;
-    }
-}
-
-export const get = <T>(url: string, params?: Record<string, any>) =>
-    request<T>(url, { method: 'GET', params });
-
-export const post = <T>(url: string, body?: any) =>
-    request<T>(url, { method: 'POST', body: JSON.stringify(body) });
-
-export const put = <T>(url: string, body?: any) =>
-    request<T>(url, { method: 'PUT', body: JSON.stringify(body) });
-
-export const del = <T>(url: string) =>
-    request<T>(url, { method: 'DELETE' });
+export default service;

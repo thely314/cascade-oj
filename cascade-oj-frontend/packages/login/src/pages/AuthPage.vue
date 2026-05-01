@@ -13,7 +13,7 @@
             <p class="sub-title">
               {{ isLogin ? '登录以继续您的编程之旅' : '注册账号，开启您的编程之旅' }}
             </p>
-            <router-link to="/home" class="back-home-link">不想登录？先返回主页</router-link>
+            <a :href="competitionHomeUrl" class="back-home-link">不想登录？先返回用户端主页</a>
           </div>
 
           <!-- Tab 切换 -->
@@ -39,7 +39,8 @@
           <Transition name="fade" mode="out-in">
             <component 
               :is="isLogin ? LoginForm : RegisterForm" 
-              @success="isLogin = true" 
+              @success="isLogin = true"
+              :source-app="sourceApp"
             />
           </Transition>
         </div>
@@ -49,12 +50,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, defineProps, computed } from 'vue';
 import AuthLeft from '../components/auth/AuthLeft.vue';
 import LoginForm from '../components/auth/LoginForm.vue';
 import RegisterForm from '../components/auth/RegisterForm.vue';
 
+const props = defineProps({
+  sourceApp: {
+    type: String,
+    default: 'competition'
+  }
+});
+
 const isLogin = ref(true);
+
+// 动态计算用户端主页的完整 URL
+const competitionHomeUrl = computed(() => {
+  const url = new URL(window.location.href);
+  // 构建不带端口的 origin
+  const competitionOrigin = `${url.protocol}//${url.hostname}`;
+  return `${competitionOrigin}/home`;
+});
 </script>
 
 <style scoped>
