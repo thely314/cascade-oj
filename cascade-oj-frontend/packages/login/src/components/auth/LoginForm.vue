@@ -63,14 +63,21 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 import md5 from 'js-md5';
-import request from '../../utils/request'; 
+import request from '../../utils/request';
 
 const router = useRouter();
 const loading = ref(false);
 const showPassword = ref(false);
+
+const props = defineProps({
+  sourceApp: {
+    type: String,
+    default: 'competition' // 默认为 'competition'
+  }
+});
 
 const form = reactive({
   username: '', 
@@ -100,8 +107,9 @@ const handleLogin = async () => {
       // 2. (可选) 存储用户信息
       // localStorage.setItem('user_info', JSON.stringify(res.data.user));
 
-      // 3. 跳转到比赛主页
-      router.push('/competition'); 
+      // 3. 根据 sourceApp 跳转到不同主页
+      const redirectPath = props.sourceApp === 'admin' ? '/admin' : '/competition';
+      window.location.href = redirectPath;
     } else {
       alert('登录失败：未获取到 Token');
     }

@@ -11,7 +11,7 @@ const routes = [
     { path: '/competition', name: 'ContestsList', component: ContestsList, meta: { title: '比赛列表 - Cascade' } },
     { path: '/competition/:id', name: 'Contest', component: Contest, meta: { title: '比赛详情 - Cascade' } },
     { path: '/about', name: 'About', component: About, meta: { title: '关于我们 - Cascade' } },
-    { path: '/login', name: 'Login', component: () => import('../../../login/src/views/AuthPage.vue'), meta: { hideNav: true, title: '登录 - Cascade' } },
+    { path: '/login', name: 'Login', component: () => import('../../../login/src/pages/AuthPage.vue'), meta: { hideNav: true, title: '登录 - Cascade' } },
     {
         path: '/contest/:contestId/problem/:id', 
         name: 'ProblemDetail',
