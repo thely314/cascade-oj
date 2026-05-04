@@ -34,6 +34,7 @@ services:
       - "8100:8000"
     volumes:
       - ./config/public:/data/conf
+      - ./data/logs:/data/logs
     container_name: cascade_oj_public
     networks:
       - backend-network
@@ -54,6 +55,7 @@ services:
       - "8200:8000"
     volumes:
       - ./config/user:/data/conf
+      - ./data/logs:/data/logs
     container_name: cascade_oj_user
     networks:
       - backend-network
@@ -74,6 +76,7 @@ services:
     volumes:
       - ./config/judge:/data/conf
       - ./cases:/cases
+      - ./data/logs:/data/logs
     container_name: cascade_oj_judge
     networks:
       - backend-network
@@ -94,6 +97,7 @@ services:
       - "8300:8000"
     volumes:
       - ./config/admin:/data/conf
+      - ./data/logs:/data/logs
     container_name: cascade_oj_admin
     networks:
       - backend-network

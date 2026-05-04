@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"cascade-oj/app/services/judge/internal/conf"
+	newlog "cascade-oj/pkg/log"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -43,7 +44,18 @@ func newApp(logger log.Logger, ms *rabbitmq.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
+	logger, err := newlog.NewLogger(
+		newlog.WithLevel("info"),
+		newlog.WithFilename("/data/logs/judge.log"),
+		newlog.WithMaxBackups(1),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	log.SetLogger(logger)
+
+	logger = log.With(logger,
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
 		"service.id", id,
