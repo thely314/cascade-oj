@@ -32,8 +32,11 @@ import type {
     UpdateUserInfoReply,
     DeleteUserReply,
     GetContestStatisticsReply,
-    GetLogsRequest,
-    GetLogsReply
+    ListLogFilesRequest,
+    ListLogFilesReply,
+    QueryLogContentRequest,
+    QueryLogContentReply,
+    DownloadLogsRequest,
 } from './types';
 
 // Contests
@@ -136,6 +139,14 @@ export async function getContestStatistics(contestId: number): Promise<GetContes
 }
 
 // Logs
-export async function getLogs(params: GetLogsRequest): Promise<GetLogsReply> {
-    return service.get('/admin/logs', { params: params as Record<string, any> });
+export async function listLogFiles(params: ListLogFilesRequest): Promise<ListLogFilesReply> {
+    return service.get('/admin/logs/files', { params: params as Record<string, any> });
+}
+
+export async function queryLogContent(params: QueryLogContentRequest): Promise<QueryLogContentReply> {
+    return service.get('/admin/logs/content', { params: params as Record<string, any> });
+}
+
+export async function downloadLogs(data: DownloadLogsRequest): Promise<any> {
+    return service.post('/admin/logs/download', data, { responseType: 'json' });
 }
