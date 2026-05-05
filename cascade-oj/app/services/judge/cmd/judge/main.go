@@ -45,7 +45,7 @@ func newApp(logger log.Logger, ms *rabbitmq.Server) *kratos.App {
 func main() {
 	flag.Parse()
 	logger, err := newlog.NewLogger(
-		newlog.WithLevel("info"),
+		newlog.WithLevel("INFO"),
 		newlog.WithFilename("/data/logs/judge.log"),
 		newlog.WithMaxBackups(1),
 	)

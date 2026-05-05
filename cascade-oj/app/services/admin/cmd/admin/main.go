@@ -51,7 +51,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, ms *rabbitmq.Se
 func main() {
 	flag.Parse()
 	logger, err := newlog.NewLogger(
-		newlog.WithLevel("info"),
+		newlog.WithLevel("INFO"),
 		newlog.WithFilename("/data/logs/admin.log"),
 		newlog.WithMaxBackups(1),
 	)

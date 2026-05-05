@@ -2,7 +2,7 @@ package log
 
 // Options contains the configuration options for the logger.
 type Options struct {
-	Level         string // Log level (e.g., "info", "warn", "error")
+	Level         string // Log level (e.g., "INFO", "WARN", "ERROR")
 	Filename      string // Log filename
 	MaxSize       int    // Maximum size of a single log file in megabytes
 	MaxBackups    int    // Maximum number of old log files to retain
@@ -14,6 +14,8 @@ type Options struct {
 type Option func(*Options)
 
 // WithLevel sets the log level.
+//
+// valid levels are DEBUG, INFO, WARN, ERROR, FATAL
 func WithLevel(level string) Option {
 	return func(o *Options) {
 		o.Level = level

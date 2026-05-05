@@ -49,7 +49,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 func main() {
 	flag.Parse()
 	logger, err := newlog.NewLogger(
-		newlog.WithLevel("info"),
+		newlog.WithLevel("INFO"),
 		newlog.WithFilename("/data/logs/public.log"),
 		newlog.WithMaxBackups(1),
 	)

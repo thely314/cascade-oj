@@ -2,6 +2,9 @@
 
 Cascade-oj 的后端项目，一个微服务 online judge 系统，基于 kratos
 
+data/ 目录用于挂载容器持久化，如数据库、日志落盘
+cases/ 目录用于存放题目测试用例，同样挂载到容器，具体结构查阅 cases/README.md
+
 ## Dev
 ### Environment
 

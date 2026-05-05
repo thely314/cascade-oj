@@ -12,7 +12,7 @@ import (
 func NewLogger(opts ...Option) (log.Logger, error) {
 	// default Options
 	options := Options{
-		Level:         "info",
+		Level:         "INFO", // support DEBUG, INFO, WARN, ERROR, FATAL
 		EnableConsole: true,
 		MaxSize:       100, // 100MB
 		MaxBackups:    10,
