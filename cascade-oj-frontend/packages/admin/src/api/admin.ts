@@ -1,4 +1,4 @@
-import { get, post, put, del } from './request';
+import service from './request';
 import type {
     GetContestsReply,
     GetSingleContestReply,
@@ -42,76 +42,98 @@ import type {
 } from './types';
 
 // Contests
-export const getContests = () =>
-    get<GetContestsReply>('/admin/contests');
+export async function getContests(): Promise<GetContestsReply> {
+    return service.get('/admin/contests');
+}
 
-export const getSingleContest = (contestId: number) =>
-    get<GetSingleContestReply>(`/admin/contests/${contestId}`);
+export async function getSingleContest(contestId: number): Promise<GetSingleContestReply> {
+    return service.get(`/admin/contests/${contestId}`);
+}
 
-export const postContest = (data: PostContestRequest) =>
-    post<PostContestReply>('/admin/contests', data);
+export async function postContest(data: PostContestRequest): Promise<PostContestReply> {
+    return service.post('/admin/contests', data);
+}
 
-export const putContest = (contestId: number, data: PutContestRequest) =>
-    put<PutContestReply>(`/admin/contests/${contestId}`, data);
+export async function putContest(contestId: number, data: PutContestRequest): Promise<PutContestReply> {
+    return service.put(`/admin/contests/${contestId}`, data);
+}
 
-export const deleteContest = (contestId: number) =>
-    del<DeleteContestReply>(`/admin/contests/${contestId}`);
+export async function deleteContest(contestId: number): Promise<DeleteContestReply> {
+    return service.delete(`/admin/contests/${contestId}`);
+}
 
 // Problems
-export const getProblems = (contestId?: number) =>
-    get<GetProblemsReply>('/admin/problems', { contest_id: contestId });
+export async function getProblems(contestId?: number): Promise<GetProblemsReply> {
+    return service.get('/admin/problems', { params: { contest_id: contestId } });
+}
 
-export const getSingleProblem = (problemId: number) =>
-    get<GetSingleProblemReply>(`/admin/problems/${problemId}`);
+export async function getSingleProblem(problemId: number): Promise<GetSingleProblemReply> {
+    return service.get(`/admin/problems/${problemId}`);
+}
 
-export const postProblem = (data: PostProblemRequest) =>
-    post<PostProblemReply>('/admin/problems', data);
+export async function postProblem(data: PostProblemRequest): Promise<PostProblemReply> {
+    return service.post('/admin/problems', data);
+}
 
-export const putProblem = (problemId: number, data: PutProblemRequest) =>
-    put<PutProblemReply>(`/admin/problems/${problemId}`, data);
+export async function putProblem(problemId: number, data: PutProblemRequest): Promise<PutProblemReply> {
+    return service.put(`/admin/problems/${problemId}`, data);
+}
 
-export const deleteProblem = (problemId: number) =>
-    del<DeleteProblemReply>(`/admin/problems/${problemId}`);
+export async function deleteProblem(problemId: number): Promise<DeleteProblemReply> {
+    return service.delete(`/admin/problems/${problemId}`);
+}
 
-export const publishProblem = (problemId: number) =>
-    post<PublishProblemReply>(`/admin/problems/${problemId}/publish`);
+export async function publishProblem(problemId: number): Promise<PublishProblemReply> {
+    return service.post(`/admin/problems/${problemId}/publish`);
+}
 
 // Submissions
-export const getSubmissions = (params: GetSubmissionsRequest) =>
-    get<GetSubmissionsReply>('/admin/submissions', params as Record<string, any>);
+export async function getSubmissions(params: GetSubmissionsRequest): Promise<GetSubmissionsReply> {
+    return service.get('/admin/submissions', { params: params as Record<string, any> });
+}
 
-export const getSingleSubmission = (submissionUuid: string) =>
-    get<GetSingleSubmissionReply>(`/admin/submissions/${submissionUuid}`);
+export async function getSingleSubmission(submissionUuid: string): Promise<GetSingleSubmissionReply> {
+    return service.get(`/admin/submissions/${submissionUuid}`);
+}
 
-export const rejudgeSubmission = (submissionUuid: string) =>
-    post<RejudgeSubmissionReply>(`/admin/submissions/${submissionUuid}/rejudge`);
+export async function rejudgeSubmission(submissionUuid: string): Promise<RejudgeSubmissionReply> {
+    return service.post(`/admin/submissions/${submissionUuid}/rejudge`);
+}
 
 // Ranks
-export const getRanks = (contestId: number) =>
-    get<GetRanksReply>(`/admin/${contestId}/ranks`);
+export async function getRanks(contestId: number): Promise<GetRanksReply> {
+    return service.get(`/admin/${contestId}/ranks`);
+}
 
 // Announcements
-export const getAnnouncements = () =>
-    get<GetAnnouncementsReply>('/admin/announcements');
+export async function getAnnouncements(): Promise<GetAnnouncementsReply> {
+    return service.get('/admin/announcements');
+}
 
-export const postAnnouncement = (data: PostAnnouncementRequest) =>
-    post<PostAnnouncementReply>('/admin/announcements', data);
+export async function postAnnouncement(data: PostAnnouncementRequest): Promise<PostAnnouncementReply> {
+    return service.post('/admin/announcements', data);
+}
 
-export const putAnnouncement = (announcementId: number, data: PutAnnouncementRequest) =>
-    put<PutAnnouncementReply>(`/admin/announcements/${announcementId}`, data);
+export async function putAnnouncement(announcementId: number, data: PutAnnouncementRequest): Promise<PutAnnouncementReply> {
+    return service.put(`/admin/announcements/${announcementId}`, data);
+}
 
-export const deleteAnnouncement = (announcementId: number) =>
-    del<DeleteAnnouncementReply>(`/admin/announcements/${announcementId}`);
+export async function deleteAnnouncement(announcementId: number): Promise<DeleteAnnouncementReply> {
+    return service.delete(`/admin/announcements/${announcementId}`);
+}
 
 // Users
-export const getUsers = (params: GetUsersRequest) =>
-    get<GetUsersReply>('/admin/users', params as Record<string, any>);
+export async function getUsers(params: GetUsersRequest): Promise<GetUsersReply> {
+    return service.get('/admin/users', { params: params as Record<string, any> });
+}
 
-export const updateUserInfo = (userId: number, data: UpdateUserInfoRequest) =>
-    put<UpdateUserInfoReply>(`/admin/users/${userId}`, data);
+export async function updateUserInfo(userId: number, data: UpdateUserInfoRequest): Promise<UpdateUserInfoReply> {
+    return service.put(`/admin/users/${userId}`, data);
+}
 
-export const deleteUser = (userId: number) =>
-    del<DeleteUserReply>(`/admin/users/${userId}`);
+export async function deleteUser(userId: number): Promise<DeleteUserReply> {
+    return service.delete(`/admin/users/${userId}`);
+}
 
 export const getContestUsers = (contestId: number) =>
     get<GetContestUsersReply>(`/admin/contests/${contestId}/users`);
@@ -126,9 +148,11 @@ export const updateUserPassword = (userId: number, data: UpdateUserPasswordReque
     put<UpdateUserPasswordReply>(`/admin/users/${userId}/password`, data);
 
 // Statistics
-export const getContestStatistics = (contestId: number) =>
-    get<GetContestStatisticsReply>(`/admin/contests/${contestId}/statistics`);
+export async function getContestStatistics(contestId: number): Promise<GetContestStatisticsReply> {
+    return service.get(`/admin/contests/${contestId}/statistics`);
+}
 
 // Logs
-export const getLogs = (params: GetLogsRequest) =>
-    get<GetLogsReply>('/admin/logs', params as Record<string, any>);
+export async function getLogs(params: GetLogsRequest): Promise<GetLogsReply> {
+    return service.get('/admin/logs', { params: params as Record<string, any> });
+}
