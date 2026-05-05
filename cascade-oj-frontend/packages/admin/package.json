@@ -14,7 +14,9 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
-    "axios": "^1.13.2",
+    "@vuepic/vue-datepicker": "^12.1.0",
+    "axios": "^1.15.2",
+    "v-page": "^3.5.0",
     "js-md5": "^0.8.3",
     "vue": "^3.5.25",
     "vue-router": "^4.4.5"

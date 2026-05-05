@@ -8,6 +8,7 @@ package v1
 
 import (
 	context "context"
+	httpbody "google.golang.org/genproto/googleapis/api/httpbody"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -46,41 +47,71 @@ const (
 	Admin_RemoveContestUser_FullMethodName    = "/api.cascade.admin.v1.Admin/RemoveContestUser"
 	Admin_UpdateUserPassword_FullMethodName   = "/api.cascade.admin.v1.Admin/UpdateUserPassword"
 	Admin_GetContestStatistics_FullMethodName = "/api.cascade.admin.v1.Admin/GetContestStatistics"
-	Admin_GetLogs_FullMethodName              = "/api.cascade.admin.v1.Admin/GetLogs"
+	Admin_ListLogFiles_FullMethodName         = "/api.cascade.admin.v1.Admin/ListLogFiles"
+	Admin_QueryLogContent_FullMethodName      = "/api.cascade.admin.v1.Admin/QueryLogContent"
+	Admin_DownloadLogs_FullMethodName         = "/api.cascade.admin.v1.Admin/DownloadLogs"
 )
 
 // AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminClient interface {
+	// Get a list of contests
 	GetContests(ctx context.Context, in *GetContestsRequest, opts ...grpc.CallOption) (*GetContestsReply, error)
+	// Get a single contest's details
 	GetSingleContest(ctx context.Context, in *GetSingleContestRequest, opts ...grpc.CallOption) (*GetSingleContestReply, error)
+	// Create a new contest
 	PostContest(ctx context.Context, in *PostContestRequest, opts ...grpc.CallOption) (*PostContestReply, error)
+	// Update an existing contest
 	PutContest(ctx context.Context, in *PutContestRequest, opts ...grpc.CallOption) (*PutContestReply, error)
+	// Delete a contest
 	DeleteContest(ctx context.Context, in *DeleteContestRequest, opts ...grpc.CallOption) (*DeleteContestReply, error)
+	// Get a list of problems
 	GetProblems(ctx context.Context, in *GetProblemsRequest, opts ...grpc.CallOption) (*GetProblemsReply, error)
+	// Get a single problem's details
 	GetSingleProblem(ctx context.Context, in *GetSingleProblemRequest, opts ...grpc.CallOption) (*GetSingleProblemReply, error)
+	// Create a new problem
 	PostProblem(ctx context.Context, in *PostProblemRequest, opts ...grpc.CallOption) (*PostProblemReply, error)
+	// Update an existing problem
 	PutProblem(ctx context.Context, in *PutProblemRequest, opts ...grpc.CallOption) (*PutProblemReply, error)
+	// Delete a problem
 	DeleteProblem(ctx context.Context, in *DeleteProblemRequest, opts ...grpc.CallOption) (*DeleteProblemReply, error)
+	// Publish a problem to make it visible
 	PublishProblem(ctx context.Context, in *PublishProblemRequest, opts ...grpc.CallOption) (*PublishProblemReply, error)
+	// Get a list of submissions
 	GetSubmissions(ctx context.Context, in *GetSubmissionsRequest, opts ...grpc.CallOption) (*GetSubmissionsReply, error)
+	// Get a single submission's details
 	GetSingleSubmission(ctx context.Context, in *GetSingleSubmissionRequest, opts ...grpc.CallOption) (*GetSingleSubmissionReply, error)
+	// Rejudge a submission
 	RejudgeSubmission(ctx context.Context, in *RejudgeSubmissionRequest, opts ...grpc.CallOption) (*RejudgeSubmissionReply, error)
+	// Get contest rankings
 	GetRanks(ctx context.Context, in *GetRanksRequest, opts ...grpc.CallOption) (*GetRanksReply, error)
+	// Get a list of announcements
 	GetAnnouncements(ctx context.Context, in *GetAnnouncementsRequest, opts ...grpc.CallOption) (*GetAnnouncementsReply, error)
+	// Create a new announcement
 	PostAnnouncement(ctx context.Context, in *PostAnnouncementRequest, opts ...grpc.CallOption) (*PostAnnouncementReply, error)
+	// Update an existing announcement
 	PutAnnouncement(ctx context.Context, in *PutAnnouncementRequest, opts ...grpc.CallOption) (*PutAnnouncementReply, error)
+	// Delete an announcement
 	DeleteAnnouncement(ctx context.Context, in *DeleteAnnouncementRequest, opts ...grpc.CallOption) (*DeleteAnnouncementReply, error)
+	// Get a list of users
 	GetUsers(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUsersReply, error)
+	// Update user information
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoReply, error)
+	// Delete a user
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserReply, error)
 	GetContestUsers(ctx context.Context, in *GetContestUsersRequest, opts ...grpc.CallOption) (*GetContestUsersReply, error)
 	AddContestUser(ctx context.Context, in *AddContestUserRequest, opts ...grpc.CallOption) (*AddContestUserReply, error)
 	RemoveContestUser(ctx context.Context, in *RemoveContestUserRequest, opts ...grpc.CallOption) (*RemoveContestUserReply, error)
 	UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordRequest, opts ...grpc.CallOption) (*UpdateUserPasswordReply, error)
+	// Get statistics for a contest
 	GetContestStatistics(ctx context.Context, in *GetContestStatisticsRequest, opts ...grpc.CallOption) (*GetContestStatisticsReply, error)
-	GetLogs(ctx context.Context, in *GetLogsRequest, opts ...grpc.CallOption) (*GetLogsReply, error)
+	// List available log files
+	ListLogFiles(ctx context.Context, in *ListLogFilesRequest, opts ...grpc.CallOption) (*ListLogFilesReply, error)
+	// Query content from a log file
+	QueryLogContent(ctx context.Context, in *QueryLogContentRequest, opts ...grpc.CallOption) (*QueryLogContentReply, error)
+	// Download log files as a zip archive
+	DownloadLogs(ctx context.Context, in *DownloadLogsRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error)
 }
 
 type adminClient struct {
@@ -361,10 +392,30 @@ func (c *adminClient) GetContestStatistics(ctx context.Context, in *GetContestSt
 	return out, nil
 }
 
-func (c *adminClient) GetLogs(ctx context.Context, in *GetLogsRequest, opts ...grpc.CallOption) (*GetLogsReply, error) {
+func (c *adminClient) ListLogFiles(ctx context.Context, in *ListLogFilesRequest, opts ...grpc.CallOption) (*ListLogFilesReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetLogsReply)
-	err := c.cc.Invoke(ctx, Admin_GetLogs_FullMethodName, in, out, cOpts...)
+	out := new(ListLogFilesReply)
+	err := c.cc.Invoke(ctx, Admin_ListLogFiles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) QueryLogContent(ctx context.Context, in *QueryLogContentRequest, opts ...grpc.CallOption) (*QueryLogContentReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryLogContentReply)
+	err := c.cc.Invoke(ctx, Admin_QueryLogContent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) DownloadLogs(ctx context.Context, in *DownloadLogsRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(httpbody.HttpBody)
+	err := c.cc.Invoke(ctx, Admin_DownloadLogs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -375,34 +426,62 @@ func (c *adminClient) GetLogs(ctx context.Context, in *GetLogsRequest, opts ...g
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
 type AdminServer interface {
+	// Get a list of contests
 	GetContests(context.Context, *GetContestsRequest) (*GetContestsReply, error)
+	// Get a single contest's details
 	GetSingleContest(context.Context, *GetSingleContestRequest) (*GetSingleContestReply, error)
+	// Create a new contest
 	PostContest(context.Context, *PostContestRequest) (*PostContestReply, error)
+	// Update an existing contest
 	PutContest(context.Context, *PutContestRequest) (*PutContestReply, error)
+	// Delete a contest
 	DeleteContest(context.Context, *DeleteContestRequest) (*DeleteContestReply, error)
+	// Get a list of problems
 	GetProblems(context.Context, *GetProblemsRequest) (*GetProblemsReply, error)
+	// Get a single problem's details
 	GetSingleProblem(context.Context, *GetSingleProblemRequest) (*GetSingleProblemReply, error)
+	// Create a new problem
 	PostProblem(context.Context, *PostProblemRequest) (*PostProblemReply, error)
+	// Update an existing problem
 	PutProblem(context.Context, *PutProblemRequest) (*PutProblemReply, error)
+	// Delete a problem
 	DeleteProblem(context.Context, *DeleteProblemRequest) (*DeleteProblemReply, error)
+	// Publish a problem to make it visible
 	PublishProblem(context.Context, *PublishProblemRequest) (*PublishProblemReply, error)
+	// Get a list of submissions
 	GetSubmissions(context.Context, *GetSubmissionsRequest) (*GetSubmissionsReply, error)
+	// Get a single submission's details
 	GetSingleSubmission(context.Context, *GetSingleSubmissionRequest) (*GetSingleSubmissionReply, error)
+	// Rejudge a submission
 	RejudgeSubmission(context.Context, *RejudgeSubmissionRequest) (*RejudgeSubmissionReply, error)
+	// Get contest rankings
 	GetRanks(context.Context, *GetRanksRequest) (*GetRanksReply, error)
+	// Get a list of announcements
 	GetAnnouncements(context.Context, *GetAnnouncementsRequest) (*GetAnnouncementsReply, error)
+	// Create a new announcement
 	PostAnnouncement(context.Context, *PostAnnouncementRequest) (*PostAnnouncementReply, error)
+	// Update an existing announcement
 	PutAnnouncement(context.Context, *PutAnnouncementRequest) (*PutAnnouncementReply, error)
+	// Delete an announcement
 	DeleteAnnouncement(context.Context, *DeleteAnnouncementRequest) (*DeleteAnnouncementReply, error)
+	// Get a list of users
 	GetUsers(context.Context, *GetUsersRequest) (*GetUsersReply, error)
+	// Update user information
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoReply, error)
+	// Delete a user
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error)
 	GetContestUsers(context.Context, *GetContestUsersRequest) (*GetContestUsersReply, error)
 	AddContestUser(context.Context, *AddContestUserRequest) (*AddContestUserReply, error)
 	RemoveContestUser(context.Context, *RemoveContestUserRequest) (*RemoveContestUserReply, error)
 	UpdateUserPassword(context.Context, *UpdateUserPasswordRequest) (*UpdateUserPasswordReply, error)
+	// Get statistics for a contest
 	GetContestStatistics(context.Context, *GetContestStatisticsRequest) (*GetContestStatisticsReply, error)
-	GetLogs(context.Context, *GetLogsRequest) (*GetLogsReply, error)
+	// List available log files
+	ListLogFiles(context.Context, *ListLogFilesRequest) (*ListLogFilesReply, error)
+	// Query content from a log file
+	QueryLogContent(context.Context, *QueryLogContentRequest) (*QueryLogContentReply, error)
+	// Download log files as a zip archive
+	DownloadLogs(context.Context, *DownloadLogsRequest) (*httpbody.HttpBody, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -494,8 +573,14 @@ func (UnimplementedAdminServer) UpdateUserPassword(context.Context, *UpdateUserP
 func (UnimplementedAdminServer) GetContestStatistics(context.Context, *GetContestStatisticsRequest) (*GetContestStatisticsReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetContestStatistics not implemented")
 }
-func (UnimplementedAdminServer) GetLogs(context.Context, *GetLogsRequest) (*GetLogsReply, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetLogs not implemented")
+func (UnimplementedAdminServer) ListLogFiles(context.Context, *ListLogFilesRequest) (*ListLogFilesReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListLogFiles not implemented")
+}
+func (UnimplementedAdminServer) QueryLogContent(context.Context, *QueryLogContentRequest) (*QueryLogContentReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method QueryLogContent not implemented")
+}
+func (UnimplementedAdminServer) DownloadLogs(context.Context, *DownloadLogsRequest) (*httpbody.HttpBody, error) {
+	return nil, status.Error(codes.Unimplemented, "method DownloadLogs not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 func (UnimplementedAdminServer) testEmbeddedByValue()               {}
@@ -1004,20 +1089,56 @@ func _Admin_GetContestStatistics_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Admin_GetLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetLogsRequest)
+func _Admin_ListLogFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListLogFilesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminServer).GetLogs(ctx, in)
+		return srv.(AdminServer).ListLogFiles(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Admin_GetLogs_FullMethodName,
+		FullMethod: Admin_ListLogFiles_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).GetLogs(ctx, req.(*GetLogsRequest))
+		return srv.(AdminServer).ListLogFiles(ctx, req.(*ListLogFilesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_QueryLogContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryLogContentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).QueryLogContent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_QueryLogContent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).QueryLogContent(ctx, req.(*QueryLogContentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_DownloadLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DownloadLogsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).DownloadLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_DownloadLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).DownloadLogs(ctx, req.(*DownloadLogsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1138,8 +1259,16 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Admin_GetContestStatistics_Handler,
 		},
 		{
-			MethodName: "GetLogs",
-			Handler:    _Admin_GetLogs_Handler,
+			MethodName: "ListLogFiles",
+			Handler:    _Admin_ListLogFiles_Handler,
+		},
+		{
+			MethodName: "QueryLogContent",
+			Handler:    _Admin_QueryLogContent_Handler,
+		},
+		{
+			MethodName: "DownloadLogs",
+			Handler:    _Admin_DownloadLogs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

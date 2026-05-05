@@ -244,11 +244,30 @@ export interface GetContestStatisticsReply {
 }
 
 // Logs
-export interface GetLogsRequest {
-    page?: number;
+export interface ListLogFilesRequest {
     pageSize?: number;
+    offset?: number;
 }
 
-export interface GetLogsReply {
-    logs: LogEntry[];
+export interface ListLogFilesReply {
+    filenames: string[];
+    total: number;
+}
+
+export interface QueryLogContentRequest {
+    filename: string;
+    level?: string;
+    timeStart?: string;
+    timeEnd?: string;
+    pageSize?: number;
+    offset?: number;
+}
+
+export interface QueryLogContentReply {
+    lines: string[];
+    total: number;
+}
+
+export interface DownloadLogsRequest {
+    filenames: string[];
 }
