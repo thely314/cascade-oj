@@ -13,7 +13,7 @@ export default defineConfig({
     // 注册插件，按需加载语言可以减小体积
     // 使用 (xxx as any).default 的方式来强制调用
     (monacoEditorPlugin as any).default({
-      languageWorkers: ['editorWorkerService', 'typescript', 'json', 'css', 'html'], 
+      languageWorkers: ['editorWorkerService', 'typescript', 'json', 'css', 'html'],
       // 对于 C++，通常不需要特定 Worker，Monaco 基础包里包含了高亮规则
     })
   ],

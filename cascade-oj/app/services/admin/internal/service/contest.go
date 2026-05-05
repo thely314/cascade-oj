@@ -114,3 +114,35 @@ func (adminService *AdminService) GetRanks(ctx context.Context, request *pb.GetR
 		Ranks: pbRanks,
 	}, nil
 }
+
+func (adminService *AdminService) GetContestUsers(ctx context.Context, request *pb.GetContestUsersRequest) (*pb.GetContestUsersReply, error) {
+	users, err := adminService.contestUseCase.GetContestUsers(ctx, request.ContestId)
+	if err != nil {
+		return nil, err
+	}
+	pbUsers := make([]*pb.UserInfo, 0, len(users))
+	for _, u := range users {
+		pbUsers = append(pbUsers, &pb.UserInfo{
+			UserId:   u.UserID,
+			Username: u.Username,
+			Email:    u.Email,
+		})
+	}
+	return &pb.GetContestUsersReply{Users: pbUsers}, nil
+}
+
+func (adminService *AdminService) AddContestUser(ctx context.Context, request *pb.AddContestUserRequest) (*pb.AddContestUserReply, error) {
+	isJoined, err := adminService.contestUseCase.AddContestUser(ctx, request.ContestId, request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AddContestUserReply{IsJoined: isJoined}, nil
+}
+
+func (adminService *AdminService) RemoveContestUser(ctx context.Context, request *pb.RemoveContestUserRequest) (*pb.RemoveContestUserReply, error) {
+	isJoined, err := adminService.contestUseCase.RemoveContestUser(ctx, request.ContestId, request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.RemoveContestUserReply{IsJoined: isJoined}, nil
+}

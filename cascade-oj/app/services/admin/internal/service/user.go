@@ -47,6 +47,16 @@ func (adminService *AdminService) UpdateUserInfo(ctx context.Context, request *p
 	}, nil
 }
 
+func (adminService *AdminService) UpdateUserPassword(ctx context.Context, request *pb.UpdateUserPasswordRequest) (*pb.UpdateUserPasswordReply, error) {
+	isUpdated, err := adminService.userUseCase.UpdateUserPassword(ctx, request.UserId, request.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.UpdateUserPasswordReply{
+		IsUpdated: isUpdated,
+	}, nil
+}
+
 func (adminService *AdminService) DeleteUser(ctx context.Context, request *pb.DeleteUserRequest) (*pb.DeleteUserReply, error) {
 	isDeleted, err := adminService.userUseCase.DeleteUser(ctx, request.UserId)
 	if err != nil {

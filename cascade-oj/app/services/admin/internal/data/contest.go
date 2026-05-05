@@ -7,6 +7,7 @@ import (
 	"cascade-oj/ent/problemset"
 	"cascade-oj/ent/user"
 	"context"
+	"errors"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -170,4 +171,92 @@ func (contestRepo *ContestRepo) GetRanks(ctx context.Context, contestID int64) (
 			})
 	}
 	return ranks, nil
+}
+
+func (contestRepo *ContestRepo) GetContestUsers(ctx context.Context, contestID int64) ([]*biz.User, error) {
+	entCompetitors, err := contestRepo.data.db.Competitor_List.
+		Query().
+		Where(competitor_list.ProblemSetIDEQ(contestID)).
+		WithUser(func(uq *ent.UserQuery) {
+			uq.Select(user.FieldID, user.FieldUsername, user.FieldEmail)
+		}).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	users := make([]*biz.User, 0, len(entCompetitors))
+	for _, competitor := range entCompetitors {
+		if competitor.Edges.User == nil {
+			continue
+		}
+		users = append(users, &biz.User{
+			UserID:   competitor.Edges.User.ID,
+			Username: competitor.Edges.User.Username,
+			Email:    competitor.Edges.User.Email,
+		})
+	}
+	return users, nil
+}
+
+func (contestRepo *ContestRepo) AddContestUser(ctx context.Context, contestID int64, userID int64) (bool, error) {
+	contestExists, err := contestRepo.data.db.ProblemSet.
+		Query().
+		Where(problemset.IDEQ(contestID)).
+		Exist(ctx)
+	if err != nil {
+		return false, err
+	}
+	if !contestExists {
+		return false, errors.New("contest not found")
+	}
+
+	userExists, err := contestRepo.data.db.User.
+		Query().
+		Where(user.IDEQ(userID)).
+		Exist(ctx)
+	if err != nil {
+		return false, err
+	}
+	if !userExists {
+		return false, errors.New("user not found")
+	}
+
+	isJoined, err := contestRepo.data.db.Competitor_List.
+		Query().
+		Where(competitor_list.And(
+			competitor_list.ProblemSetIDEQ(contestID),
+			competitor_list.UserIDEQ(userID),
+		)).
+		Exist(ctx)
+	if err != nil {
+		return false, err
+	}
+	if isJoined {
+		return true, nil
+	}
+
+	_, err = contestRepo.data.db.Competitor_List.
+		Create().
+		SetProblemSetID(contestID).
+		SetUserID(userID).
+		Save(ctx)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (contestRepo *ContestRepo) RemoveContestUser(ctx context.Context, contestID int64, userID int64) (bool, error) {
+	_, err := contestRepo.data.db.Competitor_List.
+		Delete().
+		Where(competitor_list.And(
+			competitor_list.ProblemSetIDEQ(contestID),
+			competitor_list.UserIDEQ(userID),
+		)).
+		Exec(ctx)
+	if err != nil {
+		return false, err
+	}
+	return false, nil
 }
