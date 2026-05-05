@@ -20,6 +20,7 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationAdminAddContestUser = "/api.cascade.admin.v1.Admin/AddContestUser"
 const OperationAdminDeleteAnnouncement = "/api.cascade.admin.v1.Admin/DeleteAnnouncement"
 const OperationAdminDeleteContest = "/api.cascade.admin.v1.Admin/DeleteContest"
 const OperationAdminDeleteProblem = "/api.cascade.admin.v1.Admin/DeleteProblem"
@@ -27,6 +28,7 @@ const OperationAdminDeleteUser = "/api.cascade.admin.v1.Admin/DeleteUser"
 const OperationAdminDownloadLogs = "/api.cascade.admin.v1.Admin/DownloadLogs"
 const OperationAdminGetAnnouncements = "/api.cascade.admin.v1.Admin/GetAnnouncements"
 const OperationAdminGetContestStatistics = "/api.cascade.admin.v1.Admin/GetContestStatistics"
+const OperationAdminGetContestUsers = "/api.cascade.admin.v1.Admin/GetContestUsers"
 const OperationAdminGetContests = "/api.cascade.admin.v1.Admin/GetContests"
 const OperationAdminGetProblems = "/api.cascade.admin.v1.Admin/GetProblems"
 const OperationAdminGetRanks = "/api.cascade.admin.v1.Admin/GetRanks"
@@ -45,9 +47,12 @@ const OperationAdminPutContest = "/api.cascade.admin.v1.Admin/PutContest"
 const OperationAdminPutProblem = "/api.cascade.admin.v1.Admin/PutProblem"
 const OperationAdminQueryLogContent = "/api.cascade.admin.v1.Admin/QueryLogContent"
 const OperationAdminRejudgeSubmission = "/api.cascade.admin.v1.Admin/RejudgeSubmission"
+const OperationAdminRemoveContestUser = "/api.cascade.admin.v1.Admin/RemoveContestUser"
 const OperationAdminUpdateUserInfo = "/api.cascade.admin.v1.Admin/UpdateUserInfo"
+const OperationAdminUpdateUserPassword = "/api.cascade.admin.v1.Admin/UpdateUserPassword"
 
 type AdminHTTPServer interface {
+	AddContestUser(context.Context, *AddContestUserRequest) (*AddContestUserReply, error)
 	// DeleteAnnouncement Delete an announcement
 	DeleteAnnouncement(context.Context, *DeleteAnnouncementRequest) (*DeleteAnnouncementReply, error)
 	// DeleteContest Delete a contest
@@ -62,6 +67,7 @@ type AdminHTTPServer interface {
 	GetAnnouncements(context.Context, *GetAnnouncementsRequest) (*GetAnnouncementsReply, error)
 	// GetContestStatistics Get statistics for a contest
 	GetContestStatistics(context.Context, *GetContestStatisticsRequest) (*GetContestStatisticsReply, error)
+	GetContestUsers(context.Context, *GetContestUsersRequest) (*GetContestUsersReply, error)
 	// GetContests Get a list of contests
 	GetContests(context.Context, *GetContestsRequest) (*GetContestsReply, error)
 	// GetProblems Get a list of problems
@@ -98,8 +104,10 @@ type AdminHTTPServer interface {
 	QueryLogContent(context.Context, *QueryLogContentRequest) (*QueryLogContentReply, error)
 	// RejudgeSubmission Rejudge a submission
 	RejudgeSubmission(context.Context, *RejudgeSubmissionRequest) (*RejudgeSubmissionReply, error)
+	RemoveContestUser(context.Context, *RemoveContestUserRequest) (*RemoveContestUserReply, error)
 	// UpdateUserInfo Update user information
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoReply, error)
+	UpdateUserPassword(context.Context, *UpdateUserPasswordRequest) (*UpdateUserPasswordReply, error)
 }
 
 func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
@@ -126,6 +134,10 @@ func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
 	r.GET("/admin/users", _Admin_GetUsers0_HTTP_Handler(srv))
 	r.PUT("/admin/users/{user_id}", _Admin_UpdateUserInfo0_HTTP_Handler(srv))
 	r.DELETE("/admin/users/{user_id}", _Admin_DeleteUser0_HTTP_Handler(srv))
+	r.GET("/admin/contests/{contest_id}/users", _Admin_GetContestUsers0_HTTP_Handler(srv))
+	r.POST("/admin/contests/{contest_id}/users/{user_id}", _Admin_AddContestUser0_HTTP_Handler(srv))
+	r.DELETE("/admin/contests/{contest_id}/users/{user_id}", _Admin_RemoveContestUser0_HTTP_Handler(srv))
+	r.PUT("/admin/users/{user_id}/password", _Admin_UpdateUserPassword0_HTTP_Handler(srv))
 	r.GET("/admin/contests/{contest_id}/statistics", _Admin_GetContestStatistics0_HTTP_Handler(srv))
 	r.GET("/admin/logs/files", _Admin_ListLogFiles0_HTTP_Handler(srv))
 	r.GET("/admin/logs/content", _Admin_QueryLogContent0_HTTP_Handler(srv))
@@ -619,6 +631,100 @@ func _Admin_DeleteUser0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context)
 	}
 }
 
+func _Admin_GetContestUsers0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetContestUsersRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminGetContestUsers)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetContestUsers(ctx, req.(*GetContestUsersRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetContestUsersReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Admin_AddContestUser0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in AddContestUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminAddContestUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.AddContestUser(ctx, req.(*AddContestUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*AddContestUserReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Admin_RemoveContestUser0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RemoveContestUserRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminRemoveContestUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RemoveContestUser(ctx, req.(*RemoveContestUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RemoveContestUserReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Admin_UpdateUserPassword0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateUserPasswordRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminUpdateUserPassword)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateUserPassword(ctx, req.(*UpdateUserPasswordRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateUserPasswordReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _Admin_GetContestStatistics0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetContestStatisticsRequest
@@ -702,6 +808,7 @@ func _Admin_DownloadLogs0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Contex
 }
 
 type AdminHTTPClient interface {
+	AddContestUser(ctx context.Context, req *AddContestUserRequest, opts ...http.CallOption) (rsp *AddContestUserReply, err error)
 	// DeleteAnnouncement Delete an announcement
 	DeleteAnnouncement(ctx context.Context, req *DeleteAnnouncementRequest, opts ...http.CallOption) (rsp *DeleteAnnouncementReply, err error)
 	// DeleteContest Delete a contest
@@ -716,6 +823,7 @@ type AdminHTTPClient interface {
 	GetAnnouncements(ctx context.Context, req *GetAnnouncementsRequest, opts ...http.CallOption) (rsp *GetAnnouncementsReply, err error)
 	// GetContestStatistics Get statistics for a contest
 	GetContestStatistics(ctx context.Context, req *GetContestStatisticsRequest, opts ...http.CallOption) (rsp *GetContestStatisticsReply, err error)
+	GetContestUsers(ctx context.Context, req *GetContestUsersRequest, opts ...http.CallOption) (rsp *GetContestUsersReply, err error)
 	// GetContests Get a list of contests
 	GetContests(ctx context.Context, req *GetContestsRequest, opts ...http.CallOption) (rsp *GetContestsReply, err error)
 	// GetProblems Get a list of problems
@@ -752,8 +860,10 @@ type AdminHTTPClient interface {
 	QueryLogContent(ctx context.Context, req *QueryLogContentRequest, opts ...http.CallOption) (rsp *QueryLogContentReply, err error)
 	// RejudgeSubmission Rejudge a submission
 	RejudgeSubmission(ctx context.Context, req *RejudgeSubmissionRequest, opts ...http.CallOption) (rsp *RejudgeSubmissionReply, err error)
+	RemoveContestUser(ctx context.Context, req *RemoveContestUserRequest, opts ...http.CallOption) (rsp *RemoveContestUserReply, err error)
 	// UpdateUserInfo Update user information
 	UpdateUserInfo(ctx context.Context, req *UpdateUserInfoRequest, opts ...http.CallOption) (rsp *UpdateUserInfoReply, err error)
+	UpdateUserPassword(ctx context.Context, req *UpdateUserPasswordRequest, opts ...http.CallOption) (rsp *UpdateUserPasswordReply, err error)
 }
 
 type AdminHTTPClientImpl struct {
@@ -762,6 +872,19 @@ type AdminHTTPClientImpl struct {
 
 func NewAdminHTTPClient(client *http.Client) AdminHTTPClient {
 	return &AdminHTTPClientImpl{client}
+}
+
+func (c *AdminHTTPClientImpl) AddContestUser(ctx context.Context, in *AddContestUserRequest, opts ...http.CallOption) (*AddContestUserReply, error) {
+	var out AddContestUserReply
+	pattern := "/admin/contests/{contest_id}/users/{user_id}"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAdminAddContestUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // DeleteAnnouncement Delete an announcement
@@ -854,6 +977,19 @@ func (c *AdminHTTPClientImpl) GetContestStatistics(ctx context.Context, in *GetC
 	pattern := "/admin/contests/{contest_id}/statistics"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAdminGetContestStatistics))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AdminHTTPClientImpl) GetContestUsers(ctx context.Context, in *GetContestUsersRequest, opts ...http.CallOption) (*GetContestUsersReply, error) {
+	var out GetContestUsersReply
+	pattern := "/admin/contests/{contest_id}/users"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAdminGetContestUsers))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -1114,12 +1250,38 @@ func (c *AdminHTTPClientImpl) RejudgeSubmission(ctx context.Context, in *Rejudge
 	return &out, nil
 }
 
+func (c *AdminHTTPClientImpl) RemoveContestUser(ctx context.Context, in *RemoveContestUserRequest, opts ...http.CallOption) (*RemoveContestUserReply, error) {
+	var out RemoveContestUserReply
+	pattern := "/admin/contests/{contest_id}/users/{user_id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAdminRemoveContestUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // UpdateUserInfo Update user information
 func (c *AdminHTTPClientImpl) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...http.CallOption) (*UpdateUserInfoReply, error) {
 	var out UpdateUserInfoReply
 	pattern := "/admin/users/{user_id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAdminUpdateUserInfo))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AdminHTTPClientImpl) UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordRequest, opts ...http.CallOption) (*UpdateUserPasswordReply, error) {
+	var out UpdateUserPasswordReply
+	pattern := "/admin/users/{user_id}/password"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAdminUpdateUserPassword))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {

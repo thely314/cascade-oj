@@ -42,6 +42,10 @@ const (
 	Admin_GetUsers_FullMethodName             = "/api.cascade.admin.v1.Admin/GetUsers"
 	Admin_UpdateUserInfo_FullMethodName       = "/api.cascade.admin.v1.Admin/UpdateUserInfo"
 	Admin_DeleteUser_FullMethodName           = "/api.cascade.admin.v1.Admin/DeleteUser"
+	Admin_GetContestUsers_FullMethodName      = "/api.cascade.admin.v1.Admin/GetContestUsers"
+	Admin_AddContestUser_FullMethodName       = "/api.cascade.admin.v1.Admin/AddContestUser"
+	Admin_RemoveContestUser_FullMethodName    = "/api.cascade.admin.v1.Admin/RemoveContestUser"
+	Admin_UpdateUserPassword_FullMethodName   = "/api.cascade.admin.v1.Admin/UpdateUserPassword"
 	Admin_GetContestStatistics_FullMethodName = "/api.cascade.admin.v1.Admin/GetContestStatistics"
 	Admin_ListLogFiles_FullMethodName         = "/api.cascade.admin.v1.Admin/ListLogFiles"
 	Admin_QueryLogContent_FullMethodName      = "/api.cascade.admin.v1.Admin/QueryLogContent"
@@ -96,6 +100,10 @@ type AdminClient interface {
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoReply, error)
 	// Delete a user
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserReply, error)
+	GetContestUsers(ctx context.Context, in *GetContestUsersRequest, opts ...grpc.CallOption) (*GetContestUsersReply, error)
+	AddContestUser(ctx context.Context, in *AddContestUserRequest, opts ...grpc.CallOption) (*AddContestUserReply, error)
+	RemoveContestUser(ctx context.Context, in *RemoveContestUserRequest, opts ...grpc.CallOption) (*RemoveContestUserReply, error)
+	UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordRequest, opts ...grpc.CallOption) (*UpdateUserPasswordReply, error)
 	// Get statistics for a contest
 	GetContestStatistics(ctx context.Context, in *GetContestStatisticsRequest, opts ...grpc.CallOption) (*GetContestStatisticsReply, error)
 	// List available log files
@@ -334,6 +342,46 @@ func (c *adminClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opt
 	return out, nil
 }
 
+func (c *adminClient) GetContestUsers(ctx context.Context, in *GetContestUsersRequest, opts ...grpc.CallOption) (*GetContestUsersReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContestUsersReply)
+	err := c.cc.Invoke(ctx, Admin_GetContestUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) AddContestUser(ctx context.Context, in *AddContestUserRequest, opts ...grpc.CallOption) (*AddContestUserReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddContestUserReply)
+	err := c.cc.Invoke(ctx, Admin_AddContestUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) RemoveContestUser(ctx context.Context, in *RemoveContestUserRequest, opts ...grpc.CallOption) (*RemoveContestUserReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemoveContestUserReply)
+	err := c.cc.Invoke(ctx, Admin_RemoveContestUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) UpdateUserPassword(ctx context.Context, in *UpdateUserPasswordRequest, opts ...grpc.CallOption) (*UpdateUserPasswordReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserPasswordReply)
+	err := c.cc.Invoke(ctx, Admin_UpdateUserPassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) GetContestStatistics(ctx context.Context, in *GetContestStatisticsRequest, opts ...grpc.CallOption) (*GetContestStatisticsReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetContestStatisticsReply)
@@ -422,6 +470,10 @@ type AdminServer interface {
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoReply, error)
 	// Delete a user
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error)
+	GetContestUsers(context.Context, *GetContestUsersRequest) (*GetContestUsersReply, error)
+	AddContestUser(context.Context, *AddContestUserRequest) (*AddContestUserReply, error)
+	RemoveContestUser(context.Context, *RemoveContestUserRequest) (*RemoveContestUserReply, error)
+	UpdateUserPassword(context.Context, *UpdateUserPasswordRequest) (*UpdateUserPasswordReply, error)
 	// Get statistics for a contest
 	GetContestStatistics(context.Context, *GetContestStatisticsRequest) (*GetContestStatisticsReply, error)
 	// List available log files
@@ -505,6 +557,18 @@ func (UnimplementedAdminServer) UpdateUserInfo(context.Context, *UpdateUserInfoR
 }
 func (UnimplementedAdminServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedAdminServer) GetContestUsers(context.Context, *GetContestUsersRequest) (*GetContestUsersReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetContestUsers not implemented")
+}
+func (UnimplementedAdminServer) AddContestUser(context.Context, *AddContestUserRequest) (*AddContestUserReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddContestUser not implemented")
+}
+func (UnimplementedAdminServer) RemoveContestUser(context.Context, *RemoveContestUserRequest) (*RemoveContestUserReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemoveContestUser not implemented")
+}
+func (UnimplementedAdminServer) UpdateUserPassword(context.Context, *UpdateUserPasswordRequest) (*UpdateUserPasswordReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateUserPassword not implemented")
 }
 func (UnimplementedAdminServer) GetContestStatistics(context.Context, *GetContestStatisticsRequest) (*GetContestStatisticsReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetContestStatistics not implemented")
@@ -935,6 +999,78 @@ func _Admin_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_GetContestUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContestUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetContestUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetContestUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetContestUsers(ctx, req.(*GetContestUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_AddContestUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddContestUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).AddContestUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_AddContestUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).AddContestUser(ctx, req.(*AddContestUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_RemoveContestUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveContestUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).RemoveContestUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_RemoveContestUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).RemoveContestUser(ctx, req.(*RemoveContestUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_UpdateUserPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).UpdateUserPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_UpdateUserPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).UpdateUserPassword(ctx, req.(*UpdateUserPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_GetContestStatistics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetContestStatisticsRequest)
 	if err := dec(in); err != nil {
@@ -1101,6 +1237,22 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUser",
 			Handler:    _Admin_DeleteUser_Handler,
+		},
+		{
+			MethodName: "GetContestUsers",
+			Handler:    _Admin_GetContestUsers_Handler,
+		},
+		{
+			MethodName: "AddContestUser",
+			Handler:    _Admin_AddContestUser_Handler,
+		},
+		{
+			MethodName: "RemoveContestUser",
+			Handler:    _Admin_RemoveContestUser_Handler,
+		},
+		{
+			MethodName: "UpdateUserPassword",
+			Handler:    _Admin_UpdateUserPassword_Handler,
 		},
 		{
 			MethodName: "GetContestStatistics",

@@ -31,6 +31,11 @@ import type {
     UpdateUserInfoRequest,
     UpdateUserInfoReply,
     DeleteUserReply,
+    GetContestUsersReply,
+    AddContestUserReply,
+    RemoveContestUserReply,
+    UpdateUserPasswordRequest,
+    UpdateUserPasswordReply,
     GetContestStatisticsReply,
     ListLogFilesRequest,
     ListLogFilesReply,
@@ -133,6 +138,21 @@ export async function deleteUser(userId: number): Promise<DeleteUserReply> {
     return service.delete(`/admin/users/${userId}`);
 }
 
+export async function getContestUsers(contestId: number): Promise<GetContestUsersReply> {
+    return service.get(`/admin/contests/${contestId}/users`);
+}
+
+export async function addContestUser(contestId: number, userId: number): Promise<AddContestUserReply> {
+    return service.post(`/admin/contests/${contestId}/users/${userId}`);
+}
+
+export async function removeContestUser(contestId: number, userId: number): Promise<RemoveContestUserReply> {
+    return service.delete(`/admin/contests/${contestId}/users/${userId}`);
+}
+
+export async function updateUserPassword(userId: number, data: UpdateUserPasswordRequest): Promise<UpdateUserPasswordReply> {
+    return service.put(`/admin/users/${userId}/password`, data);
+}
 // Statistics
 export async function getContestStatistics(contestId: number): Promise<GetContestStatisticsReply> {
     return service.get(`/admin/contests/${contestId}/statistics`);

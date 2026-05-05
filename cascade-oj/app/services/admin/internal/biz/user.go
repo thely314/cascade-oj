@@ -26,6 +26,7 @@ type UserEditInfo struct {
 type UserRepo interface {
 	GetUsers(ctx context.Context, request UserRequestInfo) ([]*User, error)
 	UpdateUserInfo(ctx context.Context, userEditInfo UserEditInfo) (bool, error)
+	UpdateUserPassword(ctx context.Context, userID int64, password string) (bool, error)
 	DeleteUser(ctx context.Context, userID int64) (bool, error)
 }
 
@@ -47,6 +48,10 @@ func (userUsecase *UserUsecase) GetUsers(ctx context.Context, request UserReques
 
 func (userUsecase *UserUsecase) UpdateUserInfo(ctx context.Context, userEditInfo UserEditInfo) (bool, error) {
 	return userUsecase.userRepo.UpdateUserInfo(ctx, userEditInfo)
+}
+
+func (userUsecase *UserUsecase) UpdateUserPassword(ctx context.Context, userID int64, password string) (bool, error) {
+	return userUsecase.userRepo.UpdateUserPassword(ctx, userID, password)
 }
 
 func (userUsecase *UserUsecase) DeleteUser(ctx context.Context, userID int64) (bool, error) {

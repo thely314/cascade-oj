@@ -49,6 +49,9 @@ type ContestRepo interface {
 	PutContest(ctx context.Context, contestEditInfo ContestEditInfo) (bool, error)
 	DeleteContest(ctx context.Context, contestID int64) (bool, error)
 	GetRanks(ctx context.Context, contestID int64) ([]*ContestRank, error)
+	GetContestUsers(ctx context.Context, contestID int64) ([]*User, error)
+	AddContestUser(ctx context.Context, contestID int64, userID int64) (bool, error)
+	RemoveContestUser(ctx context.Context, contestID int64, userID int64) (bool, error)
 }
 
 type ContestUsecase struct {
@@ -82,4 +85,16 @@ func (contestUsecase *ContestUsecase) DeleteContest(ctx context.Context, contest
 }
 func (contestUsecase *ContestUsecase) GetRanks(ctx context.Context, contestID int64) ([]*ContestRank, error) {
 	return contestUsecase.contestRepo.GetRanks(ctx, contestID)
+}
+
+func (contestUsecase *ContestUsecase) GetContestUsers(ctx context.Context, contestID int64) ([]*User, error) {
+	return contestUsecase.contestRepo.GetContestUsers(ctx, contestID)
+}
+
+func (contestUsecase *ContestUsecase) AddContestUser(ctx context.Context, contestID int64, userID int64) (bool, error) {
+	return contestUsecase.contestRepo.AddContestUser(ctx, contestID, userID)
+}
+
+func (contestUsecase *ContestUsecase) RemoveContestUser(ctx context.Context, contestID int64, userID int64) (bool, error) {
+	return contestUsecase.contestRepo.RemoveContestUser(ctx, contestID, userID)
 }
