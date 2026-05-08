@@ -66,7 +66,7 @@ export interface GetContestsReply {
 export interface GetSingleContestReply {
     metadata: ContestMetadata;
     description: string;
-    problem_ids: number[];
+    problemIds: number[];
 }
 
 export interface PostContestRequest {
@@ -75,7 +75,7 @@ export interface PostContestRequest {
     startTime: string;
     endTime: string;
     problems: {
-        problem_ids: number[];
+        problemIds: number[];
     };
 }
 
@@ -89,7 +89,7 @@ export interface PutContestRequest {
     startTime: string;
     endTime: string;
     problems?: {
-        problem_ids: number[];
+        problemIds: number[];
     };
 }
 
@@ -106,7 +106,7 @@ export interface GetContestCompetitorsReply {
 }
 
 export interface PutContestCompetitorsRequest {
-    user_ids: number[];
+    userIds: number[];
 }
 
 export interface PutContestCompetitorsReply {

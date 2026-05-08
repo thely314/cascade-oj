@@ -7,6 +7,9 @@ import type {
     PutContestRequest,
     PutContestReply,
     DeleteContestReply,
+    GetContestCompetitorsReply,
+    PutContestCompetitorsRequest,
+    PutContestCompetitorsReply,
     GetProblemsReply,
     GetSingleProblemReply,
     PostProblemRequest,
@@ -57,9 +60,17 @@ export async function deleteContest(contestId: number): Promise<DeleteContestRep
     return service.delete(`/admin/contests/${contestId}`);
 }
 
+export async function getContestCompetitors(contestId: number): Promise<GetContestCompetitorsReply> {
+    return service.get(`/admin/contests/${contestId}/competitors`);
+}
+
+export async function putContestCompetitors(contestId: number, data: PutContestCompetitorsRequest): Promise<PutContestCompetitorsReply> {
+    return service.put(`/admin/contests/${contestId}/competitors`, data);
+}
+
 // Problems
 export async function getProblems(contestId?: number): Promise<GetProblemsReply> {
-    return service.get('/admin/problems', { params: { contest_id: contestId } });
+    return service.get('/admin/problems', { params: { contestId: contestId } });
 }
 
 export async function getSingleProblem(problemId: number): Promise<GetSingleProblemReply> {

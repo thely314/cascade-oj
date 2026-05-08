@@ -114,7 +114,7 @@ const openEditModal = async (contestId: number) => {
   try {
     const response = await getSingleContest(contestId);
     console.log('Response from getSingleContest:', response);
-    const problemIds = (response as any).problemIds || (response as any).problem_ids || [];
+    const problemIds = response.problemIds || [];
     console.log('Problem IDs:', problemIds);
     currentContest.value = response.metadata;
     form.value = {
@@ -172,7 +172,7 @@ const handleSaveCompetitors = async () => {
 		return;
 	try {
 		const data: PutContestCompetitorsRequest = {
-			user_ids: selectedUsers.value
+			userIds: selectedUsers.value
 		};
 		await putContestCompetitors(currentContest.value.id, data);
 		alert('参赛人员更新成功！');
@@ -213,7 +213,7 @@ const handleSubmit = async (isEdit: boolean) => {
       startTime: new Date(form.value.startTime).toISOString(),
       endTime: new Date(form.value.endTime).toISOString(),
       problems: {
-        problem_ids: selectedProblems.value
+        problemIds: selectedProblems.value
       }
     };
     if (isEdit && currentContest.value) {
