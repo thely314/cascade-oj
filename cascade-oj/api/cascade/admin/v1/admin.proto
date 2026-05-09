@@ -5,31 +5,37 @@ option go_package = "cascade-oj/api/cascade/admin/v1;v1";
 
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
+import "google/api/httpbody.proto";
 import "errors/errors.proto";
 
 service Admin {
+    // Get a list of contests
     rpc GetContests(GetContestsRequest) returns (GetContestsReply) {
         option (google.api.http) = {
             get: "/admin/contests"
         };
     };
+    // Get a single contest's details
     rpc GetSingleContest(GetSingleContestRequest) returns (GetSingleContestReply) {
         option (google.api.http) = {
             get: "/admin/contests/{contest_id}"
         };
     };
+    // Create a new contest
     rpc PostContest(PostContestRequest) returns (PostContestReply) {
         option (google.api.http) = {
             post: "/admin/contests"
             body: "*"
         };
     };
+    // Update an existing contest
     rpc PutContest(PutContestRequest) returns (PutContestReply) {
         option (google.api.http) = {
             put: "/admin/contests/{contest_id}"
             body: "*"
         };
     };
+    // Delete a contest
     rpc DeleteContest(DeleteContestRequest) returns (DeleteContestReply) {
         option (google.api.http) = {
             delete: "/admin/contests/{contest_id}"
@@ -47,33 +53,39 @@ service Admin {
         };
     };
 
+    // Get a list of problems
     rpc GetProblems(GetProblemsRequest) returns (GetProblemsReply) {
         option (google.api.http) = {
             get: "/admin/problems"
         };
     };
+    // Get a single problem's details
     rpc GetSingleProblem(GetSingleProblemRequest) returns (GetSingleProblemReply) {
         option (google.api.http) = {
             get: "/admin/problems/{problem_id}"
         };
     };
+    // Create a new problem
     rpc PostProblem(PostProblemRequest) returns (PostProblemReply) {
         option (google.api.http) = {
             post: "/admin/problems"
             body: "*"
         };
     };
+    // Update an existing problem
     rpc PutProblem(PutProblemRequest) returns (PutProblemReply) {
         option (google.api.http) = {
             put: "/admin/problems/{problem_id}"
             body: "*"
         };
     };
+    // Delete a problem
     rpc DeleteProblem(DeleteProblemRequest) returns (DeleteProblemReply) {
         option (google.api.http) = {
             delete: "/admin/problems/{problem_id}"
         };
     };
+    // Publish a problem to make it visible
     rpc PublishProblem(PublishProblemRequest) returns (PublishProblemReply) {
         option (google.api.http) = {
             post: "/admin/problems/{problem_id}/publish"
@@ -81,16 +93,19 @@ service Admin {
         };
     };
 
+    // Get a list of submissions
     rpc GetSubmissions(GetSubmissionsRequest) returns (GetSubmissionsReply) {
         option (google.api.http) = {
             get: "/admin/submissions"
         };
     };
+    // Get a single submission's details
     rpc GetSingleSubmission(GetSingleSubmissionRequest) returns (GetSingleSubmissionReply) {
         option (google.api.http) = {
             get: "/admin/submissions/{submission_uuid}"
         };
     };
+    // Rejudge a submission
     rpc RejudgeSubmission(RejudgeSubmissionRequest) returns (RejudgeSubmissionReply) {
         option (google.api.http) = {
             post: "/admin/submissions/{submission_uuid}/rejudge"
@@ -98,61 +113,108 @@ service Admin {
         };
     };
 
+    // Get contest rankings
     rpc GetRanks(GetRanksRequest) returns (GetRanksReply) {
         option (google.api.http) = {
             get: "/admin/{contest_id}/ranks"
         };
     };
 
+    // Get a list of announcements
     rpc GetAnnouncements(GetAnnouncementsRequest) returns (GetAnnouncementsReply) {
         option (google.api.http) = {
             get: "/admin/announcements"
         };
     };
+    // Create a new announcement
     rpc PostAnnouncement(PostAnnouncementRequest) returns (PostAnnouncementReply) {
         option (google.api.http) = {
             post: "/admin/announcements"
             body: "*"
         };
     };
+    // Update an existing announcement
     rpc PutAnnouncement(PutAnnouncementRequest) returns (PutAnnouncementReply) {
         option (google.api.http) = {
             put: "/admin/announcements/{announcement_id}"
             body: "*"
         };
     };
+    // Delete an announcement
     rpc DeleteAnnouncement(DeleteAnnouncementRequest) returns (DeleteAnnouncementReply) {
         option (google.api.http) = {
             delete: "/admin/announcements/{announcement_id}"
         };
     };
 
+    // Get a list of users
     rpc GetUsers(GetUsersRequest) returns (GetUsersReply) {
         option (google.api.http) = {
             get: "/admin/users"
         };
     };
+    // Update user information
     rpc UpdateUserInfo(UpdateUserInfoRequest) returns (UpdateUserInfoReply) {
         option (google.api.http) = {
             put: "/admin/users/{user_id}"
             body: "*"
         };
     };
+    // Delete a user
     rpc DeleteUser(DeleteUserRequest) returns (DeleteUserReply) {
         option (google.api.http) = {
             delete: "/admin/users/{user_id}"
         };
     };
+    rpc GetContestUsers(GetContestUsersRequest) returns (GetContestUsersReply) {
+        option (google.api.http) = {
+            get: "/admin/contests/{contest_id}/users"
+        };
+    };
+    rpc AddContestUser(AddContestUserRequest) returns (AddContestUserReply) {
+        option (google.api.http) = {
+            post: "/admin/contests/{contest_id}/users/{user_id}"
+            body: "*"
+        };
+    };
+    rpc RemoveContestUser(RemoveContestUserRequest) returns (RemoveContestUserReply) {
+        option (google.api.http) = {
+            delete: "/admin/contests/{contest_id}/users/{user_id}"
+        };
+    };
+    rpc UpdateUserPassword(UpdateUserPasswordRequest) returns (UpdateUserPasswordReply) {
+        option (google.api.http) = {
+            put: "/admin/users/{user_id}/password"
+            body: "*"
+        };
+    };
 
+    // Get statistics for a contest
     rpc GetContestStatistics(GetContestStatisticsRequest) returns (GetContestStatisticsReply) {
         option (google.api.http) = {
             get: "/admin/contests/{contest_id}/statistics"
         };
     };
 
-    rpc GetLogs(GetLogsRequest) returns (GetLogsReply) {
+    // List available log files
+    rpc ListLogFiles(ListLogFilesRequest) returns (ListLogFilesReply) {
         option (google.api.http) = {
-            get: "/admin/logs"
+            get: "/admin/logs/files"
+        };
+    };
+
+    // Query content from a log file
+    rpc QueryLogContent(QueryLogContentRequest) returns (QueryLogContentReply) {
+        option (google.api.http) = {
+            get: "/admin/logs/content"
+        };
+    };
+
+    // Download log files as a zip archive
+    rpc DownloadLogs(DownloadLogsRequest) returns (google.api.HttpBody) {
+        option (google.api.http) = {
+            post: "/admin/logs/download"
+            body: "*"
         };
     };
 }
@@ -408,6 +470,37 @@ message DeleteUserReply {
     bool is_deleted = 1; // Whether the user is deleted
 }
 
+message GetContestUsersRequest {
+    int64 contest_id = 1; // Contest ID
+}
+message GetContestUsersReply {
+    repeated UserInfo users = 1; // Users currently in the contest
+}
+
+message AddContestUserRequest {
+    int64 contest_id = 1; // Contest ID
+    int64 user_id = 2; // User ID
+}
+message AddContestUserReply {
+    bool is_joined = 1; // Whether the user is in contest after operation
+}
+
+message RemoveContestUserRequest {
+    int64 contest_id = 1; // Contest ID
+    int64 user_id = 2; // User ID
+}
+message RemoveContestUserReply {
+    bool is_joined = 1; // Whether the user is in contest after operation
+}
+
+message UpdateUserPasswordRequest {
+    int64 user_id = 1; // User ID
+    string password = 2; // Password payload (align with current login flow)
+}
+message UpdateUserPasswordReply {
+    bool is_updated = 1; // Whether the password is updated
+}
+
 message GetContestStatisticsRequest {
     int64 contest_id = 1; // Contest ID
 }
@@ -416,15 +509,30 @@ message GetContestStatisticsReply {
     string statistics_json = 1; // Statistics from one contest in JSON format
 }
 
-message GetLogsRequest {
-    int32 page = 1; // Page number
-    int32 page_size = 2; // Page size
+message ListLogFilesRequest {
+    int32 page_size = 1;
+    int32 offset = 2;
 }
-message GetLogsReply {
-    message LogEntry {
-        int64 id = 1; // Log ID
-        string message = 2; // Log Message
-        google.protobuf.Timestamp timestamp = 3; // Log Timestamp
-    }
-    repeated LogEntry logs = 1; // List of log entries
+
+message ListLogFilesReply {
+    repeated string filenames = 1;
+    int32 total = 2;
+}
+
+message QueryLogContentRequest {
+    string filename = 1;
+    string level = 2;
+    google.protobuf.Timestamp time_start = 3;
+    google.protobuf.Timestamp time_end = 4;
+    int32 page_size = 5;
+    int32 offset = 6;
+}
+
+message QueryLogContentReply {
+    repeated string lines = 1;
+    int32 total = 2;
+}
+
+message DownloadLogsRequest {
+    repeated string filenames = 1;
 }

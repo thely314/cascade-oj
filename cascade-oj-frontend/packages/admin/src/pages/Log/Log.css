@@ -83,6 +83,12 @@
 
 .panel-header h2 {
     margin: 0;
+    font-size: 20px;
+    color: #e6f7ec;
+}
+
+.panel-header h3 {
+    margin: 0;
     font-size: 18px;
     color: #e6f7ec;
 }
@@ -134,4 +140,8 @@
     margin: 4px 0 0;
     color: #8aa39b;
     font-size: 14px;
+}
+
+.pagination {
+    background: #8aa39b;
 }

@@ -235,17 +235,56 @@ export interface DeleteUserReply {
     isDeleted: boolean;
 }
 
+export interface GetContestUsersReply {
+    users: UserInfo[];
+}
+
+export interface AddContestUserReply {
+    isJoined: boolean;
+}
+
+export interface RemoveContestUserReply {
+    isJoined: boolean;
+}
+
+export interface UpdateUserPasswordRequest {
+    password: string;
+}
+
+export interface UpdateUserPasswordReply {
+    isUpdated: boolean;
+}
+
 // Statistics
 export interface GetContestStatisticsReply {
     statisticsJson: string;
 }
 
 // Logs
-export interface GetLogsRequest {
-    page?: number;
+export interface ListLogFilesRequest {
     pageSize?: number;
+    offset?: number;
 }
 
-export interface GetLogsReply {
-    logs: LogEntry[];
+export interface ListLogFilesReply {
+    filenames: string[];
+    total: number;
+}
+
+export interface QueryLogContentRequest {
+    filename: string;
+    level?: string;
+    timeStart?: string;
+    timeEnd?: string;
+    pageSize?: number;
+    offset?: number;
+}
+
+export interface QueryLogContentReply {
+    lines: string[];
+    total: number;
+}
+
+export interface DownloadLogsRequest {
+    filenames: string[];
 }

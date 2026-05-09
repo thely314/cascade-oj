@@ -30,7 +30,9 @@ init:
 	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
 	go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
-	go install github.com/google/wire/cmd/wire@latest
+# 	go install github.com/google/wire/cmd/wire@latest
+# 	go mod tidy 可能将 wire 的依赖从 go.mod 删除，需要补全
+	go get github.com/google/wire/cmd/wire@v0.7.0
 	go install github.com/bufbuild/buf/cmd/buf@v1.59.0
 
 .PHONY: config

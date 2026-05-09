@@ -34,9 +34,17 @@ import type {
     UpdateUserInfoRequest,
     UpdateUserInfoReply,
     DeleteUserReply,
+    GetContestUsersReply,
+    AddContestUserReply,
+    RemoveContestUserReply,
+    UpdateUserPasswordRequest,
+    UpdateUserPasswordReply,
     GetContestStatisticsReply,
-    GetLogsRequest,
-    GetLogsReply
+    ListLogFilesRequest,
+    ListLogFilesReply,
+    QueryLogContentRequest,
+    QueryLogContentReply,
+    DownloadLogsRequest,
 } from './types';
 
 // Contests
@@ -141,12 +149,35 @@ export async function deleteUser(userId: number): Promise<DeleteUserReply> {
     return service.delete(`/admin/users/${userId}`);
 }
 
+export async function getContestUsers(contestId: number): Promise<GetContestUsersReply> {
+    return service.get(`/admin/contests/${contestId}/users`);
+}
+
+export async function addContestUser(contestId: number, userId: number): Promise<AddContestUserReply> {
+    return service.post(`/admin/contests/${contestId}/users/${userId}`);
+}
+
+export async function removeContestUser(contestId: number, userId: number): Promise<RemoveContestUserReply> {
+    return service.delete(`/admin/contests/${contestId}/users/${userId}`);
+}
+
+export async function updateUserPassword(userId: number, data: UpdateUserPasswordRequest): Promise<UpdateUserPasswordReply> {
+    return service.put(`/admin/users/${userId}/password`, data);
+}
 // Statistics
 export async function getContestStatistics(contestId: number): Promise<GetContestStatisticsReply> {
     return service.get(`/admin/contests/${contestId}/statistics`);
 }
 
 // Logs
-export async function getLogs(params: GetLogsRequest): Promise<GetLogsReply> {
-    return service.get('/admin/logs', { params: params as Record<string, any> });
+export async function listLogFiles(params: ListLogFilesRequest): Promise<ListLogFilesReply> {
+    return service.get('/admin/logs/files', { params: params as Record<string, any> });
+}
+
+export async function queryLogContent(params: QueryLogContentRequest): Promise<QueryLogContentReply> {
+    return service.get('/admin/logs/content', { params: params as Record<string, any> });
+}
+
+export async function downloadLogs(data: DownloadLogsRequest): Promise<any> {
+    return service.post('/admin/logs/download', data, { responseType: 'json' });
 }
