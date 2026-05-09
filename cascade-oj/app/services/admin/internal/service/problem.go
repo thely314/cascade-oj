@@ -22,6 +22,7 @@ func (adminService *AdminService) GetProblems(ctx context.Context, request *pb.G
 				Title:         problem.Title,
 				TimeLimitMs:   problem.TimeLimitMs,
 				MemoryLimitMb: problem.MemoryLimitKB / 1024,
+				Description:   problem.Description,
 			},
 		)
 	}
@@ -41,6 +42,7 @@ func (adminService *AdminService) GetSingleProblem(ctx context.Context, request 
 			Title:         problem.Problem.Title,
 			TimeLimitMs:   problem.Problem.TimeLimitMs,
 			MemoryLimitMb: problem.Problem.MemoryLimitKB / 1024,
+			Description:   problem.Problem.Description,
 		},
 		Creator:     problem.CreatorUsername,
 		Description: problem.Description,

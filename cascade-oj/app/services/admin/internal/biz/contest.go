@@ -18,21 +18,24 @@ type Contest struct {
 type DetailedContest struct {
 	Contest     Contest
 	Description string
+	ProblemIDs  []int64
 }
 
 type ContestCreateInfo struct {
 	Title         string
+	Description   string
 	StartTime     time.Time
 	EndTime       time.Time
 	ProblemIDList []int64
 }
 
 type ContestEditInfo struct {
-	ID          int64
-	Title       string
-	Description string
-	StartTime   time.Time
-	EndTime     time.Time
+	ID            int64
+	Title         string
+	Description   string
+	StartTime     time.Time
+	EndTime       time.Time
+	ProblemIDList []int64
 }
 
 type ContestRank struct {
@@ -42,16 +45,22 @@ type ContestRank struct {
 	Score    int32
 }
 
+type UserInfo struct {
+	UserID   int64
+	Username string
+	Email    string
+}
+
 type ContestRepo interface {
-	GetContests(ctx context.Context) ([]*Contest, error)
+	GetContests(ctx context.Context, adminID int64) ([]*Contest, error)
 	GetSingleContest(ctx context.Context, contestID int64) (*DetailedContest, error)
-	PostContest(ctx context.Context, contestCreateInfo ContestCreateInfo) (int64, error)
+	PostContest(ctx context.Context, contestCreateInfo ContestCreateInfo, adminID int64) (int64, error)
 	PutContest(ctx context.Context, contestEditInfo ContestEditInfo) (bool, error)
 	DeleteContest(ctx context.Context, contestID int64) (bool, error)
+	UpdateContestStatuses(ctx context.Context) error
 	GetRanks(ctx context.Context, contestID int64) ([]*ContestRank, error)
-	GetContestUsers(ctx context.Context, contestID int64) ([]*User, error)
-	AddContestUser(ctx context.Context, contestID int64, userID int64) (bool, error)
-	RemoveContestUser(ctx context.Context, contestID int64, userID int64) (bool, error)
+	GetContestCompetitors(ctx context.Context, contestID int64) ([]*UserInfo, error)
+	PutContestCompetitors(ctx context.Context, contestID int64, userIDs []int64) (bool, error)
 }
 
 type ContestUsecase struct {
@@ -66,35 +75,38 @@ func NewContestUsecase(repo ContestRepo, logger log.Logger) *ContestUsecase {
 	}
 }
 
-func (contestUsecase *ContestUsecase) GetContests(ctx context.Context) ([]*Contest, error) {
-	return contestUsecase.contestRepo.GetContests(ctx)
+func (contestUsecase *ContestUsecase) GetContests(ctx context.Context, adminID int64) ([]*Contest, error) {
+	return contestUsecase.contestRepo.GetContests(ctx, adminID)
 }
 
 func (contestUsecase *ContestUsecase) GetSingleContest(ctx context.Context, contestID int64) (*DetailedContest, error) {
 	return contestUsecase.contestRepo.GetSingleContest(ctx, contestID)
 }
 
-func (contestUsecase *ContestUsecase) PostContest(ctx context.Context, contestCreateInfo ContestCreateInfo) (int64, error) {
-	return contestUsecase.contestRepo.PostContest(ctx, contestCreateInfo)
+func (contestUsecase *ContestUsecase) PostContest(ctx context.Context, contestCreateInfo ContestCreateInfo, adminID int64) (int64, error) {
+	return contestUsecase.contestRepo.PostContest(ctx, contestCreateInfo, adminID)
 }
+
 func (contestUsecase *ContestUsecase) PutContest(ctx context.Context, contestEditInfo ContestEditInfo) (bool, error) {
 	return contestUsecase.contestRepo.PutContest(ctx, contestEditInfo)
 }
+
+func (contestUsecase *ContestUsecase) UpdateContestStatuses(ctx context.Context) error {
+	return contestUsecase.contestRepo.UpdateContestStatuses(ctx)
+}
+
 func (contestUsecase *ContestUsecase) DeleteContest(ctx context.Context, contestID int64) (bool, error) {
 	return contestUsecase.contestRepo.DeleteContest(ctx, contestID)
 }
+
 func (contestUsecase *ContestUsecase) GetRanks(ctx context.Context, contestID int64) ([]*ContestRank, error) {
 	return contestUsecase.contestRepo.GetRanks(ctx, contestID)
 }
 
-func (contestUsecase *ContestUsecase) GetContestUsers(ctx context.Context, contestID int64) ([]*User, error) {
-	return contestUsecase.contestRepo.GetContestUsers(ctx, contestID)
+func (contestUsecase *ContestUsecase) GetContestCompetitors(ctx context.Context, contestID int64) ([]*UserInfo, error) {
+	return contestUsecase.contestRepo.GetContestCompetitors(ctx, contestID)
 }
 
-func (contestUsecase *ContestUsecase) AddContestUser(ctx context.Context, contestID int64, userID int64) (bool, error) {
-	return contestUsecase.contestRepo.AddContestUser(ctx, contestID, userID)
-}
-
-func (contestUsecase *ContestUsecase) RemoveContestUser(ctx context.Context, contestID int64, userID int64) (bool, error) {
-	return contestUsecase.contestRepo.RemoveContestUser(ctx, contestID, userID)
+func (contestUsecase *ContestUsecase) PutContestCompetitors(ctx context.Context, contestID int64, userIDs []int64) (bool, error) {
+	return contestUsecase.contestRepo.PutContestCompetitors(ctx, contestID, userIDs)
 }

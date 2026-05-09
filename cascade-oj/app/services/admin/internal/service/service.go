@@ -3,7 +3,9 @@ package service
 import (
 	pb "cascade-oj/api/cascade/admin/v1"
 	"cascade-oj/app/services/admin/internal/biz"
+	"time"
 
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 )
 
@@ -18,6 +20,7 @@ type AdminService struct {
 	problemUseCase      *biz.ProblemUsecase
 	submissionUseCase   *biz.SubmissionUseCase
 	userUseCase         *biz.UserUsecase
+	scheduler           *ContestStatusScheduler
 }
 
 func NewAdminService(
@@ -27,8 +30,9 @@ func NewAdminService(
 	problemUseCase *biz.ProblemUsecase,
 	submissionUseCase *biz.SubmissionUseCase,
 	userUseCase *biz.UserUsecase,
+	logger log.Logger,
 ) *AdminService {
-	return &AdminService{
+	adminService := &AdminService{
 		announcementUseCase: announcementUseCase,
 		contestUseCase:      contestUseCase,
 		logUseCase:          logUseCase,
@@ -36,4 +40,10 @@ func NewAdminService(
 		submissionUseCase:   submissionUseCase,
 		userUseCase:         userUseCase,
 	}
+
+	scheduler := NewContestStatusScheduler(contestUseCase, logger, 1*time.Minute)
+	scheduler.Start()
+	adminService.scheduler = scheduler
+
+	return adminService
 }

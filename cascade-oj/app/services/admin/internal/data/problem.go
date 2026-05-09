@@ -24,11 +24,34 @@ func NewProblemRepo(data *Data, logger log.Logger) biz.ProblemRepo {
 }
 
 func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64) ([]*biz.Problem, error) {
+	if contestID == 0 {
+		entProblems, err := problemRepo.data.db.Problem.
+			Query().
+			Select(problem.FieldID, problem.FieldTitle, problem.FieldTimeLimitMs, problem.FieldMemoryLimitKB, problem.FieldDescription, problem.FieldUseStatus).
+			Where(problem.UseStatusEQ(problem.UseStatusAvailable)).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		problems := make([]*biz.Problem, 0, len(entProblems))
+		for _, p := range entProblems {
+			problems = append(problems,
+				&biz.Problem{
+					ID:            p.ID,
+					Title:         p.Title,
+					TimeLimitMs:   int32(p.TimeLimitMs),
+					MemoryLimitKB: int32(p.MemoryLimitKB),
+					Description:   p.Description,
+				})
+		}
+		return problems, nil
+	}
+
 	entProblemIncludes, err := problemRepo.data.db.ProblemSet_Includes.
 		Query().
 		Select().
 		WithProblem(func(pq *ent.ProblemQuery) {
-			pq.Select(problem.FieldTitle, problem.FieldTimeLimitMs, problem.FieldMemoryLimitKB)
+			pq.Select(problem.FieldTitle, problem.FieldTimeLimitMs, problem.FieldMemoryLimitKB, problem.FieldDescription)
 		}).
 		Where(
 			problemset_includes.ProblemSetIDEQ(contestID),
@@ -44,6 +67,7 @@ func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64
 				Title:         entProblemIncludes[i].Edges.Problem.Title,
 				TimeLimitMs:   int32(entProblemIncludes[i].Edges.Problem.TimeLimitMs),
 				MemoryLimitKB: int32(entProblemIncludes[i].Edges.Problem.MemoryLimitKB),
+				Description:   entProblemIncludes[i].Edges.Problem.Description,
 			})
 	}
 	return problems, nil

@@ -11,6 +11,7 @@ type Problem struct {
 	Title         string
 	TimeLimitMs   int32
 	MemoryLimitKB int32
+	Description   string
 }
 
 type DetailedProblem struct {
