@@ -173,7 +173,6 @@ export interface GetAnnouncementsReply {
 }
 
 export interface PostAnnouncementRequest {
-    publisherName: string;
     title: string;
     content: string;
 }
