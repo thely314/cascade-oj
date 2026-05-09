@@ -160,7 +160,45 @@
     transition: background 0.12s ease, border-color 0.12s ease;
 }
 
-.ghost:hover {
-    background: rgba(22, 163, 118, 0.08);
-    border-color: rgba(22, 163, 118, 0.35);
+.list-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.ghost.danger {
+    border-color: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}
+
+.ghost.danger:hover {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 4px;
+    color: #e6f7ec;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(22, 163, 118, 0.2);
+    border-radius: 6px;
+    background: #0f1412;
+    color: #cbd5c0;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #16a379;
 }
