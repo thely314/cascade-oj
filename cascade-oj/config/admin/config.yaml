@@ -5,7 +5,6 @@ server:
   grpc:
     addr: 0.0.0.0:9000
     timeout: 1s
-  jwt_secret: cascade
   mq: amqp://cascade_oj:123456@cascade_rabbitmq:5672
 data:
   database:
@@ -17,3 +16,7 @@ data:
     write_timeout: 0.2s
     db: 0
   mq: amqp://cascade_oj:123456@cascade_rabbitmq:5672
+jwt:
+  secret: cascade
+  expiration: 24
+  issuer: cascade

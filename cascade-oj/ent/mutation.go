@@ -4030,6 +4030,7 @@ type ProblemMutation struct {
 	memory_limit_kb             *int
 	addmemory_limit_kb          *int
 	use_status                  *problem.UseStatus
+	code_template               *string
 	clearedFields               map[string]struct{}
 	creator                     *int64
 	clearedcreator              bool
@@ -4501,6 +4502,42 @@ func (m *ProblemMutation) ResetUseStatus() {
 	m.use_status = nil
 }
 
+// SetCodeTemplate sets the "code_template" field.
+func (m *ProblemMutation) SetCodeTemplate(s string) {
+	m.code_template = &s
+}
+
+// CodeTemplate returns the value of the "code_template" field in the mutation.
+func (m *ProblemMutation) CodeTemplate() (r string, exists bool) {
+	v := m.code_template
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCodeTemplate returns the old "code_template" field's value of the Problem entity.
+// If the Problem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProblemMutation) OldCodeTemplate(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCodeTemplate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCodeTemplate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCodeTemplate: %w", err)
+	}
+	return oldValue.CodeTemplate, nil
+}
+
+// ResetCodeTemplate resets all changes to the "code_template" field.
+func (m *ProblemMutation) ResetCodeTemplate() {
+	m.code_template = nil
+}
+
 // ClearCreator clears the "creator" edge to the User entity.
 func (m *ProblemMutation) ClearCreator() {
 	m.clearedcreator = true
@@ -4751,7 +4788,7 @@ func (m *ProblemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProblemMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.creator != nil {
 		fields = append(fields, problem.FieldCreatorID)
 	}
@@ -4775,6 +4812,9 @@ func (m *ProblemMutation) Fields() []string {
 	}
 	if m.use_status != nil {
 		fields = append(fields, problem.FieldUseStatus)
+	}
+	if m.code_template != nil {
+		fields = append(fields, problem.FieldCodeTemplate)
 	}
 	return fields
 }
@@ -4800,6 +4840,8 @@ func (m *ProblemMutation) Field(name string) (ent.Value, bool) {
 		return m.MemoryLimitKB()
 	case problem.FieldUseStatus:
 		return m.UseStatus()
+	case problem.FieldCodeTemplate:
+		return m.CodeTemplate()
 	}
 	return nil, false
 }
@@ -4825,6 +4867,8 @@ func (m *ProblemMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldMemoryLimitKB(ctx)
 	case problem.FieldUseStatus:
 		return m.OldUseStatus(ctx)
+	case problem.FieldCodeTemplate:
+		return m.OldCodeTemplate(ctx)
 	}
 	return nil, fmt.Errorf("unknown Problem field %s", name)
 }
@@ -4889,6 +4933,13 @@ func (m *ProblemMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUseStatus(v)
+		return nil
+	case problem.FieldCodeTemplate:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCodeTemplate(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Problem field %s", name)
@@ -5001,6 +5052,9 @@ func (m *ProblemMutation) ResetField(name string) error {
 		return nil
 	case problem.FieldUseStatus:
 		m.ResetUseStatus()
+		return nil
+	case problem.FieldCodeTemplate:
+		m.ResetCodeTemplate()
 		return nil
 	}
 	return fmt.Errorf("unknown Problem field %s", name)

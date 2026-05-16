@@ -2,8 +2,18 @@ package biz
 
 import (
 	"context"
+	"errors"
 
 	"github.com/go-kratos/kratos/v2/log"
+)
+
+type ProblemStatus int32
+
+const (
+	ProblemStatusUnspecified ProblemStatus = 0
+	ProblemStatusDisabled    ProblemStatus = 1
+	ProblemStatusEnabled     ProblemStatus = 2
+	ProblemStatusDeleted     ProblemStatus = 3
 )
 
 type Problem struct {
@@ -11,6 +21,8 @@ type Problem struct {
 	Title         string
 	TimeLimitMs   int32
 	MemoryLimitKB int32
+	Status        ProblemStatus
+	CodeTemplate  string
 }
 
 type DetailedProblem struct {
@@ -25,6 +37,7 @@ type ProblemCreateInfo struct {
 	MemoryLimitKB   int32
 	CreatorUsername string
 	Description     string
+	CodeTemplate    string
 }
 
 type ProblemEditInfo struct {
@@ -33,6 +46,7 @@ type ProblemEditInfo struct {
 	TimeLimitMs   int32
 	MemoryLimitKB int32
 	Description   string
+	CodeTemplate  string
 }
 
 type ProblemRepo interface {
@@ -42,6 +56,7 @@ type ProblemRepo interface {
 	PutProblem(ctx context.Context, problemEditInfo ProblemEditInfo) (bool, error)
 	DeleteProblem(ctx context.Context, problemID int64) (bool, error)
 	PublishProblem(ctx context.Context, problemID int64) (bool, error)
+	DisableProblem(ctx context.Context, problemID int64) (bool, error)
 }
 
 type ProblemUsecase struct {
@@ -67,12 +82,28 @@ func (problemUsecase *ProblemUsecase) GetSingleProblem(ctx context.Context, prob
 func (problemUsecase *ProblemUsecase) PostProblem(ctx context.Context, problemCreateInfo ProblemCreateInfo) (int64, error) {
 	return problemUsecase.problemRepo.PostProblem(ctx, problemCreateInfo)
 }
+
 func (problemUsecase *ProblemUsecase) PutProblem(ctx context.Context, problemEditInfo ProblemEditInfo) (bool, error) {
+	detailedProblem, err := problemUsecase.problemRepo.GetSingleProblem(ctx, problemEditInfo.ID)
+	if err != nil {
+		return false, err
+	}
+
+	if detailedProblem.Problem.Status != ProblemStatusDisabled {
+		return false, errors.New("business rule error: only disabled problems can be edited")
+	}
+
 	return problemUsecase.problemRepo.PutProblem(ctx, problemEditInfo)
 }
+
 func (problemUsecase *ProblemUsecase) DeleteProblem(ctx context.Context, problemID int64) (bool, error) {
 	return problemUsecase.problemRepo.DeleteProblem(ctx, problemID)
 }
+
 func (problemUsecase *ProblemUsecase) PublishProblem(ctx context.Context, problemID int64) (bool, error) {
 	return problemUsecase.problemRepo.PublishProblem(ctx, problemID)
+}
+
+func (problemUsecase *ProblemUsecase) DisableProblem(ctx context.Context, problemID int64) (bool, error) {
+	return problemUsecase.problemRepo.DisableProblem(ctx, problemID)
 }

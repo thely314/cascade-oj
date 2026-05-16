@@ -180,6 +180,10 @@ func init() {
 	problemDescMemoryLimitKB := problemFields[7].Descriptor()
 	// problem.MemoryLimitKBValidator is a validator for the "memory_limit_kb" field. It is called by the builders before save.
 	problem.MemoryLimitKBValidator = problemDescMemoryLimitKB.Validators[0].(func(int) error)
+	// problemDescCodeTemplate is the schema descriptor for code_template field.
+	problemDescCodeTemplate := problemFields[9].Descriptor()
+	// problem.DefaultCodeTemplate holds the default value on creation for the code_template field.
+	problem.DefaultCodeTemplate = problemDescCodeTemplate.Default.(string)
 	// problemDescID is the schema descriptor for id field.
 	problemDescID := problemFields[0].Descriptor()
 	// problem.IDValidator is a validator for the "id" field. It is called by the builders before save.

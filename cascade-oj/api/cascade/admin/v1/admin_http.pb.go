@@ -25,6 +25,7 @@ const OperationAdminDeleteAnnouncement = "/api.cascade.admin.v1.Admin/DeleteAnno
 const OperationAdminDeleteContest = "/api.cascade.admin.v1.Admin/DeleteContest"
 const OperationAdminDeleteProblem = "/api.cascade.admin.v1.Admin/DeleteProblem"
 const OperationAdminDeleteUser = "/api.cascade.admin.v1.Admin/DeleteUser"
+const OperationAdminDisableProblem = "/api.cascade.admin.v1.Admin/DisableProblem"
 const OperationAdminDownloadLogs = "/api.cascade.admin.v1.Admin/DownloadLogs"
 const OperationAdminGetAnnouncements = "/api.cascade.admin.v1.Admin/GetAnnouncements"
 const OperationAdminGetContestStatistics = "/api.cascade.admin.v1.Admin/GetContestStatistics"
@@ -61,6 +62,8 @@ type AdminHTTPServer interface {
 	DeleteProblem(context.Context, *DeleteProblemRequest) (*DeleteProblemReply, error)
 	// DeleteUser Delete a user
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error)
+	// DisableProblem Disable a problem (change status to DISABLED)
+	DisableProblem(context.Context, *DisableProblemRequest) (*DisableProblemReply, error)
 	// DownloadLogs Download log files as a zip archive
 	DownloadLogs(context.Context, *DownloadLogsRequest) (*httpbody.HttpBody, error)
 	// GetAnnouncements Get a list of announcements
@@ -123,6 +126,7 @@ func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
 	r.PUT("/admin/problems/{problem_id}", _Admin_PutProblem0_HTTP_Handler(srv))
 	r.DELETE("/admin/problems/{problem_id}", _Admin_DeleteProblem0_HTTP_Handler(srv))
 	r.POST("/admin/problems/{problem_id}/publish", _Admin_PublishProblem0_HTTP_Handler(srv))
+	r.POST("/admin/problems/{problem_id}/disable", _Admin_DisableProblem0_HTTP_Handler(srv))
 	r.GET("/admin/submissions", _Admin_GetSubmissions0_HTTP_Handler(srv))
 	r.GET("/admin/submissions/{submission_uuid}", _Admin_GetSingleSubmission0_HTTP_Handler(srv))
 	r.POST("/admin/submissions/{submission_uuid}/rejudge", _Admin_RejudgeSubmission0_HTTP_Handler(srv))
@@ -385,6 +389,31 @@ func _Admin_PublishProblem0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Cont
 			return err
 		}
 		reply := out.(*PublishProblemReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Admin_DisableProblem0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DisableProblemRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminDisableProblem)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DisableProblem(ctx, req.(*DisableProblemRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*DisableProblemReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -817,6 +846,8 @@ type AdminHTTPClient interface {
 	DeleteProblem(ctx context.Context, req *DeleteProblemRequest, opts ...http.CallOption) (rsp *DeleteProblemReply, err error)
 	// DeleteUser Delete a user
 	DeleteUser(ctx context.Context, req *DeleteUserRequest, opts ...http.CallOption) (rsp *DeleteUserReply, err error)
+	// DisableProblem Disable a problem (change status to DISABLED)
+	DisableProblem(ctx context.Context, req *DisableProblemRequest, opts ...http.CallOption) (rsp *DisableProblemReply, err error)
 	// DownloadLogs Download log files as a zip archive
 	DownloadLogs(ctx context.Context, req *DownloadLogsRequest, opts ...http.CallOption) (rsp *httpbody.HttpBody, err error)
 	// GetAnnouncements Get a list of announcements
@@ -937,6 +968,20 @@ func (c *AdminHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteUserRequ
 	opts = append(opts, http.Operation(OperationAdminDeleteUser))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// DisableProblem Disable a problem (change status to DISABLED)
+func (c *AdminHTTPClientImpl) DisableProblem(ctx context.Context, in *DisableProblemRequest, opts ...http.CallOption) (*DisableProblemReply, error) {
+	var out DisableProblemReply
+	pattern := "/admin/problems/{problem_id}/disable"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAdminDisableProblem))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

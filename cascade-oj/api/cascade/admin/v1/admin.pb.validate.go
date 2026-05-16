@@ -1473,6 +1473,8 @@ func (m *ProblemMetadata) validate(all bool) error {
 
 	// no validation rules for MemoryLimitMb
 
+	// no validation rules for Status
+
 	if len(errors) > 0 {
 		return ProblemMetadataMultiError(errors)
 	}
@@ -1948,6 +1950,8 @@ func (m *GetSingleProblemReply) validate(all bool) error {
 
 	// no validation rules for Description
 
+	// no validation rules for CodeTemplate
+
 	if len(errors) > 0 {
 		return GetSingleProblemReplyMultiError(errors)
 	}
@@ -2082,6 +2086,8 @@ func (m *PostProblemRequest) validate(all bool) error {
 	// no validation rules for Creator
 
 	// no validation rules for Description
+
+	// no validation rules for CodeTemplate
 
 	if len(errors) > 0 {
 		return PostProblemRequestMultiError(errors)
@@ -2319,6 +2325,8 @@ func (m *PutProblemRequest) validate(all bool) error {
 	}
 
 	// no validation rules for Description
+
+	// no validation rules for CodeTemplate
 
 	if len(errors) > 0 {
 		return PutProblemRequestMultiError(errors)
@@ -7423,6 +7431,214 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DownloadLogsRequestValidationError{}
+
+// Validate checks the field values on DisableProblemRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DisableProblemRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DisableProblemRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DisableProblemRequestMultiError, or nil if none found.
+func (m *DisableProblemRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DisableProblemRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ProblemId
+
+	if len(errors) > 0 {
+		return DisableProblemRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DisableProblemRequestMultiError is an error wrapping multiple validation
+// errors returned by DisableProblemRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DisableProblemRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DisableProblemRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DisableProblemRequestMultiError) AllErrors() []error { return m }
+
+// DisableProblemRequestValidationError is the validation error returned by
+// DisableProblemRequest.Validate if the designated constraints aren't met.
+type DisableProblemRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DisableProblemRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DisableProblemRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DisableProblemRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DisableProblemRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DisableProblemRequestValidationError) ErrorName() string {
+	return "DisableProblemRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DisableProblemRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDisableProblemRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DisableProblemRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DisableProblemRequestValidationError{}
+
+// Validate checks the field values on DisableProblemReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DisableProblemReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DisableProblemReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DisableProblemReplyMultiError, or nil if none found.
+func (m *DisableProblemReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DisableProblemReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for IsSuccess
+
+	if len(errors) > 0 {
+		return DisableProblemReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DisableProblemReplyMultiError is an error wrapping multiple validation
+// errors returned by DisableProblemReply.ValidateAll() if the designated
+// constraints aren't met.
+type DisableProblemReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DisableProblemReplyMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DisableProblemReplyMultiError) AllErrors() []error { return m }
+
+// DisableProblemReplyValidationError is the validation error returned by
+// DisableProblemReply.Validate if the designated constraints aren't met.
+type DisableProblemReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DisableProblemReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DisableProblemReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DisableProblemReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DisableProblemReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DisableProblemReplyValidationError) ErrorName() string {
+	return "DisableProblemReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DisableProblemReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDisableProblemReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DisableProblemReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DisableProblemReplyValidationError{}
 
 // Validate checks the field values on PostContestRequest_ProblemList with the
 // rules defined in the proto definition for this message. If any rules are

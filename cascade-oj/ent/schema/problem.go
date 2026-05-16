@@ -37,8 +37,10 @@ func (Problem) Fields() []ent.Field {
 			"mysql": "INT",
 		}).Comment("kilobytes"),
 		field.Enum("use_status").
-			Values("unavailable", "available", "using").
-			Default("unavailable"),
+			Values("available", "using", "disabled", "deleted").
+			Default("disabled"),
+		field.Text("code_template").
+			Default(""),
 	}
 }
 

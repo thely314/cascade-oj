@@ -147,7 +147,8 @@ var (
 		{Name: "case_version", Type: field.TypeInt16, Default: 1},
 		{Name: "time_limit_ms", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
 		{Name: "memory_limit_kb", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
-		{Name: "use_status", Type: field.TypeEnum, Enums: []string{"unavailable", "available", "using"}, Default: "unavailable"},
+		{Name: "use_status", Type: field.TypeEnum, Enums: []string{"available", "using", "disabled", "deleted"}, Default: "disabled"},
+		{Name: "code_template", Type: field.TypeString, Size: 2147483647, Default: ""},
 		{Name: "case_group_result_problem", Type: field.TypeInt64, Nullable: true},
 		{Name: "judge_config_id", Type: field.TypeInt64},
 		{Name: "creator_id", Type: field.TypeInt64},
@@ -160,19 +161,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "Problems_CaseGroup_Results_problem",
-				Columns:    []*schema.Column{ProblemsColumns[7]},
+				Columns:    []*schema.Column{ProblemsColumns[8]},
 				RefColumns: []*schema.Column{CaseGroupResultsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "Problems_Problem_JudgeConfigs_judge_config",
-				Columns:    []*schema.Column{ProblemsColumns[8]},
+				Columns:    []*schema.Column{ProblemsColumns[9]},
 				RefColumns: []*schema.Column{ProblemJudgeConfigsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "Problems_Users_problems",
-				Columns:    []*schema.Column{ProblemsColumns[9]},
+				Columns:    []*schema.Column{ProblemsColumns[10]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

@@ -31,6 +31,7 @@ const (
 	Admin_PutProblem_FullMethodName           = "/api.cascade.admin.v1.Admin/PutProblem"
 	Admin_DeleteProblem_FullMethodName        = "/api.cascade.admin.v1.Admin/DeleteProblem"
 	Admin_PublishProblem_FullMethodName       = "/api.cascade.admin.v1.Admin/PublishProblem"
+	Admin_DisableProblem_FullMethodName       = "/api.cascade.admin.v1.Admin/DisableProblem"
 	Admin_GetSubmissions_FullMethodName       = "/api.cascade.admin.v1.Admin/GetSubmissions"
 	Admin_GetSingleSubmission_FullMethodName  = "/api.cascade.admin.v1.Admin/GetSingleSubmission"
 	Admin_RejudgeSubmission_FullMethodName    = "/api.cascade.admin.v1.Admin/RejudgeSubmission"
@@ -78,6 +79,8 @@ type AdminClient interface {
 	DeleteProblem(ctx context.Context, in *DeleteProblemRequest, opts ...grpc.CallOption) (*DeleteProblemReply, error)
 	// Publish a problem to make it visible
 	PublishProblem(ctx context.Context, in *PublishProblemRequest, opts ...grpc.CallOption) (*PublishProblemReply, error)
+	// Disable a problem (change status to DISABLED)
+	DisableProblem(ctx context.Context, in *DisableProblemRequest, opts ...grpc.CallOption) (*DisableProblemReply, error)
 	// Get a list of submissions
 	GetSubmissions(ctx context.Context, in *GetSubmissionsRequest, opts ...grpc.CallOption) (*GetSubmissionsReply, error)
 	// Get a single submission's details
@@ -226,6 +229,16 @@ func (c *adminClient) PublishProblem(ctx context.Context, in *PublishProblemRequ
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PublishProblemReply)
 	err := c.cc.Invoke(ctx, Admin_PublishProblem_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) DisableProblem(ctx context.Context, in *DisableProblemRequest, opts ...grpc.CallOption) (*DisableProblemReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DisableProblemReply)
+	err := c.cc.Invoke(ctx, Admin_DisableProblem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -448,6 +461,8 @@ type AdminServer interface {
 	DeleteProblem(context.Context, *DeleteProblemRequest) (*DeleteProblemReply, error)
 	// Publish a problem to make it visible
 	PublishProblem(context.Context, *PublishProblemRequest) (*PublishProblemReply, error)
+	// Disable a problem (change status to DISABLED)
+	DisableProblem(context.Context, *DisableProblemRequest) (*DisableProblemReply, error)
 	// Get a list of submissions
 	GetSubmissions(context.Context, *GetSubmissionsRequest) (*GetSubmissionsReply, error)
 	// Get a single submission's details
@@ -524,6 +539,9 @@ func (UnimplementedAdminServer) DeleteProblem(context.Context, *DeleteProblemReq
 }
 func (UnimplementedAdminServer) PublishProblem(context.Context, *PublishProblemRequest) (*PublishProblemReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method PublishProblem not implemented")
+}
+func (UnimplementedAdminServer) DisableProblem(context.Context, *DisableProblemRequest) (*DisableProblemReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method DisableProblem not implemented")
 }
 func (UnimplementedAdminServer) GetSubmissions(context.Context, *GetSubmissionsRequest) (*GetSubmissionsReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSubmissions not implemented")
@@ -797,6 +815,24 @@ func _Admin_PublishProblem_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AdminServer).PublishProblem(ctx, req.(*PublishProblemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_DisableProblem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DisableProblemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).DisableProblem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_DisableProblem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).DisableProblem(ctx, req.(*DisableProblemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1193,6 +1229,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PublishProblem",
 			Handler:    _Admin_PublishProblem_Handler,
+		},
+		{
+			MethodName: "DisableProblem",
+			Handler:    _Admin_DisableProblem_Handler,
 		},
 		{
 			MethodName: "GetSubmissions",

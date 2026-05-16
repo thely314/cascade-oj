@@ -6,6 +6,19 @@ import (
 	"context"
 )
 
+func mapBizStatusToPbStatus(status biz.ProblemStatus) pb.ProblemStatus {
+	switch status {
+	case biz.ProblemStatusDisabled:
+		return pb.ProblemStatus_PROBLEM_STATUS_DISABLED
+	case biz.ProblemStatusEnabled:
+		return pb.ProblemStatus_PROBLEM_STATUS_ENABLED
+	case biz.ProblemStatusDeleted:
+		return pb.ProblemStatus_PROBLEM_STATUS_DELETED
+	default:
+		return pb.ProblemStatus_PROBLEM_STATUS_UNSPECIFIED
+	}
+}
+
 func (adminService *AdminService) GetProblems(ctx context.Context, request *pb.GetProblemsRequest) (*pb.GetProblemsReply, error) {
 	problems, err := adminService.problemUseCase.GetProblems(
 		ctx,
@@ -22,6 +35,7 @@ func (adminService *AdminService) GetProblems(ctx context.Context, request *pb.G
 				Title:         problem.Title,
 				TimeLimitMs:   problem.TimeLimitMs,
 				MemoryLimitMb: problem.MemoryLimitKB / 1024,
+				Status:        mapBizStatusToPbStatus(problem.Status),
 			},
 		)
 	}
@@ -41,9 +55,11 @@ func (adminService *AdminService) GetSingleProblem(ctx context.Context, request 
 			Title:         problem.Problem.Title,
 			TimeLimitMs:   problem.Problem.TimeLimitMs,
 			MemoryLimitMb: problem.Problem.MemoryLimitKB / 1024,
+			Status:        mapBizStatusToPbStatus(problem.Problem.Status),
 		},
-		Creator:     problem.CreatorUsername,
-		Description: problem.Description,
+		Creator:      problem.CreatorUsername,
+		Description:  problem.Description,
+		CodeTemplate: problem.Problem.CodeTemplate,
 	}, nil
 }
 
@@ -52,9 +68,10 @@ func (adminService *AdminService) PostProblem(ctx context.Context, request *pb.P
 		biz.ProblemCreateInfo{
 			Title:           request.Metadata.Title,
 			TimeLimitMs:     request.Metadata.TimeLimitMs,
-			MemoryLimitKB:   request.Metadata.MemoryLimitMb,
+			MemoryLimitKB:   request.Metadata.MemoryLimitMb * 1024,
 			CreatorUsername: request.Creator,
 			Description:     request.Description,
+			CodeTemplate:    request.CodeTemplate,
 		})
 	if err != nil {
 		return nil, err
@@ -70,8 +87,9 @@ func (adminService *AdminService) PutProblem(ctx context.Context, request *pb.Pu
 			ID:            request.ProblemId,
 			Title:         request.Metadata.Title,
 			TimeLimitMs:   request.Metadata.TimeLimitMs,
-			MemoryLimitKB: request.Metadata.MemoryLimitMb,
+			MemoryLimitKB: request.Metadata.MemoryLimitMb * 1024,
 			Description:   request.Description,
+			CodeTemplate:  request.CodeTemplate,
 		})
 	if err != nil {
 		return nil, err
@@ -98,5 +116,15 @@ func (adminService *AdminService) DeleteProblem(ctx context.Context, request *pb
 	}
 	return &pb.DeleteProblemReply{
 		IsDeleted: isDeleted,
+	}, nil
+}
+
+func (adminService *AdminService) DisableProblem(ctx context.Context, request *pb.DisableProblemRequest) (*pb.DisableProblemReply, error) {
+	isSuccess, err := adminService.problemUseCase.DisableProblem(ctx, request.ProblemId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DisableProblemReply{
+		IsSuccess: isSuccess,
 	}, nil
 }

@@ -1,12 +1,10 @@
 import axios from 'axios';
-import router from '../router'; // 引入路由，用于跳转登录
+import router from '../router';
 
 // 1. 创建 axios 实例
 const service = axios.create({
-  // 基础 URL，配合 vite.config.ts 的代理使用
-  // 比如后端地址是 http://localhost:8080，这里写 /api，vite 会转发过去
-  baseURL: '/api', 
-  timeout: 10000 // 请求超时时间 10s
+  baseURL: '/api',
+  timeout: 10000 
 });
 
 // 2. 请求拦截器 (Request Interceptor)

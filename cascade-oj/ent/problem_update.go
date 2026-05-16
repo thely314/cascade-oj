@@ -165,6 +165,20 @@ func (_u *ProblemUpdate) SetNillableUseStatus(v *problem.UseStatus) *ProblemUpda
 	return _u
 }
 
+// SetCodeTemplate sets the "code_template" field.
+func (_u *ProblemUpdate) SetCodeTemplate(v string) *ProblemUpdate {
+	_u.mutation.SetCodeTemplate(v)
+	return _u
+}
+
+// SetNillableCodeTemplate sets the "code_template" field if the given value is not nil.
+func (_u *ProblemUpdate) SetNillableCodeTemplate(v *string) *ProblemUpdate {
+	if v != nil {
+		_u.SetCodeTemplate(*v)
+	}
+	return _u
+}
+
 // SetCreator sets the "creator" edge to the User entity.
 func (_u *ProblemUpdate) SetCreator(v *User) *ProblemUpdate {
 	return _u.SetCreatorID(v.ID)
@@ -406,6 +420,9 @@ func (_u *ProblemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UseStatus(); ok {
 		_spec.SetField(problem.FieldUseStatus, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.CodeTemplate(); ok {
+		_spec.SetField(problem.FieldCodeTemplate, field.TypeString, value)
 	}
 	if _u.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -753,6 +770,20 @@ func (_u *ProblemUpdateOne) SetNillableUseStatus(v *problem.UseStatus) *ProblemU
 	return _u
 }
 
+// SetCodeTemplate sets the "code_template" field.
+func (_u *ProblemUpdateOne) SetCodeTemplate(v string) *ProblemUpdateOne {
+	_u.mutation.SetCodeTemplate(v)
+	return _u
+}
+
+// SetNillableCodeTemplate sets the "code_template" field if the given value is not nil.
+func (_u *ProblemUpdateOne) SetNillableCodeTemplate(v *string) *ProblemUpdateOne {
+	if v != nil {
+		_u.SetCodeTemplate(*v)
+	}
+	return _u
+}
+
 // SetCreator sets the "creator" edge to the User entity.
 func (_u *ProblemUpdateOne) SetCreator(v *User) *ProblemUpdateOne {
 	return _u.SetCreatorID(v.ID)
@@ -1024,6 +1055,9 @@ func (_u *ProblemUpdateOne) sqlSave(ctx context.Context) (_node *Problem, err er
 	}
 	if value, ok := _u.mutation.UseStatus(); ok {
 		_spec.SetField(problem.FieldUseStatus, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.CodeTemplate(); ok {
+		_spec.SetField(problem.FieldCodeTemplate, field.TypeString, value)
 	}
 	if _u.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{

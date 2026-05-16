@@ -81,6 +81,13 @@ service Admin {
             body: "*"
         };
     };
+    // Disable a problem (change status to DISABLED)
+    rpc DisableProblem(DisableProblemRequest) returns (DisableProblemReply) {
+        option (google.api.http) = {
+            post: "/admin/problems/{problem_id}/disable"
+            body: "*"
+        };
+    };
 
     // Get a list of submissions
     rpc GetSubmissions(GetSubmissionsRequest) returns (GetSubmissionsReply) {
@@ -260,11 +267,19 @@ message DeleteContestReply {
     bool is_deleted = 1; // Whether the deletion was successful
 }
 
+// Problem status
+enum ProblemStatus {
+    PROBLEM_STATUS_UNSPECIFIED = 0; // Default placeholder
+    PROBLEM_STATUS_DISABLED = 1;    // Disabled status (default for new problems)
+    PROBLEM_STATUS_ENABLED = 2;     // Enabled status (visible to contestants)
+    PROBLEM_STATUS_DELETED = 3;     // Deleted status (logical deletion)
+}
 message ProblemMetadata {
     int64 id = 1; // Problem ID
     string title = 2; // Problem Title
     int32 time_limit_ms = 3; // Time Limit in milliseconds
     int32 memory_limit_mb = 4; // Memory Limit in megabytes
+    ProblemStatus status = 5; // Current status of the problem
 }
 message GetProblemsRequest {
     int64 contest_id = 1; // Contest ID
@@ -280,12 +295,14 @@ message GetSingleProblemReply {
     ProblemMetadata metadata = 1; // Problem Metadata
     string creator = 2; // Problem Creator
     string description = 3; // Problem Description
+    string code_template = 4;
 }
 
 message PostProblemRequest {
     ProblemMetadata metadata = 1; // Problem Metadata
     string creator = 2; // Problem Creator
     string description = 3; // Problem Description
+    string code_template = 4; 
 }
 message PostProblemReply {
     int64 problem_id = 1; // Created Problem ID
@@ -295,6 +312,7 @@ message PutProblemRequest {
     int64 problem_id = 1; // Problem ID
     ProblemMetadata metadata = 2; // Problem Metadata
     string description = 3; // Problem Description
+    string code_template = 4;
 }
 message PutProblemReply {
     bool is_updated = 1; // Whether the update was successful
@@ -504,4 +522,11 @@ message QueryLogContentReply {
 
 message DownloadLogsRequest {
     repeated string filenames = 1;
+}
+
+message DisableProblemRequest {
+    int64 problem_id = 1; // Problem ID
+}
+message DisableProblemReply {
+    bool is_success = 1; // Whether the disable operation was successful
 }

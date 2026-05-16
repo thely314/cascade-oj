@@ -30,6 +30,8 @@ const (
 	FieldMemoryLimitKB = "memory_limit_kb"
 	// FieldUseStatus holds the string denoting the use_status field in the database.
 	FieldUseStatus = "use_status"
+	// FieldCodeTemplate holds the string denoting the code_template field in the database.
+	FieldCodeTemplate = "code_template"
 	// EdgeCreator holds the string denoting the creator edge name in mutations.
 	EdgeCreator = "creator"
 	// EdgeJudgeConfig holds the string denoting the judge_config edge name in mutations.
@@ -90,6 +92,7 @@ var Columns = []string{
 	FieldTimeLimitMs,
 	FieldMemoryLimitKB,
 	FieldUseStatus,
+	FieldCodeTemplate,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "Problems"
@@ -126,6 +129,8 @@ var (
 	TimeLimitMsValidator func(int) error
 	// MemoryLimitKBValidator is a validator for the "memory_limit_kb" field. It is called by the builders before save.
 	MemoryLimitKBValidator func(int) error
+	// DefaultCodeTemplate holds the default value on creation for the "code_template" field.
+	DefaultCodeTemplate string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(int64) error
 )
@@ -133,14 +138,15 @@ var (
 // UseStatus defines the type for the "use_status" enum field.
 type UseStatus string
 
-// UseStatusUnavailable is the default value of the UseStatus enum.
-const DefaultUseStatus = UseStatusUnavailable
+// UseStatusDisabled is the default value of the UseStatus enum.
+const DefaultUseStatus = UseStatusDisabled
 
 // UseStatus values.
 const (
-	UseStatusUnavailable UseStatus = "unavailable"
-	UseStatusAvailable   UseStatus = "available"
-	UseStatusUsing       UseStatus = "using"
+	UseStatusAvailable UseStatus = "available"
+	UseStatusUsing     UseStatus = "using"
+	UseStatusDisabled  UseStatus = "disabled"
+	UseStatusDeleted   UseStatus = "deleted"
 )
 
 func (us UseStatus) String() string {
@@ -150,7 +156,7 @@ func (us UseStatus) String() string {
 // UseStatusValidator is a validator for the "use_status" field enum values. It is called by the builders before save.
 func UseStatusValidator(us UseStatus) error {
 	switch us {
-	case UseStatusUnavailable, UseStatusAvailable, UseStatusUsing:
+	case UseStatusAvailable, UseStatusUsing, UseStatusDisabled, UseStatusDeleted:
 		return nil
 	default:
 		return fmt.Errorf("problem: invalid enum value for use_status field: %q", us)
@@ -203,6 +209,11 @@ func ByMemoryLimitKB(opts ...sql.OrderTermOption) OrderOption {
 // ByUseStatus orders the results by the use_status field.
 func ByUseStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUseStatus, opts...).ToFunc()
+}
+
+// ByCodeTemplate orders the results by the code_template field.
+func ByCodeTemplate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCodeTemplate, opts...).ToFunc()
 }
 
 // ByCreatorField orders the results by creator field.

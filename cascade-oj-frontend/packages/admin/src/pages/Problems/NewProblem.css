@@ -1,0 +1,65 @@
+.new-problem-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: calc(100vh - 100px);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 16px;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 12px;
+    color: #8aa39b;
+    font-weight: bold;
+}
+
+input, textarea {
+    background: #0f1412;
+    border: 1px solid #333;
+    color: #e6f7ec;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.editor-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px;
+    flex: 1;
+    min-height: 400px;
+}
+
+.panel-box {
+    background: #141816;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 10px 16px;
+    background: #1c211e;
+    color: #1dad80;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.preview-area {
+    padding: 20px;
+    overflow-y: auto;
+    color: #cbd5c0;
+}
