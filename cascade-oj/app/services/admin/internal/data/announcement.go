@@ -49,19 +49,7 @@ func (announcementRepo *AnnouncementRepo) GetAnnouncements(ctx context.Context) 
 	return announcements, nil
 }
 func (announcementRepo *AnnouncementRepo) PostAnnouncement(ctx context.Context, announcementCreateInfo biz.AnnouncementCreateInfo) (int64, error) {
-	publisher, err := announcementRepo.data.db.User.
-		Query().
-		Select(
-			user.FieldID,
-		).
-		Where(
-			user.UsernameEQ(announcementCreateInfo.PublisherName),
-		).
-		Only(ctx)
-	if err != nil {
-		return -1, err
-	}
-	newAnnouncementID, err := announcementRepo.data.db.Announcement.Create().SetPublisherID(publisher.ID).SetTitle(announcementCreateInfo.Title).SetContent(announcementCreateInfo.Content).Save(ctx)
+	newAnnouncementID, err := announcementRepo.data.db.Announcement.Create().SetPublisherID(announcementCreateInfo.PublisherID).SetTitle(announcementCreateInfo.Title).SetContent(announcementCreateInfo.Content).Save(ctx)
 	if err != nil {
 		return -1, nil
 	}

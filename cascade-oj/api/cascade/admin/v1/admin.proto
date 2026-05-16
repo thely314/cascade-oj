@@ -417,9 +417,8 @@ message GetAnnouncementsReply {
 }
 
 message PostAnnouncementRequest {
-    string publisher_name = 1; // Publisher Name
-    string title = 2; // Announcement Title
-    string content = 3; // Announcement Content
+    string title = 1; // Announcement Title
+    string content = 2; // Announcement Content
 }
 message PostAnnouncementReply {
     int64 announcement_id = 1; // Created Announcement ID

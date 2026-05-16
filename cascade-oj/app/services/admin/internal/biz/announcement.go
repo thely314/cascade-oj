@@ -14,9 +14,9 @@ type Announcement struct {
 }
 
 type AnnouncementCreateInfo struct {
-	PublisherName string
-	Title         string
-	Content       string
+	PublisherID int64
+	Title       string
+	Content     string
 }
 
 type AnnouncementEditInfo struct {
