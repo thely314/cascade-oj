@@ -3,6 +3,7 @@ package service
 import (
 	pb "cascade-oj/api/cascade/admin/v1"
 	"cascade-oj/app/services/admin/internal/biz"
+	"cascade-oj/pkg/middleware/auth"
 	"context"
 )
 
@@ -28,10 +29,11 @@ func (adminService *AdminService) GetAnnouncements(ctx context.Context, request 
 }
 
 func (adminService *AdminService) PostAnnouncement(ctx context.Context, request *pb.PostAnnouncementRequest) (*pb.PostAnnouncementReply, error) {
+	userID := ctx.Value("userInfo").(*auth.Claims).UserID
 	announcementID, err := adminService.announcementUseCase.PostAnnouncement(ctx, biz.AnnouncementCreateInfo{
-		PublisherName: request.PublisherName,
-		Title:         request.Title,
-		Content:       request.Content,
+		PublisherID: userID,
+		Title:       request.Title,
+		Content:     request.Content,
 	})
 	if err != nil {
 		return nil, err
