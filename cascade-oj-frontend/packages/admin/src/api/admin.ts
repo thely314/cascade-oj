@@ -42,7 +42,6 @@ import type {
     QueryLogContentRequest,
     QueryLogContentReply,
     DownloadLogsRequest,
-    GetCurrentUserReply,
 } from './types';
 
 // Contests
@@ -172,6 +171,3 @@ export async function downloadLogs(data: DownloadLogsRequest): Promise<any> {
     return service.post('/admin/logs/download', data, { responseType: 'json' });
 }
 
-export async function getCurrentUser(): Promise<GetCurrentUserReply> {
-    return service.get('/admin/current-user');
-}
