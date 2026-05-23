@@ -35,7 +35,6 @@ const (
 	User_GetAnnouncements_FullMethodName    = "/api.cascade.user.v1.User/GetAnnouncements"
 	User_GetUserInfo_FullMethodName         = "/api.cascade.user.v1.User/GetUserInfo"
 	User_UpdateUserInfo_FullMethodName      = "/api.cascade.user.v1.User/UpdateUserInfo"
-	User_Register_FullMethodName            = "/api.cascade.user.v1.User/Register"
 )
 
 // UserClient is the client API for User service.
@@ -58,8 +57,6 @@ type UserClient interface {
 	GetAnnouncements(ctx context.Context, in *GetAnnouncementsRequest, opts ...grpc.CallOption) (*GetAnnouncementsReply, error)
 	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoReply, error)
 	UpdateUserInfo(ctx context.Context, in *UpdateUserInfoRequest, opts ...grpc.CallOption) (*UpdateUserInfoReply, error)
-	// Used for registering gateway clients
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 }
 
 type userClient struct {
@@ -230,16 +227,6 @@ func (c *userClient) UpdateUserInfo(ctx context.Context, in *UpdateUserInfoReque
 	return out, nil
 }
 
-func (c *userClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RegisterReply)
-	err := c.cc.Invoke(ctx, User_Register_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
@@ -260,8 +247,6 @@ type UserServer interface {
 	GetAnnouncements(context.Context, *GetAnnouncementsRequest) (*GetAnnouncementsReply, error)
 	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoReply, error)
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoReply, error)
-	// Used for registering gateway clients
-	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -319,9 +304,6 @@ func (UnimplementedUserServer) GetUserInfo(context.Context, *GetUserInfoRequest)
 }
 func (UnimplementedUserServer) UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserInfo not implemented")
-}
-func (UnimplementedUserServer) Register(context.Context, *RegisterRequest) (*RegisterReply, error) {
-	return nil, status.Error(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -632,24 +614,6 @@ func _User_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).Register(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_Register_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).Register(ctx, req.(*RegisterRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -720,10 +684,6 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserInfo",
 			Handler:    _User_UpdateUserInfo_Handler,
-		},
-		{
-			MethodName: "Register",
-			Handler:    _User_Register_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -468,6 +468,7 @@ paths:
     get:
       tags:
         - Admin
+      description: Get a list of announcements
       operationId: Admin_GetAnnouncements
       responses:
         '200':
@@ -485,6 +486,7 @@ paths:
     post:
       tags:
         - Admin
+      description: Create a new announcement
       operationId: Admin_PostAnnouncement
       requestBody:
         content:
@@ -509,6 +511,7 @@ paths:
     put:
       tags:
         - Admin
+      description: Update an existing announcement
       operationId: Admin_PutAnnouncement
       parameters:
         - name: announcementId
@@ -538,6 +541,7 @@ paths:
     delete:
       tags:
         - Admin
+      description: Delete an announcement
       operationId: Admin_DeleteAnnouncement
       parameters:
         - name: announcementId
@@ -562,6 +566,7 @@ paths:
     get:
       tags:
         - Admin
+      description: Get a list of contests
       operationId: Admin_GetContests
       responses:
         '200':
@@ -579,6 +584,7 @@ paths:
     post:
       tags:
         - Admin
+      description: Create a new contest
       operationId: Admin_PostContest
       requestBody:
         content:
@@ -603,6 +609,7 @@ paths:
     get:
       tags:
         - Admin
+      description: Get a single contest's details
       operationId: Admin_GetSingleContest
       parameters:
         - name: contestId
@@ -616,7 +623,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSingleContestReply'
+                $ref: '#/components/schemas/GetSingleContestReply1'
         default:
           description: Default error response
           content:
@@ -626,6 +633,7 @@ paths:
     put:
       tags:
         - Admin
+      description: Update an existing contest
       operationId: Admin_PutContest
       parameters:
         - name: contestId
@@ -655,6 +663,7 @@ paths:
     delete:
       tags:
         - Admin
+      description: Delete a contest
       operationId: Admin_DeleteContest
       parameters:
         - name: contestId
@@ -675,10 +684,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
+  '/admin/contests/{contestId}/competitors':
+    get:
+      tags:
+        - Admin
+      operationId: Admin_GetContestCompetitors
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetContestCompetitorsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    put:
+      tags:
+        - Admin
+      operationId: Admin_PutContestCompetitors
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutContestCompetitorsRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutContestCompetitorsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
   '/admin/contests/{contestId}/statistics':
     get:
       tags:
         - Admin
+      description: Get statistics for a contest
       operationId: Admin_GetContestStatistics
       parameters:
         - name: contestId
@@ -699,18 +762,124 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
-  /admin/logs:
+  '/admin/contests/{contestId}/users':
     get:
       tags:
         - Admin
-      operationId: Admin_GetLogs
+      operationId: Admin_GetContestUsers
       parameters:
-        - name: page
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetContestUsersReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/contests/{contestId}/users/{userId}':
+    post:
+      tags:
+        - Admin
+      operationId: Admin_AddContestUser
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddContestUserRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddContestUserReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+    delete:
+      tags:
+        - Admin
+      operationId: Admin_RemoveContestUser
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoveContestUserReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /admin/logs/content:
+    get:
+      tags:
+        - Admin
+      description: Query content from a log file
+      operationId: Admin_QueryLogContent
+      parameters:
+        - name: filename
+          in: query
+          schema:
+            type: string
+        - name: level
+          in: query
+          schema:
+            type: string
+        - name: timeStart
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: timeEnd
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: pageSize
           in: query
           schema:
             type: integer
             format: int32
-        - name: pageSize
+        - name: offset
           in: query
           schema:
             type: integer
@@ -721,7 +890,60 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetLogsReply'
+                $ref: '#/components/schemas/QueryLogContentReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /admin/logs/download:
+    post:
+      tags:
+        - Admin
+      description: Download log files as a zip archive
+      operationId: Admin_DownloadLogs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadLogsRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*': {}
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /admin/logs/files:
+    get:
+      tags:
+        - Admin
+      description: List available log files
+      operationId: Admin_ListLogFiles
+      parameters:
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListLogFilesReply'
         default:
           description: Default error response
           content:
@@ -732,6 +954,7 @@ paths:
     get:
       tags:
         - Admin
+      description: Get a list of problems
       operationId: Admin_GetProblems
       parameters:
         - name: contestId
@@ -744,7 +967,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetProblemsReply'
+                $ref: '#/components/schemas/GetProblemsReply1'
         default:
           description: Default error response
           content:
@@ -754,6 +977,7 @@ paths:
     post:
       tags:
         - Admin
+      description: Create a new problem
       operationId: Admin_PostProblem
       requestBody:
         content:
@@ -778,6 +1002,7 @@ paths:
     get:
       tags:
         - Admin
+      description: Get a single problem's details
       operationId: Admin_GetSingleProblem
       parameters:
         - name: problemId
@@ -801,6 +1026,7 @@ paths:
     put:
       tags:
         - Admin
+      description: Update an existing problem
       operationId: Admin_PutProblem
       parameters:
         - name: problemId
@@ -830,6 +1056,7 @@ paths:
     delete:
       tags:
         - Admin
+      description: Delete a problem
       operationId: Admin_DeleteProblem
       parameters:
         - name: problemId
@@ -854,6 +1081,7 @@ paths:
     post:
       tags:
         - Admin
+      description: Publish a problem to make it visible
       operationId: Admin_PublishProblem
       parameters:
         - name: problemId
@@ -884,6 +1112,7 @@ paths:
     get:
       tags:
         - Admin
+      description: Get a list of submissions
       operationId: Admin_GetSubmissions
       parameters:
         - name: problemId
@@ -925,6 +1154,7 @@ paths:
     get:
       tags:
         - Admin
+      description: Get a single submission's details
       operationId: Admin_GetSingleSubmission
       parameters:
         - name: submissionUuid
@@ -949,6 +1179,7 @@ paths:
     post:
       tags:
         - Admin
+      description: Rejudge a submission
       operationId: Admin_RejudgeSubmission
       parameters:
         - name: submissionUuid
@@ -979,6 +1210,7 @@ paths:
     get:
       tags:
         - Admin
+      description: Get a list of users
       operationId: Admin_GetUsers
       parameters:
         - name: page
@@ -1008,6 +1240,7 @@ paths:
     put:
       tags:
         - Admin
+      description: Update user information
       operationId: Admin_UpdateUserInfo
       parameters:
         - name: userId
@@ -1037,6 +1270,7 @@ paths:
     delete:
       tags:
         - Admin
+      description: Delete a user
       operationId: Admin_DeleteUser
       parameters:
         - name: userId
@@ -1057,10 +1291,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
+  '/admin/users/{userId}/password':
+    put:
+      tags:
+        - Admin
+      operationId: Admin_UpdateUserPassword
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserPasswordRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUserPasswordReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
   '/admin/{contestId}/ranks':
     get:
       tags:
         - Admin
+      description: Get contest rankings
       operationId: Admin_GetRanks
       parameters:
         - name: contestId
@@ -1278,7 +1543,7 @@ components:
       type: object
       properties:
         metadata:
-          $ref: '#/components/schemas/ProblemMetadata'
+          $ref: '#/components/schemas/ProblemMetadata1'
         creator:
           type: string
         description:
@@ -1433,6 +1698,18 @@ components:
           type: string
         email:
           type: string
+    AddContestUserReply:
+      type: object
+      properties:
+        isJoined:
+          type: boolean
+    AddContestUserRequest:
+      type: object
+      properties:
+        contestId:
+          type: string
+        userId:
+          type: string
     DeleteAnnouncementReply:
       type: object
       properties:
@@ -1453,29 +1730,51 @@ components:
       properties:
         isDeleted:
           type: boolean
+    DownloadLogsRequest:
+      type: object
+      properties:
+        filenames:
+          type: array
+          items:
+            type: string
+    GetContestCompetitorsReply:
+      type: object
+      properties:
+        competitors:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserInfo'
     GetContestStatisticsReply:
       type: object
       properties:
         statisticsJson:
           type: string
           description: TODO
-    GetLogsReply:
+    GetContestUsersReply:
       type: object
       properties:
-        logs:
+        users:
           type: array
           items:
-            $ref: '#/components/schemas/GetLogsReply_LogEntry'
-    GetLogsReply_LogEntry:
+            $ref: '#/components/schemas/UserInfo'
+    GetProblemsReply1:
       type: object
       properties:
-        id:
+        problems:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemMetadata1'
+    GetSingleContestReply1:
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/ContestMetadata'
+        description:
           type: string
-        message:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
+        problemIds:
+          type: array
+          items:
+            type: string
     GetSubmissionsReply1:
       type: object
       properties:
@@ -1490,6 +1789,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UserInfo'
+    ListLogFilesReply:
+      type: object
+      properties:
+        filenames:
+          type: array
+          items:
+            type: string
+        total:
+          type: integer
+          format: int32
     PostAnnouncementReply:
       type: object
       properties:
@@ -1540,9 +1849,24 @@ components:
       type: object
       properties:
         metadata:
-          $ref: '#/components/schemas/ProblemMetadata'
+          $ref: '#/components/schemas/ProblemMetadata1'
         creator:
           type: string
+        description:
+          type: string
+    ProblemMetadata1:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        timeLimitMs:
+          type: integer
+          format: int32
+        memoryLimitMb:
+          type: integer
+          format: int32
         description:
           type: string
     PublishProblemReply:
@@ -1569,6 +1893,20 @@ components:
           type: string
         content:
           type: string
+    PutContestCompetitorsReply:
+      type: object
+      properties:
+        isUpdated:
+          type: boolean
+    PutContestCompetitorsRequest:
+      type: object
+      properties:
+        contestId:
+          type: string
+        userIds:
+          type: array
+          items:
+            type: string
     PutContestReply:
       type: object
       properties:
@@ -1589,6 +1927,15 @@ components:
         endTime:
           type: string
           format: date-time
+        problems:
+          $ref: '#/components/schemas/PutContestRequest_ProblemList'
+    PutContestRequest_ProblemList:
+      type: object
+      properties:
+        problemIds:
+          type: array
+          items:
+            type: string
     PutProblemReply:
       type: object
       properties:
@@ -1600,9 +1947,19 @@ components:
         problemId:
           type: string
         metadata:
-          $ref: '#/components/schemas/ProblemMetadata'
+          $ref: '#/components/schemas/ProblemMetadata1'
         description:
           type: string
+    QueryLogContentReply:
+      type: object
+      properties:
+        lines:
+          type: array
+          items:
+            type: string
+        total:
+          type: integer
+          format: int32
     RejudgeSubmissionReply:
       type: object
       properties:
@@ -1613,6 +1970,11 @@ components:
       properties:
         submissionUuid:
           type: string
+    RemoveContestUserReply:
+      type: object
+      properties:
+        isJoined:
+          type: boolean
     UpdateUserInfoRequest1:
       type: object
       properties:
@@ -1621,6 +1983,18 @@ components:
         username:
           type: string
         email:
+          type: string
+    UpdateUserPasswordReply:
+      type: object
+      properties:
+        isUpdated:
+          type: boolean
+    UpdateUserPasswordRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        password:
           type: string
     UserInfo:
       type: object

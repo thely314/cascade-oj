@@ -1950,103 +1950,6 @@ func (x *UpdateUserInfoReply) GetIsUpdated() bool {
 	return false
 }
 
-// Used for registering gateway clients
-type RegisterRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Endpoint      string                 `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	ApiKey        string                 `protobuf:"bytes,2,opt,name=api_key,json=apiKey,proto3" json:"api_key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RegisterRequest) Reset() {
-	*x = RegisterRequest{}
-	mi := &file_user_v1_user_proto_msgTypes[36]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RegisterRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterRequest) ProtoMessage() {}
-
-func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[36]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
-func (*RegisterRequest) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{36}
-}
-
-func (x *RegisterRequest) GetEndpoint() string {
-	if x != nil {
-		return x.Endpoint
-	}
-	return ""
-}
-
-func (x *RegisterRequest) GetApiKey() string {
-	if x != nil {
-		return x.ApiKey
-	}
-	return ""
-}
-
-type RegisterReply struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RegisterReply) Reset() {
-	*x = RegisterReply{}
-	mi := &file_user_v1_user_proto_msgTypes[37]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RegisterReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterReply) ProtoMessage() {}
-
-func (x *RegisterReply) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[37]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterReply.ProtoReflect.Descriptor instead.
-func (*RegisterReply) Descriptor() ([]byte, []int) {
-	return file_user_v1_user_proto_rawDescGZIP(), []int{37}
-}
-
-func (x *RegisterReply) GetToken() string {
-	if x != nil {
-		return x.Token
-	}
-	return ""
-}
-
 type GetSubmissionsReply_SubmissionResult struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	SubmissionUuid string                 `protobuf:"bytes,1,opt,name=submission_uuid,json=submissionUuid,proto3" json:"submission_uuid,omitempty"` // Submission UUID
@@ -2062,7 +1965,7 @@ type GetSubmissionsReply_SubmissionResult struct {
 
 func (x *GetSubmissionsReply_SubmissionResult) Reset() {
 	*x = GetSubmissionsReply_SubmissionResult{}
-	mi := &file_user_v1_user_proto_msgTypes[38]
+	mi := &file_user_v1_user_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2074,7 +1977,7 @@ func (x *GetSubmissionsReply_SubmissionResult) String() string {
 func (*GetSubmissionsReply_SubmissionResult) ProtoMessage() {}
 
 func (x *GetSubmissionsReply_SubmissionResult) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[38]
+	mi := &file_user_v1_user_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2148,7 +2051,7 @@ type GetSingleSubmissionReply_CaseResults struct {
 
 func (x *GetSingleSubmissionReply_CaseResults) Reset() {
 	*x = GetSingleSubmissionReply_CaseResults{}
-	mi := &file_user_v1_user_proto_msgTypes[39]
+	mi := &file_user_v1_user_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2160,7 +2063,7 @@ func (x *GetSingleSubmissionReply_CaseResults) String() string {
 func (*GetSingleSubmissionReply_CaseResults) ProtoMessage() {}
 
 func (x *GetSingleSubmissionReply_CaseResults) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[39]
+	mi := &file_user_v1_user_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2195,7 +2098,7 @@ type GetRanksReply_RankItem struct {
 
 func (x *GetRanksReply_RankItem) Reset() {
 	*x = GetRanksReply_RankItem{}
-	mi := &file_user_v1_user_proto_msgTypes[40]
+	mi := &file_user_v1_user_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2207,7 +2110,7 @@ func (x *GetRanksReply_RankItem) String() string {
 func (*GetRanksReply_RankItem) ProtoMessage() {}
 
 func (x *GetRanksReply_RankItem) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[40]
+	mi := &file_user_v1_user_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2263,7 +2166,7 @@ type GetAnnouncementsReply_Announcement struct {
 
 func (x *GetAnnouncementsReply_Announcement) Reset() {
 	*x = GetAnnouncementsReply_Announcement{}
-	mi := &file_user_v1_user_proto_msgTypes[41]
+	mi := &file_user_v1_user_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2275,7 +2178,7 @@ func (x *GetAnnouncementsReply_Announcement) String() string {
 func (*GetAnnouncementsReply_Announcement) ProtoMessage() {}
 
 func (x *GetAnnouncementsReply_Announcement) ProtoReflect() protoreflect.Message {
-	mi := &file_user_v1_user_proto_msgTypes[41]
+	mi := &file_user_v1_user_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2474,15 +2377,10 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"\x05email\x18\x02 \x01(\tR\x05email\"4\n" +
 	"\x13UpdateUserInfoReply\x12\x1d\n" +
 	"\n" +
-	"is_updated\x18\x01 \x01(\bR\tisUpdated\"F\n" +
-	"\x0fRegisterRequest\x12\x1a\n" +
-	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12\x17\n" +
-	"\aapi_key\x18\x02 \x01(\tR\x06apiKey\"%\n" +
-	"\rRegisterReply\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token*A\n" +
+	"is_updated\x18\x01 \x01(\bR\tisUpdated*A\n" +
 	"\vErrorReason\x12\x15\n" +
 	"\vUSER_BANNED\x10\x00\x1a\x04\xa8E\x91\x03\x12\x15\n" +
-	"\vCONTEST_END\x10\x01\x1a\x04\xa8E\x91\x03\x1a\x04\xa0E\xf4\x032\xeb\x11\n" +
+	"\vCONTEST_END\x10\x01\x1a\x04\xa8E\x91\x03\x1a\x04\xa0E\xf4\x032\x93\x11\n" +
 	"\x04User\x12u\n" +
 	"\vGetContests\x12'.api.cascade.user.v1.GetContestsRequest\x1a%.api.cascade.user.v1.GetContestsReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/user/contests\x12\x91\x01\n" +
 	"\x10GetSingleContest\x12,.api.cascade.user.v1.GetSingleContestRequest\x1a*.api.cascade.user.v1.GetSingleContestReply\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/user/contests/{contest_id}\x12\x8a\x01\n" +
@@ -2499,8 +2397,7 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"\bGetRanks\x12$.api.cascade.user.v1.GetRanksRequest\x1a\".api.cascade.user.v1.GetRanksReply\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/user/{contest_id}/ranks\x12\x89\x01\n" +
 	"\x10GetAnnouncements\x12,.api.cascade.user.v1.GetAnnouncementsRequest\x1a*.api.cascade.user.v1.GetAnnouncementsReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/user/announcements\x12r\n" +
 	"\vGetUserInfo\x12'.api.cascade.user.v1.GetUserInfoRequest\x1a%.api.cascade.user.v1.GetUserInfoReply\"\x13\x82\xd3\xe4\x93\x02\r\x12\v/user/users\x12~\n" +
-	"\x0eUpdateUserInfo\x12*.api.cascade.user.v1.UpdateUserInfoRequest\x1a(.api.cascade.user.v1.UpdateUserInfoReply\"\x16\x82\xd3\xe4\x93\x02\x10:\x01*\x1a\v/user/users\x12V\n" +
-	"\bRegister\x12$.api.cascade.user.v1.RegisterRequest\x1a\".api.cascade.user.v1.RegisterReply\"\x00B\xb6\x01\n" +
+	"\x0eUpdateUserInfo\x12*.api.cascade.user.v1.UpdateUserInfoRequest\x1a(.api.cascade.user.v1.UpdateUserInfoReply\"\x16\x82\xd3\xe4\x93\x02\x10:\x01*\x1a\v/user/usersB\xb6\x01\n" +
 	"\x17com.api.cascade.user.v1B\tUserProtoP\x01Z!cascade-oj/api/cascade/user/v1;v1\xa2\x02\x03ACU\xaa\x02\x13Api.Cascade.User.V1\xca\x02\x13Api\\Cascade\\User\\V1\xe2\x02\x1fApi\\Cascade\\User\\V1\\GPBMetadata\xea\x02\x16Api::Cascade::User::V1b\x06proto3"
 
 var (
@@ -2516,7 +2413,7 @@ func file_user_v1_user_proto_rawDescGZIP() []byte {
 }
 
 var file_user_v1_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
+var file_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
 var file_user_v1_user_proto_goTypes = []any{
 	(ErrorReason)(0),                             // 0: api.cascade.user.v1.ErrorReason
 	(*ContestMetadata)(nil),                      // 1: api.cascade.user.v1.ContestMetadata
@@ -2555,28 +2452,26 @@ var file_user_v1_user_proto_goTypes = []any{
 	(*GetUserInfoReply)(nil),                     // 34: api.cascade.user.v1.GetUserInfoReply
 	(*UpdateUserInfoRequest)(nil),                // 35: api.cascade.user.v1.UpdateUserInfoRequest
 	(*UpdateUserInfoReply)(nil),                  // 36: api.cascade.user.v1.UpdateUserInfoReply
-	(*RegisterRequest)(nil),                      // 37: api.cascade.user.v1.RegisterRequest
-	(*RegisterReply)(nil),                        // 38: api.cascade.user.v1.RegisterReply
-	(*GetSubmissionsReply_SubmissionResult)(nil), // 39: api.cascade.user.v1.GetSubmissionsReply.SubmissionResult
-	(*GetSingleSubmissionReply_CaseResults)(nil), // 40: api.cascade.user.v1.GetSingleSubmissionReply.CaseResults
-	(*GetRanksReply_RankItem)(nil),               // 41: api.cascade.user.v1.GetRanksReply.RankItem
-	(*GetAnnouncementsReply_Announcement)(nil),   // 42: api.cascade.user.v1.GetAnnouncementsReply.Announcement
-	(*timestamppb.Timestamp)(nil),                // 43: google.protobuf.Timestamp
+	(*GetSubmissionsReply_SubmissionResult)(nil), // 37: api.cascade.user.v1.GetSubmissionsReply.SubmissionResult
+	(*GetSingleSubmissionReply_CaseResults)(nil), // 38: api.cascade.user.v1.GetSingleSubmissionReply.CaseResults
+	(*GetRanksReply_RankItem)(nil),               // 39: api.cascade.user.v1.GetRanksReply.RankItem
+	(*GetAnnouncementsReply_Announcement)(nil),   // 40: api.cascade.user.v1.GetAnnouncementsReply.Announcement
+	(*timestamppb.Timestamp)(nil),                // 41: google.protobuf.Timestamp
 }
 var file_user_v1_user_proto_depIdxs = []int32{
-	43, // 0: api.cascade.user.v1.ContestMetadata.start_time:type_name -> google.protobuf.Timestamp
-	43, // 1: api.cascade.user.v1.ContestMetadata.end_time:type_name -> google.protobuf.Timestamp
+	41, // 0: api.cascade.user.v1.ContestMetadata.start_time:type_name -> google.protobuf.Timestamp
+	41, // 1: api.cascade.user.v1.ContestMetadata.end_time:type_name -> google.protobuf.Timestamp
 	1,  // 2: api.cascade.user.v1.GetContestsReply.contests:type_name -> api.cascade.user.v1.ContestMetadata
 	1,  // 3: api.cascade.user.v1.GetSingleContestReply.metadata:type_name -> api.cascade.user.v1.ContestMetadata
 	12, // 4: api.cascade.user.v1.GetProblemsReply.problems:type_name -> api.cascade.user.v1.ProblemMetadata
 	12, // 5: api.cascade.user.v1.GetSingleProblemReply.metadata:type_name -> api.cascade.user.v1.ProblemMetadata
-	43, // 6: api.cascade.user.v1.SubmissionMetadata.submit_time:type_name -> google.protobuf.Timestamp
-	39, // 7: api.cascade.user.v1.GetSubmissionsReply.submissions:type_name -> api.cascade.user.v1.GetSubmissionsReply.SubmissionResult
+	41, // 6: api.cascade.user.v1.SubmissionMetadata.submit_time:type_name -> google.protobuf.Timestamp
+	37, // 7: api.cascade.user.v1.GetSubmissionsReply.submissions:type_name -> api.cascade.user.v1.GetSubmissionsReply.SubmissionResult
 	23, // 8: api.cascade.user.v1.GetSingleSubmissionReply.metadata:type_name -> api.cascade.user.v1.SubmissionMetadata
-	40, // 9: api.cascade.user.v1.GetSingleSubmissionReply.case_results:type_name -> api.cascade.user.v1.GetSingleSubmissionReply.CaseResults
-	41, // 10: api.cascade.user.v1.GetRanksReply.ranks:type_name -> api.cascade.user.v1.GetRanksReply.RankItem
-	42, // 11: api.cascade.user.v1.GetAnnouncementsReply.announcements:type_name -> api.cascade.user.v1.GetAnnouncementsReply.Announcement
-	43, // 12: api.cascade.user.v1.GetSubmissionsReply.SubmissionResult.submit_time:type_name -> google.protobuf.Timestamp
+	38, // 9: api.cascade.user.v1.GetSingleSubmissionReply.case_results:type_name -> api.cascade.user.v1.GetSingleSubmissionReply.CaseResults
+	39, // 10: api.cascade.user.v1.GetRanksReply.ranks:type_name -> api.cascade.user.v1.GetRanksReply.RankItem
+	40, // 11: api.cascade.user.v1.GetAnnouncementsReply.announcements:type_name -> api.cascade.user.v1.GetAnnouncementsReply.Announcement
+	41, // 12: api.cascade.user.v1.GetSubmissionsReply.SubmissionResult.submit_time:type_name -> google.protobuf.Timestamp
 	26, // 13: api.cascade.user.v1.GetSingleSubmissionReply.CaseResults.cases:type_name -> api.cascade.user.v1.CaseMetadata
 	2,  // 14: api.cascade.user.v1.User.GetContests:input_type -> api.cascade.user.v1.GetContestsRequest
 	4,  // 15: api.cascade.user.v1.User.GetSingleContest:input_type -> api.cascade.user.v1.GetSingleContestRequest
@@ -2594,26 +2489,24 @@ var file_user_v1_user_proto_depIdxs = []int32{
 	31, // 27: api.cascade.user.v1.User.GetAnnouncements:input_type -> api.cascade.user.v1.GetAnnouncementsRequest
 	33, // 28: api.cascade.user.v1.User.GetUserInfo:input_type -> api.cascade.user.v1.GetUserInfoRequest
 	35, // 29: api.cascade.user.v1.User.UpdateUserInfo:input_type -> api.cascade.user.v1.UpdateUserInfoRequest
-	37, // 30: api.cascade.user.v1.User.Register:input_type -> api.cascade.user.v1.RegisterRequest
-	3,  // 31: api.cascade.user.v1.User.GetContests:output_type -> api.cascade.user.v1.GetContestsReply
-	5,  // 32: api.cascade.user.v1.User.GetSingleContest:output_type -> api.cascade.user.v1.GetSingleContestReply
-	7,  // 33: api.cascade.user.v1.User.JoinContest:output_type -> api.cascade.user.v1.JoinContestReply
-	9,  // 34: api.cascade.user.v1.User.QuitContest:output_type -> api.cascade.user.v1.QuitContestReply
-	11, // 35: api.cascade.user.v1.User.GetJoinStatus:output_type -> api.cascade.user.v1.GetJoinStatusReply
-	14, // 36: api.cascade.user.v1.User.GetProblems:output_type -> api.cascade.user.v1.GetProblemsReply
-	16, // 37: api.cascade.user.v1.User.GetSingleProblem:output_type -> api.cascade.user.v1.GetSingleProblemReply
-	18, // 38: api.cascade.user.v1.User.PostSelfTest:output_type -> api.cascade.user.v1.SelfTestReply
-	20, // 39: api.cascade.user.v1.User.GetSelfTestResult:output_type -> api.cascade.user.v1.GetSelfTestResultReply
-	22, // 40: api.cascade.user.v1.User.PostSubmission:output_type -> api.cascade.user.v1.PostSubmissionReply
-	25, // 41: api.cascade.user.v1.User.GetSubmissions:output_type -> api.cascade.user.v1.GetSubmissionsReply
-	28, // 42: api.cascade.user.v1.User.GetSingleSubmission:output_type -> api.cascade.user.v1.GetSingleSubmissionReply
-	30, // 43: api.cascade.user.v1.User.GetRanks:output_type -> api.cascade.user.v1.GetRanksReply
-	32, // 44: api.cascade.user.v1.User.GetAnnouncements:output_type -> api.cascade.user.v1.GetAnnouncementsReply
-	34, // 45: api.cascade.user.v1.User.GetUserInfo:output_type -> api.cascade.user.v1.GetUserInfoReply
-	36, // 46: api.cascade.user.v1.User.UpdateUserInfo:output_type -> api.cascade.user.v1.UpdateUserInfoReply
-	38, // 47: api.cascade.user.v1.User.Register:output_type -> api.cascade.user.v1.RegisterReply
-	31, // [31:48] is the sub-list for method output_type
-	14, // [14:31] is the sub-list for method input_type
+	3,  // 30: api.cascade.user.v1.User.GetContests:output_type -> api.cascade.user.v1.GetContestsReply
+	5,  // 31: api.cascade.user.v1.User.GetSingleContest:output_type -> api.cascade.user.v1.GetSingleContestReply
+	7,  // 32: api.cascade.user.v1.User.JoinContest:output_type -> api.cascade.user.v1.JoinContestReply
+	9,  // 33: api.cascade.user.v1.User.QuitContest:output_type -> api.cascade.user.v1.QuitContestReply
+	11, // 34: api.cascade.user.v1.User.GetJoinStatus:output_type -> api.cascade.user.v1.GetJoinStatusReply
+	14, // 35: api.cascade.user.v1.User.GetProblems:output_type -> api.cascade.user.v1.GetProblemsReply
+	16, // 36: api.cascade.user.v1.User.GetSingleProblem:output_type -> api.cascade.user.v1.GetSingleProblemReply
+	18, // 37: api.cascade.user.v1.User.PostSelfTest:output_type -> api.cascade.user.v1.SelfTestReply
+	20, // 38: api.cascade.user.v1.User.GetSelfTestResult:output_type -> api.cascade.user.v1.GetSelfTestResultReply
+	22, // 39: api.cascade.user.v1.User.PostSubmission:output_type -> api.cascade.user.v1.PostSubmissionReply
+	25, // 40: api.cascade.user.v1.User.GetSubmissions:output_type -> api.cascade.user.v1.GetSubmissionsReply
+	28, // 41: api.cascade.user.v1.User.GetSingleSubmission:output_type -> api.cascade.user.v1.GetSingleSubmissionReply
+	30, // 42: api.cascade.user.v1.User.GetRanks:output_type -> api.cascade.user.v1.GetRanksReply
+	32, // 43: api.cascade.user.v1.User.GetAnnouncements:output_type -> api.cascade.user.v1.GetAnnouncementsReply
+	34, // 44: api.cascade.user.v1.User.GetUserInfo:output_type -> api.cascade.user.v1.GetUserInfoReply
+	36, // 45: api.cascade.user.v1.User.UpdateUserInfo:output_type -> api.cascade.user.v1.UpdateUserInfoReply
+	30, // [30:46] is the sub-list for method output_type
+	14, // [14:30] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name
 	14, // [14:14] is the sub-list for extension extendee
 	0,  // [0:14] is the sub-list for field type_name
@@ -2630,7 +2523,7 @@ func file_user_v1_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_v1_user_proto_rawDesc), len(file_user_v1_user_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   42,
+			NumMessages:   40,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -1,9 +1,10 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
-GATEWAYDIR:=app/gateway
+# GATEWAYDIR:=app/gateway
 SERVICESDIR:=app/services
 SUBDIRS:=public user judge admin
-SUBPROJECTS:=$(addprefix $(SERVICESDIR)/,$(SUBDIRS)) $(GATEWAYDIR)
+# SUBPROJECTS:=$(addprefix $(SERVICESDIR)/,$(SUBDIRS)) $(GATEWAYDIR)
+SUBPROJECTS:=$(addprefix $(SERVICESDIR)/,$(SUBDIRS))
 export VERSION:="0.1.0"
 
 # ifeq ($(GOHOSTOS), windows)
