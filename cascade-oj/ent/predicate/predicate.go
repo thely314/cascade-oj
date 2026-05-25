@@ -36,6 +36,9 @@ type ProblemSetManager func(*sql.Selector)
 // ProblemSet_Includes is the predicate function for problemset_includes builders.
 type ProblemSet_Includes func(*sql.Selector)
 
+// ProblemTemplate is the predicate function for problemtemplate builders.
+type ProblemTemplate func(*sql.Selector)
+
 // SubmissionRecord is the predicate function for submissionrecord builders.
 type SubmissionRecord func(*sql.Selector)
 

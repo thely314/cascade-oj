@@ -88,3 +88,28 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		mq_channel: ch,
 	}, cleanup, nil
 }
+
+// WithTx 事务封装辅助函数
+func WithTx(ctx context.Context, client *ent.Client, fn func(tx *ent.Tx) (int64, error)) (int64, error) {
+	tx, err := client.Tx(ctx)
+	if err != nil {
+		return 0, err
+	}
+	defer func() {
+		if v := recover(); v != nil {
+			tx.Rollback()
+			panic(v)
+		}
+	}()
+	id, err := fn(tx)
+	if err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			return 0, rerr
+		}
+		return 0, err
+	}
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+	return id, nil
+}

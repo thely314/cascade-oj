@@ -128,6 +128,18 @@ func (f ProblemSet_IncludesFunc) Mutate(ctx context.Context, m ent.Mutation) (en
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProblemSetIncludesMutation", m)
 }
 
+// The ProblemTemplateFunc type is an adapter to allow the use of ordinary
+// function as ProblemTemplate mutator.
+type ProblemTemplateFunc func(context.Context, *ent.ProblemTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProblemTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ProblemTemplateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProblemTemplateMutation", m)
+}
+
 // The SubmissionRecordFunc type is an adapter to allow the use of ordinary
 // function as SubmissionRecord mutator.
 type SubmissionRecordFunc func(context.Context, *ent.SubmissionRecordMutation) (ent.Value, error)

@@ -21,6 +21,7 @@ import (
 	"cascade-oj/ent/problemset"
 	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/problemsetmanager"
+	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/systemlog"
 	"cascade-oj/ent/user"
@@ -56,6 +57,8 @@ type Client struct {
 	ProblemSetManager *ProblemSetManagerClient
 	// ProblemSet_Includes is the client for interacting with the ProblemSet_Includes builders.
 	ProblemSet_Includes *ProblemSetIncludesClient
+	// ProblemTemplate is the client for interacting with the ProblemTemplate builders.
+	ProblemTemplate *ProblemTemplateClient
 	// SubmissionRecord is the client for interacting with the SubmissionRecord builders.
 	SubmissionRecord *SubmissionRecordClient
 	// SystemLog is the client for interacting with the SystemLog builders.
@@ -83,6 +86,7 @@ func (c *Client) init() {
 	c.ProblemSet = NewProblemSetClient(c.config)
 	c.ProblemSetManager = NewProblemSetManagerClient(c.config)
 	c.ProblemSet_Includes = NewProblemSetIncludesClient(c.config)
+	c.ProblemTemplate = NewProblemTemplateClient(c.config)
 	c.SubmissionRecord = NewSubmissionRecordClient(c.config)
 	c.SystemLog = NewSystemLogClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -188,6 +192,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ProblemSet:          NewProblemSetClient(cfg),
 		ProblemSetManager:   NewProblemSetManagerClient(cfg),
 		ProblemSet_Includes: NewProblemSetIncludesClient(cfg),
+		ProblemTemplate:     NewProblemTemplateClient(cfg),
 		SubmissionRecord:    NewSubmissionRecordClient(cfg),
 		SystemLog:           NewSystemLogClient(cfg),
 		User:                NewUserClient(cfg),
@@ -220,6 +225,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ProblemSet:          NewProblemSetClient(cfg),
 		ProblemSetManager:   NewProblemSetManagerClient(cfg),
 		ProblemSet_Includes: NewProblemSetIncludesClient(cfg),
+		ProblemTemplate:     NewProblemTemplateClient(cfg),
 		SubmissionRecord:    NewSubmissionRecordClient(cfg),
 		SystemLog:           NewSystemLogClient(cfg),
 		User:                NewUserClient(cfg),
@@ -254,8 +260,8 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Announcement, c.CaseGroupResult, c.CaseResult, c.Competitor_List,
 		c.JudgeRecord, c.Problem, c.ProblemJudgeConfig, c.ProblemSet,
-		c.ProblemSetManager, c.ProblemSet_Includes, c.SubmissionRecord, c.SystemLog,
-		c.User,
+		c.ProblemSetManager, c.ProblemSet_Includes, c.ProblemTemplate,
+		c.SubmissionRecord, c.SystemLog, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -267,8 +273,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Announcement, c.CaseGroupResult, c.CaseResult, c.Competitor_List,
 		c.JudgeRecord, c.Problem, c.ProblemJudgeConfig, c.ProblemSet,
-		c.ProblemSetManager, c.ProblemSet_Includes, c.SubmissionRecord, c.SystemLog,
-		c.User,
+		c.ProblemSetManager, c.ProblemSet_Includes, c.ProblemTemplate,
+		c.SubmissionRecord, c.SystemLog, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -297,6 +303,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ProblemSetManager.mutate(ctx, m)
 	case *ProblemSetIncludesMutation:
 		return c.ProblemSet_Includes.mutate(ctx, m)
+	case *ProblemTemplateMutation:
+		return c.ProblemTemplate.mutate(ctx, m)
 	case *SubmissionRecordMutation:
 		return c.SubmissionRecord.mutate(ctx, m)
 	case *SystemLogMutation:
@@ -1321,6 +1329,22 @@ func (c *ProblemClient) QueryProblemSetIncludes(_m *Problem) *ProblemSetIncludes
 	return query
 }
 
+// QueryTemplates queries the templates edge of a Problem.
+func (c *ProblemClient) QueryTemplates(_m *Problem) *ProblemTemplateQuery {
+	query := (&ProblemTemplateClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(problem.Table, problem.FieldID, id),
+			sqlgraph.To(problemtemplate.Table, problemtemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, problem.TemplatesTable, problem.TemplatesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ProblemClient) Hooks() []Hook {
 	return c.hooks.Problem
@@ -2022,6 +2046,155 @@ func (c *ProblemSetIncludesClient) mutate(ctx context.Context, m *ProblemSetIncl
 	}
 }
 
+// ProblemTemplateClient is a client for the ProblemTemplate schema.
+type ProblemTemplateClient struct {
+	config
+}
+
+// NewProblemTemplateClient returns a client for the ProblemTemplate from the given config.
+func NewProblemTemplateClient(c config) *ProblemTemplateClient {
+	return &ProblemTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `problemtemplate.Hooks(f(g(h())))`.
+func (c *ProblemTemplateClient) Use(hooks ...Hook) {
+	c.hooks.ProblemTemplate = append(c.hooks.ProblemTemplate, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `problemtemplate.Intercept(f(g(h())))`.
+func (c *ProblemTemplateClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProblemTemplate = append(c.inters.ProblemTemplate, interceptors...)
+}
+
+// Create returns a builder for creating a ProblemTemplate entity.
+func (c *ProblemTemplateClient) Create() *ProblemTemplateCreate {
+	mutation := newProblemTemplateMutation(c.config, OpCreate)
+	return &ProblemTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProblemTemplate entities.
+func (c *ProblemTemplateClient) CreateBulk(builders ...*ProblemTemplateCreate) *ProblemTemplateCreateBulk {
+	return &ProblemTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProblemTemplateClient) MapCreateBulk(slice any, setFunc func(*ProblemTemplateCreate, int)) *ProblemTemplateCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProblemTemplateCreateBulk{err: fmt.Errorf("calling to ProblemTemplateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProblemTemplateCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProblemTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProblemTemplate.
+func (c *ProblemTemplateClient) Update() *ProblemTemplateUpdate {
+	mutation := newProblemTemplateMutation(c.config, OpUpdate)
+	return &ProblemTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProblemTemplateClient) UpdateOne(_m *ProblemTemplate) *ProblemTemplateUpdateOne {
+	mutation := newProblemTemplateMutation(c.config, OpUpdateOne, withProblemTemplate(_m))
+	return &ProblemTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProblemTemplateClient) UpdateOneID(id int) *ProblemTemplateUpdateOne {
+	mutation := newProblemTemplateMutation(c.config, OpUpdateOne, withProblemTemplateID(id))
+	return &ProblemTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProblemTemplate.
+func (c *ProblemTemplateClient) Delete() *ProblemTemplateDelete {
+	mutation := newProblemTemplateMutation(c.config, OpDelete)
+	return &ProblemTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProblemTemplateClient) DeleteOne(_m *ProblemTemplate) *ProblemTemplateDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProblemTemplateClient) DeleteOneID(id int) *ProblemTemplateDeleteOne {
+	builder := c.Delete().Where(problemtemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProblemTemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for ProblemTemplate.
+func (c *ProblemTemplateClient) Query() *ProblemTemplateQuery {
+	return &ProblemTemplateQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProblemTemplate},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProblemTemplate entity by its id.
+func (c *ProblemTemplateClient) Get(ctx context.Context, id int) (*ProblemTemplate, error) {
+	return c.Query().Where(problemtemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProblemTemplateClient) GetX(ctx context.Context, id int) *ProblemTemplate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProblem queries the problem edge of a ProblemTemplate.
+func (c *ProblemTemplateClient) QueryProblem(_m *ProblemTemplate) *ProblemQuery {
+	query := (&ProblemClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(problemtemplate.Table, problemtemplate.FieldID, id),
+			sqlgraph.To(problem.Table, problem.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, problemtemplate.ProblemTable, problemtemplate.ProblemColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProblemTemplateClient) Hooks() []Hook {
+	return c.hooks.ProblemTemplate
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProblemTemplateClient) Interceptors() []Interceptor {
+	return c.inters.ProblemTemplate
+}
+
+func (c *ProblemTemplateClient) mutate(ctx context.Context, m *ProblemTemplateMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProblemTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProblemTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProblemTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProblemTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ProblemTemplate mutation op: %q", m.Op())
+	}
+}
+
 // SubmissionRecordClient is a client for the SubmissionRecord schema.
 type SubmissionRecordClient struct {
 	config
@@ -2570,11 +2743,13 @@ type (
 	hooks struct {
 		Announcement, CaseGroupResult, CaseResult, Competitor_List, JudgeRecord,
 		Problem, ProblemJudgeConfig, ProblemSet, ProblemSetManager,
-		ProblemSet_Includes, SubmissionRecord, SystemLog, User []ent.Hook
+		ProblemSet_Includes, ProblemTemplate, SubmissionRecord, SystemLog,
+		User []ent.Hook
 	}
 	inters struct {
 		Announcement, CaseGroupResult, CaseResult, Competitor_List, JudgeRecord,
 		Problem, ProblemJudgeConfig, ProblemSet, ProblemSetManager,
-		ProblemSet_Includes, SubmissionRecord, SystemLog, User []ent.Interceptor
+		ProblemSet_Includes, ProblemTemplate, SubmissionRecord, SystemLog,
+		User []ent.Interceptor
 	}
 )

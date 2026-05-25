@@ -8,6 +8,7 @@ import (
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemjudgeconfig"
 	"cascade-oj/ent/problemset_includes"
+	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/user"
 	"context"
@@ -33,6 +34,7 @@ type ProblemQuery struct {
 	withJudgeRecords       *JudgeRecordQuery
 	withSubmissions        *SubmissionRecordQuery
 	withProblemSetIncludes *ProblemSetIncludesQuery
+	withTemplates          *ProblemTemplateQuery
 	withFKs                bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -173,6 +175,28 @@ func (_q *ProblemQuery) QueryProblemSetIncludes() *ProblemSetIncludesQuery {
 			sqlgraph.From(problem.Table, problem.FieldID, selector),
 			sqlgraph.To(problemset_includes.Table, problemset_includes.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, problem.ProblemSetIncludesTable, problem.ProblemSetIncludesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTemplates chains the current query on the "templates" edge.
+func (_q *ProblemQuery) QueryTemplates() *ProblemTemplateQuery {
+	query := (&ProblemTemplateClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(problem.Table, problem.FieldID, selector),
+			sqlgraph.To(problemtemplate.Table, problemtemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, problem.TemplatesTable, problem.TemplatesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -377,6 +401,7 @@ func (_q *ProblemQuery) Clone() *ProblemQuery {
 		withJudgeRecords:       _q.withJudgeRecords.Clone(),
 		withSubmissions:        _q.withSubmissions.Clone(),
 		withProblemSetIncludes: _q.withProblemSetIncludes.Clone(),
+		withTemplates:          _q.withTemplates.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -435,6 +460,17 @@ func (_q *ProblemQuery) WithProblemSetIncludes(opts ...func(*ProblemSetIncludesQ
 		opt(query)
 	}
 	_q.withProblemSetIncludes = query
+	return _q
+}
+
+// WithTemplates tells the query-builder to eager-load the nodes that are connected to
+// the "templates" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProblemQuery) WithTemplates(opts ...func(*ProblemTemplateQuery)) *ProblemQuery {
+	query := (&ProblemTemplateClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withTemplates = query
 	return _q
 }
 
@@ -517,12 +553,13 @@ func (_q *ProblemQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prob
 		nodes       = []*Problem{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			_q.withCreator != nil,
 			_q.withJudgeConfig != nil,
 			_q.withJudgeRecords != nil,
 			_q.withSubmissions != nil,
 			_q.withProblemSetIncludes != nil,
+			_q.withTemplates != nil,
 		}
 	)
 	if withFKs {
@@ -578,6 +615,13 @@ func (_q *ProblemQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prob
 			func(n *Problem, e *ProblemSet_Includes) {
 				n.Edges.ProblemSetIncludes = append(n.Edges.ProblemSetIncludes, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withTemplates; query != nil {
+		if err := _q.loadTemplates(ctx, query, nodes,
+			func(n *Problem) { n.Edges.Templates = []*ProblemTemplate{} },
+			func(n *Problem, e *ProblemTemplate) { n.Edges.Templates = append(n.Edges.Templates, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -727,6 +771,37 @@ func (_q *ProblemQuery) loadProblemSetIncludes(ctx context.Context, query *Probl
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "problem_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *ProblemQuery) loadTemplates(ctx context.Context, query *ProblemTemplateQuery, nodes []*Problem, init func(*Problem), assign func(*Problem, *ProblemTemplate)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int64]*Problem)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.ProblemTemplate(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(problem.TemplatesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.problem_templates
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "problem_templates" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "problem_templates" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

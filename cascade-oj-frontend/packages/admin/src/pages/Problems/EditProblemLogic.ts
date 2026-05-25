@@ -15,7 +15,7 @@ export function useEditProblem() {
         memoryLimitMb: 256,
         description: '',
         codeTemplate: '',
-        status: ProblemStatus.PROBLEM_STATUS_DISABLED
+        status: ProblemStatus.PROBLEM_STATUS_UNAVAILABLE
     })
 
     // 1. 初始化：从后端拉取现有数据
@@ -27,7 +27,7 @@ export function useEditProblem() {
             form.memoryLimitMb = res.metadata.memoryLimitMb
             form.description = res.description
             form.codeTemplate = res.codeTemplate
-            form.status = res.metadata.Status
+            form.status = res.metadata.status
         } catch (err) {
             console.error('Failed to fetch detail', err)
             alert('题目不存在或加载失败')
@@ -39,12 +39,13 @@ export function useEditProblem() {
         loading.value = true
         try {
             await putProblem(problemId, {
+                problemId: problemId, 
                 metadata: {
                     id: problemId,
                     title: form.title,
                     timeLimitMs: form.timeLimitMs,
                     memoryLimitMb: form.memoryLimitMb,
-                    Status: form.status
+                    status: form.status
                 },
                 description: form.description,
                 codeTemplate: form.codeTemplate

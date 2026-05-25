@@ -88,11 +88,11 @@ export async function deleteProblem(problemId: number): Promise<DeleteProblemRep
 }
 
 export async function publishProblem(problemId: number): Promise<PublishProblemReply> {
-    return service.post(`/admin/problems/${problemId}/publish`);
+    return service.post(`/admin/problems/${problemId}/publish`, {});
 }
 
 export async function disableProblem(problemId: number): Promise<DisableProblemReply> {
-    return service.post(`/admin/problems/${problemId}/disable`);
+    return service.post(`/admin/problems/${problemId}/disable`, {});
 }
 
 // Submissions

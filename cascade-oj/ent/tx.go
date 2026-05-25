@@ -32,6 +32,8 @@ type Tx struct {
 	ProblemSetManager *ProblemSetManagerClient
 	// ProblemSet_Includes is the client for interacting with the ProblemSet_Includes builders.
 	ProblemSet_Includes *ProblemSetIncludesClient
+	// ProblemTemplate is the client for interacting with the ProblemTemplate builders.
+	ProblemTemplate *ProblemTemplateClient
 	// SubmissionRecord is the client for interacting with the SubmissionRecord builders.
 	SubmissionRecord *SubmissionRecordClient
 	// SystemLog is the client for interacting with the SystemLog builders.
@@ -179,6 +181,7 @@ func (tx *Tx) init() {
 	tx.ProblemSet = NewProblemSetClient(tx.config)
 	tx.ProblemSetManager = NewProblemSetManagerClient(tx.config)
 	tx.ProblemSet_Includes = NewProblemSetIncludesClient(tx.config)
+	tx.ProblemTemplate = NewProblemTemplateClient(tx.config)
 	tx.SubmissionRecord = NewSubmissionRecordClient(tx.config)
 	tx.SystemLog = NewSystemLogClient(tx.config)
 	tx.User = NewUserClient(tx.config)

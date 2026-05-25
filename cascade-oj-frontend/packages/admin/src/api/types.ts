@@ -7,10 +7,10 @@ export interface ContestMetadata {
 }
 
 export enum ProblemStatus {
-    PROBLEM_STATUS_UNSPECIFIED = 0,
-    PROBLEM_STATUS_DISABLED = 1,
-    PROBLEM_STATUS_ENABLED = 2,
-    PROBLEM_STATUS_DELETED = 3,
+    PROBLEM_STATUS_UNAVAILABLE = "PROBLEM_STATUS_UNAVAILABLE",
+    PROBLEM_STATUS_AVAILABLE = "PROBLEM_STATUS_AVAILABLE",
+    PROBLEM_STATUS_USING = "PROBLEM_STATUS_USING",
+    PROBLEM_STATUS_DELETED = "PROBLEM_STATUS_DELETED",
 }
 
 export interface ProblemMetadata {
@@ -18,7 +18,7 @@ export interface ProblemMetadata {
     title: string;
     timeLimitMs: number;
     memoryLimitMb: number;
-    Status: ProblemStatus;
+    status: ProblemStatus;
 }
 
 export interface SubmissionMetadata {
@@ -118,7 +118,6 @@ export interface GetSingleProblemReply {
 
 export interface PostProblemRequest {
     metadata: ProblemMetadata;
-    creator: string;
     description: string;
     codeTemplate: string; 
 }
@@ -128,6 +127,7 @@ export interface PostProblemReply {
 }
 
 export interface PutProblemRequest {
+    problemId: number;
     metadata: ProblemMetadata;
     description: string;
     codeTemplate: string; 

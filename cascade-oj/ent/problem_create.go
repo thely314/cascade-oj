@@ -7,6 +7,7 @@ import (
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemjudgeconfig"
 	"cascade-oj/ent/problemset_includes"
+	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/user"
 	"context"
@@ -88,20 +89,6 @@ func (_c *ProblemCreate) SetNillableUseStatus(v *problem.UseStatus) *ProblemCrea
 	return _c
 }
 
-// SetCodeTemplate sets the "code_template" field.
-func (_c *ProblemCreate) SetCodeTemplate(v string) *ProblemCreate {
-	_c.mutation.SetCodeTemplate(v)
-	return _c
-}
-
-// SetNillableCodeTemplate sets the "code_template" field if the given value is not nil.
-func (_c *ProblemCreate) SetNillableCodeTemplate(v *string) *ProblemCreate {
-	if v != nil {
-		_c.SetCodeTemplate(*v)
-	}
-	return _c
-}
-
 // SetID sets the "id" field.
 func (_c *ProblemCreate) SetID(v int64) *ProblemCreate {
 	_c.mutation.SetID(v)
@@ -163,6 +150,21 @@ func (_c *ProblemCreate) AddProblemSetIncludes(v ...*ProblemSet_Includes) *Probl
 	return _c.AddProblemSetIncludeIDs(ids...)
 }
 
+// AddTemplateIDs adds the "templates" edge to the ProblemTemplate entity by IDs.
+func (_c *ProblemCreate) AddTemplateIDs(ids ...int) *ProblemCreate {
+	_c.mutation.AddTemplateIDs(ids...)
+	return _c
+}
+
+// AddTemplates adds the "templates" edges to the ProblemTemplate entity.
+func (_c *ProblemCreate) AddTemplates(v ...*ProblemTemplate) *ProblemCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddTemplateIDs(ids...)
+}
+
 // Mutation returns the ProblemMutation object of the builder.
 func (_c *ProblemCreate) Mutation() *ProblemMutation {
 	return _c.mutation
@@ -205,10 +207,6 @@ func (_c *ProblemCreate) defaults() {
 	if _, ok := _c.mutation.UseStatus(); !ok {
 		v := problem.DefaultUseStatus
 		_c.mutation.SetUseStatus(v)
-	}
-	if _, ok := _c.mutation.CodeTemplate(); !ok {
-		v := problem.DefaultCodeTemplate
-		_c.mutation.SetCodeTemplate(v)
 	}
 }
 
@@ -267,9 +265,6 @@ func (_c *ProblemCreate) check() error {
 		if err := problem.UseStatusValidator(v); err != nil {
 			return &ValidationError{Name: "use_status", err: fmt.Errorf(`ent: validator failed for field "Problem.use_status": %w`, err)}
 		}
-	}
-	if _, ok := _c.mutation.CodeTemplate(); !ok {
-		return &ValidationError{Name: "code_template", err: errors.New(`ent: missing required field "Problem.code_template"`)}
 	}
 	if v, ok := _c.mutation.ID(); ok {
 		if err := problem.IDValidator(v); err != nil {
@@ -337,10 +332,6 @@ func (_c *ProblemCreate) createSpec() (*Problem, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UseStatus(); ok {
 		_spec.SetField(problem.FieldUseStatus, field.TypeEnum, value)
 		_node.UseStatus = value
-	}
-	if value, ok := _c.mutation.CodeTemplate(); ok {
-		_spec.SetField(problem.FieldCodeTemplate, field.TypeString, value)
-		_node.CodeTemplate = value
 	}
 	if nodes := _c.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -417,6 +408,22 @@ func (_c *ProblemCreate) createSpec() (*Problem, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.TemplatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problem.TemplatesTable,
+			Columns: []string{problem.TemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemtemplate.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

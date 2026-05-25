@@ -269,10 +269,10 @@ message DeleteContestReply {
 
 // Problem status
 enum ProblemStatus {
-    PROBLEM_STATUS_UNSPECIFIED = 0; // Default placeholder
-    PROBLEM_STATUS_DISABLED = 1;    // Disabled status (default for new problems)
-    PROBLEM_STATUS_ENABLED = 2;     // Enabled status (visible to contestants)
-    PROBLEM_STATUS_DELETED = 3;     // Deleted status (logical deletion)
+    PROBLEM_STATUS_UNAVAILABLE = 0;
+    PROBLEM_STATUS_AVAILABLE = 1;
+    PROBLEM_STATUS_USING = 2;
+    PROBLEM_STATUS_DELETED = 3;
 }
 message ProblemMetadata {
     int64 id = 1; // Problem ID
@@ -300,7 +300,6 @@ message GetSingleProblemReply {
 
 message PostProblemRequest {
     ProblemMetadata metadata = 1; // Problem Metadata
-    string creator = 2; // Problem Creator
     string description = 3; // Problem Description
     string code_template = 4; 
 }

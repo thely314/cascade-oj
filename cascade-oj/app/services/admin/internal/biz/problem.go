@@ -10,11 +10,16 @@ import (
 type ProblemStatus int32
 
 const (
-	ProblemStatusUnspecified ProblemStatus = 0
-	ProblemStatusDisabled    ProblemStatus = 1
-	ProblemStatusEnabled     ProblemStatus = 2
+	ProblemStatusUnavailable ProblemStatus = 0
+	ProblemStatusAvailable   ProblemStatus = 1
+	ProblemStatusUsing       ProblemStatus = 2
 	ProblemStatusDeleted     ProblemStatus = 3
 )
+
+type ProblemTemplate struct {
+	Name    string
+	Content string
+}
 
 type Problem struct {
 	ID            int64
@@ -22,7 +27,7 @@ type Problem struct {
 	TimeLimitMs   int32
 	MemoryLimitKB int32
 	Status        ProblemStatus
-	CodeTemplate  string
+	Templates     []*ProblemTemplate
 }
 
 type DetailedProblem struct {
@@ -37,7 +42,7 @@ type ProblemCreateInfo struct {
 	MemoryLimitKB   int32
 	CreatorUsername string
 	Description     string
-	CodeTemplate    string
+	Templates       []*ProblemTemplate
 }
 
 type ProblemEditInfo struct {
@@ -46,14 +51,14 @@ type ProblemEditInfo struct {
 	TimeLimitMs   int32
 	MemoryLimitKB int32
 	Description   string
-	CodeTemplate  string
+	Templates     []*ProblemTemplate
 }
 
 type ProblemRepo interface {
 	GetProblems(ctx context.Context, contestID int64) ([]*Problem, error)
 	GetSingleProblem(ctx context.Context, problemID int64) (*DetailedProblem, error)
-	PostProblem(ctx context.Context, problemCreateInfo ProblemCreateInfo) (int64, error)
-	PutProblem(ctx context.Context, problemEditInfo ProblemEditInfo) (bool, error)
+	PostProblem(ctx context.Context, creatorID int64, info ProblemCreateInfo) (int64, error) // 改传 creatorID
+	PutProblem(ctx context.Context, info ProblemEditInfo) (bool, error)
 	DeleteProblem(ctx context.Context, problemID int64) (bool, error)
 	PublishProblem(ctx context.Context, problemID int64) (bool, error)
 	DisableProblem(ctx context.Context, problemID int64) (bool, error)
@@ -79,8 +84,8 @@ func (problemUsecase *ProblemUsecase) GetSingleProblem(ctx context.Context, prob
 	return problemUsecase.problemRepo.GetSingleProblem(ctx, problemID)
 }
 
-func (problemUsecase *ProblemUsecase) PostProblem(ctx context.Context, problemCreateInfo ProblemCreateInfo) (int64, error) {
-	return problemUsecase.problemRepo.PostProblem(ctx, problemCreateInfo)
+func (problemUsecase *ProblemUsecase) PostProblem(ctx context.Context, creatorID int64, problemCreateInfo ProblemCreateInfo) (int64, error) {
+	return problemUsecase.problemRepo.PostProblem(ctx, creatorID, problemCreateInfo)
 }
 
 func (problemUsecase *ProblemUsecase) PutProblem(ctx context.Context, problemEditInfo ProblemEditInfo) (bool, error) {
@@ -89,8 +94,8 @@ func (problemUsecase *ProblemUsecase) PutProblem(ctx context.Context, problemEdi
 		return false, err
 	}
 
-	if detailedProblem.Problem.Status != ProblemStatusDisabled {
-		return false, errors.New("business rule error: only disabled problems can be edited")
+	if detailedProblem.Problem.Status == ProblemStatusUsing || detailedProblem.Problem.Status == ProblemStatusDeleted {
+		return false, errors.New("business rule error: problems in use or deleted cannot be edited")
 	}
 
 	return problemUsecase.problemRepo.PutProblem(ctx, problemEditInfo)

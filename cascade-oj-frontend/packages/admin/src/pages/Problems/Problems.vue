@@ -18,7 +18,6 @@ const fetchProblems = async () => {
   error.value = ''
   try {
     const response = await getProblems()
-    console.log('后端原始返回：', response)
     problems.value = response.problems || []
   } catch (err) {
     error.value = 'Failed to load problems'
@@ -91,15 +90,16 @@ onMounted(() => {
             <div style="display: flex; align-items: center; gap: 8px;">
               <p class="list-title">{{p.title }}</p>
               
-              <span v-if="(p.Status) === ProblemStatus.PROBLEM_STATUS_ENABLED" class="badge badge-live">已启用</span>
-              <span v-else-if="(p.Status) === ProblemStatus.PROBLEM_STATUS_DISABLED" class="badge badge-muted">已禁用</span>
+              <span v-if="p.status === ProblemStatus.PROBLEM_STATUS_AVAILABLE" class="badge badge-live">已启用</span>
+              <span v-else-if="p.status === ProblemStatus.PROBLEM_STATUS_USING" class="badge badge-live" style="filter: hue-rotate(50deg); background: rgba(0, 123, 255, 0.16); color: #007bff; border-color: rgba(0, 123, 255, 0.35);">使用中</span>
+              <span v-else class="badge badge-muted">已禁用</span>
             </div>
             
             <p class="list-meta">ID {{p.id }} · {{p.timeLimitMs }}ms · {{p.memoryLimitMb }}MB</p>
           </div>
 
           <div class="list-right">
-            <template v-if="(p.Status) === ProblemStatus.PROBLEM_STATUS_ENABLED">
+            <template v-if="p.status === ProblemStatus.PROBLEM_STATUS_AVAILABLE">
               <button class="ghost" @click="handleDisable(p.id)">禁用</button>
             </template>
             

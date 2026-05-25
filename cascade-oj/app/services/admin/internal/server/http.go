@@ -17,9 +17,7 @@ func NewHTTPServer(c *conf.Server, admin *service.AdminService, logger log.Logge
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
-			/*auth.Auth(c.JwtSecret, auth.RoleAdmin, nil),*/
-			// 为了最快通关，我们先直接在这里“写死”钥匙（仅限本地联调）：
-			auth.Auth("cascade", auth.RoleAdmin, nil),
+			auth.Auth(c.JwtSecret, auth.RoleAdmin, nil),
 		),
 		http.Filter(handlers.CORS(
 			handlers.AllowedOrigins([]string{"*"}),

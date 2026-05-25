@@ -17,32 +17,30 @@ export function useNewProblem() {
 
     // 保存题目
     const handleSave = async () => {
-        if (!form.title) return alert('Please enter a title')
-        
-        loading.value = true
-        try {
-            await postProblem({
-                metadata: {
-                    id: 0, 
-                    title: form.title,
-                    timeLimitMs: form.timeLimitMs,
-                    memoryLimitMb: form.memoryLimitMb,
-                    Status: ProblemStatus.PROBLEM_STATUS_DISABLED 
-                },
-                creator: 'admin', // 暂时写死，实际应从当前用户信息获取
-                description: form.description, 
-                codeTemplate: form.codeTemplate
-            })
-            alert('Problem created successfully!')
-            router.push('/problems') // 跳回列表
-        } catch (err) {
-            console.error(err)
-            alert('Failed to create problem')
-        } finally {
-            loading.value = false
-        }
+    if (!form.title) return alert('Please enter a title')
+    
+    loading.value = true
+    try {
+        await postProblem({
+            metadata: {
+                id: 0,
+                title: form.title,
+                timeLimitMs: form.timeLimitMs,
+                memoryLimitMb: form.memoryLimitMb,
+                status: ProblemStatus.PROBLEM_STATUS_UNAVAILABLE 
+            },
+            description: form.description,
+            codeTemplate: form.codeTemplate
+        })
+        alert('Problem created successfully!')
+        router.push('/problems')
+    } catch (err) {
+        console.error(err)
+        alert('Failed to create problem')
+    } finally {
+        loading.value = false
     }
-
+}
     return {
         form,
         loading,

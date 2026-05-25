@@ -37,10 +37,8 @@ func (Problem) Fields() []ent.Field {
 			"mysql": "INT",
 		}).Comment("kilobytes"),
 		field.Enum("use_status").
-			Values("available", "using", "disabled", "deleted").
-			Default("disabled"),
-		field.Text("code_template").
-			Default(""),
+			Values("unavailable", "available", "using", "deleted").
+			Default("unavailable"),
 	}
 }
 
@@ -68,5 +66,6 @@ func (Problem) Edges() []ent.Edge {
 			Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("problem_set_includes", ProblemSet_Includes.Type).
 			Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("templates", ProblemTemplate.Type),
 	}
 }

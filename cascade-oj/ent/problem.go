@@ -34,8 +34,6 @@ type Problem struct {
 	MemoryLimitKB int `json:"memory_limit_kb,omitempty"`
 	// UseStatus holds the value of the "use_status" field.
 	UseStatus problem.UseStatus `json:"use_status,omitempty"`
-	// CodeTemplate holds the value of the "code_template" field.
-	CodeTemplate string `json:"code_template,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProblemQuery when eager-loading is set.
 	Edges                     ProblemEdges `json:"edges"`
@@ -55,9 +53,11 @@ type ProblemEdges struct {
 	Submissions []*SubmissionRecord `json:"submissions,omitempty"`
 	// ProblemSetIncludes holds the value of the problem_set_includes edge.
 	ProblemSetIncludes []*ProblemSet_Includes `json:"problem_set_includes,omitempty"`
+	// Templates holds the value of the templates edge.
+	Templates []*ProblemTemplate `json:"templates,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // CreatorOrErr returns the Creator value or an error if the edge
@@ -109,6 +109,15 @@ func (e ProblemEdges) ProblemSetIncludesOrErr() ([]*ProblemSet_Includes, error) 
 	return nil, &NotLoadedError{edge: "problem_set_includes"}
 }
 
+// TemplatesOrErr returns the Templates value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProblemEdges) TemplatesOrErr() ([]*ProblemTemplate, error) {
+	if e.loadedTypes[5] {
+		return e.Templates, nil
+	}
+	return nil, &NotLoadedError{edge: "templates"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Problem) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -116,7 +125,7 @@ func (*Problem) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case problem.FieldID, problem.FieldCreatorID, problem.FieldJudgeConfigID, problem.FieldCaseVersion, problem.FieldTimeLimitMs, problem.FieldMemoryLimitKB:
 			values[i] = new(sql.NullInt64)
-		case problem.FieldTitle, problem.FieldDescription, problem.FieldUseStatus, problem.FieldCodeTemplate:
+		case problem.FieldTitle, problem.FieldDescription, problem.FieldUseStatus:
 			values[i] = new(sql.NullString)
 		case problem.ForeignKeys[0]: // case_group_result_problem
 			values[i] = new(sql.NullInt64)
@@ -189,12 +198,6 @@ func (_m *Problem) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UseStatus = problem.UseStatus(value.String)
 			}
-		case problem.FieldCodeTemplate:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field code_template", values[i])
-			} else if value.Valid {
-				_m.CodeTemplate = value.String
-			}
 		case problem.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field case_group_result_problem", value)
@@ -238,6 +241,11 @@ func (_m *Problem) QuerySubmissions() *SubmissionRecordQuery {
 // QueryProblemSetIncludes queries the "problem_set_includes" edge of the Problem entity.
 func (_m *Problem) QueryProblemSetIncludes() *ProblemSetIncludesQuery {
 	return NewProblemClient(_m.config).QueryProblemSetIncludes(_m)
+}
+
+// QueryTemplates queries the "templates" edge of the Problem entity.
+func (_m *Problem) QueryTemplates() *ProblemTemplateQuery {
+	return NewProblemClient(_m.config).QueryTemplates(_m)
 }
 
 // Update returns a builder for updating this Problem.
@@ -286,9 +294,6 @@ func (_m *Problem) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("use_status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.UseStatus))
-	builder.WriteString(", ")
-	builder.WriteString("code_template=")
-	builder.WriteString(_m.CodeTemplate)
 	builder.WriteByte(')')
 	return builder.String()
 }

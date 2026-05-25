@@ -2,6 +2,12 @@
 import { useEditProblem } from './EditProblemLogic'
 import CodeEditor from '@/components/CodeEditor/CodeEditor.vue' 
 import { marked } from 'marked' 
+import DOMPurify from 'dompurify'
+
+const renderMarkdown = (text: string) => {
+  const rawHtml = marked.parse(text) as string 
+  return DOMPurify.sanitize(rawHtml)
+}
 
 const { form, loading, handleUpdate, router } = useEditProblem()
 </script>
@@ -29,11 +35,11 @@ const { form, loading, handleUpdate, router } = useEditProblem()
         </div>
         <div class="input-group">
           <label>TIME LIMIT (MS)</label>
-          <input type="number" v-model="form.timeLimitMs" />
+          <input type="number" v-model.number="form.timeLimitMs" />
         </div>
         <div class="input-group">
           <label>MEMORY LIMIT (MB)</label>
-          <input type="number" v-model="form.memoryLimitMb" />
+          <input type="number" v-model.number="form.memoryLimitMb" />
         </div>
       </div>
 
@@ -44,7 +50,7 @@ const { form, loading, handleUpdate, router } = useEditProblem()
           <div class="panel-header">DESCRIPTION (MARKDOWN)</div>
           <textarea v-model="form.description" style="height: 50%; border: none;"></textarea>
           <div class="panel-header" style="border-top: 1px solid #333">PREVIEW</div>
-          <div class="preview-area" v-html="marked(form.description)"></div>
+          <div class="preview-area" v-html="renderMarkdown(form.description)"></div>
         </div>
 
         <!-- 右侧：代码模板 (Monaco) -->

@@ -3,19 +3,23 @@ package service
 import (
 	pb "cascade-oj/api/cascade/admin/v1"
 	"cascade-oj/app/services/admin/internal/biz"
+	"cascade-oj/pkg/middleware/auth"
 	"context"
+	"errors"
 )
 
 func mapBizStatusToPbStatus(status biz.ProblemStatus) pb.ProblemStatus {
 	switch status {
-	case biz.ProblemStatusDisabled:
-		return pb.ProblemStatus_PROBLEM_STATUS_DISABLED
-	case biz.ProblemStatusEnabled:
-		return pb.ProblemStatus_PROBLEM_STATUS_ENABLED
+	case biz.ProblemStatusUnavailable:
+		return pb.ProblemStatus_PROBLEM_STATUS_UNAVAILABLE
+	case biz.ProblemStatusAvailable:
+		return pb.ProblemStatus_PROBLEM_STATUS_AVAILABLE
+	case biz.ProblemStatusUsing:
+		return pb.ProblemStatus_PROBLEM_STATUS_USING
 	case biz.ProblemStatusDeleted:
 		return pb.ProblemStatus_PROBLEM_STATUS_DELETED
 	default:
-		return pb.ProblemStatus_PROBLEM_STATUS_UNSPECIFIED
+		return pb.ProblemStatus_PROBLEM_STATUS_UNAVAILABLE
 	}
 }
 
@@ -49,6 +53,12 @@ func (adminService *AdminService) GetSingleProblem(ctx context.Context, request 
 	if err != nil {
 		return nil, err
 	}
+
+	var templateStr string
+	if len(problem.Problem.Templates) > 0 {
+		templateStr = problem.Problem.Templates[0].Content
+	}
+
 	return &pb.GetSingleProblemReply{
 		Metadata: &pb.ProblemMetadata{
 			Id:            problem.Problem.ID,
@@ -59,20 +69,30 @@ func (adminService *AdminService) GetSingleProblem(ctx context.Context, request 
 		},
 		Creator:      problem.CreatorUsername,
 		Description:  problem.Description,
-		CodeTemplate: problem.Problem.CodeTemplate,
+		CodeTemplate: templateStr,
 	}, nil
 }
 
 func (adminService *AdminService) PostProblem(ctx context.Context, request *pb.PostProblemRequest) (*pb.PostProblemReply, error) {
-	problemID, err := adminService.problemUseCase.PostProblem(ctx,
+	claims, ok := auth.FromContext(ctx)
+	if !ok {
+		return nil, errors.New("unauthorized: metadata not found in context")
+	}
+
+	problemID, err := adminService.problemUseCase.PostProblem(ctx, claims.UserID,
 		biz.ProblemCreateInfo{
-			Title:           request.Metadata.Title,
-			TimeLimitMs:     request.Metadata.TimeLimitMs,
-			MemoryLimitKB:   request.Metadata.MemoryLimitMb * 1024,
-			CreatorUsername: request.Creator,
-			Description:     request.Description,
-			CodeTemplate:    request.CodeTemplate,
+			Title:         request.Metadata.Title,
+			TimeLimitMs:   request.Metadata.TimeLimitMs,
+			MemoryLimitKB: request.Metadata.MemoryLimitMb * 1024,
+			Description:   request.Description,
+			Templates: []*biz.ProblemTemplate{
+				{
+					Name:    "main.cpp",
+					Content: request.CodeTemplate,
+				},
+			},
 		})
+
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +109,12 @@ func (adminService *AdminService) PutProblem(ctx context.Context, request *pb.Pu
 			TimeLimitMs:   request.Metadata.TimeLimitMs,
 			MemoryLimitKB: request.Metadata.MemoryLimitMb * 1024,
 			Description:   request.Description,
-			CodeTemplate:  request.CodeTemplate,
+			Templates: []*biz.ProblemTemplate{
+				{
+					Name:    "main.cpp",
+					Content: request.CodeTemplate,
+				},
+			},
 		})
 	if err != nil {
 		return nil, err

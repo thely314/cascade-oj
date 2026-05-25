@@ -89,11 +89,6 @@ func MemoryLimitKB(v int) predicate.Problem {
 	return predicate.Problem(sql.FieldEQ(FieldMemoryLimitKB, v))
 }
 
-// CodeTemplate applies equality check predicate on the "code_template" field. It's identical to CodeTemplateEQ.
-func CodeTemplate(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldCodeTemplate, v))
-}
-
 // CreatorIDEQ applies the EQ predicate on the "creator_id" field.
 func CreatorIDEQ(v int64) predicate.Problem {
 	return predicate.Problem(sql.FieldEQ(FieldCreatorID, v))
@@ -404,71 +399,6 @@ func UseStatusNotIn(vs ...UseStatus) predicate.Problem {
 	return predicate.Problem(sql.FieldNotIn(FieldUseStatus, vs...))
 }
 
-// CodeTemplateEQ applies the EQ predicate on the "code_template" field.
-func CodeTemplateEQ(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldEQ(FieldCodeTemplate, v))
-}
-
-// CodeTemplateNEQ applies the NEQ predicate on the "code_template" field.
-func CodeTemplateNEQ(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldNEQ(FieldCodeTemplate, v))
-}
-
-// CodeTemplateIn applies the In predicate on the "code_template" field.
-func CodeTemplateIn(vs ...string) predicate.Problem {
-	return predicate.Problem(sql.FieldIn(FieldCodeTemplate, vs...))
-}
-
-// CodeTemplateNotIn applies the NotIn predicate on the "code_template" field.
-func CodeTemplateNotIn(vs ...string) predicate.Problem {
-	return predicate.Problem(sql.FieldNotIn(FieldCodeTemplate, vs...))
-}
-
-// CodeTemplateGT applies the GT predicate on the "code_template" field.
-func CodeTemplateGT(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldGT(FieldCodeTemplate, v))
-}
-
-// CodeTemplateGTE applies the GTE predicate on the "code_template" field.
-func CodeTemplateGTE(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldGTE(FieldCodeTemplate, v))
-}
-
-// CodeTemplateLT applies the LT predicate on the "code_template" field.
-func CodeTemplateLT(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldLT(FieldCodeTemplate, v))
-}
-
-// CodeTemplateLTE applies the LTE predicate on the "code_template" field.
-func CodeTemplateLTE(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldLTE(FieldCodeTemplate, v))
-}
-
-// CodeTemplateContains applies the Contains predicate on the "code_template" field.
-func CodeTemplateContains(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldContains(FieldCodeTemplate, v))
-}
-
-// CodeTemplateHasPrefix applies the HasPrefix predicate on the "code_template" field.
-func CodeTemplateHasPrefix(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldHasPrefix(FieldCodeTemplate, v))
-}
-
-// CodeTemplateHasSuffix applies the HasSuffix predicate on the "code_template" field.
-func CodeTemplateHasSuffix(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldHasSuffix(FieldCodeTemplate, v))
-}
-
-// CodeTemplateEqualFold applies the EqualFold predicate on the "code_template" field.
-func CodeTemplateEqualFold(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldEqualFold(FieldCodeTemplate, v))
-}
-
-// CodeTemplateContainsFold applies the ContainsFold predicate on the "code_template" field.
-func CodeTemplateContainsFold(v string) predicate.Problem {
-	return predicate.Problem(sql.FieldContainsFold(FieldCodeTemplate, v))
-}
-
 // HasCreator applies the HasEdge predicate on the "creator" edge.
 func HasCreator() predicate.Problem {
 	return predicate.Problem(func(s *sql.Selector) {
@@ -576,6 +506,29 @@ func HasProblemSetIncludes() predicate.Problem {
 func HasProblemSetIncludesWith(preds ...predicate.ProblemSet_Includes) predicate.Problem {
 	return predicate.Problem(func(s *sql.Selector) {
 		step := newProblemSetIncludesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTemplates applies the HasEdge predicate on the "templates" edge.
+func HasTemplates() predicate.Problem {
+	return predicate.Problem(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TemplatesTable, TemplatesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTemplatesWith applies the HasEdge predicate on the "templates" edge with a given conditions (other predicates).
+func HasTemplatesWith(preds ...predicate.ProblemTemplate) predicate.Problem {
+	return predicate.Problem(func(s *sql.Selector) {
+		step := newTemplatesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

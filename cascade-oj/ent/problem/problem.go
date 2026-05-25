@@ -30,8 +30,6 @@ const (
 	FieldMemoryLimitKB = "memory_limit_kb"
 	// FieldUseStatus holds the string denoting the use_status field in the database.
 	FieldUseStatus = "use_status"
-	// FieldCodeTemplate holds the string denoting the code_template field in the database.
-	FieldCodeTemplate = "code_template"
 	// EdgeCreator holds the string denoting the creator edge name in mutations.
 	EdgeCreator = "creator"
 	// EdgeJudgeConfig holds the string denoting the judge_config edge name in mutations.
@@ -42,6 +40,8 @@ const (
 	EdgeSubmissions = "submissions"
 	// EdgeProblemSetIncludes holds the string denoting the problem_set_includes edge name in mutations.
 	EdgeProblemSetIncludes = "problem_set_includes"
+	// EdgeTemplates holds the string denoting the templates edge name in mutations.
+	EdgeTemplates = "templates"
 	// Table holds the table name of the problem in the database.
 	Table = "Problems"
 	// CreatorTable is the table that holds the creator relation/edge.
@@ -79,6 +79,13 @@ const (
 	ProblemSetIncludesInverseTable = "ProblemSet_Includes"
 	// ProblemSetIncludesColumn is the table column denoting the problem_set_includes relation/edge.
 	ProblemSetIncludesColumn = "problem_id"
+	// TemplatesTable is the table that holds the templates relation/edge.
+	TemplatesTable = "problem_templates"
+	// TemplatesInverseTable is the table name for the ProblemTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "problemtemplate" package.
+	TemplatesInverseTable = "problem_templates"
+	// TemplatesColumn is the table column denoting the templates relation/edge.
+	TemplatesColumn = "problem_templates"
 )
 
 // Columns holds all SQL columns for problem fields.
@@ -92,7 +99,6 @@ var Columns = []string{
 	FieldTimeLimitMs,
 	FieldMemoryLimitKB,
 	FieldUseStatus,
-	FieldCodeTemplate,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "Problems"
@@ -129,8 +135,6 @@ var (
 	TimeLimitMsValidator func(int) error
 	// MemoryLimitKBValidator is a validator for the "memory_limit_kb" field. It is called by the builders before save.
 	MemoryLimitKBValidator func(int) error
-	// DefaultCodeTemplate holds the default value on creation for the "code_template" field.
-	DefaultCodeTemplate string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(int64) error
 )
@@ -138,15 +142,15 @@ var (
 // UseStatus defines the type for the "use_status" enum field.
 type UseStatus string
 
-// UseStatusDisabled is the default value of the UseStatus enum.
-const DefaultUseStatus = UseStatusDisabled
+// UseStatusUnavailable is the default value of the UseStatus enum.
+const DefaultUseStatus = UseStatusUnavailable
 
 // UseStatus values.
 const (
-	UseStatusAvailable UseStatus = "available"
-	UseStatusUsing     UseStatus = "using"
-	UseStatusDisabled  UseStatus = "disabled"
-	UseStatusDeleted   UseStatus = "deleted"
+	UseStatusUnavailable UseStatus = "unavailable"
+	UseStatusAvailable   UseStatus = "available"
+	UseStatusUsing       UseStatus = "using"
+	UseStatusDeleted     UseStatus = "deleted"
 )
 
 func (us UseStatus) String() string {
@@ -156,7 +160,7 @@ func (us UseStatus) String() string {
 // UseStatusValidator is a validator for the "use_status" field enum values. It is called by the builders before save.
 func UseStatusValidator(us UseStatus) error {
 	switch us {
-	case UseStatusAvailable, UseStatusUsing, UseStatusDisabled, UseStatusDeleted:
+	case UseStatusUnavailable, UseStatusAvailable, UseStatusUsing, UseStatusDeleted:
 		return nil
 	default:
 		return fmt.Errorf("problem: invalid enum value for use_status field: %q", us)
@@ -209,11 +213,6 @@ func ByMemoryLimitKB(opts ...sql.OrderTermOption) OrderOption {
 // ByUseStatus orders the results by the use_status field.
 func ByUseStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUseStatus, opts...).ToFunc()
-}
-
-// ByCodeTemplate orders the results by the code_template field.
-func ByCodeTemplate(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCodeTemplate, opts...).ToFunc()
 }
 
 // ByCreatorField orders the results by creator field.
@@ -271,6 +270,20 @@ func ByProblemSetIncludes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 		sqlgraph.OrderByNeighborTerms(s, newProblemSetIncludesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByTemplatesCount orders the results by templates count.
+func ByTemplatesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTemplatesStep(), opts...)
+	}
+}
+
+// ByTemplates orders the results by templates terms.
+func ByTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTemplatesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newCreatorStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -304,5 +317,12 @@ func newProblemSetIncludesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProblemSetIncludesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetIncludesTable, ProblemSetIncludesColumn),
+	)
+}
+func newTemplatesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TemplatesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TemplatesTable, TemplatesColumn),
 	)
 }

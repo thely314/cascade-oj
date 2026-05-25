@@ -8,6 +8,7 @@ import (
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemjudgeconfig"
 	"cascade-oj/ent/problemset_includes"
+	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/user"
 	"context"
@@ -165,20 +166,6 @@ func (_u *ProblemUpdate) SetNillableUseStatus(v *problem.UseStatus) *ProblemUpda
 	return _u
 }
 
-// SetCodeTemplate sets the "code_template" field.
-func (_u *ProblemUpdate) SetCodeTemplate(v string) *ProblemUpdate {
-	_u.mutation.SetCodeTemplate(v)
-	return _u
-}
-
-// SetNillableCodeTemplate sets the "code_template" field if the given value is not nil.
-func (_u *ProblemUpdate) SetNillableCodeTemplate(v *string) *ProblemUpdate {
-	if v != nil {
-		_u.SetCodeTemplate(*v)
-	}
-	return _u
-}
-
 // SetCreator sets the "creator" edge to the User entity.
 func (_u *ProblemUpdate) SetCreator(v *User) *ProblemUpdate {
 	return _u.SetCreatorID(v.ID)
@@ -232,6 +219,21 @@ func (_u *ProblemUpdate) AddProblemSetIncludes(v ...*ProblemSet_Includes) *Probl
 		ids[i] = v[i].ID
 	}
 	return _u.AddProblemSetIncludeIDs(ids...)
+}
+
+// AddTemplateIDs adds the "templates" edge to the ProblemTemplate entity by IDs.
+func (_u *ProblemUpdate) AddTemplateIDs(ids ...int) *ProblemUpdate {
+	_u.mutation.AddTemplateIDs(ids...)
+	return _u
+}
+
+// AddTemplates adds the "templates" edges to the ProblemTemplate entity.
+func (_u *ProblemUpdate) AddTemplates(v ...*ProblemTemplate) *ProblemUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddTemplateIDs(ids...)
 }
 
 // Mutation returns the ProblemMutation object of the builder.
@@ -312,6 +314,27 @@ func (_u *ProblemUpdate) RemoveProblemSetIncludes(v ...*ProblemSet_Includes) *Pr
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveProblemSetIncludeIDs(ids...)
+}
+
+// ClearTemplates clears all "templates" edges to the ProblemTemplate entity.
+func (_u *ProblemUpdate) ClearTemplates() *ProblemUpdate {
+	_u.mutation.ClearTemplates()
+	return _u
+}
+
+// RemoveTemplateIDs removes the "templates" edge to ProblemTemplate entities by IDs.
+func (_u *ProblemUpdate) RemoveTemplateIDs(ids ...int) *ProblemUpdate {
+	_u.mutation.RemoveTemplateIDs(ids...)
+	return _u
+}
+
+// RemoveTemplates removes "templates" edges to ProblemTemplate entities.
+func (_u *ProblemUpdate) RemoveTemplates(v ...*ProblemTemplate) *ProblemUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveTemplateIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -420,9 +443,6 @@ func (_u *ProblemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UseStatus(); ok {
 		_spec.SetField(problem.FieldUseStatus, field.TypeEnum, value)
-	}
-	if value, ok := _u.mutation.CodeTemplate(); ok {
-		_spec.SetField(problem.FieldCodeTemplate, field.TypeString, value)
 	}
 	if _u.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -610,6 +630,51 @@ func (_u *ProblemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.TemplatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problem.TemplatesTable,
+			Columns: []string{problem.TemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemtemplate.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedTemplatesIDs(); len(nodes) > 0 && !_u.mutation.TemplatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problem.TemplatesTable,
+			Columns: []string{problem.TemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemtemplate.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TemplatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problem.TemplatesTable,
+			Columns: []string{problem.TemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemtemplate.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -770,20 +835,6 @@ func (_u *ProblemUpdateOne) SetNillableUseStatus(v *problem.UseStatus) *ProblemU
 	return _u
 }
 
-// SetCodeTemplate sets the "code_template" field.
-func (_u *ProblemUpdateOne) SetCodeTemplate(v string) *ProblemUpdateOne {
-	_u.mutation.SetCodeTemplate(v)
-	return _u
-}
-
-// SetNillableCodeTemplate sets the "code_template" field if the given value is not nil.
-func (_u *ProblemUpdateOne) SetNillableCodeTemplate(v *string) *ProblemUpdateOne {
-	if v != nil {
-		_u.SetCodeTemplate(*v)
-	}
-	return _u
-}
-
 // SetCreator sets the "creator" edge to the User entity.
 func (_u *ProblemUpdateOne) SetCreator(v *User) *ProblemUpdateOne {
 	return _u.SetCreatorID(v.ID)
@@ -837,6 +888,21 @@ func (_u *ProblemUpdateOne) AddProblemSetIncludes(v ...*ProblemSet_Includes) *Pr
 		ids[i] = v[i].ID
 	}
 	return _u.AddProblemSetIncludeIDs(ids...)
+}
+
+// AddTemplateIDs adds the "templates" edge to the ProblemTemplate entity by IDs.
+func (_u *ProblemUpdateOne) AddTemplateIDs(ids ...int) *ProblemUpdateOne {
+	_u.mutation.AddTemplateIDs(ids...)
+	return _u
+}
+
+// AddTemplates adds the "templates" edges to the ProblemTemplate entity.
+func (_u *ProblemUpdateOne) AddTemplates(v ...*ProblemTemplate) *ProblemUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddTemplateIDs(ids...)
 }
 
 // Mutation returns the ProblemMutation object of the builder.
@@ -917,6 +983,27 @@ func (_u *ProblemUpdateOne) RemoveProblemSetIncludes(v ...*ProblemSet_Includes) 
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveProblemSetIncludeIDs(ids...)
+}
+
+// ClearTemplates clears all "templates" edges to the ProblemTemplate entity.
+func (_u *ProblemUpdateOne) ClearTemplates() *ProblemUpdateOne {
+	_u.mutation.ClearTemplates()
+	return _u
+}
+
+// RemoveTemplateIDs removes the "templates" edge to ProblemTemplate entities by IDs.
+func (_u *ProblemUpdateOne) RemoveTemplateIDs(ids ...int) *ProblemUpdateOne {
+	_u.mutation.RemoveTemplateIDs(ids...)
+	return _u
+}
+
+// RemoveTemplates removes "templates" edges to ProblemTemplate entities.
+func (_u *ProblemUpdateOne) RemoveTemplates(v ...*ProblemTemplate) *ProblemUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveTemplateIDs(ids...)
 }
 
 // Where appends a list predicates to the ProblemUpdate builder.
@@ -1055,9 +1142,6 @@ func (_u *ProblemUpdateOne) sqlSave(ctx context.Context) (_node *Problem, err er
 	}
 	if value, ok := _u.mutation.UseStatus(); ok {
 		_spec.SetField(problem.FieldUseStatus, field.TypeEnum, value)
-	}
-	if value, ok := _u.mutation.CodeTemplate(); ok {
-		_spec.SetField(problem.FieldCodeTemplate, field.TypeString, value)
 	}
 	if _u.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1245,6 +1329,51 @@ func (_u *ProblemUpdateOne) sqlSave(ctx context.Context) (_node *Problem, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.TemplatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problem.TemplatesTable,
+			Columns: []string{problem.TemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemtemplate.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedTemplatesIDs(); len(nodes) > 0 && !_u.mutation.TemplatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problem.TemplatesTable,
+			Columns: []string{problem.TemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemtemplate.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TemplatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problem.TemplatesTable,
+			Columns: []string{problem.TemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemtemplate.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
