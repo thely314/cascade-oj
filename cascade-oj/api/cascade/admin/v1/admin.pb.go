@@ -280,8 +280,9 @@ func (x *GetSingleContestRequest) GetContestId() int64 {
 
 type GetSingleContestReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Metadata      *ContestMetadata       `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"`       // Contest Metadata
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"` // Contest Description
+	Metadata      *ContestMetadata       `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"`                               // Contest Metadata
+	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`                         // Contest Description
+	ProblemIds    []int64                `protobuf:"varint,3,rep,packed,name=problem_ids,json=problemIds,proto3" json:"problem_ids,omitempty"` // Problem IDs included in the contest
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -328,6 +329,13 @@ func (x *GetSingleContestReply) GetDescription() string {
 		return x.Description
 	}
 	return ""
+}
+
+func (x *GetSingleContestReply) GetProblemIds() []int64 {
+	if x != nil {
+		return x.ProblemIds
+	}
+	return nil
 }
 
 type PostContestRequest struct {
@@ -451,12 +459,13 @@ func (x *PostContestReply) GetContestId() int64 {
 }
 
 type PutContestRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
-	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`                           // Contest Title
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`               // Contest Description
-	StartTime     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`  // Contest Start Time
-	EndTime       *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`        // Contest End Time
+	state         protoimpl.MessageState         `protogen:"open.v1"`
+	ContestId     int64                          `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
+	Title         string                         `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`                           // Contest Title
+	Description   string                         `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`               // Contest Description
+	StartTime     *timestamppb.Timestamp         `protobuf:"bytes,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`  // Contest Start Time
+	EndTime       *timestamppb.Timestamp         `protobuf:"bytes,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`        // Contest End Time
+	Problems      *PutContestRequest_ProblemList `protobuf:"bytes,6,opt,name=problems,proto3" json:"problems,omitempty"`                     // Problems included in the contest
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -522,6 +531,13 @@ func (x *PutContestRequest) GetStartTime() *timestamppb.Timestamp {
 func (x *PutContestRequest) GetEndTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.EndTime
+	}
+	return nil
+}
+
+func (x *PutContestRequest) GetProblems() *PutContestRequest_ProblemList {
+	if x != nil {
+		return x.Problems
 	}
 	return nil
 }
@@ -658,20 +674,205 @@ func (x *DeleteContestReply) GetIsDeleted() bool {
 	return false
 }
 
+type GetContestCompetitorsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContestCompetitorsRequest) Reset() {
+	*x = GetContestCompetitorsRequest{}
+	mi := &file_admin_v1_admin_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContestCompetitorsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContestCompetitorsRequest) ProtoMessage() {}
+
+func (x *GetContestCompetitorsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContestCompetitorsRequest.ProtoReflect.Descriptor instead.
+func (*GetContestCompetitorsRequest) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetContestCompetitorsRequest) GetContestId() int64 {
+	if x != nil {
+		return x.ContestId
+	}
+	return 0
+}
+
+type GetContestCompetitorsReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Competitors   []*UserInfo            `protobuf:"bytes,1,rep,name=competitors,proto3" json:"competitors,omitempty"` // List of competitors in the contest
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContestCompetitorsReply) Reset() {
+	*x = GetContestCompetitorsReply{}
+	mi := &file_admin_v1_admin_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContestCompetitorsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContestCompetitorsReply) ProtoMessage() {}
+
+func (x *GetContestCompetitorsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContestCompetitorsReply.ProtoReflect.Descriptor instead.
+func (*GetContestCompetitorsReply) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetContestCompetitorsReply) GetCompetitors() []*UserInfo {
+	if x != nil {
+		return x.Competitors
+	}
+	return nil
+}
+
+type PutContestCompetitorsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"`  // Contest ID
+	UserIds       []int64                `protobuf:"varint,2,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"` // List of user IDs to set as competitors
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PutContestCompetitorsRequest) Reset() {
+	*x = PutContestCompetitorsRequest{}
+	mi := &file_admin_v1_admin_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PutContestCompetitorsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PutContestCompetitorsRequest) ProtoMessage() {}
+
+func (x *PutContestCompetitorsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PutContestCompetitorsRequest.ProtoReflect.Descriptor instead.
+func (*PutContestCompetitorsRequest) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *PutContestCompetitorsRequest) GetContestId() int64 {
+	if x != nil {
+		return x.ContestId
+	}
+	return 0
+}
+
+func (x *PutContestCompetitorsRequest) GetUserIds() []int64 {
+	if x != nil {
+		return x.UserIds
+	}
+	return nil
+}
+
+type PutContestCompetitorsReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	IsUpdated     bool                   `protobuf:"varint,1,opt,name=is_updated,json=isUpdated,proto3" json:"is_updated,omitempty"` // Whether the update was successful
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PutContestCompetitorsReply) Reset() {
+	*x = PutContestCompetitorsReply{}
+	mi := &file_admin_v1_admin_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PutContestCompetitorsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PutContestCompetitorsReply) ProtoMessage() {}
+
+func (x *PutContestCompetitorsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PutContestCompetitorsReply.ProtoReflect.Descriptor instead.
+func (*PutContestCompetitorsReply) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *PutContestCompetitorsReply) GetIsUpdated() bool {
+	if x != nil {
+		return x.IsUpdated
+	}
+	return false
+}
+
 type ProblemMetadata struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                 // Problem ID
-	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`                                            // Problem Title
-	TimeLimitMs   int32                  `protobuf:"varint,3,opt,name=time_limit_ms,json=timeLimitMs,proto3" json:"time_limit_ms,omitempty"`          // Time Limit in milliseconds
-	MemoryLimitMb int32                  `protobuf:"varint,4,opt,name=memory_limit_mb,json=memoryLimitMb,proto3" json:"memory_limit_mb,omitempty"`    // Memory Limit in megabytes
-	Status        ProblemStatus          `protobuf:"varint,5,opt,name=status,proto3,enum=api.cascade.admin.v1.ProblemStatus" json:"status,omitempty"` // Current status of the problem
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                              // Problem ID
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`                                         // Problem Title
+	TimeLimitMs   int32                  `protobuf:"varint,3,opt,name=time_limit_ms,json=timeLimitMs,proto3" json:"time_limit_ms,omitempty"`       // Time Limit in milliseconds
+	MemoryLimitMb int32                  `protobuf:"varint,4,opt,name=memory_limit_mb,json=memoryLimitMb,proto3" json:"memory_limit_mb,omitempty"` // Memory Limit in megabytes
+	Description   string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`                             // Problem Description
+	Status        ProblemStatus          `protobuf:"varint,6,opt,name=status,proto3,enum=api.cascade.admin.v1.ProblemStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ProblemMetadata) Reset() {
 	*x = ProblemMetadata{}
-	mi := &file_admin_v1_admin_proto_msgTypes[11]
+	mi := &file_admin_v1_admin_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -683,7 +884,7 @@ func (x *ProblemMetadata) String() string {
 func (*ProblemMetadata) ProtoMessage() {}
 
 func (x *ProblemMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[11]
+	mi := &file_admin_v1_admin_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -696,7 +897,7 @@ func (x *ProblemMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProblemMetadata.ProtoReflect.Descriptor instead.
 func (*ProblemMetadata) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{11}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ProblemMetadata) GetId() int64 {
@@ -727,6 +928,13 @@ func (x *ProblemMetadata) GetMemoryLimitMb() int32 {
 	return 0
 }
 
+func (x *ProblemMetadata) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
 func (x *ProblemMetadata) GetStatus() ProblemStatus {
 	if x != nil {
 		return x.Status
@@ -743,7 +951,7 @@ type GetProblemsRequest struct {
 
 func (x *GetProblemsRequest) Reset() {
 	*x = GetProblemsRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[12]
+	mi := &file_admin_v1_admin_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -755,7 +963,7 @@ func (x *GetProblemsRequest) String() string {
 func (*GetProblemsRequest) ProtoMessage() {}
 
 func (x *GetProblemsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[12]
+	mi := &file_admin_v1_admin_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -768,7 +976,7 @@ func (x *GetProblemsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProblemsRequest.ProtoReflect.Descriptor instead.
 func (*GetProblemsRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{12}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetProblemsRequest) GetContestId() int64 {
@@ -787,7 +995,7 @@ type GetProblemsReply struct {
 
 func (x *GetProblemsReply) Reset() {
 	*x = GetProblemsReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[13]
+	mi := &file_admin_v1_admin_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -799,7 +1007,7 @@ func (x *GetProblemsReply) String() string {
 func (*GetProblemsReply) ProtoMessage() {}
 
 func (x *GetProblemsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[13]
+	mi := &file_admin_v1_admin_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -812,7 +1020,7 @@ func (x *GetProblemsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProblemsReply.ProtoReflect.Descriptor instead.
 func (*GetProblemsReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{13}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetProblemsReply) GetProblems() []*ProblemMetadata {
@@ -831,7 +1039,7 @@ type GetSingleProblemRequest struct {
 
 func (x *GetSingleProblemRequest) Reset() {
 	*x = GetSingleProblemRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[14]
+	mi := &file_admin_v1_admin_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -843,7 +1051,7 @@ func (x *GetSingleProblemRequest) String() string {
 func (*GetSingleProblemRequest) ProtoMessage() {}
 
 func (x *GetSingleProblemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[14]
+	mi := &file_admin_v1_admin_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -856,7 +1064,7 @@ func (x *GetSingleProblemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleProblemRequest.ProtoReflect.Descriptor instead.
 func (*GetSingleProblemRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{14}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetSingleProblemRequest) GetProblemId() int64 {
@@ -878,7 +1086,7 @@ type GetSingleProblemReply struct {
 
 func (x *GetSingleProblemReply) Reset() {
 	*x = GetSingleProblemReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[15]
+	mi := &file_admin_v1_admin_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -890,7 +1098,7 @@ func (x *GetSingleProblemReply) String() string {
 func (*GetSingleProblemReply) ProtoMessage() {}
 
 func (x *GetSingleProblemReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[15]
+	mi := &file_admin_v1_admin_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -903,7 +1111,7 @@ func (x *GetSingleProblemReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleProblemReply.ProtoReflect.Descriptor instead.
 func (*GetSingleProblemReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{15}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetSingleProblemReply) GetMetadata() *ProblemMetadata {
@@ -945,7 +1153,7 @@ type PostProblemRequest struct {
 
 func (x *PostProblemRequest) Reset() {
 	*x = PostProblemRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[16]
+	mi := &file_admin_v1_admin_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -957,7 +1165,7 @@ func (x *PostProblemRequest) String() string {
 func (*PostProblemRequest) ProtoMessage() {}
 
 func (x *PostProblemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[16]
+	mi := &file_admin_v1_admin_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -970,7 +1178,7 @@ func (x *PostProblemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PostProblemRequest.ProtoReflect.Descriptor instead.
 func (*PostProblemRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{16}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *PostProblemRequest) GetMetadata() *ProblemMetadata {
@@ -1003,7 +1211,7 @@ type PostProblemReply struct {
 
 func (x *PostProblemReply) Reset() {
 	*x = PostProblemReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	mi := &file_admin_v1_admin_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1015,7 +1223,7 @@ func (x *PostProblemReply) String() string {
 func (*PostProblemReply) ProtoMessage() {}
 
 func (x *PostProblemReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	mi := &file_admin_v1_admin_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1028,7 +1236,7 @@ func (x *PostProblemReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PostProblemReply.ProtoReflect.Descriptor instead.
 func (*PostProblemReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{17}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *PostProblemReply) GetProblemId() int64 {
@@ -1050,7 +1258,7 @@ type PutProblemRequest struct {
 
 func (x *PutProblemRequest) Reset() {
 	*x = PutProblemRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	mi := &file_admin_v1_admin_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1062,7 +1270,7 @@ func (x *PutProblemRequest) String() string {
 func (*PutProblemRequest) ProtoMessage() {}
 
 func (x *PutProblemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	mi := &file_admin_v1_admin_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1075,7 +1283,7 @@ func (x *PutProblemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutProblemRequest.ProtoReflect.Descriptor instead.
 func (*PutProblemRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{18}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *PutProblemRequest) GetProblemId() int64 {
@@ -1115,7 +1323,7 @@ type PutProblemReply struct {
 
 func (x *PutProblemReply) Reset() {
 	*x = PutProblemReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	mi := &file_admin_v1_admin_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1127,7 +1335,7 @@ func (x *PutProblemReply) String() string {
 func (*PutProblemReply) ProtoMessage() {}
 
 func (x *PutProblemReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	mi := &file_admin_v1_admin_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1140,7 +1348,7 @@ func (x *PutProblemReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutProblemReply.ProtoReflect.Descriptor instead.
 func (*PutProblemReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{19}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *PutProblemReply) GetIsUpdated() bool {
@@ -1159,7 +1367,7 @@ type DeleteProblemRequest struct {
 
 func (x *DeleteProblemRequest) Reset() {
 	*x = DeleteProblemRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[20]
+	mi := &file_admin_v1_admin_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1171,7 +1379,7 @@ func (x *DeleteProblemRequest) String() string {
 func (*DeleteProblemRequest) ProtoMessage() {}
 
 func (x *DeleteProblemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[20]
+	mi := &file_admin_v1_admin_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1184,7 +1392,7 @@ func (x *DeleteProblemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProblemRequest.ProtoReflect.Descriptor instead.
 func (*DeleteProblemRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{20}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *DeleteProblemRequest) GetProblemId() int64 {
@@ -1203,7 +1411,7 @@ type DeleteProblemReply struct {
 
 func (x *DeleteProblemReply) Reset() {
 	*x = DeleteProblemReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[21]
+	mi := &file_admin_v1_admin_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1215,7 +1423,7 @@ func (x *DeleteProblemReply) String() string {
 func (*DeleteProblemReply) ProtoMessage() {}
 
 func (x *DeleteProblemReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[21]
+	mi := &file_admin_v1_admin_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1228,7 +1436,7 @@ func (x *DeleteProblemReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProblemReply.ProtoReflect.Descriptor instead.
 func (*DeleteProblemReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{21}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *DeleteProblemReply) GetIsDeleted() bool {
@@ -1247,7 +1455,7 @@ type PublishProblemRequest struct {
 
 func (x *PublishProblemRequest) Reset() {
 	*x = PublishProblemRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[22]
+	mi := &file_admin_v1_admin_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1259,7 +1467,7 @@ func (x *PublishProblemRequest) String() string {
 func (*PublishProblemRequest) ProtoMessage() {}
 
 func (x *PublishProblemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[22]
+	mi := &file_admin_v1_admin_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1272,7 +1480,7 @@ func (x *PublishProblemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishProblemRequest.ProtoReflect.Descriptor instead.
 func (*PublishProblemRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{22}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *PublishProblemRequest) GetProblemId() int64 {
@@ -1291,7 +1499,7 @@ type PublishProblemReply struct {
 
 func (x *PublishProblemReply) Reset() {
 	*x = PublishProblemReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[23]
+	mi := &file_admin_v1_admin_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1303,7 +1511,7 @@ func (x *PublishProblemReply) String() string {
 func (*PublishProblemReply) ProtoMessage() {}
 
 func (x *PublishProblemReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[23]
+	mi := &file_admin_v1_admin_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1316,7 +1524,7 @@ func (x *PublishProblemReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublishProblemReply.ProtoReflect.Descriptor instead.
 func (*PublishProblemReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{23}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *PublishProblemReply) GetIsSuccess() bool {
@@ -1340,7 +1548,7 @@ type SubmissionMetadata struct {
 
 func (x *SubmissionMetadata) Reset() {
 	*x = SubmissionMetadata{}
-	mi := &file_admin_v1_admin_proto_msgTypes[24]
+	mi := &file_admin_v1_admin_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1352,7 +1560,7 @@ func (x *SubmissionMetadata) String() string {
 func (*SubmissionMetadata) ProtoMessage() {}
 
 func (x *SubmissionMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[24]
+	mi := &file_admin_v1_admin_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1365,7 +1573,7 @@ func (x *SubmissionMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmissionMetadata.ProtoReflect.Descriptor instead.
 func (*SubmissionMetadata) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{24}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *SubmissionMetadata) GetSubmissionUuid() string {
@@ -1423,7 +1631,7 @@ type GetSubmissionsRequest struct {
 
 func (x *GetSubmissionsRequest) Reset() {
 	*x = GetSubmissionsRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[25]
+	mi := &file_admin_v1_admin_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1435,7 +1643,7 @@ func (x *GetSubmissionsRequest) String() string {
 func (*GetSubmissionsRequest) ProtoMessage() {}
 
 func (x *GetSubmissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[25]
+	mi := &file_admin_v1_admin_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1448,7 +1656,7 @@ func (x *GetSubmissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSubmissionsRequest.ProtoReflect.Descriptor instead.
 func (*GetSubmissionsRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{25}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *GetSubmissionsRequest) GetProblemId() int64 {
@@ -1495,7 +1703,7 @@ type GetSubmissionsReply struct {
 
 func (x *GetSubmissionsReply) Reset() {
 	*x = GetSubmissionsReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[26]
+	mi := &file_admin_v1_admin_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1507,7 +1715,7 @@ func (x *GetSubmissionsReply) String() string {
 func (*GetSubmissionsReply) ProtoMessage() {}
 
 func (x *GetSubmissionsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[26]
+	mi := &file_admin_v1_admin_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1520,7 +1728,7 @@ func (x *GetSubmissionsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSubmissionsReply.ProtoReflect.Descriptor instead.
 func (*GetSubmissionsReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{26}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetSubmissionsReply) GetSubmissions() []*SubmissionMetadata {
@@ -1542,7 +1750,7 @@ type CaseMetadata struct {
 
 func (x *CaseMetadata) Reset() {
 	*x = CaseMetadata{}
-	mi := &file_admin_v1_admin_proto_msgTypes[27]
+	mi := &file_admin_v1_admin_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1554,7 +1762,7 @@ func (x *CaseMetadata) String() string {
 func (*CaseMetadata) ProtoMessage() {}
 
 func (x *CaseMetadata) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[27]
+	mi := &file_admin_v1_admin_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1567,7 +1775,7 @@ func (x *CaseMetadata) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CaseMetadata.ProtoReflect.Descriptor instead.
 func (*CaseMetadata) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{27}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *CaseMetadata) GetScore() int32 {
@@ -1607,7 +1815,7 @@ type GetSingleSubmissionRequest struct {
 
 func (x *GetSingleSubmissionRequest) Reset() {
 	*x = GetSingleSubmissionRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[28]
+	mi := &file_admin_v1_admin_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1619,7 +1827,7 @@ func (x *GetSingleSubmissionRequest) String() string {
 func (*GetSingleSubmissionRequest) ProtoMessage() {}
 
 func (x *GetSingleSubmissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[28]
+	mi := &file_admin_v1_admin_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1632,7 +1840,7 @@ func (x *GetSingleSubmissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleSubmissionRequest.ProtoReflect.Descriptor instead.
 func (*GetSingleSubmissionRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{28}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *GetSingleSubmissionRequest) GetSubmissionUuid() string {
@@ -1656,7 +1864,7 @@ type GetSingleSubmissionReply struct {
 
 func (x *GetSingleSubmissionReply) Reset() {
 	*x = GetSingleSubmissionReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[29]
+	mi := &file_admin_v1_admin_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1668,7 +1876,7 @@ func (x *GetSingleSubmissionReply) String() string {
 func (*GetSingleSubmissionReply) ProtoMessage() {}
 
 func (x *GetSingleSubmissionReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[29]
+	mi := &file_admin_v1_admin_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1681,7 +1889,7 @@ func (x *GetSingleSubmissionReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSingleSubmissionReply.ProtoReflect.Descriptor instead.
 func (*GetSingleSubmissionReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{29}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *GetSingleSubmissionReply) GetMetadata() *SubmissionMetadata {
@@ -1735,7 +1943,7 @@ type RejudgeSubmissionRequest struct {
 
 func (x *RejudgeSubmissionRequest) Reset() {
 	*x = RejudgeSubmissionRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[30]
+	mi := &file_admin_v1_admin_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1747,7 +1955,7 @@ func (x *RejudgeSubmissionRequest) String() string {
 func (*RejudgeSubmissionRequest) ProtoMessage() {}
 
 func (x *RejudgeSubmissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[30]
+	mi := &file_admin_v1_admin_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1760,7 +1968,7 @@ func (x *RejudgeSubmissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejudgeSubmissionRequest.ProtoReflect.Descriptor instead.
 func (*RejudgeSubmissionRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{30}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *RejudgeSubmissionRequest) GetSubmissionUuid() string {
@@ -1779,7 +1987,7 @@ type RejudgeSubmissionReply struct {
 
 func (x *RejudgeSubmissionReply) Reset() {
 	*x = RejudgeSubmissionReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[31]
+	mi := &file_admin_v1_admin_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1791,7 +1999,7 @@ func (x *RejudgeSubmissionReply) String() string {
 func (*RejudgeSubmissionReply) ProtoMessage() {}
 
 func (x *RejudgeSubmissionReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[31]
+	mi := &file_admin_v1_admin_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1804,7 +2012,7 @@ func (x *RejudgeSubmissionReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RejudgeSubmissionReply.ProtoReflect.Descriptor instead.
 func (*RejudgeSubmissionReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{31}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *RejudgeSubmissionReply) GetNewSubmissionUuid() string {
@@ -1823,7 +2031,7 @@ type GetRanksRequest struct {
 
 func (x *GetRanksRequest) Reset() {
 	*x = GetRanksRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[32]
+	mi := &file_admin_v1_admin_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1835,7 +2043,7 @@ func (x *GetRanksRequest) String() string {
 func (*GetRanksRequest) ProtoMessage() {}
 
 func (x *GetRanksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[32]
+	mi := &file_admin_v1_admin_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1848,7 +2056,7 @@ func (x *GetRanksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRanksRequest.ProtoReflect.Descriptor instead.
 func (*GetRanksRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{32}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetRanksRequest) GetContestId() int64 {
@@ -1867,7 +2075,7 @@ type GetRanksReply struct {
 
 func (x *GetRanksReply) Reset() {
 	*x = GetRanksReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[33]
+	mi := &file_admin_v1_admin_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1879,7 +2087,7 @@ func (x *GetRanksReply) String() string {
 func (*GetRanksReply) ProtoMessage() {}
 
 func (x *GetRanksReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[33]
+	mi := &file_admin_v1_admin_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1892,7 +2100,7 @@ func (x *GetRanksReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRanksReply.ProtoReflect.Descriptor instead.
 func (*GetRanksReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{33}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetRanksReply) GetRanks() []*GetRanksReply_RankItem {
@@ -1910,7 +2118,7 @@ type GetAnnouncementsRequest struct {
 
 func (x *GetAnnouncementsRequest) Reset() {
 	*x = GetAnnouncementsRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[34]
+	mi := &file_admin_v1_admin_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1922,7 +2130,7 @@ func (x *GetAnnouncementsRequest) String() string {
 func (*GetAnnouncementsRequest) ProtoMessage() {}
 
 func (x *GetAnnouncementsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[34]
+	mi := &file_admin_v1_admin_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1935,7 +2143,7 @@ func (x *GetAnnouncementsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAnnouncementsRequest.ProtoReflect.Descriptor instead.
 func (*GetAnnouncementsRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{34}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{38}
 }
 
 type GetAnnouncementsReply struct {
@@ -1947,7 +2155,7 @@ type GetAnnouncementsReply struct {
 
 func (x *GetAnnouncementsReply) Reset() {
 	*x = GetAnnouncementsReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[35]
+	mi := &file_admin_v1_admin_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1959,7 +2167,7 @@ func (x *GetAnnouncementsReply) String() string {
 func (*GetAnnouncementsReply) ProtoMessage() {}
 
 func (x *GetAnnouncementsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[35]
+	mi := &file_admin_v1_admin_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1972,7 +2180,7 @@ func (x *GetAnnouncementsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAnnouncementsReply.ProtoReflect.Descriptor instead.
 func (*GetAnnouncementsReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{35}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetAnnouncementsReply) GetAnnouncements() []*GetAnnouncementsReply_Announcement {
@@ -1984,16 +2192,15 @@ func (x *GetAnnouncementsReply) GetAnnouncements() []*GetAnnouncementsReply_Anno
 
 type PostAnnouncementRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PublisherName string                 `protobuf:"bytes,1,opt,name=publisher_name,json=publisherName,proto3" json:"publisher_name,omitempty"` // Publisher Name
-	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`                                      // Announcement Title
-	Content       string                 `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`                                  // Announcement Content
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`     // Announcement Title
+	Content       string                 `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"` // Announcement Content
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PostAnnouncementRequest) Reset() {
 	*x = PostAnnouncementRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[36]
+	mi := &file_admin_v1_admin_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2005,7 +2212,7 @@ func (x *PostAnnouncementRequest) String() string {
 func (*PostAnnouncementRequest) ProtoMessage() {}
 
 func (x *PostAnnouncementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[36]
+	mi := &file_admin_v1_admin_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2018,14 +2225,7 @@ func (x *PostAnnouncementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PostAnnouncementRequest.ProtoReflect.Descriptor instead.
 func (*PostAnnouncementRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{36}
-}
-
-func (x *PostAnnouncementRequest) GetPublisherName() string {
-	if x != nil {
-		return x.PublisherName
-	}
-	return ""
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *PostAnnouncementRequest) GetTitle() string {
@@ -2051,7 +2251,7 @@ type PostAnnouncementReply struct {
 
 func (x *PostAnnouncementReply) Reset() {
 	*x = PostAnnouncementReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[37]
+	mi := &file_admin_v1_admin_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2063,7 +2263,7 @@ func (x *PostAnnouncementReply) String() string {
 func (*PostAnnouncementReply) ProtoMessage() {}
 
 func (x *PostAnnouncementReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[37]
+	mi := &file_admin_v1_admin_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2076,7 +2276,7 @@ func (x *PostAnnouncementReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PostAnnouncementReply.ProtoReflect.Descriptor instead.
 func (*PostAnnouncementReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{37}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *PostAnnouncementReply) GetAnnouncementId() int64 {
@@ -2097,7 +2297,7 @@ type PutAnnouncementRequest struct {
 
 func (x *PutAnnouncementRequest) Reset() {
 	*x = PutAnnouncementRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[38]
+	mi := &file_admin_v1_admin_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2109,7 +2309,7 @@ func (x *PutAnnouncementRequest) String() string {
 func (*PutAnnouncementRequest) ProtoMessage() {}
 
 func (x *PutAnnouncementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[38]
+	mi := &file_admin_v1_admin_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2122,7 +2322,7 @@ func (x *PutAnnouncementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutAnnouncementRequest.ProtoReflect.Descriptor instead.
 func (*PutAnnouncementRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{38}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *PutAnnouncementRequest) GetAnnouncementId() int64 {
@@ -2155,7 +2355,7 @@ type PutAnnouncementReply struct {
 
 func (x *PutAnnouncementReply) Reset() {
 	*x = PutAnnouncementReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[39]
+	mi := &file_admin_v1_admin_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2167,7 +2367,7 @@ func (x *PutAnnouncementReply) String() string {
 func (*PutAnnouncementReply) ProtoMessage() {}
 
 func (x *PutAnnouncementReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[39]
+	mi := &file_admin_v1_admin_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2180,7 +2380,7 @@ func (x *PutAnnouncementReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutAnnouncementReply.ProtoReflect.Descriptor instead.
 func (*PutAnnouncementReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{39}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *PutAnnouncementReply) GetIsUpdated() bool {
@@ -2199,7 +2399,7 @@ type DeleteAnnouncementRequest struct {
 
 func (x *DeleteAnnouncementRequest) Reset() {
 	*x = DeleteAnnouncementRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[40]
+	mi := &file_admin_v1_admin_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2211,7 +2411,7 @@ func (x *DeleteAnnouncementRequest) String() string {
 func (*DeleteAnnouncementRequest) ProtoMessage() {}
 
 func (x *DeleteAnnouncementRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[40]
+	mi := &file_admin_v1_admin_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2224,7 +2424,7 @@ func (x *DeleteAnnouncementRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAnnouncementRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAnnouncementRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{40}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *DeleteAnnouncementRequest) GetAnnouncementId() int64 {
@@ -2243,7 +2443,7 @@ type DeleteAnnouncementReply struct {
 
 func (x *DeleteAnnouncementReply) Reset() {
 	*x = DeleteAnnouncementReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[41]
+	mi := &file_admin_v1_admin_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2255,7 +2455,7 @@ func (x *DeleteAnnouncementReply) String() string {
 func (*DeleteAnnouncementReply) ProtoMessage() {}
 
 func (x *DeleteAnnouncementReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[41]
+	mi := &file_admin_v1_admin_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2268,7 +2468,7 @@ func (x *DeleteAnnouncementReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAnnouncementReply.ProtoReflect.Descriptor instead.
 func (*DeleteAnnouncementReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{41}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *DeleteAnnouncementReply) GetIsDeleted() bool {
@@ -2289,7 +2489,7 @@ type UserInfo struct {
 
 func (x *UserInfo) Reset() {
 	*x = UserInfo{}
-	mi := &file_admin_v1_admin_proto_msgTypes[42]
+	mi := &file_admin_v1_admin_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2301,7 +2501,7 @@ func (x *UserInfo) String() string {
 func (*UserInfo) ProtoMessage() {}
 
 func (x *UserInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[42]
+	mi := &file_admin_v1_admin_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2314,7 +2514,7 @@ func (x *UserInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserInfo.ProtoReflect.Descriptor instead.
 func (*UserInfo) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{42}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *UserInfo) GetUserId() int64 {
@@ -2348,7 +2548,7 @@ type GetUsersRequest struct {
 
 func (x *GetUsersRequest) Reset() {
 	*x = GetUsersRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[43]
+	mi := &file_admin_v1_admin_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2360,7 +2560,7 @@ func (x *GetUsersRequest) String() string {
 func (*GetUsersRequest) ProtoMessage() {}
 
 func (x *GetUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[43]
+	mi := &file_admin_v1_admin_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2373,7 +2573,7 @@ func (x *GetUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUsersRequest.ProtoReflect.Descriptor instead.
 func (*GetUsersRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{43}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *GetUsersRequest) GetPage() int32 {
@@ -2399,7 +2599,7 @@ type GetUsersReply struct {
 
 func (x *GetUsersReply) Reset() {
 	*x = GetUsersReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[44]
+	mi := &file_admin_v1_admin_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2411,7 +2611,7 @@ func (x *GetUsersReply) String() string {
 func (*GetUsersReply) ProtoMessage() {}
 
 func (x *GetUsersReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[44]
+	mi := &file_admin_v1_admin_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2424,7 +2624,7 @@ func (x *GetUsersReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUsersReply.ProtoReflect.Descriptor instead.
 func (*GetUsersReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{44}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *GetUsersReply) GetUsers() []*UserInfo {
@@ -2445,7 +2645,7 @@ type UpdateUserInfoRequest struct {
 
 func (x *UpdateUserInfoRequest) Reset() {
 	*x = UpdateUserInfoRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[45]
+	mi := &file_admin_v1_admin_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2457,7 +2657,7 @@ func (x *UpdateUserInfoRequest) String() string {
 func (*UpdateUserInfoRequest) ProtoMessage() {}
 
 func (x *UpdateUserInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[45]
+	mi := &file_admin_v1_admin_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2470,7 +2670,7 @@ func (x *UpdateUserInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserInfoRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserInfoRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{45}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *UpdateUserInfoRequest) GetUserId() int64 {
@@ -2503,7 +2703,7 @@ type UpdateUserInfoReply struct {
 
 func (x *UpdateUserInfoReply) Reset() {
 	*x = UpdateUserInfoReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[46]
+	mi := &file_admin_v1_admin_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2515,7 +2715,7 @@ func (x *UpdateUserInfoReply) String() string {
 func (*UpdateUserInfoReply) ProtoMessage() {}
 
 func (x *UpdateUserInfoReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[46]
+	mi := &file_admin_v1_admin_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2528,7 +2728,7 @@ func (x *UpdateUserInfoReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserInfoReply.ProtoReflect.Descriptor instead.
 func (*UpdateUserInfoReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{46}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *UpdateUserInfoReply) GetIsUpdated() bool {
@@ -2547,7 +2747,7 @@ type DeleteUserRequest struct {
 
 func (x *DeleteUserRequest) Reset() {
 	*x = DeleteUserRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[47]
+	mi := &file_admin_v1_admin_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2559,7 +2759,7 @@ func (x *DeleteUserRequest) String() string {
 func (*DeleteUserRequest) ProtoMessage() {}
 
 func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[47]
+	mi := &file_admin_v1_admin_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2572,7 +2772,7 @@ func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserRequest.ProtoReflect.Descriptor instead.
 func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{47}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *DeleteUserRequest) GetUserId() int64 {
@@ -2591,7 +2791,7 @@ type DeleteUserReply struct {
 
 func (x *DeleteUserReply) Reset() {
 	*x = DeleteUserReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[48]
+	mi := &file_admin_v1_admin_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2603,7 +2803,7 @@ func (x *DeleteUserReply) String() string {
 func (*DeleteUserReply) ProtoMessage() {}
 
 func (x *DeleteUserReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[48]
+	mi := &file_admin_v1_admin_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2616,7 +2816,7 @@ func (x *DeleteUserReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserReply.ProtoReflect.Descriptor instead.
 func (*DeleteUserReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{48}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *DeleteUserReply) GetIsDeleted() bool {
@@ -2635,7 +2835,7 @@ type GetContestUsersRequest struct {
 
 func (x *GetContestUsersRequest) Reset() {
 	*x = GetContestUsersRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[49]
+	mi := &file_admin_v1_admin_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2647,7 +2847,7 @@ func (x *GetContestUsersRequest) String() string {
 func (*GetContestUsersRequest) ProtoMessage() {}
 
 func (x *GetContestUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[49]
+	mi := &file_admin_v1_admin_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2660,7 +2860,7 @@ func (x *GetContestUsersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContestUsersRequest.ProtoReflect.Descriptor instead.
 func (*GetContestUsersRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{49}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *GetContestUsersRequest) GetContestId() int64 {
@@ -2679,7 +2879,7 @@ type GetContestUsersReply struct {
 
 func (x *GetContestUsersReply) Reset() {
 	*x = GetContestUsersReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[50]
+	mi := &file_admin_v1_admin_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2691,7 +2891,7 @@ func (x *GetContestUsersReply) String() string {
 func (*GetContestUsersReply) ProtoMessage() {}
 
 func (x *GetContestUsersReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[50]
+	mi := &file_admin_v1_admin_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2704,7 +2904,7 @@ func (x *GetContestUsersReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContestUsersReply.ProtoReflect.Descriptor instead.
 func (*GetContestUsersReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{50}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *GetContestUsersReply) GetUsers() []*UserInfo {
@@ -2724,7 +2924,7 @@ type AddContestUserRequest struct {
 
 func (x *AddContestUserRequest) Reset() {
 	*x = AddContestUserRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[51]
+	mi := &file_admin_v1_admin_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2736,7 +2936,7 @@ func (x *AddContestUserRequest) String() string {
 func (*AddContestUserRequest) ProtoMessage() {}
 
 func (x *AddContestUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[51]
+	mi := &file_admin_v1_admin_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2749,7 +2949,7 @@ func (x *AddContestUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddContestUserRequest.ProtoReflect.Descriptor instead.
 func (*AddContestUserRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{51}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *AddContestUserRequest) GetContestId() int64 {
@@ -2775,7 +2975,7 @@ type AddContestUserReply struct {
 
 func (x *AddContestUserReply) Reset() {
 	*x = AddContestUserReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[52]
+	mi := &file_admin_v1_admin_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2787,7 +2987,7 @@ func (x *AddContestUserReply) String() string {
 func (*AddContestUserReply) ProtoMessage() {}
 
 func (x *AddContestUserReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[52]
+	mi := &file_admin_v1_admin_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2800,7 +3000,7 @@ func (x *AddContestUserReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddContestUserReply.ProtoReflect.Descriptor instead.
 func (*AddContestUserReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{52}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *AddContestUserReply) GetIsJoined() bool {
@@ -2820,7 +3020,7 @@ type RemoveContestUserRequest struct {
 
 func (x *RemoveContestUserRequest) Reset() {
 	*x = RemoveContestUserRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[53]
+	mi := &file_admin_v1_admin_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2832,7 +3032,7 @@ func (x *RemoveContestUserRequest) String() string {
 func (*RemoveContestUserRequest) ProtoMessage() {}
 
 func (x *RemoveContestUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[53]
+	mi := &file_admin_v1_admin_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2845,7 +3045,7 @@ func (x *RemoveContestUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveContestUserRequest.ProtoReflect.Descriptor instead.
 func (*RemoveContestUserRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{53}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *RemoveContestUserRequest) GetContestId() int64 {
@@ -2871,7 +3071,7 @@ type RemoveContestUserReply struct {
 
 func (x *RemoveContestUserReply) Reset() {
 	*x = RemoveContestUserReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[54]
+	mi := &file_admin_v1_admin_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2883,7 +3083,7 @@ func (x *RemoveContestUserReply) String() string {
 func (*RemoveContestUserReply) ProtoMessage() {}
 
 func (x *RemoveContestUserReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[54]
+	mi := &file_admin_v1_admin_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2896,7 +3096,7 @@ func (x *RemoveContestUserReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveContestUserReply.ProtoReflect.Descriptor instead.
 func (*RemoveContestUserReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{54}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *RemoveContestUserReply) GetIsJoined() bool {
@@ -2916,7 +3116,7 @@ type UpdateUserPasswordRequest struct {
 
 func (x *UpdateUserPasswordRequest) Reset() {
 	*x = UpdateUserPasswordRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[55]
+	mi := &file_admin_v1_admin_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2928,7 +3128,7 @@ func (x *UpdateUserPasswordRequest) String() string {
 func (*UpdateUserPasswordRequest) ProtoMessage() {}
 
 func (x *UpdateUserPasswordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[55]
+	mi := &file_admin_v1_admin_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2941,7 +3141,7 @@ func (x *UpdateUserPasswordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserPasswordRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserPasswordRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{55}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *UpdateUserPasswordRequest) GetUserId() int64 {
@@ -2967,7 +3167,7 @@ type UpdateUserPasswordReply struct {
 
 func (x *UpdateUserPasswordReply) Reset() {
 	*x = UpdateUserPasswordReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[56]
+	mi := &file_admin_v1_admin_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2979,7 +3179,7 @@ func (x *UpdateUserPasswordReply) String() string {
 func (*UpdateUserPasswordReply) ProtoMessage() {}
 
 func (x *UpdateUserPasswordReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[56]
+	mi := &file_admin_v1_admin_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2992,7 +3192,7 @@ func (x *UpdateUserPasswordReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserPasswordReply.ProtoReflect.Descriptor instead.
 func (*UpdateUserPasswordReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{56}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *UpdateUserPasswordReply) GetIsUpdated() bool {
@@ -3011,7 +3211,7 @@ type GetContestStatisticsRequest struct {
 
 func (x *GetContestStatisticsRequest) Reset() {
 	*x = GetContestStatisticsRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[57]
+	mi := &file_admin_v1_admin_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3023,7 +3223,7 @@ func (x *GetContestStatisticsRequest) String() string {
 func (*GetContestStatisticsRequest) ProtoMessage() {}
 
 func (x *GetContestStatisticsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[57]
+	mi := &file_admin_v1_admin_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3036,7 +3236,7 @@ func (x *GetContestStatisticsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContestStatisticsRequest.ProtoReflect.Descriptor instead.
 func (*GetContestStatisticsRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{57}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *GetContestStatisticsRequest) GetContestId() int64 {
@@ -3056,7 +3256,7 @@ type GetContestStatisticsReply struct {
 
 func (x *GetContestStatisticsReply) Reset() {
 	*x = GetContestStatisticsReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[58]
+	mi := &file_admin_v1_admin_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3068,7 +3268,7 @@ func (x *GetContestStatisticsReply) String() string {
 func (*GetContestStatisticsReply) ProtoMessage() {}
 
 func (x *GetContestStatisticsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[58]
+	mi := &file_admin_v1_admin_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3081,7 +3281,7 @@ func (x *GetContestStatisticsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContestStatisticsReply.ProtoReflect.Descriptor instead.
 func (*GetContestStatisticsReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{58}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *GetContestStatisticsReply) GetStatisticsJson() string {
@@ -3101,7 +3301,7 @@ type ListLogFilesRequest struct {
 
 func (x *ListLogFilesRequest) Reset() {
 	*x = ListLogFilesRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[59]
+	mi := &file_admin_v1_admin_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3113,7 +3313,7 @@ func (x *ListLogFilesRequest) String() string {
 func (*ListLogFilesRequest) ProtoMessage() {}
 
 func (x *ListLogFilesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[59]
+	mi := &file_admin_v1_admin_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3126,7 +3326,7 @@ func (x *ListLogFilesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLogFilesRequest.ProtoReflect.Descriptor instead.
 func (*ListLogFilesRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{59}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *ListLogFilesRequest) GetPageSize() int32 {
@@ -3153,7 +3353,7 @@ type ListLogFilesReply struct {
 
 func (x *ListLogFilesReply) Reset() {
 	*x = ListLogFilesReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[60]
+	mi := &file_admin_v1_admin_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3165,7 +3365,7 @@ func (x *ListLogFilesReply) String() string {
 func (*ListLogFilesReply) ProtoMessage() {}
 
 func (x *ListLogFilesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[60]
+	mi := &file_admin_v1_admin_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3178,7 +3378,7 @@ func (x *ListLogFilesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLogFilesReply.ProtoReflect.Descriptor instead.
 func (*ListLogFilesReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{60}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *ListLogFilesReply) GetFilenames() []string {
@@ -3209,7 +3409,7 @@ type QueryLogContentRequest struct {
 
 func (x *QueryLogContentRequest) Reset() {
 	*x = QueryLogContentRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[61]
+	mi := &file_admin_v1_admin_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3221,7 +3421,7 @@ func (x *QueryLogContentRequest) String() string {
 func (*QueryLogContentRequest) ProtoMessage() {}
 
 func (x *QueryLogContentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[61]
+	mi := &file_admin_v1_admin_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3234,7 +3434,7 @@ func (x *QueryLogContentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryLogContentRequest.ProtoReflect.Descriptor instead.
 func (*QueryLogContentRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{61}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *QueryLogContentRequest) GetFilename() string {
@@ -3289,7 +3489,7 @@ type QueryLogContentReply struct {
 
 func (x *QueryLogContentReply) Reset() {
 	*x = QueryLogContentReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[62]
+	mi := &file_admin_v1_admin_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3301,7 +3501,7 @@ func (x *QueryLogContentReply) String() string {
 func (*QueryLogContentReply) ProtoMessage() {}
 
 func (x *QueryLogContentReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[62]
+	mi := &file_admin_v1_admin_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3314,7 +3514,7 @@ func (x *QueryLogContentReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryLogContentReply.ProtoReflect.Descriptor instead.
 func (*QueryLogContentReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{62}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *QueryLogContentReply) GetLines() []string {
@@ -3340,7 +3540,7 @@ type DownloadLogsRequest struct {
 
 func (x *DownloadLogsRequest) Reset() {
 	*x = DownloadLogsRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[63]
+	mi := &file_admin_v1_admin_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3352,7 +3552,7 @@ func (x *DownloadLogsRequest) String() string {
 func (*DownloadLogsRequest) ProtoMessage() {}
 
 func (x *DownloadLogsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[63]
+	mi := &file_admin_v1_admin_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3365,7 +3565,7 @@ func (x *DownloadLogsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownloadLogsRequest.ProtoReflect.Descriptor instead.
 func (*DownloadLogsRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{63}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *DownloadLogsRequest) GetFilenames() []string {
@@ -3384,7 +3584,7 @@ type DisableProblemRequest struct {
 
 func (x *DisableProblemRequest) Reset() {
 	*x = DisableProblemRequest{}
-	mi := &file_admin_v1_admin_proto_msgTypes[64]
+	mi := &file_admin_v1_admin_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3396,7 +3596,7 @@ func (x *DisableProblemRequest) String() string {
 func (*DisableProblemRequest) ProtoMessage() {}
 
 func (x *DisableProblemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[64]
+	mi := &file_admin_v1_admin_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3409,7 +3609,7 @@ func (x *DisableProblemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DisableProblemRequest.ProtoReflect.Descriptor instead.
 func (*DisableProblemRequest) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{64}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *DisableProblemRequest) GetProblemId() int64 {
@@ -3428,7 +3628,7 @@ type DisableProblemReply struct {
 
 func (x *DisableProblemReply) Reset() {
 	*x = DisableProblemReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[65]
+	mi := &file_admin_v1_admin_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3440,7 +3640,7 @@ func (x *DisableProblemReply) String() string {
 func (*DisableProblemReply) ProtoMessage() {}
 
 func (x *DisableProblemReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[65]
+	mi := &file_admin_v1_admin_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3453,7 +3653,7 @@ func (x *DisableProblemReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DisableProblemReply.ProtoReflect.Descriptor instead.
 func (*DisableProblemReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{65}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *DisableProblemReply) GetIsSuccess() bool {
@@ -3472,7 +3672,7 @@ type PostContestRequest_ProblemList struct {
 
 func (x *PostContestRequest_ProblemList) Reset() {
 	*x = PostContestRequest_ProblemList{}
-	mi := &file_admin_v1_admin_proto_msgTypes[66]
+	mi := &file_admin_v1_admin_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3484,7 +3684,7 @@ func (x *PostContestRequest_ProblemList) String() string {
 func (*PostContestRequest_ProblemList) ProtoMessage() {}
 
 func (x *PostContestRequest_ProblemList) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[66]
+	mi := &file_admin_v1_admin_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3507,6 +3707,50 @@ func (x *PostContestRequest_ProblemList) GetProblemIds() []int64 {
 	return nil
 }
 
+type PutContestRequest_ProblemList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProblemIds    []int64                `protobuf:"varint,1,rep,packed,name=problem_ids,json=problemIds,proto3" json:"problem_ids,omitempty"` // List of Problem IDs to include in the contest
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PutContestRequest_ProblemList) Reset() {
+	*x = PutContestRequest_ProblemList{}
+	mi := &file_admin_v1_admin_proto_msgTypes[71]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PutContestRequest_ProblemList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PutContestRequest_ProblemList) ProtoMessage() {}
+
+func (x *PutContestRequest_ProblemList) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[71]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PutContestRequest_ProblemList.ProtoReflect.Descriptor instead.
+func (*PutContestRequest_ProblemList) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{7, 0}
+}
+
+func (x *PutContestRequest_ProblemList) GetProblemIds() []int64 {
+	if x != nil {
+		return x.ProblemIds
+	}
+	return nil
+}
+
 type GetSingleSubmissionReply_CaseResults struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Cases         []*CaseMetadata        `protobuf:"bytes,1,rep,name=cases,proto3" json:"cases,omitempty"` // List of test cases metadata
@@ -3516,7 +3760,7 @@ type GetSingleSubmissionReply_CaseResults struct {
 
 func (x *GetSingleSubmissionReply_CaseResults) Reset() {
 	*x = GetSingleSubmissionReply_CaseResults{}
-	mi := &file_admin_v1_admin_proto_msgTypes[67]
+	mi := &file_admin_v1_admin_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3528,7 +3772,7 @@ func (x *GetSingleSubmissionReply_CaseResults) String() string {
 func (*GetSingleSubmissionReply_CaseResults) ProtoMessage() {}
 
 func (x *GetSingleSubmissionReply_CaseResults) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[67]
+	mi := &file_admin_v1_admin_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3541,7 +3785,7 @@ func (x *GetSingleSubmissionReply_CaseResults) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use GetSingleSubmissionReply_CaseResults.ProtoReflect.Descriptor instead.
 func (*GetSingleSubmissionReply_CaseResults) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{29, 0}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{33, 0}
 }
 
 func (x *GetSingleSubmissionReply_CaseResults) GetCases() []*CaseMetadata {
@@ -3563,7 +3807,7 @@ type GetRanksReply_RankItem struct {
 
 func (x *GetRanksReply_RankItem) Reset() {
 	*x = GetRanksReply_RankItem{}
-	mi := &file_admin_v1_admin_proto_msgTypes[68]
+	mi := &file_admin_v1_admin_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3575,7 +3819,7 @@ func (x *GetRanksReply_RankItem) String() string {
 func (*GetRanksReply_RankItem) ProtoMessage() {}
 
 func (x *GetRanksReply_RankItem) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[68]
+	mi := &file_admin_v1_admin_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3588,7 +3832,7 @@ func (x *GetRanksReply_RankItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRanksReply_RankItem.ProtoReflect.Descriptor instead.
 func (*GetRanksReply_RankItem) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{33, 0}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{37, 0}
 }
 
 func (x *GetRanksReply_RankItem) GetUserId() int64 {
@@ -3631,7 +3875,7 @@ type GetAnnouncementsReply_Announcement struct {
 
 func (x *GetAnnouncementsReply_Announcement) Reset() {
 	*x = GetAnnouncementsReply_Announcement{}
-	mi := &file_admin_v1_admin_proto_msgTypes[69]
+	mi := &file_admin_v1_admin_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3643,7 +3887,7 @@ func (x *GetAnnouncementsReply_Announcement) String() string {
 func (*GetAnnouncementsReply_Announcement) ProtoMessage() {}
 
 func (x *GetAnnouncementsReply_Announcement) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[69]
+	mi := &file_admin_v1_admin_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3656,7 +3900,7 @@ func (x *GetAnnouncementsReply_Announcement) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use GetAnnouncementsReply_Announcement.ProtoReflect.Descriptor instead.
 func (*GetAnnouncementsReply_Announcement) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{35, 0}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{39, 0}
 }
 
 func (x *GetAnnouncementsReply_Announcement) GetId() int64 {
@@ -3704,10 +3948,12 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\bcontests\x18\x01 \x03(\v2%.api.cascade.admin.v1.ContestMetadataR\bcontests\"8\n" +
 	"\x17GetSingleContestRequest\x12\x1d\n" +
 	"\n" +
-	"contest_id\x18\x01 \x01(\x03R\tcontestId\"|\n" +
+	"contest_id\x18\x01 \x01(\x03R\tcontestId\"\x9d\x01\n" +
 	"\x15GetSingleContestReply\x12A\n" +
 	"\bmetadata\x18\x01 \x01(\v2%.api.cascade.admin.v1.ContestMetadataR\bmetadata\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\"\xc0\x02\n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1f\n" +
+	"\vproblem_ids\x18\x03 \x03(\x03R\n" +
+	"problemIds\"\xc0\x02\n" +
 	"\x12PostContestRequest\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x129\n" +
@@ -3720,7 +3966,7 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"problemIds\"1\n" +
 	"\x10PostContestReply\x12\x1d\n" +
 	"\n" +
-	"contest_id\x18\x01 \x01(\x03R\tcontestId\"\xdc\x01\n" +
+	"contest_id\x18\x01 \x01(\x03R\tcontestId\"\xdd\x02\n" +
 	"\x11PutContestRequest\x12\x1d\n" +
 	"\n" +
 	"contest_id\x18\x01 \x01(\x03R\tcontestId\x12\x14\n" +
@@ -3728,7 +3974,11 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x129\n" +
 	"\n" +
 	"start_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tstartTime\x125\n" +
-	"\bend_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aendTime\"0\n" +
+	"\bend_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\aendTime\x12O\n" +
+	"\bproblems\x18\x06 \x01(\v23.api.cascade.admin.v1.PutContestRequest.ProblemListR\bproblems\x1a.\n" +
+	"\vProblemList\x12\x1f\n" +
+	"\vproblem_ids\x18\x01 \x03(\x03R\n" +
+	"problemIds\"0\n" +
 	"\x0fPutContestReply\x12\x1d\n" +
 	"\n" +
 	"is_updated\x18\x01 \x01(\bR\tisUpdated\"5\n" +
@@ -3737,13 +3987,26 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"contest_id\x18\x01 \x01(\x03R\tcontestId\"3\n" +
 	"\x12DeleteContestReply\x12\x1d\n" +
 	"\n" +
-	"is_deleted\x18\x01 \x01(\bR\tisDeleted\"\xc0\x01\n" +
+	"is_deleted\x18\x01 \x01(\bR\tisDeleted\"=\n" +
+	"\x1cGetContestCompetitorsRequest\x12\x1d\n" +
+	"\n" +
+	"contest_id\x18\x01 \x01(\x03R\tcontestId\"^\n" +
+	"\x1aGetContestCompetitorsReply\x12@\n" +
+	"\vcompetitors\x18\x01 \x03(\v2\x1e.api.cascade.admin.v1.UserInfoR\vcompetitors\"X\n" +
+	"\x1cPutContestCompetitorsRequest\x12\x1d\n" +
+	"\n" +
+	"contest_id\x18\x01 \x01(\x03R\tcontestId\x12\x19\n" +
+	"\buser_ids\x18\x02 \x03(\x03R\auserIds\";\n" +
+	"\x1aPutContestCompetitorsReply\x12\x1d\n" +
+	"\n" +
+	"is_updated\x18\x01 \x01(\bR\tisUpdated\"\xe2\x01\n" +
 	"\x0fProblemMetadata\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\"\n" +
 	"\rtime_limit_ms\x18\x03 \x01(\x05R\vtimeLimitMs\x12&\n" +
-	"\x0fmemory_limit_mb\x18\x04 \x01(\x05R\rmemoryLimitMb\x12;\n" +
-	"\x06status\x18\x05 \x01(\x0e2#.api.cascade.admin.v1.ProblemStatusR\x06status\"3\n" +
+	"\x0fmemory_limit_mb\x18\x04 \x01(\x05R\rmemoryLimitMb\x12 \n" +
+	"\vdescription\x18\x05 \x01(\tR\vdescription\x12;\n" +
+	"\x06status\x18\x06 \x01(\x0e2#.api.cascade.admin.v1.ProblemStatusR\x06status\"3\n" +
 	"\x12GetProblemsRequest\x12\x1d\n" +
 	"\n" +
 	"contest_id\x18\x01 \x01(\x03R\tcontestId\"U\n" +
@@ -3843,11 +4106,10 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12%\n" +
 	"\x0epublisher_name\x18\x02 \x01(\tR\rpublisherName\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12\x18\n" +
-	"\acontent\x18\x04 \x01(\tR\acontent\"p\n" +
-	"\x17PostAnnouncementRequest\x12%\n" +
-	"\x0epublisher_name\x18\x01 \x01(\tR\rpublisherName\x12\x14\n" +
-	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
-	"\acontent\x18\x03 \x01(\tR\acontent\"@\n" +
+	"\acontent\x18\x04 \x01(\tR\acontent\"I\n" +
+	"\x17PostAnnouncementRequest\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x18\n" +
+	"\acontent\x18\x02 \x01(\tR\acontent\"@\n" +
 	"\x15PostAnnouncementReply\x12'\n" +
 	"\x0fannouncement_id\x18\x01 \x01(\x03R\x0eannouncementId\"q\n" +
 	"\x16PutAnnouncementRequest\x12'\n" +
@@ -3940,14 +4202,16 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\x1aPROBLEM_STATUS_UNAVAILABLE\x10\x00\x12\x1c\n" +
 	"\x18PROBLEM_STATUS_AVAILABLE\x10\x01\x12\x18\n" +
 	"\x14PROBLEM_STATUS_USING\x10\x02\x12\x1a\n" +
-	"\x16PROBLEM_STATUS_DELETED\x10\x032\xf6\"\n" +
+	"\x16PROBLEM_STATUS_DELETED\x10\x032\xdd%\n" +
 	"\x05Admin\x12x\n" +
 	"\vGetContests\x12(.api.cascade.admin.v1.GetContestsRequest\x1a&.api.cascade.admin.v1.GetContestsReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/contests\x12\x94\x01\n" +
 	"\x10GetSingleContest\x12-.api.cascade.admin.v1.GetSingleContestRequest\x1a+.api.cascade.admin.v1.GetSingleContestReply\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/admin/contests/{contest_id}\x12{\n" +
 	"\vPostContest\x12(.api.cascade.admin.v1.PostContestRequest\x1a&.api.cascade.admin.v1.PostContestReply\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/admin/contests\x12\x85\x01\n" +
 	"\n" +
 	"PutContest\x12'.api.cascade.admin.v1.PutContestRequest\x1a%.api.cascade.admin.v1.PutContestReply\"'\x82\xd3\xe4\x93\x02!:\x01*\x1a\x1c/admin/contests/{contest_id}\x12\x8b\x01\n" +
-	"\rDeleteContest\x12*.api.cascade.admin.v1.DeleteContestRequest\x1a(.api.cascade.admin.v1.DeleteContestReply\"$\x82\xd3\xe4\x93\x02\x1e*\x1c/admin/contests/{contest_id}\x12x\n" +
+	"\rDeleteContest\x12*.api.cascade.admin.v1.DeleteContestRequest\x1a(.api.cascade.admin.v1.DeleteContestReply\"$\x82\xd3\xe4\x93\x02\x1e*\x1c/admin/contests/{contest_id}\x12\xaf\x01\n" +
+	"\x15GetContestCompetitors\x122.api.cascade.admin.v1.GetContestCompetitorsRequest\x1a0.api.cascade.admin.v1.GetContestCompetitorsReply\"0\x82\xd3\xe4\x93\x02*\x12(/admin/contests/{contest_id}/competitors\x12\xb2\x01\n" +
+	"\x15PutContestCompetitors\x122.api.cascade.admin.v1.PutContestCompetitorsRequest\x1a0.api.cascade.admin.v1.PutContestCompetitorsReply\"3\x82\xd3\xe4\x93\x02-:\x01*\x1a(/admin/contests/{contest_id}/competitors\x12x\n" +
 	"\vGetProblems\x12(.api.cascade.admin.v1.GetProblemsRequest\x1a&.api.cascade.admin.v1.GetProblemsReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/problems\x12\x94\x01\n" +
 	"\x10GetSingleProblem\x12-.api.cascade.admin.v1.GetSingleProblemRequest\x1a+.api.cascade.admin.v1.GetSingleProblemReply\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/admin/problems/{problem_id}\x12{\n" +
 	"\vPostProblem\x12(.api.cascade.admin.v1.PostProblemRequest\x1a&.api.cascade.admin.v1.PostProblemReply\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/admin/problems\x12\x85\x01\n" +
@@ -3992,7 +4256,7 @@ func file_admin_v1_admin_proto_rawDescGZIP() []byte {
 }
 
 var file_admin_v1_admin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 70)
+var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 75)
 var file_admin_v1_admin_proto_goTypes = []any{
 	(ProblemStatus)(0),                           // 0: api.cascade.admin.v1.ProblemStatus
 	(*ContestMetadata)(nil),                      // 1: api.cascade.admin.v1.ContestMetadata
@@ -4006,161 +4270,172 @@ var file_admin_v1_admin_proto_goTypes = []any{
 	(*PutContestReply)(nil),                      // 9: api.cascade.admin.v1.PutContestReply
 	(*DeleteContestRequest)(nil),                 // 10: api.cascade.admin.v1.DeleteContestRequest
 	(*DeleteContestReply)(nil),                   // 11: api.cascade.admin.v1.DeleteContestReply
-	(*ProblemMetadata)(nil),                      // 12: api.cascade.admin.v1.ProblemMetadata
-	(*GetProblemsRequest)(nil),                   // 13: api.cascade.admin.v1.GetProblemsRequest
-	(*GetProblemsReply)(nil),                     // 14: api.cascade.admin.v1.GetProblemsReply
-	(*GetSingleProblemRequest)(nil),              // 15: api.cascade.admin.v1.GetSingleProblemRequest
-	(*GetSingleProblemReply)(nil),                // 16: api.cascade.admin.v1.GetSingleProblemReply
-	(*PostProblemRequest)(nil),                   // 17: api.cascade.admin.v1.PostProblemRequest
-	(*PostProblemReply)(nil),                     // 18: api.cascade.admin.v1.PostProblemReply
-	(*PutProblemRequest)(nil),                    // 19: api.cascade.admin.v1.PutProblemRequest
-	(*PutProblemReply)(nil),                      // 20: api.cascade.admin.v1.PutProblemReply
-	(*DeleteProblemRequest)(nil),                 // 21: api.cascade.admin.v1.DeleteProblemRequest
-	(*DeleteProblemReply)(nil),                   // 22: api.cascade.admin.v1.DeleteProblemReply
-	(*PublishProblemRequest)(nil),                // 23: api.cascade.admin.v1.PublishProblemRequest
-	(*PublishProblemReply)(nil),                  // 24: api.cascade.admin.v1.PublishProblemReply
-	(*SubmissionMetadata)(nil),                   // 25: api.cascade.admin.v1.SubmissionMetadata
-	(*GetSubmissionsRequest)(nil),                // 26: api.cascade.admin.v1.GetSubmissionsRequest
-	(*GetSubmissionsReply)(nil),                  // 27: api.cascade.admin.v1.GetSubmissionsReply
-	(*CaseMetadata)(nil),                         // 28: api.cascade.admin.v1.CaseMetadata
-	(*GetSingleSubmissionRequest)(nil),           // 29: api.cascade.admin.v1.GetSingleSubmissionRequest
-	(*GetSingleSubmissionReply)(nil),             // 30: api.cascade.admin.v1.GetSingleSubmissionReply
-	(*RejudgeSubmissionRequest)(nil),             // 31: api.cascade.admin.v1.RejudgeSubmissionRequest
-	(*RejudgeSubmissionReply)(nil),               // 32: api.cascade.admin.v1.RejudgeSubmissionReply
-	(*GetRanksRequest)(nil),                      // 33: api.cascade.admin.v1.GetRanksRequest
-	(*GetRanksReply)(nil),                        // 34: api.cascade.admin.v1.GetRanksReply
-	(*GetAnnouncementsRequest)(nil),              // 35: api.cascade.admin.v1.GetAnnouncementsRequest
-	(*GetAnnouncementsReply)(nil),                // 36: api.cascade.admin.v1.GetAnnouncementsReply
-	(*PostAnnouncementRequest)(nil),              // 37: api.cascade.admin.v1.PostAnnouncementRequest
-	(*PostAnnouncementReply)(nil),                // 38: api.cascade.admin.v1.PostAnnouncementReply
-	(*PutAnnouncementRequest)(nil),               // 39: api.cascade.admin.v1.PutAnnouncementRequest
-	(*PutAnnouncementReply)(nil),                 // 40: api.cascade.admin.v1.PutAnnouncementReply
-	(*DeleteAnnouncementRequest)(nil),            // 41: api.cascade.admin.v1.DeleteAnnouncementRequest
-	(*DeleteAnnouncementReply)(nil),              // 42: api.cascade.admin.v1.DeleteAnnouncementReply
-	(*UserInfo)(nil),                             // 43: api.cascade.admin.v1.UserInfo
-	(*GetUsersRequest)(nil),                      // 44: api.cascade.admin.v1.GetUsersRequest
-	(*GetUsersReply)(nil),                        // 45: api.cascade.admin.v1.GetUsersReply
-	(*UpdateUserInfoRequest)(nil),                // 46: api.cascade.admin.v1.UpdateUserInfoRequest
-	(*UpdateUserInfoReply)(nil),                  // 47: api.cascade.admin.v1.UpdateUserInfoReply
-	(*DeleteUserRequest)(nil),                    // 48: api.cascade.admin.v1.DeleteUserRequest
-	(*DeleteUserReply)(nil),                      // 49: api.cascade.admin.v1.DeleteUserReply
-	(*GetContestUsersRequest)(nil),               // 50: api.cascade.admin.v1.GetContestUsersRequest
-	(*GetContestUsersReply)(nil),                 // 51: api.cascade.admin.v1.GetContestUsersReply
-	(*AddContestUserRequest)(nil),                // 52: api.cascade.admin.v1.AddContestUserRequest
-	(*AddContestUserReply)(nil),                  // 53: api.cascade.admin.v1.AddContestUserReply
-	(*RemoveContestUserRequest)(nil),             // 54: api.cascade.admin.v1.RemoveContestUserRequest
-	(*RemoveContestUserReply)(nil),               // 55: api.cascade.admin.v1.RemoveContestUserReply
-	(*UpdateUserPasswordRequest)(nil),            // 56: api.cascade.admin.v1.UpdateUserPasswordRequest
-	(*UpdateUserPasswordReply)(nil),              // 57: api.cascade.admin.v1.UpdateUserPasswordReply
-	(*GetContestStatisticsRequest)(nil),          // 58: api.cascade.admin.v1.GetContestStatisticsRequest
-	(*GetContestStatisticsReply)(nil),            // 59: api.cascade.admin.v1.GetContestStatisticsReply
-	(*ListLogFilesRequest)(nil),                  // 60: api.cascade.admin.v1.ListLogFilesRequest
-	(*ListLogFilesReply)(nil),                    // 61: api.cascade.admin.v1.ListLogFilesReply
-	(*QueryLogContentRequest)(nil),               // 62: api.cascade.admin.v1.QueryLogContentRequest
-	(*QueryLogContentReply)(nil),                 // 63: api.cascade.admin.v1.QueryLogContentReply
-	(*DownloadLogsRequest)(nil),                  // 64: api.cascade.admin.v1.DownloadLogsRequest
-	(*DisableProblemRequest)(nil),                // 65: api.cascade.admin.v1.DisableProblemRequest
-	(*DisableProblemReply)(nil),                  // 66: api.cascade.admin.v1.DisableProblemReply
-	(*PostContestRequest_ProblemList)(nil),       // 67: api.cascade.admin.v1.PostContestRequest.ProblemList
-	(*GetSingleSubmissionReply_CaseResults)(nil), // 68: api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults
-	(*GetRanksReply_RankItem)(nil),               // 69: api.cascade.admin.v1.GetRanksReply.RankItem
-	(*GetAnnouncementsReply_Announcement)(nil),   // 70: api.cascade.admin.v1.GetAnnouncementsReply.Announcement
-	(*timestamppb.Timestamp)(nil),                // 71: google.protobuf.Timestamp
-	(*httpbody.HttpBody)(nil),                    // 72: google.api.HttpBody
+	(*GetContestCompetitorsRequest)(nil),         // 12: api.cascade.admin.v1.GetContestCompetitorsRequest
+	(*GetContestCompetitorsReply)(nil),           // 13: api.cascade.admin.v1.GetContestCompetitorsReply
+	(*PutContestCompetitorsRequest)(nil),         // 14: api.cascade.admin.v1.PutContestCompetitorsRequest
+	(*PutContestCompetitorsReply)(nil),           // 15: api.cascade.admin.v1.PutContestCompetitorsReply
+	(*ProblemMetadata)(nil),                      // 16: api.cascade.admin.v1.ProblemMetadata
+	(*GetProblemsRequest)(nil),                   // 17: api.cascade.admin.v1.GetProblemsRequest
+	(*GetProblemsReply)(nil),                     // 18: api.cascade.admin.v1.GetProblemsReply
+	(*GetSingleProblemRequest)(nil),              // 19: api.cascade.admin.v1.GetSingleProblemRequest
+	(*GetSingleProblemReply)(nil),                // 20: api.cascade.admin.v1.GetSingleProblemReply
+	(*PostProblemRequest)(nil),                   // 21: api.cascade.admin.v1.PostProblemRequest
+	(*PostProblemReply)(nil),                     // 22: api.cascade.admin.v1.PostProblemReply
+	(*PutProblemRequest)(nil),                    // 23: api.cascade.admin.v1.PutProblemRequest
+	(*PutProblemReply)(nil),                      // 24: api.cascade.admin.v1.PutProblemReply
+	(*DeleteProblemRequest)(nil),                 // 25: api.cascade.admin.v1.DeleteProblemRequest
+	(*DeleteProblemReply)(nil),                   // 26: api.cascade.admin.v1.DeleteProblemReply
+	(*PublishProblemRequest)(nil),                // 27: api.cascade.admin.v1.PublishProblemRequest
+	(*PublishProblemReply)(nil),                  // 28: api.cascade.admin.v1.PublishProblemReply
+	(*SubmissionMetadata)(nil),                   // 29: api.cascade.admin.v1.SubmissionMetadata
+	(*GetSubmissionsRequest)(nil),                // 30: api.cascade.admin.v1.GetSubmissionsRequest
+	(*GetSubmissionsReply)(nil),                  // 31: api.cascade.admin.v1.GetSubmissionsReply
+	(*CaseMetadata)(nil),                         // 32: api.cascade.admin.v1.CaseMetadata
+	(*GetSingleSubmissionRequest)(nil),           // 33: api.cascade.admin.v1.GetSingleSubmissionRequest
+	(*GetSingleSubmissionReply)(nil),             // 34: api.cascade.admin.v1.GetSingleSubmissionReply
+	(*RejudgeSubmissionRequest)(nil),             // 35: api.cascade.admin.v1.RejudgeSubmissionRequest
+	(*RejudgeSubmissionReply)(nil),               // 36: api.cascade.admin.v1.RejudgeSubmissionReply
+	(*GetRanksRequest)(nil),                      // 37: api.cascade.admin.v1.GetRanksRequest
+	(*GetRanksReply)(nil),                        // 38: api.cascade.admin.v1.GetRanksReply
+	(*GetAnnouncementsRequest)(nil),              // 39: api.cascade.admin.v1.GetAnnouncementsRequest
+	(*GetAnnouncementsReply)(nil),                // 40: api.cascade.admin.v1.GetAnnouncementsReply
+	(*PostAnnouncementRequest)(nil),              // 41: api.cascade.admin.v1.PostAnnouncementRequest
+	(*PostAnnouncementReply)(nil),                // 42: api.cascade.admin.v1.PostAnnouncementReply
+	(*PutAnnouncementRequest)(nil),               // 43: api.cascade.admin.v1.PutAnnouncementRequest
+	(*PutAnnouncementReply)(nil),                 // 44: api.cascade.admin.v1.PutAnnouncementReply
+	(*DeleteAnnouncementRequest)(nil),            // 45: api.cascade.admin.v1.DeleteAnnouncementRequest
+	(*DeleteAnnouncementReply)(nil),              // 46: api.cascade.admin.v1.DeleteAnnouncementReply
+	(*UserInfo)(nil),                             // 47: api.cascade.admin.v1.UserInfo
+	(*GetUsersRequest)(nil),                      // 48: api.cascade.admin.v1.GetUsersRequest
+	(*GetUsersReply)(nil),                        // 49: api.cascade.admin.v1.GetUsersReply
+	(*UpdateUserInfoRequest)(nil),                // 50: api.cascade.admin.v1.UpdateUserInfoRequest
+	(*UpdateUserInfoReply)(nil),                  // 51: api.cascade.admin.v1.UpdateUserInfoReply
+	(*DeleteUserRequest)(nil),                    // 52: api.cascade.admin.v1.DeleteUserRequest
+	(*DeleteUserReply)(nil),                      // 53: api.cascade.admin.v1.DeleteUserReply
+	(*GetContestUsersRequest)(nil),               // 54: api.cascade.admin.v1.GetContestUsersRequest
+	(*GetContestUsersReply)(nil),                 // 55: api.cascade.admin.v1.GetContestUsersReply
+	(*AddContestUserRequest)(nil),                // 56: api.cascade.admin.v1.AddContestUserRequest
+	(*AddContestUserReply)(nil),                  // 57: api.cascade.admin.v1.AddContestUserReply
+	(*RemoveContestUserRequest)(nil),             // 58: api.cascade.admin.v1.RemoveContestUserRequest
+	(*RemoveContestUserReply)(nil),               // 59: api.cascade.admin.v1.RemoveContestUserReply
+	(*UpdateUserPasswordRequest)(nil),            // 60: api.cascade.admin.v1.UpdateUserPasswordRequest
+	(*UpdateUserPasswordReply)(nil),              // 61: api.cascade.admin.v1.UpdateUserPasswordReply
+	(*GetContestStatisticsRequest)(nil),          // 62: api.cascade.admin.v1.GetContestStatisticsRequest
+	(*GetContestStatisticsReply)(nil),            // 63: api.cascade.admin.v1.GetContestStatisticsReply
+	(*ListLogFilesRequest)(nil),                  // 64: api.cascade.admin.v1.ListLogFilesRequest
+	(*ListLogFilesReply)(nil),                    // 65: api.cascade.admin.v1.ListLogFilesReply
+	(*QueryLogContentRequest)(nil),               // 66: api.cascade.admin.v1.QueryLogContentRequest
+	(*QueryLogContentReply)(nil),                 // 67: api.cascade.admin.v1.QueryLogContentReply
+	(*DownloadLogsRequest)(nil),                  // 68: api.cascade.admin.v1.DownloadLogsRequest
+	(*DisableProblemRequest)(nil),                // 69: api.cascade.admin.v1.DisableProblemRequest
+	(*DisableProblemReply)(nil),                  // 70: api.cascade.admin.v1.DisableProblemReply
+	(*PostContestRequest_ProblemList)(nil),       // 71: api.cascade.admin.v1.PostContestRequest.ProblemList
+	(*PutContestRequest_ProblemList)(nil),        // 72: api.cascade.admin.v1.PutContestRequest.ProblemList
+	(*GetSingleSubmissionReply_CaseResults)(nil), // 73: api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults
+	(*GetRanksReply_RankItem)(nil),               // 74: api.cascade.admin.v1.GetRanksReply.RankItem
+	(*GetAnnouncementsReply_Announcement)(nil),   // 75: api.cascade.admin.v1.GetAnnouncementsReply.Announcement
+	(*timestamppb.Timestamp)(nil),                // 76: google.protobuf.Timestamp
+	(*httpbody.HttpBody)(nil),                    // 77: google.api.HttpBody
 }
 var file_admin_v1_admin_proto_depIdxs = []int32{
-	71, // 0: api.cascade.admin.v1.ContestMetadata.start_time:type_name -> google.protobuf.Timestamp
-	71, // 1: api.cascade.admin.v1.ContestMetadata.end_time:type_name -> google.protobuf.Timestamp
+	76, // 0: api.cascade.admin.v1.ContestMetadata.start_time:type_name -> google.protobuf.Timestamp
+	76, // 1: api.cascade.admin.v1.ContestMetadata.end_time:type_name -> google.protobuf.Timestamp
 	1,  // 2: api.cascade.admin.v1.GetContestsReply.contests:type_name -> api.cascade.admin.v1.ContestMetadata
 	1,  // 3: api.cascade.admin.v1.GetSingleContestReply.metadata:type_name -> api.cascade.admin.v1.ContestMetadata
-	71, // 4: api.cascade.admin.v1.PostContestRequest.start_time:type_name -> google.protobuf.Timestamp
-	71, // 5: api.cascade.admin.v1.PostContestRequest.end_time:type_name -> google.protobuf.Timestamp
-	67, // 6: api.cascade.admin.v1.PostContestRequest.problems:type_name -> api.cascade.admin.v1.PostContestRequest.ProblemList
-	71, // 7: api.cascade.admin.v1.PutContestRequest.start_time:type_name -> google.protobuf.Timestamp
-	71, // 8: api.cascade.admin.v1.PutContestRequest.end_time:type_name -> google.protobuf.Timestamp
-	0,  // 9: api.cascade.admin.v1.ProblemMetadata.status:type_name -> api.cascade.admin.v1.ProblemStatus
-	12, // 10: api.cascade.admin.v1.GetProblemsReply.problems:type_name -> api.cascade.admin.v1.ProblemMetadata
-	12, // 11: api.cascade.admin.v1.GetSingleProblemReply.metadata:type_name -> api.cascade.admin.v1.ProblemMetadata
-	12, // 12: api.cascade.admin.v1.PostProblemRequest.metadata:type_name -> api.cascade.admin.v1.ProblemMetadata
-	12, // 13: api.cascade.admin.v1.PutProblemRequest.metadata:type_name -> api.cascade.admin.v1.ProblemMetadata
-	71, // 14: api.cascade.admin.v1.SubmissionMetadata.submit_time:type_name -> google.protobuf.Timestamp
-	25, // 15: api.cascade.admin.v1.GetSubmissionsReply.submissions:type_name -> api.cascade.admin.v1.SubmissionMetadata
-	25, // 16: api.cascade.admin.v1.GetSingleSubmissionReply.metadata:type_name -> api.cascade.admin.v1.SubmissionMetadata
-	68, // 17: api.cascade.admin.v1.GetSingleSubmissionReply.case_results:type_name -> api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults
-	69, // 18: api.cascade.admin.v1.GetRanksReply.ranks:type_name -> api.cascade.admin.v1.GetRanksReply.RankItem
-	70, // 19: api.cascade.admin.v1.GetAnnouncementsReply.announcements:type_name -> api.cascade.admin.v1.GetAnnouncementsReply.Announcement
-	43, // 20: api.cascade.admin.v1.GetUsersReply.users:type_name -> api.cascade.admin.v1.UserInfo
-	43, // 21: api.cascade.admin.v1.GetContestUsersReply.users:type_name -> api.cascade.admin.v1.UserInfo
-	71, // 22: api.cascade.admin.v1.QueryLogContentRequest.time_start:type_name -> google.protobuf.Timestamp
-	71, // 23: api.cascade.admin.v1.QueryLogContentRequest.time_end:type_name -> google.protobuf.Timestamp
-	28, // 24: api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults.cases:type_name -> api.cascade.admin.v1.CaseMetadata
-	2,  // 25: api.cascade.admin.v1.Admin.GetContests:input_type -> api.cascade.admin.v1.GetContestsRequest
-	4,  // 26: api.cascade.admin.v1.Admin.GetSingleContest:input_type -> api.cascade.admin.v1.GetSingleContestRequest
-	6,  // 27: api.cascade.admin.v1.Admin.PostContest:input_type -> api.cascade.admin.v1.PostContestRequest
-	8,  // 28: api.cascade.admin.v1.Admin.PutContest:input_type -> api.cascade.admin.v1.PutContestRequest
-	10, // 29: api.cascade.admin.v1.Admin.DeleteContest:input_type -> api.cascade.admin.v1.DeleteContestRequest
-	13, // 30: api.cascade.admin.v1.Admin.GetProblems:input_type -> api.cascade.admin.v1.GetProblemsRequest
-	15, // 31: api.cascade.admin.v1.Admin.GetSingleProblem:input_type -> api.cascade.admin.v1.GetSingleProblemRequest
-	17, // 32: api.cascade.admin.v1.Admin.PostProblem:input_type -> api.cascade.admin.v1.PostProblemRequest
-	19, // 33: api.cascade.admin.v1.Admin.PutProblem:input_type -> api.cascade.admin.v1.PutProblemRequest
-	21, // 34: api.cascade.admin.v1.Admin.DeleteProblem:input_type -> api.cascade.admin.v1.DeleteProblemRequest
-	23, // 35: api.cascade.admin.v1.Admin.PublishProblem:input_type -> api.cascade.admin.v1.PublishProblemRequest
-	65, // 36: api.cascade.admin.v1.Admin.DisableProblem:input_type -> api.cascade.admin.v1.DisableProblemRequest
-	26, // 37: api.cascade.admin.v1.Admin.GetSubmissions:input_type -> api.cascade.admin.v1.GetSubmissionsRequest
-	29, // 38: api.cascade.admin.v1.Admin.GetSingleSubmission:input_type -> api.cascade.admin.v1.GetSingleSubmissionRequest
-	31, // 39: api.cascade.admin.v1.Admin.RejudgeSubmission:input_type -> api.cascade.admin.v1.RejudgeSubmissionRequest
-	33, // 40: api.cascade.admin.v1.Admin.GetRanks:input_type -> api.cascade.admin.v1.GetRanksRequest
-	35, // 41: api.cascade.admin.v1.Admin.GetAnnouncements:input_type -> api.cascade.admin.v1.GetAnnouncementsRequest
-	37, // 42: api.cascade.admin.v1.Admin.PostAnnouncement:input_type -> api.cascade.admin.v1.PostAnnouncementRequest
-	39, // 43: api.cascade.admin.v1.Admin.PutAnnouncement:input_type -> api.cascade.admin.v1.PutAnnouncementRequest
-	41, // 44: api.cascade.admin.v1.Admin.DeleteAnnouncement:input_type -> api.cascade.admin.v1.DeleteAnnouncementRequest
-	44, // 45: api.cascade.admin.v1.Admin.GetUsers:input_type -> api.cascade.admin.v1.GetUsersRequest
-	46, // 46: api.cascade.admin.v1.Admin.UpdateUserInfo:input_type -> api.cascade.admin.v1.UpdateUserInfoRequest
-	48, // 47: api.cascade.admin.v1.Admin.DeleteUser:input_type -> api.cascade.admin.v1.DeleteUserRequest
-	50, // 48: api.cascade.admin.v1.Admin.GetContestUsers:input_type -> api.cascade.admin.v1.GetContestUsersRequest
-	52, // 49: api.cascade.admin.v1.Admin.AddContestUser:input_type -> api.cascade.admin.v1.AddContestUserRequest
-	54, // 50: api.cascade.admin.v1.Admin.RemoveContestUser:input_type -> api.cascade.admin.v1.RemoveContestUserRequest
-	56, // 51: api.cascade.admin.v1.Admin.UpdateUserPassword:input_type -> api.cascade.admin.v1.UpdateUserPasswordRequest
-	58, // 52: api.cascade.admin.v1.Admin.GetContestStatistics:input_type -> api.cascade.admin.v1.GetContestStatisticsRequest
-	60, // 53: api.cascade.admin.v1.Admin.ListLogFiles:input_type -> api.cascade.admin.v1.ListLogFilesRequest
-	62, // 54: api.cascade.admin.v1.Admin.QueryLogContent:input_type -> api.cascade.admin.v1.QueryLogContentRequest
-	64, // 55: api.cascade.admin.v1.Admin.DownloadLogs:input_type -> api.cascade.admin.v1.DownloadLogsRequest
-	3,  // 56: api.cascade.admin.v1.Admin.GetContests:output_type -> api.cascade.admin.v1.GetContestsReply
-	5,  // 57: api.cascade.admin.v1.Admin.GetSingleContest:output_type -> api.cascade.admin.v1.GetSingleContestReply
-	7,  // 58: api.cascade.admin.v1.Admin.PostContest:output_type -> api.cascade.admin.v1.PostContestReply
-	9,  // 59: api.cascade.admin.v1.Admin.PutContest:output_type -> api.cascade.admin.v1.PutContestReply
-	11, // 60: api.cascade.admin.v1.Admin.DeleteContest:output_type -> api.cascade.admin.v1.DeleteContestReply
-	14, // 61: api.cascade.admin.v1.Admin.GetProblems:output_type -> api.cascade.admin.v1.GetProblemsReply
-	16, // 62: api.cascade.admin.v1.Admin.GetSingleProblem:output_type -> api.cascade.admin.v1.GetSingleProblemReply
-	18, // 63: api.cascade.admin.v1.Admin.PostProblem:output_type -> api.cascade.admin.v1.PostProblemReply
-	20, // 64: api.cascade.admin.v1.Admin.PutProblem:output_type -> api.cascade.admin.v1.PutProblemReply
-	22, // 65: api.cascade.admin.v1.Admin.DeleteProblem:output_type -> api.cascade.admin.v1.DeleteProblemReply
-	24, // 66: api.cascade.admin.v1.Admin.PublishProblem:output_type -> api.cascade.admin.v1.PublishProblemReply
-	66, // 67: api.cascade.admin.v1.Admin.DisableProblem:output_type -> api.cascade.admin.v1.DisableProblemReply
-	27, // 68: api.cascade.admin.v1.Admin.GetSubmissions:output_type -> api.cascade.admin.v1.GetSubmissionsReply
-	30, // 69: api.cascade.admin.v1.Admin.GetSingleSubmission:output_type -> api.cascade.admin.v1.GetSingleSubmissionReply
-	32, // 70: api.cascade.admin.v1.Admin.RejudgeSubmission:output_type -> api.cascade.admin.v1.RejudgeSubmissionReply
-	34, // 71: api.cascade.admin.v1.Admin.GetRanks:output_type -> api.cascade.admin.v1.GetRanksReply
-	36, // 72: api.cascade.admin.v1.Admin.GetAnnouncements:output_type -> api.cascade.admin.v1.GetAnnouncementsReply
-	38, // 73: api.cascade.admin.v1.Admin.PostAnnouncement:output_type -> api.cascade.admin.v1.PostAnnouncementReply
-	40, // 74: api.cascade.admin.v1.Admin.PutAnnouncement:output_type -> api.cascade.admin.v1.PutAnnouncementReply
-	42, // 75: api.cascade.admin.v1.Admin.DeleteAnnouncement:output_type -> api.cascade.admin.v1.DeleteAnnouncementReply
-	45, // 76: api.cascade.admin.v1.Admin.GetUsers:output_type -> api.cascade.admin.v1.GetUsersReply
-	47, // 77: api.cascade.admin.v1.Admin.UpdateUserInfo:output_type -> api.cascade.admin.v1.UpdateUserInfoReply
-	49, // 78: api.cascade.admin.v1.Admin.DeleteUser:output_type -> api.cascade.admin.v1.DeleteUserReply
-	51, // 79: api.cascade.admin.v1.Admin.GetContestUsers:output_type -> api.cascade.admin.v1.GetContestUsersReply
-	53, // 80: api.cascade.admin.v1.Admin.AddContestUser:output_type -> api.cascade.admin.v1.AddContestUserReply
-	55, // 81: api.cascade.admin.v1.Admin.RemoveContestUser:output_type -> api.cascade.admin.v1.RemoveContestUserReply
-	57, // 82: api.cascade.admin.v1.Admin.UpdateUserPassword:output_type -> api.cascade.admin.v1.UpdateUserPasswordReply
-	59, // 83: api.cascade.admin.v1.Admin.GetContestStatistics:output_type -> api.cascade.admin.v1.GetContestStatisticsReply
-	61, // 84: api.cascade.admin.v1.Admin.ListLogFiles:output_type -> api.cascade.admin.v1.ListLogFilesReply
-	63, // 85: api.cascade.admin.v1.Admin.QueryLogContent:output_type -> api.cascade.admin.v1.QueryLogContentReply
-	72, // 86: api.cascade.admin.v1.Admin.DownloadLogs:output_type -> google.api.HttpBody
-	56, // [56:87] is the sub-list for method output_type
-	25, // [25:56] is the sub-list for method input_type
-	25, // [25:25] is the sub-list for extension type_name
-	25, // [25:25] is the sub-list for extension extendee
-	0,  // [0:25] is the sub-list for field type_name
+	76, // 4: api.cascade.admin.v1.PostContestRequest.start_time:type_name -> google.protobuf.Timestamp
+	76, // 5: api.cascade.admin.v1.PostContestRequest.end_time:type_name -> google.protobuf.Timestamp
+	71, // 6: api.cascade.admin.v1.PostContestRequest.problems:type_name -> api.cascade.admin.v1.PostContestRequest.ProblemList
+	76, // 7: api.cascade.admin.v1.PutContestRequest.start_time:type_name -> google.protobuf.Timestamp
+	76, // 8: api.cascade.admin.v1.PutContestRequest.end_time:type_name -> google.protobuf.Timestamp
+	72, // 9: api.cascade.admin.v1.PutContestRequest.problems:type_name -> api.cascade.admin.v1.PutContestRequest.ProblemList
+	47, // 10: api.cascade.admin.v1.GetContestCompetitorsReply.competitors:type_name -> api.cascade.admin.v1.UserInfo
+	0,  // 11: api.cascade.admin.v1.ProblemMetadata.status:type_name -> api.cascade.admin.v1.ProblemStatus
+	16, // 12: api.cascade.admin.v1.GetProblemsReply.problems:type_name -> api.cascade.admin.v1.ProblemMetadata
+	16, // 13: api.cascade.admin.v1.GetSingleProblemReply.metadata:type_name -> api.cascade.admin.v1.ProblemMetadata
+	16, // 14: api.cascade.admin.v1.PostProblemRequest.metadata:type_name -> api.cascade.admin.v1.ProblemMetadata
+	16, // 15: api.cascade.admin.v1.PutProblemRequest.metadata:type_name -> api.cascade.admin.v1.ProblemMetadata
+	76, // 16: api.cascade.admin.v1.SubmissionMetadata.submit_time:type_name -> google.protobuf.Timestamp
+	29, // 17: api.cascade.admin.v1.GetSubmissionsReply.submissions:type_name -> api.cascade.admin.v1.SubmissionMetadata
+	29, // 18: api.cascade.admin.v1.GetSingleSubmissionReply.metadata:type_name -> api.cascade.admin.v1.SubmissionMetadata
+	73, // 19: api.cascade.admin.v1.GetSingleSubmissionReply.case_results:type_name -> api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults
+	74, // 20: api.cascade.admin.v1.GetRanksReply.ranks:type_name -> api.cascade.admin.v1.GetRanksReply.RankItem
+	75, // 21: api.cascade.admin.v1.GetAnnouncementsReply.announcements:type_name -> api.cascade.admin.v1.GetAnnouncementsReply.Announcement
+	47, // 22: api.cascade.admin.v1.GetUsersReply.users:type_name -> api.cascade.admin.v1.UserInfo
+	47, // 23: api.cascade.admin.v1.GetContestUsersReply.users:type_name -> api.cascade.admin.v1.UserInfo
+	76, // 24: api.cascade.admin.v1.QueryLogContentRequest.time_start:type_name -> google.protobuf.Timestamp
+	76, // 25: api.cascade.admin.v1.QueryLogContentRequest.time_end:type_name -> google.protobuf.Timestamp
+	32, // 26: api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults.cases:type_name -> api.cascade.admin.v1.CaseMetadata
+	2,  // 27: api.cascade.admin.v1.Admin.GetContests:input_type -> api.cascade.admin.v1.GetContestsRequest
+	4,  // 28: api.cascade.admin.v1.Admin.GetSingleContest:input_type -> api.cascade.admin.v1.GetSingleContestRequest
+	6,  // 29: api.cascade.admin.v1.Admin.PostContest:input_type -> api.cascade.admin.v1.PostContestRequest
+	8,  // 30: api.cascade.admin.v1.Admin.PutContest:input_type -> api.cascade.admin.v1.PutContestRequest
+	10, // 31: api.cascade.admin.v1.Admin.DeleteContest:input_type -> api.cascade.admin.v1.DeleteContestRequest
+	12, // 32: api.cascade.admin.v1.Admin.GetContestCompetitors:input_type -> api.cascade.admin.v1.GetContestCompetitorsRequest
+	14, // 33: api.cascade.admin.v1.Admin.PutContestCompetitors:input_type -> api.cascade.admin.v1.PutContestCompetitorsRequest
+	17, // 34: api.cascade.admin.v1.Admin.GetProblems:input_type -> api.cascade.admin.v1.GetProblemsRequest
+	19, // 35: api.cascade.admin.v1.Admin.GetSingleProblem:input_type -> api.cascade.admin.v1.GetSingleProblemRequest
+	21, // 36: api.cascade.admin.v1.Admin.PostProblem:input_type -> api.cascade.admin.v1.PostProblemRequest
+	23, // 37: api.cascade.admin.v1.Admin.PutProblem:input_type -> api.cascade.admin.v1.PutProblemRequest
+	25, // 38: api.cascade.admin.v1.Admin.DeleteProblem:input_type -> api.cascade.admin.v1.DeleteProblemRequest
+	27, // 39: api.cascade.admin.v1.Admin.PublishProblem:input_type -> api.cascade.admin.v1.PublishProblemRequest
+	69, // 40: api.cascade.admin.v1.Admin.DisableProblem:input_type -> api.cascade.admin.v1.DisableProblemRequest
+	30, // 41: api.cascade.admin.v1.Admin.GetSubmissions:input_type -> api.cascade.admin.v1.GetSubmissionsRequest
+	33, // 42: api.cascade.admin.v1.Admin.GetSingleSubmission:input_type -> api.cascade.admin.v1.GetSingleSubmissionRequest
+	35, // 43: api.cascade.admin.v1.Admin.RejudgeSubmission:input_type -> api.cascade.admin.v1.RejudgeSubmissionRequest
+	37, // 44: api.cascade.admin.v1.Admin.GetRanks:input_type -> api.cascade.admin.v1.GetRanksRequest
+	39, // 45: api.cascade.admin.v1.Admin.GetAnnouncements:input_type -> api.cascade.admin.v1.GetAnnouncementsRequest
+	41, // 46: api.cascade.admin.v1.Admin.PostAnnouncement:input_type -> api.cascade.admin.v1.PostAnnouncementRequest
+	43, // 47: api.cascade.admin.v1.Admin.PutAnnouncement:input_type -> api.cascade.admin.v1.PutAnnouncementRequest
+	45, // 48: api.cascade.admin.v1.Admin.DeleteAnnouncement:input_type -> api.cascade.admin.v1.DeleteAnnouncementRequest
+	48, // 49: api.cascade.admin.v1.Admin.GetUsers:input_type -> api.cascade.admin.v1.GetUsersRequest
+	50, // 50: api.cascade.admin.v1.Admin.UpdateUserInfo:input_type -> api.cascade.admin.v1.UpdateUserInfoRequest
+	52, // 51: api.cascade.admin.v1.Admin.DeleteUser:input_type -> api.cascade.admin.v1.DeleteUserRequest
+	54, // 52: api.cascade.admin.v1.Admin.GetContestUsers:input_type -> api.cascade.admin.v1.GetContestUsersRequest
+	56, // 53: api.cascade.admin.v1.Admin.AddContestUser:input_type -> api.cascade.admin.v1.AddContestUserRequest
+	58, // 54: api.cascade.admin.v1.Admin.RemoveContestUser:input_type -> api.cascade.admin.v1.RemoveContestUserRequest
+	60, // 55: api.cascade.admin.v1.Admin.UpdateUserPassword:input_type -> api.cascade.admin.v1.UpdateUserPasswordRequest
+	62, // 56: api.cascade.admin.v1.Admin.GetContestStatistics:input_type -> api.cascade.admin.v1.GetContestStatisticsRequest
+	64, // 57: api.cascade.admin.v1.Admin.ListLogFiles:input_type -> api.cascade.admin.v1.ListLogFilesRequest
+	66, // 58: api.cascade.admin.v1.Admin.QueryLogContent:input_type -> api.cascade.admin.v1.QueryLogContentRequest
+	68, // 59: api.cascade.admin.v1.Admin.DownloadLogs:input_type -> api.cascade.admin.v1.DownloadLogsRequest
+	3,  // 60: api.cascade.admin.v1.Admin.GetContests:output_type -> api.cascade.admin.v1.GetContestsReply
+	5,  // 61: api.cascade.admin.v1.Admin.GetSingleContest:output_type -> api.cascade.admin.v1.GetSingleContestReply
+	7,  // 62: api.cascade.admin.v1.Admin.PostContest:output_type -> api.cascade.admin.v1.PostContestReply
+	9,  // 63: api.cascade.admin.v1.Admin.PutContest:output_type -> api.cascade.admin.v1.PutContestReply
+	11, // 64: api.cascade.admin.v1.Admin.DeleteContest:output_type -> api.cascade.admin.v1.DeleteContestReply
+	13, // 65: api.cascade.admin.v1.Admin.GetContestCompetitors:output_type -> api.cascade.admin.v1.GetContestCompetitorsReply
+	15, // 66: api.cascade.admin.v1.Admin.PutContestCompetitors:output_type -> api.cascade.admin.v1.PutContestCompetitorsReply
+	18, // 67: api.cascade.admin.v1.Admin.GetProblems:output_type -> api.cascade.admin.v1.GetProblemsReply
+	20, // 68: api.cascade.admin.v1.Admin.GetSingleProblem:output_type -> api.cascade.admin.v1.GetSingleProblemReply
+	22, // 69: api.cascade.admin.v1.Admin.PostProblem:output_type -> api.cascade.admin.v1.PostProblemReply
+	24, // 70: api.cascade.admin.v1.Admin.PutProblem:output_type -> api.cascade.admin.v1.PutProblemReply
+	26, // 71: api.cascade.admin.v1.Admin.DeleteProblem:output_type -> api.cascade.admin.v1.DeleteProblemReply
+	28, // 72: api.cascade.admin.v1.Admin.PublishProblem:output_type -> api.cascade.admin.v1.PublishProblemReply
+	70, // 73: api.cascade.admin.v1.Admin.DisableProblem:output_type -> api.cascade.admin.v1.DisableProblemReply
+	31, // 74: api.cascade.admin.v1.Admin.GetSubmissions:output_type -> api.cascade.admin.v1.GetSubmissionsReply
+	34, // 75: api.cascade.admin.v1.Admin.GetSingleSubmission:output_type -> api.cascade.admin.v1.GetSingleSubmissionReply
+	36, // 76: api.cascade.admin.v1.Admin.RejudgeSubmission:output_type -> api.cascade.admin.v1.RejudgeSubmissionReply
+	38, // 77: api.cascade.admin.v1.Admin.GetRanks:output_type -> api.cascade.admin.v1.GetRanksReply
+	40, // 78: api.cascade.admin.v1.Admin.GetAnnouncements:output_type -> api.cascade.admin.v1.GetAnnouncementsReply
+	42, // 79: api.cascade.admin.v1.Admin.PostAnnouncement:output_type -> api.cascade.admin.v1.PostAnnouncementReply
+	44, // 80: api.cascade.admin.v1.Admin.PutAnnouncement:output_type -> api.cascade.admin.v1.PutAnnouncementReply
+	46, // 81: api.cascade.admin.v1.Admin.DeleteAnnouncement:output_type -> api.cascade.admin.v1.DeleteAnnouncementReply
+	49, // 82: api.cascade.admin.v1.Admin.GetUsers:output_type -> api.cascade.admin.v1.GetUsersReply
+	51, // 83: api.cascade.admin.v1.Admin.UpdateUserInfo:output_type -> api.cascade.admin.v1.UpdateUserInfoReply
+	53, // 84: api.cascade.admin.v1.Admin.DeleteUser:output_type -> api.cascade.admin.v1.DeleteUserReply
+	55, // 85: api.cascade.admin.v1.Admin.GetContestUsers:output_type -> api.cascade.admin.v1.GetContestUsersReply
+	57, // 86: api.cascade.admin.v1.Admin.AddContestUser:output_type -> api.cascade.admin.v1.AddContestUserReply
+	59, // 87: api.cascade.admin.v1.Admin.RemoveContestUser:output_type -> api.cascade.admin.v1.RemoveContestUserReply
+	61, // 88: api.cascade.admin.v1.Admin.UpdateUserPassword:output_type -> api.cascade.admin.v1.UpdateUserPasswordReply
+	63, // 89: api.cascade.admin.v1.Admin.GetContestStatistics:output_type -> api.cascade.admin.v1.GetContestStatisticsReply
+	65, // 90: api.cascade.admin.v1.Admin.ListLogFiles:output_type -> api.cascade.admin.v1.ListLogFilesReply
+	67, // 91: api.cascade.admin.v1.Admin.QueryLogContent:output_type -> api.cascade.admin.v1.QueryLogContentReply
+	77, // 92: api.cascade.admin.v1.Admin.DownloadLogs:output_type -> google.api.HttpBody
+	60, // [60:93] is the sub-list for method output_type
+	27, // [27:60] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_admin_v1_admin_proto_init() }
@@ -4174,7 +4449,7 @@ func file_admin_v1_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_v1_admin_proto_rawDesc), len(file_admin_v1_admin_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   70,
+			NumMessages:   75,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

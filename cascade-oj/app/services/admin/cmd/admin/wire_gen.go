@@ -36,7 +36,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	submissionUseCase := biz.NewSubmissionUseCase(submissionRepo, logger)
 	userRepo := data.NewUserRepo(dataData, logger)
 	userUsecase := biz.NewUserUsecase(userRepo, logger)
-	adminService := service.NewAdminService(announcementUseCase, contestUsecase, logUseCase, problemUsecase, submissionUseCase, userUsecase)
+	adminService := service.NewAdminService(announcementUseCase, contestUsecase, logUseCase, problemUsecase, submissionUseCase, userUsecase, logger)
 	grpcServer := server.NewGRPCServer(confServer, adminService, logger)
 	httpServer := server.NewHTTPServer(confServer, adminService, logger)
 	rabbitmqServer := server.NewMQServer(confServer, adminService, logger)

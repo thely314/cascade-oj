@@ -167,3 +167,159 @@
     color: #a7aab8;
     border-color: rgba(111, 114, 131, 0.24);
 }
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: #141816;
+    border: 1px solid rgba(22, 163, 118, 0.12);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.problem-modal {
+    max-width: 800px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid rgba(22, 163, 118, 0.12);
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #e6f7ec;
+    font-size: 18px;
+}
+
+.modal-header .close {
+    background: none;
+    border: none;
+    color: #8aa39b;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.modal-body {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px;
+    border-top: 1px solid rgba(22, 163, 118, 0.12);
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #cbd5c0;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgba(22, 163, 118, 0.2);
+    border-radius: 8px;
+    background: #0f1412;
+    color: #e6f7ec;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #16a379;
+}
+
+.search-box {
+    margin-bottom: 16px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgba(22, 163, 118, 0.2);
+    border-radius: 8px;
+    background: #0f1412;
+    color: #e6f7ec;
+    box-sizing: border-box;
+}
+
+.problem-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.problem-table th,
+.problem-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(22, 163, 118, 0.08);
+}
+
+.problem-table th {
+    color: #8aa39b;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.problem-table td {
+    color: #cbd5c0;
+}
+
+.selected-problems {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.tag {
+    padding: 4px 8px;
+    background: rgba(22, 163, 118, 0.16);
+    color: #23c58c;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.form-group input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: brightness(0) invert(1);
+}

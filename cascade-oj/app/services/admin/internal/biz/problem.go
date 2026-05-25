@@ -28,6 +28,7 @@ type Problem struct {
 	MemoryLimitKB int32
 	Status        ProblemStatus
 	Templates     []*ProblemTemplate
+	Description   string
 }
 
 type DetailedProblem struct {

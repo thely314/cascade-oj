@@ -47,6 +47,27 @@ func (userRepo *UserRepo) GetUsers(ctx context.Context, request biz.UserRequestI
 	}
 	return users, nil
 }
+
+func (userRepo *UserRepo) GetUserByID(ctx context.Context, userID int64) (*biz.User, error) {
+	entUser, err := userRepo.data.db.User.
+		Query().
+		Where(user.IDEQ(userID)).
+		Select(
+			user.FieldID,
+			user.FieldUsername,
+			user.FieldEmail,
+		).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &biz.User{
+		UserID:   entUser.ID,
+		Username: entUser.Username,
+		Email:    entUser.Email,
+	}, nil
+}
+
 func (userRepo *UserRepo) UpdateUserInfo(ctx context.Context, userEditInfo biz.UserEditInfo) (bool, error) {
 	err := userRepo.data.db.User.
 		UpdateOneID(userEditInfo.UserID).

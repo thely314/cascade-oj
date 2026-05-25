@@ -1053,6 +1053,35 @@ func (m *PutContestRequest) validate(all bool) error {
 		}
 	}
 
+	if all {
+		switch v := interface{}(m.GetProblems()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PutContestRequestValidationError{
+					field:  "Problems",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PutContestRequestValidationError{
+					field:  "Problems",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetProblems()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PutContestRequestValidationError{
+				field:  "Problems",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return PutContestRequestMultiError(errors)
 	}
@@ -1443,6 +1472,456 @@ var _ interface {
 	ErrorName() string
 } = DeleteContestReplyValidationError{}
 
+// Validate checks the field values on GetContestCompetitorsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetContestCompetitorsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetContestCompetitorsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetContestCompetitorsRequestMultiError, or nil if none found.
+func (m *GetContestCompetitorsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetContestCompetitorsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ContestId
+
+	if len(errors) > 0 {
+		return GetContestCompetitorsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetContestCompetitorsRequestMultiError is an error wrapping multiple
+// validation errors returned by GetContestCompetitorsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetContestCompetitorsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetContestCompetitorsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetContestCompetitorsRequestMultiError) AllErrors() []error { return m }
+
+// GetContestCompetitorsRequestValidationError is the validation error returned
+// by GetContestCompetitorsRequest.Validate if the designated constraints
+// aren't met.
+type GetContestCompetitorsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetContestCompetitorsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetContestCompetitorsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetContestCompetitorsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetContestCompetitorsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetContestCompetitorsRequestValidationError) ErrorName() string {
+	return "GetContestCompetitorsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetContestCompetitorsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetContestCompetitorsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetContestCompetitorsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetContestCompetitorsRequestValidationError{}
+
+// Validate checks the field values on GetContestCompetitorsReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetContestCompetitorsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetContestCompetitorsReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetContestCompetitorsReplyMultiError, or nil if none found.
+func (m *GetContestCompetitorsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetContestCompetitorsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCompetitors() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetContestCompetitorsReplyValidationError{
+						field:  fmt.Sprintf("Competitors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetContestCompetitorsReplyValidationError{
+						field:  fmt.Sprintf("Competitors[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetContestCompetitorsReplyValidationError{
+					field:  fmt.Sprintf("Competitors[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetContestCompetitorsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetContestCompetitorsReplyMultiError is an error wrapping multiple
+// validation errors returned by GetContestCompetitorsReply.ValidateAll() if
+// the designated constraints aren't met.
+type GetContestCompetitorsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetContestCompetitorsReplyMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetContestCompetitorsReplyMultiError) AllErrors() []error { return m }
+
+// GetContestCompetitorsReplyValidationError is the validation error returned
+// by GetContestCompetitorsReply.Validate if the designated constraints aren't met.
+type GetContestCompetitorsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetContestCompetitorsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetContestCompetitorsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetContestCompetitorsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetContestCompetitorsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetContestCompetitorsReplyValidationError) ErrorName() string {
+	return "GetContestCompetitorsReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetContestCompetitorsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetContestCompetitorsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetContestCompetitorsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetContestCompetitorsReplyValidationError{}
+
+// Validate checks the field values on PutContestCompetitorsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PutContestCompetitorsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PutContestCompetitorsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PutContestCompetitorsRequestMultiError, or nil if none found.
+func (m *PutContestCompetitorsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PutContestCompetitorsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ContestId
+
+	if len(errors) > 0 {
+		return PutContestCompetitorsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PutContestCompetitorsRequestMultiError is an error wrapping multiple
+// validation errors returned by PutContestCompetitorsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type PutContestCompetitorsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PutContestCompetitorsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PutContestCompetitorsRequestMultiError) AllErrors() []error { return m }
+
+// PutContestCompetitorsRequestValidationError is the validation error returned
+// by PutContestCompetitorsRequest.Validate if the designated constraints
+// aren't met.
+type PutContestCompetitorsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PutContestCompetitorsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PutContestCompetitorsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PutContestCompetitorsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PutContestCompetitorsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PutContestCompetitorsRequestValidationError) ErrorName() string {
+	return "PutContestCompetitorsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PutContestCompetitorsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPutContestCompetitorsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PutContestCompetitorsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PutContestCompetitorsRequestValidationError{}
+
+// Validate checks the field values on PutContestCompetitorsReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PutContestCompetitorsReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PutContestCompetitorsReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PutContestCompetitorsReplyMultiError, or nil if none found.
+func (m *PutContestCompetitorsReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PutContestCompetitorsReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for IsUpdated
+
+	if len(errors) > 0 {
+		return PutContestCompetitorsReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// PutContestCompetitorsReplyMultiError is an error wrapping multiple
+// validation errors returned by PutContestCompetitorsReply.ValidateAll() if
+// the designated constraints aren't met.
+type PutContestCompetitorsReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PutContestCompetitorsReplyMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PutContestCompetitorsReplyMultiError) AllErrors() []error { return m }
+
+// PutContestCompetitorsReplyValidationError is the validation error returned
+// by PutContestCompetitorsReply.Validate if the designated constraints aren't met.
+type PutContestCompetitorsReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PutContestCompetitorsReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PutContestCompetitorsReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PutContestCompetitorsReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PutContestCompetitorsReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PutContestCompetitorsReplyValidationError) ErrorName() string {
+	return "PutContestCompetitorsReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PutContestCompetitorsReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPutContestCompetitorsReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PutContestCompetitorsReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PutContestCompetitorsReplyValidationError{}
+
 // Validate checks the field values on ProblemMetadata with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -1472,6 +1951,8 @@ func (m *ProblemMetadata) validate(all bool) error {
 	// no validation rules for TimeLimitMs
 
 	// no validation rules for MemoryLimitMb
+
+	// no validation rules for Description
 
 	// no validation rules for Status
 
@@ -4395,8 +4876,6 @@ func (m *PostAnnouncementRequest) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for PublisherName
 
 	// no validation rules for Title
 
@@ -7740,6 +8219,109 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PostContestRequest_ProblemListValidationError{}
+
+// Validate checks the field values on PutContestRequest_ProblemList with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PutContestRequest_ProblemList) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PutContestRequest_ProblemList with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PutContestRequest_ProblemListMultiError, or nil if none found.
+func (m *PutContestRequest_ProblemList) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PutContestRequest_ProblemList) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return PutContestRequest_ProblemListMultiError(errors)
+	}
+
+	return nil
+}
+
+// PutContestRequest_ProblemListMultiError is an error wrapping multiple
+// validation errors returned by PutContestRequest_ProblemList.ValidateAll()
+// if the designated constraints aren't met.
+type PutContestRequest_ProblemListMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PutContestRequest_ProblemListMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PutContestRequest_ProblemListMultiError) AllErrors() []error { return m }
+
+// PutContestRequest_ProblemListValidationError is the validation error
+// returned by PutContestRequest_ProblemList.Validate if the designated
+// constraints aren't met.
+type PutContestRequest_ProblemListValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PutContestRequest_ProblemListValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PutContestRequest_ProblemListValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PutContestRequest_ProblemListValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PutContestRequest_ProblemListValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PutContestRequest_ProblemListValidationError) ErrorName() string {
+	return "PutContestRequest_ProblemListValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PutContestRequest_ProblemListValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPutContestRequest_ProblemList.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PutContestRequest_ProblemListValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PutContestRequest_ProblemListValidationError{}
 
 // Validate checks the field values on GetSingleSubmissionReply_CaseResults
 // with the rules defined in the proto definition for this message. If any

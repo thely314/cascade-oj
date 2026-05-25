@@ -28,6 +28,7 @@ const OperationAdminDeleteUser = "/api.cascade.admin.v1.Admin/DeleteUser"
 const OperationAdminDisableProblem = "/api.cascade.admin.v1.Admin/DisableProblem"
 const OperationAdminDownloadLogs = "/api.cascade.admin.v1.Admin/DownloadLogs"
 const OperationAdminGetAnnouncements = "/api.cascade.admin.v1.Admin/GetAnnouncements"
+const OperationAdminGetContestCompetitors = "/api.cascade.admin.v1.Admin/GetContestCompetitors"
 const OperationAdminGetContestStatistics = "/api.cascade.admin.v1.Admin/GetContestStatistics"
 const OperationAdminGetContestUsers = "/api.cascade.admin.v1.Admin/GetContestUsers"
 const OperationAdminGetContests = "/api.cascade.admin.v1.Admin/GetContests"
@@ -45,6 +46,7 @@ const OperationAdminPostProblem = "/api.cascade.admin.v1.Admin/PostProblem"
 const OperationAdminPublishProblem = "/api.cascade.admin.v1.Admin/PublishProblem"
 const OperationAdminPutAnnouncement = "/api.cascade.admin.v1.Admin/PutAnnouncement"
 const OperationAdminPutContest = "/api.cascade.admin.v1.Admin/PutContest"
+const OperationAdminPutContestCompetitors = "/api.cascade.admin.v1.Admin/PutContestCompetitors"
 const OperationAdminPutProblem = "/api.cascade.admin.v1.Admin/PutProblem"
 const OperationAdminQueryLogContent = "/api.cascade.admin.v1.Admin/QueryLogContent"
 const OperationAdminRejudgeSubmission = "/api.cascade.admin.v1.Admin/RejudgeSubmission"
@@ -68,6 +70,7 @@ type AdminHTTPServer interface {
 	DownloadLogs(context.Context, *DownloadLogsRequest) (*httpbody.HttpBody, error)
 	// GetAnnouncements Get a list of announcements
 	GetAnnouncements(context.Context, *GetAnnouncementsRequest) (*GetAnnouncementsReply, error)
+	GetContestCompetitors(context.Context, *GetContestCompetitorsRequest) (*GetContestCompetitorsReply, error)
 	// GetContestStatistics Get statistics for a contest
 	GetContestStatistics(context.Context, *GetContestStatisticsRequest) (*GetContestStatisticsReply, error)
 	GetContestUsers(context.Context, *GetContestUsersRequest) (*GetContestUsersReply, error)
@@ -101,6 +104,7 @@ type AdminHTTPServer interface {
 	PutAnnouncement(context.Context, *PutAnnouncementRequest) (*PutAnnouncementReply, error)
 	// PutContest Update an existing contest
 	PutContest(context.Context, *PutContestRequest) (*PutContestReply, error)
+	PutContestCompetitors(context.Context, *PutContestCompetitorsRequest) (*PutContestCompetitorsReply, error)
 	// PutProblem Update an existing problem
 	PutProblem(context.Context, *PutProblemRequest) (*PutProblemReply, error)
 	// QueryLogContent Query content from a log file
@@ -120,6 +124,8 @@ func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
 	r.POST("/admin/contests", _Admin_PostContest0_HTTP_Handler(srv))
 	r.PUT("/admin/contests/{contest_id}", _Admin_PutContest0_HTTP_Handler(srv))
 	r.DELETE("/admin/contests/{contest_id}", _Admin_DeleteContest0_HTTP_Handler(srv))
+	r.GET("/admin/contests/{contest_id}/competitors", _Admin_GetContestCompetitors0_HTTP_Handler(srv))
+	r.PUT("/admin/contests/{contest_id}/competitors", _Admin_PutContestCompetitors0_HTTP_Handler(srv))
 	r.GET("/admin/problems", _Admin_GetProblems0_HTTP_Handler(srv))
 	r.GET("/admin/problems/{problem_id}", _Admin_GetSingleProblem0_HTTP_Handler(srv))
 	r.POST("/admin/problems", _Admin_PostProblem0_HTTP_Handler(srv))
@@ -254,6 +260,53 @@ func _Admin_DeleteContest0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Conte
 			return err
 		}
 		reply := out.(*DeleteContestReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Admin_GetContestCompetitors0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetContestCompetitorsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminGetContestCompetitors)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetContestCompetitors(ctx, req.(*GetContestCompetitorsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetContestCompetitorsReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Admin_PutContestCompetitors0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in PutContestCompetitorsRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminPutContestCompetitors)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.PutContestCompetitors(ctx, req.(*PutContestCompetitorsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*PutContestCompetitorsReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -852,6 +905,7 @@ type AdminHTTPClient interface {
 	DownloadLogs(ctx context.Context, req *DownloadLogsRequest, opts ...http.CallOption) (rsp *httpbody.HttpBody, err error)
 	// GetAnnouncements Get a list of announcements
 	GetAnnouncements(ctx context.Context, req *GetAnnouncementsRequest, opts ...http.CallOption) (rsp *GetAnnouncementsReply, err error)
+	GetContestCompetitors(ctx context.Context, req *GetContestCompetitorsRequest, opts ...http.CallOption) (rsp *GetContestCompetitorsReply, err error)
 	// GetContestStatistics Get statistics for a contest
 	GetContestStatistics(ctx context.Context, req *GetContestStatisticsRequest, opts ...http.CallOption) (rsp *GetContestStatisticsReply, err error)
 	GetContestUsers(ctx context.Context, req *GetContestUsersRequest, opts ...http.CallOption) (rsp *GetContestUsersReply, err error)
@@ -885,6 +939,7 @@ type AdminHTTPClient interface {
 	PutAnnouncement(ctx context.Context, req *PutAnnouncementRequest, opts ...http.CallOption) (rsp *PutAnnouncementReply, err error)
 	// PutContest Update an existing contest
 	PutContest(ctx context.Context, req *PutContestRequest, opts ...http.CallOption) (rsp *PutContestReply, err error)
+	PutContestCompetitors(ctx context.Context, req *PutContestCompetitorsRequest, opts ...http.CallOption) (rsp *PutContestCompetitorsReply, err error)
 	// PutProblem Update an existing problem
 	PutProblem(ctx context.Context, req *PutProblemRequest, opts ...http.CallOption) (rsp *PutProblemReply, err error)
 	// QueryLogContent Query content from a log file
@@ -1008,6 +1063,19 @@ func (c *AdminHTTPClientImpl) GetAnnouncements(ctx context.Context, in *GetAnnou
 	pattern := "/admin/announcements"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAdminGetAnnouncements))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AdminHTTPClientImpl) GetContestCompetitors(ctx context.Context, in *GetContestCompetitorsRequest, opts ...http.CallOption) (*GetContestCompetitorsReply, error) {
+	var out GetContestCompetitorsReply
+	pattern := "/admin/contests/{contest_id}/competitors"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAdminGetContestCompetitors))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -1245,6 +1313,19 @@ func (c *AdminHTTPClientImpl) PutContest(ctx context.Context, in *PutContestRequ
 	pattern := "/admin/contests/{contest_id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAdminPutContest))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AdminHTTPClientImpl) PutContestCompetitors(ctx context.Context, in *PutContestCompetitorsRequest, opts ...http.CallOption) (*PutContestCompetitorsReply, error) {
+	var out PutContestCompetitorsReply
+	pattern := "/admin/contests/{contest_id}/competitors"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAdminPutContestCompetitors))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {

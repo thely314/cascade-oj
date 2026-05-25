@@ -41,6 +41,17 @@ service Admin {
             delete: "/admin/contests/{contest_id}"
         };
     };
+    rpc GetContestCompetitors(GetContestCompetitorsRequest) returns (GetContestCompetitorsReply) {
+        option (google.api.http) = {
+            get: "/admin/contests/{contest_id}/competitors"
+        };
+    };
+    rpc PutContestCompetitors(PutContestCompetitorsRequest) returns (PutContestCompetitorsReply) {
+        option (google.api.http) = {
+            put: "/admin/contests/{contest_id}/competitors"
+            body: "*"
+        };
+    };
 
     // Get a list of problems
     rpc GetProblems(GetProblemsRequest) returns (GetProblemsReply) {
@@ -233,6 +244,7 @@ message GetSingleContestRequest {
 message GetSingleContestReply {
     ContestMetadata metadata = 1; // Contest Metadata
     string description = 2; // Contest Description
+    repeated int64 problem_ids = 3; // Problem IDs included in the contest
 }
 
 message PostContestRequest {
@@ -255,6 +267,10 @@ message PutContestRequest {
     string description = 3; // Contest Description
     google.protobuf.Timestamp start_time = 4; // Contest Start Time
     google.protobuf.Timestamp end_time = 5; // Contest End Time
+    message ProblemList {
+        repeated int64 problem_ids = 1; // List of Problem IDs to include in the contest
+    }
+    ProblemList problems = 6; // Problems included in the contest
 }
 message PutContestReply {
     bool is_updated = 1; // Whether the update was successful
@@ -274,12 +290,27 @@ enum ProblemStatus {
     PROBLEM_STATUS_USING = 2;
     PROBLEM_STATUS_DELETED = 3;
 }
+message GetContestCompetitorsRequest {
+    int64 contest_id = 1; // Contest ID
+}
+message GetContestCompetitorsReply {
+    repeated UserInfo competitors = 1; // List of competitors in the contest
+}
+message PutContestCompetitorsRequest {
+    int64 contest_id = 1; // Contest ID
+    repeated int64 user_ids = 2; // List of user IDs to set as competitors
+}
+message PutContestCompetitorsReply {
+    bool is_updated = 1; // Whether the update was successful
+}
+
 message ProblemMetadata {
     int64 id = 1; // Problem ID
     string title = 2; // Problem Title
     int32 time_limit_ms = 3; // Time Limit in milliseconds
     int32 memory_limit_mb = 4; // Memory Limit in megabytes
-    ProblemStatus status = 5; // Current status of the problem
+    string description = 5; // Problem Description
+    ProblemStatus status = 6;
 }
 message GetProblemsRequest {
     int64 contest_id = 1; // Contest ID
@@ -403,9 +434,8 @@ message GetAnnouncementsReply {
 }
 
 message PostAnnouncementRequest {
-    string publisher_name = 1; // Publisher Name
-    string title = 2; // Announcement Title
-    string content = 3; // Announcement Content
+    string title = 1; // Announcement Title
+    string content = 2; // Announcement Content
 }
 message PostAnnouncementReply {
     int64 announcement_id = 1; // Created Announcement ID

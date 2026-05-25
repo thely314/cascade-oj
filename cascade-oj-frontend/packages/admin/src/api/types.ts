@@ -19,6 +19,7 @@ export interface ProblemMetadata {
     timeLimitMs: number;
     memoryLimitMb: number;
     status: ProblemStatus;
+    description: string;
 }
 
 export interface SubmissionMetadata {
@@ -73,6 +74,7 @@ export interface GetContestsReply {
 export interface GetSingleContestReply {
     metadata: ContestMetadata;
     description: string;
+    problemIds: number[];
 }
 
 export interface PostContestRequest {
@@ -94,6 +96,9 @@ export interface PutContestRequest {
     description: string;
     startTime: string;
     endTime: string;
+    problems?: {
+        problemIds: number[];
+    };
 }
 
 export interface PutContestReply {
@@ -102,6 +107,18 @@ export interface PutContestReply {
 
 export interface DeleteContestReply {
     isDeleted: boolean;
+}
+
+export interface GetContestCompetitorsReply {
+    competitors: UserInfo[];
+}
+
+export interface PutContestCompetitorsRequest {
+    userIds: number[];
+}
+
+export interface PutContestCompetitorsReply {
+    isUpdated: boolean;
 }
 
 // Problems
@@ -192,7 +209,6 @@ export interface GetAnnouncementsReply {
 }
 
 export interface PostAnnouncementRequest {
-    publisherName: string;
     title: string;
     content: string;
 }

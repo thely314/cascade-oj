@@ -51,6 +51,7 @@ func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64
 			res = append(res, &biz.Problem{
 				ID:            p.ID,
 				Title:         p.Title,
+				Description:   p.Description,
 				TimeLimitMs:   int32(p.TimeLimitMs),
 				MemoryLimitKB: int32(p.MemoryLimitKB),
 				Status:        mapEntStatusToBizStatus(p.UseStatus),
@@ -73,6 +74,7 @@ func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64
 		problems = append(problems, &biz.Problem{
 			ID:            p.ID,
 			Title:         p.Title,
+			Description:   p.Description,
 			TimeLimitMs:   int32(p.TimeLimitMs),
 			MemoryLimitKB: int32(p.MemoryLimitKB),
 			Status:        mapEntStatusToBizStatus(p.UseStatus),
