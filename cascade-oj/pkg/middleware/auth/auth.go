@@ -147,3 +147,8 @@ func parseClaims(claims jwt.Claims) (*Claims, error) {
 		Role:   user.Role(role),
 	}, nil
 }
+
+func FromContext(ctx context.Context) (*Claims, bool) {
+	claims, ok := ctx.Value("userInfo").(*Claims)
+	return claims, ok
+}

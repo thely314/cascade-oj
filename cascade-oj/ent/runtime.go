@@ -13,6 +13,7 @@ import (
 	"cascade-oj/ent/problemset"
 	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/problemsetmanager"
+	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/ent/schema"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/systemlog"
@@ -262,6 +263,12 @@ func init() {
 	problemset_includesDescID := problemset_includesFields[0].Descriptor()
 	// problemset_includes.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	problemset_includes.IDValidator = problemset_includesDescID.Validators[0].(func(int64) error)
+	problemtemplateFields := schema.ProblemTemplate{}.Fields()
+	_ = problemtemplateFields
+	// problemtemplateDescName is the schema descriptor for name field.
+	problemtemplateDescName := problemtemplateFields[0].Descriptor()
+	// problemtemplate.DefaultName holds the default value on creation for the name field.
+	problemtemplate.DefaultName = problemtemplateDescName.Default.(string)
 	submissionrecordFields := schema.SubmissionRecord{}.Fields()
 	_ = submissionrecordFields
 	// submissionrecordDescJudgeID is the schema descriptor for judge_id field.

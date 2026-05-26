@@ -14,10 +14,13 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@types/dompurify": "^3.2.0",
     "@vuepic/vue-datepicker": "^12.1.0",
     "axios": "^1.15.2",
-    "v-page": "^3.5.0",
+    "dompurify": "^3.4.5",
     "js-md5": "^0.8.3",
+    "monaco-editor": "^0.55.1",
+    "v-page": "^3.5.0",
     "vue": "^3.5.25",
     "vue-router": "^4.4.5"
   },

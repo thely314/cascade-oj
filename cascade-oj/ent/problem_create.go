@@ -7,6 +7,7 @@ import (
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemjudgeconfig"
 	"cascade-oj/ent/problemset_includes"
+	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/user"
 	"context"
@@ -147,6 +148,21 @@ func (_c *ProblemCreate) AddProblemSetIncludes(v ...*ProblemSet_Includes) *Probl
 		ids[i] = v[i].ID
 	}
 	return _c.AddProblemSetIncludeIDs(ids...)
+}
+
+// AddTemplateIDs adds the "templates" edge to the ProblemTemplate entity by IDs.
+func (_c *ProblemCreate) AddTemplateIDs(ids ...int) *ProblemCreate {
+	_c.mutation.AddTemplateIDs(ids...)
+	return _c
+}
+
+// AddTemplates adds the "templates" edges to the ProblemTemplate entity.
+func (_c *ProblemCreate) AddTemplates(v ...*ProblemTemplate) *ProblemCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddTemplateIDs(ids...)
 }
 
 // Mutation returns the ProblemMutation object of the builder.
@@ -392,6 +408,22 @@ func (_c *ProblemCreate) createSpec() (*Problem, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(problemset_includes.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.TemplatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   problem.TemplatesTable,
+			Columns: []string{problem.TemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(problemtemplate.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

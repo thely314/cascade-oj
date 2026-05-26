@@ -53,9 +53,11 @@ type ProblemEdges struct {
 	Submissions []*SubmissionRecord `json:"submissions,omitempty"`
 	// ProblemSetIncludes holds the value of the problem_set_includes edge.
 	ProblemSetIncludes []*ProblemSet_Includes `json:"problem_set_includes,omitempty"`
+	// Templates holds the value of the templates edge.
+	Templates []*ProblemTemplate `json:"templates,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // CreatorOrErr returns the Creator value or an error if the edge
@@ -105,6 +107,15 @@ func (e ProblemEdges) ProblemSetIncludesOrErr() ([]*ProblemSet_Includes, error) 
 		return e.ProblemSetIncludes, nil
 	}
 	return nil, &NotLoadedError{edge: "problem_set_includes"}
+}
+
+// TemplatesOrErr returns the Templates value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProblemEdges) TemplatesOrErr() ([]*ProblemTemplate, error) {
+	if e.loadedTypes[5] {
+		return e.Templates, nil
+	}
+	return nil, &NotLoadedError{edge: "templates"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -230,6 +241,11 @@ func (_m *Problem) QuerySubmissions() *SubmissionRecordQuery {
 // QueryProblemSetIncludes queries the "problem_set_includes" edge of the Problem entity.
 func (_m *Problem) QueryProblemSetIncludes() *ProblemSetIncludesQuery {
 	return NewProblemClient(_m.config).QueryProblemSetIncludes(_m)
+}
+
+// QueryTemplates queries the "templates" edge of the Problem entity.
+func (_m *Problem) QueryTemplates() *ProblemTemplateQuery {
+	return NewProblemClient(_m.config).QueryTemplates(_m)
 }
 
 // Update returns a builder for updating this Problem.

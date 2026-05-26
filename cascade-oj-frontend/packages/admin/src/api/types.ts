@@ -6,11 +6,19 @@ export interface ContestMetadata {
     status: string;
 }
 
+export enum ProblemStatus {
+    PROBLEM_STATUS_UNAVAILABLE = "PROBLEM_STATUS_UNAVAILABLE",
+    PROBLEM_STATUS_AVAILABLE = "PROBLEM_STATUS_AVAILABLE",
+    PROBLEM_STATUS_USING = "PROBLEM_STATUS_USING",
+    PROBLEM_STATUS_DELETED = "PROBLEM_STATUS_DELETED",
+}
+
 export interface ProblemMetadata {
     id: number;
     title: string;
     timeLimitMs: number;
     memoryLimitMb: number;
+    status: ProblemStatus;
     description: string;
 }
 
@@ -122,12 +130,13 @@ export interface GetSingleProblemReply {
     metadata: ProblemMetadata;
     creator: string;
     description: string;
+    codeTemplate: string;
 }
 
 export interface PostProblemRequest {
     metadata: ProblemMetadata;
-    creator: string;
     description: string;
+    codeTemplate: string; 
 }
 
 export interface PostProblemReply {
@@ -135,8 +144,10 @@ export interface PostProblemReply {
 }
 
 export interface PutProblemRequest {
+    problemId: number;
     metadata: ProblemMetadata;
     description: string;
+    codeTemplate: string; 
 }
 
 export interface PutProblemReply {
@@ -149,6 +160,14 @@ export interface DeleteProblemReply {
 
 export interface PublishProblemReply {
     isSuccess: boolean;
+}
+
+export interface DisableProblemRequest {
+    ProblemId: number;
+}
+
+export interface DisableProblemReply {
+    IsSuccess: boolean;
 }
 
 // Submissions

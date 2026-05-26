@@ -13,6 +13,7 @@ import (
 	"cascade-oj/ent/problemset"
 	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/problemsetmanager"
+	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/systemlog"
 	"cascade-oj/ent/user"
@@ -95,6 +96,7 @@ func checkColumn(t, c string) error {
 			problemset.Table:          problemset.ValidColumn,
 			problemsetmanager.Table:   problemsetmanager.ValidColumn,
 			problemset_includes.Table: problemset_includes.ValidColumn,
+			problemtemplate.Table:     problemtemplate.ValidColumn,
 			submissionrecord.Table:    submissionrecord.ValidColumn,
 			systemlog.Table:           systemlog.ValidColumn,
 			user.Table:                user.ValidColumn,

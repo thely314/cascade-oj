@@ -3,8 +3,25 @@ package service
 import (
 	pb "cascade-oj/api/cascade/admin/v1"
 	"cascade-oj/app/services/admin/internal/biz"
+	"cascade-oj/pkg/middleware/auth"
 	"context"
+	"errors"
 )
+
+func mapBizStatusToPbStatus(status biz.ProblemStatus) pb.ProblemStatus {
+	switch status {
+	case biz.ProblemStatusUnavailable:
+		return pb.ProblemStatus_PROBLEM_STATUS_UNAVAILABLE
+	case biz.ProblemStatusAvailable:
+		return pb.ProblemStatus_PROBLEM_STATUS_AVAILABLE
+	case biz.ProblemStatusUsing:
+		return pb.ProblemStatus_PROBLEM_STATUS_USING
+	case biz.ProblemStatusDeleted:
+		return pb.ProblemStatus_PROBLEM_STATUS_DELETED
+	default:
+		return pb.ProblemStatus_PROBLEM_STATUS_UNAVAILABLE
+	}
+}
 
 func (adminService *AdminService) GetProblems(ctx context.Context, request *pb.GetProblemsRequest) (*pb.GetProblemsReply, error) {
 	problems, err := adminService.problemUseCase.GetProblems(
@@ -22,6 +39,7 @@ func (adminService *AdminService) GetProblems(ctx context.Context, request *pb.G
 				Title:         problem.Title,
 				TimeLimitMs:   problem.TimeLimitMs,
 				MemoryLimitMb: problem.MemoryLimitKB / 1024,
+				Status:        mapBizStatusToPbStatus(problem.Status),
 				Description:   problem.Description,
 			},
 		)
@@ -36,28 +54,47 @@ func (adminService *AdminService) GetSingleProblem(ctx context.Context, request 
 	if err != nil {
 		return nil, err
 	}
+
+	var templateStr string
+	if len(problem.Problem.Templates) > 0 {
+		templateStr = problem.Problem.Templates[0].Content
+	}
+
 	return &pb.GetSingleProblemReply{
 		Metadata: &pb.ProblemMetadata{
 			Id:            problem.Problem.ID,
 			Title:         problem.Problem.Title,
 			TimeLimitMs:   problem.Problem.TimeLimitMs,
 			MemoryLimitMb: problem.Problem.MemoryLimitKB / 1024,
+			Status:        mapBizStatusToPbStatus(problem.Problem.Status),
 			Description:   problem.Problem.Description,
 		},
-		Creator:     problem.CreatorUsername,
-		Description: problem.Description,
+		Creator:      problem.CreatorUsername,
+		Description:  problem.Description,
+		CodeTemplate: templateStr,
 	}, nil
 }
 
 func (adminService *AdminService) PostProblem(ctx context.Context, request *pb.PostProblemRequest) (*pb.PostProblemReply, error) {
-	problemID, err := adminService.problemUseCase.PostProblem(ctx,
+	claims, ok := auth.FromContext(ctx)
+	if !ok {
+		return nil, errors.New("unauthorized: metadata not found in context")
+	}
+
+	problemID, err := adminService.problemUseCase.PostProblem(ctx, claims.UserID,
 		biz.ProblemCreateInfo{
-			Title:           request.Metadata.Title,
-			TimeLimitMs:     request.Metadata.TimeLimitMs,
-			MemoryLimitKB:   request.Metadata.MemoryLimitMb,
-			CreatorUsername: request.Creator,
-			Description:     request.Description,
+			Title:         request.Metadata.Title,
+			TimeLimitMs:   request.Metadata.TimeLimitMs,
+			MemoryLimitKB: request.Metadata.MemoryLimitMb * 1024,
+			Description:   request.Description,
+			Templates: []*biz.ProblemTemplate{
+				{
+					Name:    "main.cpp",
+					Content: request.CodeTemplate,
+				},
+			},
 		})
+
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +109,14 @@ func (adminService *AdminService) PutProblem(ctx context.Context, request *pb.Pu
 			ID:            request.ProblemId,
 			Title:         request.Metadata.Title,
 			TimeLimitMs:   request.Metadata.TimeLimitMs,
-			MemoryLimitKB: request.Metadata.MemoryLimitMb,
+			MemoryLimitKB: request.Metadata.MemoryLimitMb * 1024,
 			Description:   request.Description,
+			Templates: []*biz.ProblemTemplate{
+				{
+					Name:    "main.cpp",
+					Content: request.CodeTemplate,
+				},
+			},
 		})
 	if err != nil {
 		return nil, err
@@ -100,5 +143,15 @@ func (adminService *AdminService) DeleteProblem(ctx context.Context, request *pb
 	}
 	return &pb.DeleteProblemReply{
 		IsDeleted: isDeleted,
+	}, nil
+}
+
+func (adminService *AdminService) DisableProblem(ctx context.Context, request *pb.DisableProblemRequest) (*pb.DisableProblemReply, error) {
+	isSuccess, err := adminService.problemUseCase.DisableProblem(ctx, request.ProblemId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DisableProblemReply{
+		IsSuccess: isSuccess,
 	}, nil
 }

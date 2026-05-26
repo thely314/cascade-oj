@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { getProblems } from '../../api/admin'
-import type { ProblemMetadata } from '../../api/types'
+import { getProblems, publishProblem, disableProblem, deleteProblem } from '../../api/admin'
+import { ProblemStatus, type ProblemMetadata } from '../../api/types'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const handleCreate = () => {
+  router.push('/problems/new') 
+}
 
 const problems = ref<ProblemMetadata[]>([])
 const loading = ref(false)
@@ -21,6 +27,36 @@ const fetchProblems = async () => {
   }
 }
 
+// 点击发布题目
+const handlePublish = async (id: number) => {
+  try {
+    await publishProblem(id)
+    await fetchProblems()
+  } catch (err) {
+    console.error('Failed to publish', err)
+  }
+}
+
+// 点击禁用题目
+const handleDisable = async (id: number) => {
+  try {
+    await disableProblem(id)
+    await fetchProblems() 
+  } catch (err) {
+    console.error('Failed to disable', err)
+  }
+}
+
+const handleDelete = async (id: number) => {
+  if (!confirm('确定要删除这道题吗？')) return
+  try {
+    await deleteProblem(id)
+    await fetchProblems() // 刷新列表
+  } catch (err) {
+    console.error('Delete failed', err)
+  }
+}
+
 onMounted(() => {
   fetchProblems()
 })
@@ -37,7 +73,7 @@ onMounted(() => {
         <button class="ghost" @click="fetchProblems" :disabled="loading">
           {{ loading ? 'Loading...' : 'Refresh' }}
         </button>
-        <button class="primary">New Problem</button>
+        <button class="primary" @click="handleCreate">New Problem</button>
       </div>
     </header>
 
@@ -48,14 +84,33 @@ onMounted(() => {
       </header>
       <div v-if="error" class="error-message">{{ error }}</div>
       <ul v-else class="list">
-        <li v-for="problem in problems" :key="problem.id" class="list-item">
+        <li v-for="p in problems" :key="p.id" class="list-item">
+          
           <div class="list-main">
-            <p class="list-title">{{ problem.title }}</p>
-            <p class="list-meta">ID {{ problem.id }} · {{ problem.timeLimitMs }}ms · {{ problem.memoryLimitMb }}MB</p>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <p class="list-title">{{p.title }}</p>
+              
+              <span v-if="p.status === ProblemStatus.PROBLEM_STATUS_AVAILABLE" class="badge badge-live">已启用</span>
+              <span v-else-if="p.status === ProblemStatus.PROBLEM_STATUS_USING" class="badge badge-live" style="filter: hue-rotate(50deg); background: rgba(0, 123, 255, 0.16); color: #007bff; border-color: rgba(0, 123, 255, 0.35);">使用中</span>
+              <span v-else class="badge badge-muted">已禁用</span>
+            </div>
+            
+            <p class="list-meta">ID {{p.id }} · {{p.timeLimitMs }}ms · {{p.memoryLimitMb }}MB</p>
           </div>
+
           <div class="list-right">
-            <button class="ghost">Edit</button>
+            <template v-if="p.status === ProblemStatus.PROBLEM_STATUS_AVAILABLE">
+              <button class="ghost" @click="handleDisable(p.id)">禁用</button>
+            </template>
+            
+            <template v-else>
+              <button class="primary" @click="handlePublish(p.id)">发布</button>
+              <button class="ghost" @click="router.push(`/problems/edit/${p.id}`)">编辑</button>
+            </template>
+            
+            <button class="ghost" style="color: #ff4d4f" @click="handleDelete(p.id)">删除</button>
           </div>
+
         </li>
       </ul>
     </section>

@@ -20,36 +20,39 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Admin_GetContests_FullMethodName          = "/api.cascade.admin.v1.Admin/GetContests"
-	Admin_GetSingleContest_FullMethodName     = "/api.cascade.admin.v1.Admin/GetSingleContest"
-	Admin_PostContest_FullMethodName          = "/api.cascade.admin.v1.Admin/PostContest"
-	Admin_PutContest_FullMethodName           = "/api.cascade.admin.v1.Admin/PutContest"
-	Admin_DeleteContest_FullMethodName        = "/api.cascade.admin.v1.Admin/DeleteContest"
-	Admin_GetProblems_FullMethodName          = "/api.cascade.admin.v1.Admin/GetProblems"
-	Admin_GetSingleProblem_FullMethodName     = "/api.cascade.admin.v1.Admin/GetSingleProblem"
-	Admin_PostProblem_FullMethodName          = "/api.cascade.admin.v1.Admin/PostProblem"
-	Admin_PutProblem_FullMethodName           = "/api.cascade.admin.v1.Admin/PutProblem"
-	Admin_DeleteProblem_FullMethodName        = "/api.cascade.admin.v1.Admin/DeleteProblem"
-	Admin_PublishProblem_FullMethodName       = "/api.cascade.admin.v1.Admin/PublishProblem"
-	Admin_GetSubmissions_FullMethodName       = "/api.cascade.admin.v1.Admin/GetSubmissions"
-	Admin_GetSingleSubmission_FullMethodName  = "/api.cascade.admin.v1.Admin/GetSingleSubmission"
-	Admin_RejudgeSubmission_FullMethodName    = "/api.cascade.admin.v1.Admin/RejudgeSubmission"
-	Admin_GetRanks_FullMethodName             = "/api.cascade.admin.v1.Admin/GetRanks"
-	Admin_GetAnnouncements_FullMethodName     = "/api.cascade.admin.v1.Admin/GetAnnouncements"
-	Admin_PostAnnouncement_FullMethodName     = "/api.cascade.admin.v1.Admin/PostAnnouncement"
-	Admin_PutAnnouncement_FullMethodName      = "/api.cascade.admin.v1.Admin/PutAnnouncement"
-	Admin_DeleteAnnouncement_FullMethodName   = "/api.cascade.admin.v1.Admin/DeleteAnnouncement"
-	Admin_GetUsers_FullMethodName             = "/api.cascade.admin.v1.Admin/GetUsers"
-	Admin_UpdateUserInfo_FullMethodName       = "/api.cascade.admin.v1.Admin/UpdateUserInfo"
-	Admin_DeleteUser_FullMethodName           = "/api.cascade.admin.v1.Admin/DeleteUser"
-	Admin_GetContestUsers_FullMethodName      = "/api.cascade.admin.v1.Admin/GetContestUsers"
-	Admin_AddContestUser_FullMethodName       = "/api.cascade.admin.v1.Admin/AddContestUser"
-	Admin_RemoveContestUser_FullMethodName    = "/api.cascade.admin.v1.Admin/RemoveContestUser"
-	Admin_UpdateUserPassword_FullMethodName   = "/api.cascade.admin.v1.Admin/UpdateUserPassword"
-	Admin_GetContestStatistics_FullMethodName = "/api.cascade.admin.v1.Admin/GetContestStatistics"
-	Admin_ListLogFiles_FullMethodName         = "/api.cascade.admin.v1.Admin/ListLogFiles"
-	Admin_QueryLogContent_FullMethodName      = "/api.cascade.admin.v1.Admin/QueryLogContent"
-	Admin_DownloadLogs_FullMethodName         = "/api.cascade.admin.v1.Admin/DownloadLogs"
+	Admin_GetContests_FullMethodName           = "/api.cascade.admin.v1.Admin/GetContests"
+	Admin_GetSingleContest_FullMethodName      = "/api.cascade.admin.v1.Admin/GetSingleContest"
+	Admin_PostContest_FullMethodName           = "/api.cascade.admin.v1.Admin/PostContest"
+	Admin_PutContest_FullMethodName            = "/api.cascade.admin.v1.Admin/PutContest"
+	Admin_DeleteContest_FullMethodName         = "/api.cascade.admin.v1.Admin/DeleteContest"
+	Admin_GetContestCompetitors_FullMethodName = "/api.cascade.admin.v1.Admin/GetContestCompetitors"
+	Admin_PutContestCompetitors_FullMethodName = "/api.cascade.admin.v1.Admin/PutContestCompetitors"
+	Admin_GetProblems_FullMethodName           = "/api.cascade.admin.v1.Admin/GetProblems"
+	Admin_GetSingleProblem_FullMethodName      = "/api.cascade.admin.v1.Admin/GetSingleProblem"
+	Admin_PostProblem_FullMethodName           = "/api.cascade.admin.v1.Admin/PostProblem"
+	Admin_PutProblem_FullMethodName            = "/api.cascade.admin.v1.Admin/PutProblem"
+	Admin_DeleteProblem_FullMethodName         = "/api.cascade.admin.v1.Admin/DeleteProblem"
+	Admin_PublishProblem_FullMethodName        = "/api.cascade.admin.v1.Admin/PublishProblem"
+	Admin_DisableProblem_FullMethodName        = "/api.cascade.admin.v1.Admin/DisableProblem"
+	Admin_GetSubmissions_FullMethodName        = "/api.cascade.admin.v1.Admin/GetSubmissions"
+	Admin_GetSingleSubmission_FullMethodName   = "/api.cascade.admin.v1.Admin/GetSingleSubmission"
+	Admin_RejudgeSubmission_FullMethodName     = "/api.cascade.admin.v1.Admin/RejudgeSubmission"
+	Admin_GetRanks_FullMethodName              = "/api.cascade.admin.v1.Admin/GetRanks"
+	Admin_GetAnnouncements_FullMethodName      = "/api.cascade.admin.v1.Admin/GetAnnouncements"
+	Admin_PostAnnouncement_FullMethodName      = "/api.cascade.admin.v1.Admin/PostAnnouncement"
+	Admin_PutAnnouncement_FullMethodName       = "/api.cascade.admin.v1.Admin/PutAnnouncement"
+	Admin_DeleteAnnouncement_FullMethodName    = "/api.cascade.admin.v1.Admin/DeleteAnnouncement"
+	Admin_GetUsers_FullMethodName              = "/api.cascade.admin.v1.Admin/GetUsers"
+	Admin_UpdateUserInfo_FullMethodName        = "/api.cascade.admin.v1.Admin/UpdateUserInfo"
+	Admin_DeleteUser_FullMethodName            = "/api.cascade.admin.v1.Admin/DeleteUser"
+	Admin_GetContestUsers_FullMethodName       = "/api.cascade.admin.v1.Admin/GetContestUsers"
+	Admin_AddContestUser_FullMethodName        = "/api.cascade.admin.v1.Admin/AddContestUser"
+	Admin_RemoveContestUser_FullMethodName     = "/api.cascade.admin.v1.Admin/RemoveContestUser"
+	Admin_UpdateUserPassword_FullMethodName    = "/api.cascade.admin.v1.Admin/UpdateUserPassword"
+	Admin_GetContestStatistics_FullMethodName  = "/api.cascade.admin.v1.Admin/GetContestStatistics"
+	Admin_ListLogFiles_FullMethodName          = "/api.cascade.admin.v1.Admin/ListLogFiles"
+	Admin_QueryLogContent_FullMethodName       = "/api.cascade.admin.v1.Admin/QueryLogContent"
+	Admin_DownloadLogs_FullMethodName          = "/api.cascade.admin.v1.Admin/DownloadLogs"
 )
 
 // AdminClient is the client API for Admin service.
@@ -66,6 +69,8 @@ type AdminClient interface {
 	PutContest(ctx context.Context, in *PutContestRequest, opts ...grpc.CallOption) (*PutContestReply, error)
 	// Delete a contest
 	DeleteContest(ctx context.Context, in *DeleteContestRequest, opts ...grpc.CallOption) (*DeleteContestReply, error)
+	GetContestCompetitors(ctx context.Context, in *GetContestCompetitorsRequest, opts ...grpc.CallOption) (*GetContestCompetitorsReply, error)
+	PutContestCompetitors(ctx context.Context, in *PutContestCompetitorsRequest, opts ...grpc.CallOption) (*PutContestCompetitorsReply, error)
 	// Get a list of problems
 	GetProblems(ctx context.Context, in *GetProblemsRequest, opts ...grpc.CallOption) (*GetProblemsReply, error)
 	// Get a single problem's details
@@ -78,6 +83,8 @@ type AdminClient interface {
 	DeleteProblem(ctx context.Context, in *DeleteProblemRequest, opts ...grpc.CallOption) (*DeleteProblemReply, error)
 	// Publish a problem to make it visible
 	PublishProblem(ctx context.Context, in *PublishProblemRequest, opts ...grpc.CallOption) (*PublishProblemReply, error)
+	// Disable a problem (change status to DISABLED)
+	DisableProblem(ctx context.Context, in *DisableProblemRequest, opts ...grpc.CallOption) (*DisableProblemReply, error)
 	// Get a list of submissions
 	GetSubmissions(ctx context.Context, in *GetSubmissionsRequest, opts ...grpc.CallOption) (*GetSubmissionsReply, error)
 	// Get a single submission's details
@@ -172,6 +179,26 @@ func (c *adminClient) DeleteContest(ctx context.Context, in *DeleteContestReques
 	return out, nil
 }
 
+func (c *adminClient) GetContestCompetitors(ctx context.Context, in *GetContestCompetitorsRequest, opts ...grpc.CallOption) (*GetContestCompetitorsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContestCompetitorsReply)
+	err := c.cc.Invoke(ctx, Admin_GetContestCompetitors_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) PutContestCompetitors(ctx context.Context, in *PutContestCompetitorsRequest, opts ...grpc.CallOption) (*PutContestCompetitorsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PutContestCompetitorsReply)
+	err := c.cc.Invoke(ctx, Admin_PutContestCompetitors_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) GetProblems(ctx context.Context, in *GetProblemsRequest, opts ...grpc.CallOption) (*GetProblemsReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProblemsReply)
@@ -226,6 +253,16 @@ func (c *adminClient) PublishProblem(ctx context.Context, in *PublishProblemRequ
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PublishProblemReply)
 	err := c.cc.Invoke(ctx, Admin_PublishProblem_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) DisableProblem(ctx context.Context, in *DisableProblemRequest, opts ...grpc.CallOption) (*DisableProblemReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DisableProblemReply)
+	err := c.cc.Invoke(ctx, Admin_DisableProblem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -436,6 +473,8 @@ type AdminServer interface {
 	PutContest(context.Context, *PutContestRequest) (*PutContestReply, error)
 	// Delete a contest
 	DeleteContest(context.Context, *DeleteContestRequest) (*DeleteContestReply, error)
+	GetContestCompetitors(context.Context, *GetContestCompetitorsRequest) (*GetContestCompetitorsReply, error)
+	PutContestCompetitors(context.Context, *PutContestCompetitorsRequest) (*PutContestCompetitorsReply, error)
 	// Get a list of problems
 	GetProblems(context.Context, *GetProblemsRequest) (*GetProblemsReply, error)
 	// Get a single problem's details
@@ -448,6 +487,8 @@ type AdminServer interface {
 	DeleteProblem(context.Context, *DeleteProblemRequest) (*DeleteProblemReply, error)
 	// Publish a problem to make it visible
 	PublishProblem(context.Context, *PublishProblemRequest) (*PublishProblemReply, error)
+	// Disable a problem (change status to DISABLED)
+	DisableProblem(context.Context, *DisableProblemRequest) (*DisableProblemReply, error)
 	// Get a list of submissions
 	GetSubmissions(context.Context, *GetSubmissionsRequest) (*GetSubmissionsReply, error)
 	// Get a single submission's details
@@ -507,6 +548,12 @@ func (UnimplementedAdminServer) PutContest(context.Context, *PutContestRequest) 
 func (UnimplementedAdminServer) DeleteContest(context.Context, *DeleteContestRequest) (*DeleteContestReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteContest not implemented")
 }
+func (UnimplementedAdminServer) GetContestCompetitors(context.Context, *GetContestCompetitorsRequest) (*GetContestCompetitorsReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetContestCompetitors not implemented")
+}
+func (UnimplementedAdminServer) PutContestCompetitors(context.Context, *PutContestCompetitorsRequest) (*PutContestCompetitorsReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method PutContestCompetitors not implemented")
+}
 func (UnimplementedAdminServer) GetProblems(context.Context, *GetProblemsRequest) (*GetProblemsReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProblems not implemented")
 }
@@ -524,6 +571,9 @@ func (UnimplementedAdminServer) DeleteProblem(context.Context, *DeleteProblemReq
 }
 func (UnimplementedAdminServer) PublishProblem(context.Context, *PublishProblemRequest) (*PublishProblemReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method PublishProblem not implemented")
+}
+func (UnimplementedAdminServer) DisableProblem(context.Context, *DisableProblemRequest) (*DisableProblemReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method DisableProblem not implemented")
 }
 func (UnimplementedAdminServer) GetSubmissions(context.Context, *GetSubmissionsRequest) (*GetSubmissionsReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSubmissions not implemented")
@@ -693,6 +743,42 @@ func _Admin_DeleteContest_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_GetContestCompetitors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContestCompetitorsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetContestCompetitors(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetContestCompetitors_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetContestCompetitors(ctx, req.(*GetContestCompetitorsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_PutContestCompetitors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PutContestCompetitorsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).PutContestCompetitors(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_PutContestCompetitors_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).PutContestCompetitors(ctx, req.(*PutContestCompetitorsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_GetProblems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProblemsRequest)
 	if err := dec(in); err != nil {
@@ -797,6 +883,24 @@ func _Admin_PublishProblem_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AdminServer).PublishProblem(ctx, req.(*PublishProblemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_DisableProblem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DisableProblemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).DisableProblem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_DisableProblem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).DisableProblem(ctx, req.(*DisableProblemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1171,6 +1275,14 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Admin_DeleteContest_Handler,
 		},
 		{
+			MethodName: "GetContestCompetitors",
+			Handler:    _Admin_GetContestCompetitors_Handler,
+		},
+		{
+			MethodName: "PutContestCompetitors",
+			Handler:    _Admin_PutContestCompetitors_Handler,
+		},
+		{
 			MethodName: "GetProblems",
 			Handler:    _Admin_GetProblems_Handler,
 		},
@@ -1193,6 +1305,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PublishProblem",
 			Handler:    _Admin_PublishProblem_Handler,
+		},
+		{
+			MethodName: "DisableProblem",
+			Handler:    _Admin_DisableProblem_Handler,
 		},
 		{
 			MethodName: "GetSubmissions",

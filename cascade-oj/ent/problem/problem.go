@@ -40,6 +40,8 @@ const (
 	EdgeSubmissions = "submissions"
 	// EdgeProblemSetIncludes holds the string denoting the problem_set_includes edge name in mutations.
 	EdgeProblemSetIncludes = "problem_set_includes"
+	// EdgeTemplates holds the string denoting the templates edge name in mutations.
+	EdgeTemplates = "templates"
 	// Table holds the table name of the problem in the database.
 	Table = "Problems"
 	// CreatorTable is the table that holds the creator relation/edge.
@@ -77,6 +79,13 @@ const (
 	ProblemSetIncludesInverseTable = "ProblemSet_Includes"
 	// ProblemSetIncludesColumn is the table column denoting the problem_set_includes relation/edge.
 	ProblemSetIncludesColumn = "problem_id"
+	// TemplatesTable is the table that holds the templates relation/edge.
+	TemplatesTable = "problem_templates"
+	// TemplatesInverseTable is the table name for the ProblemTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "problemtemplate" package.
+	TemplatesInverseTable = "problem_templates"
+	// TemplatesColumn is the table column denoting the templates relation/edge.
+	TemplatesColumn = "problem_templates"
 )
 
 // Columns holds all SQL columns for problem fields.
@@ -141,6 +150,7 @@ const (
 	UseStatusUnavailable UseStatus = "unavailable"
 	UseStatusAvailable   UseStatus = "available"
 	UseStatusUsing       UseStatus = "using"
+	UseStatusDeleted     UseStatus = "deleted"
 )
 
 func (us UseStatus) String() string {
@@ -150,7 +160,7 @@ func (us UseStatus) String() string {
 // UseStatusValidator is a validator for the "use_status" field enum values. It is called by the builders before save.
 func UseStatusValidator(us UseStatus) error {
 	switch us {
-	case UseStatusUnavailable, UseStatusAvailable, UseStatusUsing:
+	case UseStatusUnavailable, UseStatusAvailable, UseStatusUsing, UseStatusDeleted:
 		return nil
 	default:
 		return fmt.Errorf("problem: invalid enum value for use_status field: %q", us)
@@ -260,6 +270,20 @@ func ByProblemSetIncludes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 		sqlgraph.OrderByNeighborTerms(s, newProblemSetIncludesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByTemplatesCount orders the results by templates count.
+func ByTemplatesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTemplatesStep(), opts...)
+	}
+}
+
+// ByTemplates orders the results by templates terms.
+func ByTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTemplatesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newCreatorStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -293,5 +317,12 @@ func newProblemSetIncludesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProblemSetIncludesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ProblemSetIncludesTable, ProblemSetIncludesColumn),
+	)
+}
+func newTemplatesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TemplatesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TemplatesTable, TemplatesColumn),
 	)
 }

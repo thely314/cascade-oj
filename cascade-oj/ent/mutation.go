@@ -14,6 +14,7 @@ import (
 	"cascade-oj/ent/problemset"
 	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/problemsetmanager"
+	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/ent/submissionrecord"
 	"cascade-oj/ent/systemlog"
 	"cascade-oj/ent/user"
@@ -46,6 +47,7 @@ const (
 	TypeProblemSet         = "ProblemSet"
 	TypeProblemSetManager  = "ProblemSetManager"
 	TypeProblemSetIncludes = "ProblemSet_Includes"
+	TypeProblemTemplate    = "ProblemTemplate"
 	TypeSubmissionRecord   = "SubmissionRecord"
 	TypeSystemLog          = "SystemLog"
 	TypeUser               = "User"
@@ -4044,6 +4046,9 @@ type ProblemMutation struct {
 	problem_set_includes        map[int64]struct{}
 	removedproblem_set_includes map[int64]struct{}
 	clearedproblem_set_includes bool
+	templates                   map[int]struct{}
+	removedtemplates            map[int]struct{}
+	clearedtemplates            bool
 	done                        bool
 	oldValue                    func(context.Context) (*Problem, error)
 	predicates                  []predicate.Problem
@@ -4717,6 +4722,60 @@ func (m *ProblemMutation) ResetProblemSetIncludes() {
 	m.removedproblem_set_includes = nil
 }
 
+// AddTemplateIDs adds the "templates" edge to the ProblemTemplate entity by ids.
+func (m *ProblemMutation) AddTemplateIDs(ids ...int) {
+	if m.templates == nil {
+		m.templates = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.templates[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTemplates clears the "templates" edge to the ProblemTemplate entity.
+func (m *ProblemMutation) ClearTemplates() {
+	m.clearedtemplates = true
+}
+
+// TemplatesCleared reports if the "templates" edge to the ProblemTemplate entity was cleared.
+func (m *ProblemMutation) TemplatesCleared() bool {
+	return m.clearedtemplates
+}
+
+// RemoveTemplateIDs removes the "templates" edge to the ProblemTemplate entity by IDs.
+func (m *ProblemMutation) RemoveTemplateIDs(ids ...int) {
+	if m.removedtemplates == nil {
+		m.removedtemplates = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.templates, ids[i])
+		m.removedtemplates[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTemplates returns the removed IDs of the "templates" edge to the ProblemTemplate entity.
+func (m *ProblemMutation) RemovedTemplatesIDs() (ids []int) {
+	for id := range m.removedtemplates {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TemplatesIDs returns the "templates" edge IDs in the mutation.
+func (m *ProblemMutation) TemplatesIDs() (ids []int) {
+	for id := range m.templates {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTemplates resets all changes to the "templates" edge.
+func (m *ProblemMutation) ResetTemplates() {
+	m.templates = nil
+	m.clearedtemplates = false
+	m.removedtemplates = nil
+}
+
 // Where appends a list predicates to the ProblemMutation builder.
 func (m *ProblemMutation) Where(ps ...predicate.Problem) {
 	m.predicates = append(m.predicates, ps...)
@@ -5008,7 +5067,7 @@ func (m *ProblemMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ProblemMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.creator != nil {
 		edges = append(edges, problem.EdgeCreator)
 	}
@@ -5023,6 +5082,9 @@ func (m *ProblemMutation) AddedEdges() []string {
 	}
 	if m.problem_set_includes != nil {
 		edges = append(edges, problem.EdgeProblemSetIncludes)
+	}
+	if m.templates != nil {
+		edges = append(edges, problem.EdgeTemplates)
 	}
 	return edges
 }
@@ -5057,13 +5119,19 @@ func (m *ProblemMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case problem.EdgeTemplates:
+		ids := make([]ent.Value, 0, len(m.templates))
+		for id := range m.templates {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ProblemMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedjudge_records != nil {
 		edges = append(edges, problem.EdgeJudgeRecords)
 	}
@@ -5072,6 +5140,9 @@ func (m *ProblemMutation) RemovedEdges() []string {
 	}
 	if m.removedproblem_set_includes != nil {
 		edges = append(edges, problem.EdgeProblemSetIncludes)
+	}
+	if m.removedtemplates != nil {
+		edges = append(edges, problem.EdgeTemplates)
 	}
 	return edges
 }
@@ -5098,13 +5169,19 @@ func (m *ProblemMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case problem.EdgeTemplates:
+		ids := make([]ent.Value, 0, len(m.removedtemplates))
+		for id := range m.removedtemplates {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ProblemMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedcreator {
 		edges = append(edges, problem.EdgeCreator)
 	}
@@ -5119,6 +5196,9 @@ func (m *ProblemMutation) ClearedEdges() []string {
 	}
 	if m.clearedproblem_set_includes {
 		edges = append(edges, problem.EdgeProblemSetIncludes)
+	}
+	if m.clearedtemplates {
+		edges = append(edges, problem.EdgeTemplates)
 	}
 	return edges
 }
@@ -5137,6 +5217,8 @@ func (m *ProblemMutation) EdgeCleared(name string) bool {
 		return m.clearedsubmissions
 	case problem.EdgeProblemSetIncludes:
 		return m.clearedproblem_set_includes
+	case problem.EdgeTemplates:
+		return m.clearedtemplates
 	}
 	return false
 }
@@ -5173,6 +5255,9 @@ func (m *ProblemMutation) ResetEdge(name string) error {
 		return nil
 	case problem.EdgeProblemSetIncludes:
 		m.ResetProblemSetIncludes()
+		return nil
+	case problem.EdgeTemplates:
+		m.ResetTemplates()
 		return nil
 	}
 	return fmt.Errorf("unknown Problem edge %s", name)
@@ -7794,6 +7879,453 @@ func (m *ProblemSetIncludesMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown ProblemSet_Includes edge %s", name)
+}
+
+// ProblemTemplateMutation represents an operation that mutates the ProblemTemplate nodes in the graph.
+type ProblemTemplateMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int
+	name           *string
+	content        *string
+	clearedFields  map[string]struct{}
+	problem        *int64
+	clearedproblem bool
+	done           bool
+	oldValue       func(context.Context) (*ProblemTemplate, error)
+	predicates     []predicate.ProblemTemplate
+}
+
+var _ ent.Mutation = (*ProblemTemplateMutation)(nil)
+
+// problemtemplateOption allows management of the mutation configuration using functional options.
+type problemtemplateOption func(*ProblemTemplateMutation)
+
+// newProblemTemplateMutation creates new mutation for the ProblemTemplate entity.
+func newProblemTemplateMutation(c config, op Op, opts ...problemtemplateOption) *ProblemTemplateMutation {
+	m := &ProblemTemplateMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeProblemTemplate,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withProblemTemplateID sets the ID field of the mutation.
+func withProblemTemplateID(id int) problemtemplateOption {
+	return func(m *ProblemTemplateMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ProblemTemplate
+		)
+		m.oldValue = func(ctx context.Context) (*ProblemTemplate, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ProblemTemplate.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withProblemTemplate sets the old ProblemTemplate of the mutation.
+func withProblemTemplate(node *ProblemTemplate) problemtemplateOption {
+	return func(m *ProblemTemplateMutation) {
+		m.oldValue = func(context.Context) (*ProblemTemplate, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ProblemTemplateMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ProblemTemplateMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ProblemTemplateMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ProblemTemplateMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ProblemTemplate.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *ProblemTemplateMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ProblemTemplateMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the ProblemTemplate entity.
+// If the ProblemTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProblemTemplateMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ProblemTemplateMutation) ResetName() {
+	m.name = nil
+}
+
+// SetContent sets the "content" field.
+func (m *ProblemTemplateMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *ProblemTemplateMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the ProblemTemplate entity.
+// If the ProblemTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProblemTemplateMutation) OldContent(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *ProblemTemplateMutation) ResetContent() {
+	m.content = nil
+}
+
+// SetProblemID sets the "problem" edge to the Problem entity by id.
+func (m *ProblemTemplateMutation) SetProblemID(id int64) {
+	m.problem = &id
+}
+
+// ClearProblem clears the "problem" edge to the Problem entity.
+func (m *ProblemTemplateMutation) ClearProblem() {
+	m.clearedproblem = true
+}
+
+// ProblemCleared reports if the "problem" edge to the Problem entity was cleared.
+func (m *ProblemTemplateMutation) ProblemCleared() bool {
+	return m.clearedproblem
+}
+
+// ProblemID returns the "problem" edge ID in the mutation.
+func (m *ProblemTemplateMutation) ProblemID() (id int64, exists bool) {
+	if m.problem != nil {
+		return *m.problem, true
+	}
+	return
+}
+
+// ProblemIDs returns the "problem" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ProblemID instead. It exists only for internal usage by the builders.
+func (m *ProblemTemplateMutation) ProblemIDs() (ids []int64) {
+	if id := m.problem; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetProblem resets all changes to the "problem" edge.
+func (m *ProblemTemplateMutation) ResetProblem() {
+	m.problem = nil
+	m.clearedproblem = false
+}
+
+// Where appends a list predicates to the ProblemTemplateMutation builder.
+func (m *ProblemTemplateMutation) Where(ps ...predicate.ProblemTemplate) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ProblemTemplateMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ProblemTemplateMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ProblemTemplate, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ProblemTemplateMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ProblemTemplateMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ProblemTemplate).
+func (m *ProblemTemplateMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ProblemTemplateMutation) Fields() []string {
+	fields := make([]string, 0, 2)
+	if m.name != nil {
+		fields = append(fields, problemtemplate.FieldName)
+	}
+	if m.content != nil {
+		fields = append(fields, problemtemplate.FieldContent)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ProblemTemplateMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case problemtemplate.FieldName:
+		return m.Name()
+	case problemtemplate.FieldContent:
+		return m.Content()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ProblemTemplateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case problemtemplate.FieldName:
+		return m.OldName(ctx)
+	case problemtemplate.FieldContent:
+		return m.OldContent(ctx)
+	}
+	return nil, fmt.Errorf("unknown ProblemTemplate field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ProblemTemplateMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case problemtemplate.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case problemtemplate.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ProblemTemplate field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ProblemTemplateMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ProblemTemplateMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ProblemTemplateMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ProblemTemplate numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ProblemTemplateMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ProblemTemplateMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ProblemTemplateMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ProblemTemplate nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ProblemTemplateMutation) ResetField(name string) error {
+	switch name {
+	case problemtemplate.FieldName:
+		m.ResetName()
+		return nil
+	case problemtemplate.FieldContent:
+		m.ResetContent()
+		return nil
+	}
+	return fmt.Errorf("unknown ProblemTemplate field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ProblemTemplateMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.problem != nil {
+		edges = append(edges, problemtemplate.EdgeProblem)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ProblemTemplateMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case problemtemplate.EdgeProblem:
+		if id := m.problem; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ProblemTemplateMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ProblemTemplateMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ProblemTemplateMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedproblem {
+		edges = append(edges, problemtemplate.EdgeProblem)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ProblemTemplateMutation) EdgeCleared(name string) bool {
+	switch name {
+	case problemtemplate.EdgeProblem:
+		return m.clearedproblem
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ProblemTemplateMutation) ClearEdge(name string) error {
+	switch name {
+	case problemtemplate.EdgeProblem:
+		m.ClearProblem()
+		return nil
+	}
+	return fmt.Errorf("unknown ProblemTemplate unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ProblemTemplateMutation) ResetEdge(name string) error {
+	switch name {
+	case problemtemplate.EdgeProblem:
+		m.ResetProblem()
+		return nil
+	}
+	return fmt.Errorf("unknown ProblemTemplate edge %s", name)
 }
 
 // SubmissionRecordMutation represents an operation that mutates the SubmissionRecord nodes in the graph.

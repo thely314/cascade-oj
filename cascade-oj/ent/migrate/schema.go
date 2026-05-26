@@ -147,7 +147,7 @@ var (
 		{Name: "case_version", Type: field.TypeInt16, Default: 1},
 		{Name: "time_limit_ms", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
 		{Name: "memory_limit_kb", Type: field.TypeInt, SchemaType: map[string]string{"mysql": "INT"}},
-		{Name: "use_status", Type: field.TypeEnum, Enums: []string{"unavailable", "available", "using"}, Default: "unavailable"},
+		{Name: "use_status", Type: field.TypeEnum, Enums: []string{"unavailable", "available", "using", "deleted"}, Default: "unavailable"},
 		{Name: "case_group_result_problem", Type: field.TypeInt64, Nullable: true},
 		{Name: "judge_config_id", Type: field.TypeInt64},
 		{Name: "creator_id", Type: field.TypeInt64},
@@ -261,6 +261,27 @@ var (
 			},
 		},
 	}
+	// ProblemTemplatesColumns holds the columns for the "problem_templates" table.
+	ProblemTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Default: "main.cpp"},
+		{Name: "content", Type: field.TypeString, Size: 2147483647},
+		{Name: "problem_templates", Type: field.TypeInt64, Nullable: true},
+	}
+	// ProblemTemplatesTable holds the schema information for the "problem_templates" table.
+	ProblemTemplatesTable = &schema.Table{
+		Name:       "problem_templates",
+		Columns:    ProblemTemplatesColumns,
+		PrimaryKey: []*schema.Column{ProblemTemplatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "problem_templates_Problems_templates",
+				Columns:    []*schema.Column{ProblemTemplatesColumns[3]},
+				RefColumns: []*schema.Column{ProblemsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// SubmissionRecordsColumns holds the columns for the "SubmissionRecords" table.
 	SubmissionRecordsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -334,6 +355,7 @@ var (
 		ProblemSetsTable,
 		ProblemSetManagersTable,
 		ProblemSetIncludesTable,
+		ProblemTemplatesTable,
 		SubmissionRecordsTable,
 		LogsTable,
 		UsersTable,
@@ -385,6 +407,7 @@ func init() {
 	ProblemSetIncludesTable.Annotation = &entsql.Annotation{
 		Table: "ProblemSet_Includes",
 	}
+	ProblemTemplatesTable.ForeignKeys[0].RefTable = ProblemsTable
 	SubmissionRecordsTable.ForeignKeys[0].RefTable = JudgeRecordsTable
 	SubmissionRecordsTable.ForeignKeys[1].RefTable = ProblemsTable
 	SubmissionRecordsTable.ForeignKeys[2].RefTable = ProblemSetsTable

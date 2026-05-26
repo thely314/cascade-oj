@@ -514,6 +514,29 @@ func HasProblemSetIncludesWith(preds ...predicate.ProblemSet_Includes) predicate
 	})
 }
 
+// HasTemplates applies the HasEdge predicate on the "templates" edge.
+func HasTemplates() predicate.Problem {
+	return predicate.Problem(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TemplatesTable, TemplatesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTemplatesWith applies the HasEdge predicate on the "templates" edge with a given conditions (other predicates).
+func HasTemplatesWith(preds ...predicate.ProblemTemplate) predicate.Problem {
+	return predicate.Problem(func(s *sql.Selector) {
+		step := newTemplatesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Problem) predicate.Problem {
 	return predicate.Problem(sql.AndPredicates(predicates...))
