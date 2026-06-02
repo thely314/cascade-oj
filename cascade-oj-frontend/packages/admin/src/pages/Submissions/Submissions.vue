@@ -15,6 +15,11 @@ const detailModal = reactive({
   detail: null as GetSingleSubmissionReply | null,
 })
 
+const rejudgeState = reactive({
+  submissionUuid: '',
+  loading: false,
+})
+
 const filters = reactive({
   problemId: '',
   contestId: '',
@@ -79,6 +84,27 @@ const openSubmissionDetail = async (submission: SubmissionMetadata) => {
     console.error(err)
   } finally {
     detailModal.loading = false
+  }
+}
+
+const submitRowRejudge = async (submission: SubmissionMetadata) => {
+  if (rejudgeState.loading) return
+  if (!globalThis.confirm(`确认重新测评提交 ${submission.submissionUuid}？原提交将保留，新结果会生成一条新的提交记录。`)) return
+
+  rejudgeState.submissionUuid = submission.submissionUuid
+  rejudgeState.loading = true
+
+  try {
+    const resp = await rejudgeSubmission(submission.submissionUuid)
+    await fetchSubmissions()
+    const newUuid = resp?.newSubmissionUuid || ''
+    globalThis.alert(newUuid ? `已提交重新测评，新提交 UUID: ${newUuid}` : '已提交重新测评')
+  } catch (err) {
+    globalThis.alert('重新测评失败')
+    console.error(err)
+  } finally {
+    rejudgeState.submissionUuid = ''
+    rejudgeState.loading = false
   }
 }
 
@@ -217,6 +243,14 @@ const formatDate = (dateStr: string) => {
             <span class="badge" :class="statusTone[sub.status] || 'badge-muted'">{{ sub.status }}</span>
             <span class="score">{{ sub.score }}</span>
             <button class="ghost" type="button" @click="openSubmissionDetail(sub)">Open</button>
+            <button
+              class="ghost"
+              type="button"
+              @click="submitRowRejudge(sub)"
+              :disabled="rejudgeState.loading && rejudgeState.submissionUuid === sub.submissionUuid"
+            >
+              {{ rejudgeState.loading && rejudgeState.submissionUuid === sub.submissionUuid ? 'Rejudging...' : 'Rejudge' }}
+            </button>
           </div>
         </li>
       </ul>
