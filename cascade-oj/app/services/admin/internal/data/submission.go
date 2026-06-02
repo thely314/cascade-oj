@@ -49,20 +49,17 @@ func NewSubmissionRepo(data *Data, logger log.Logger) biz.SubmissionRepo {
 }
 
 func (submissionRepo *SubmissionRepo) GetSubmissions(ctx context.Context, request biz.SubmissionsRequestInfo) ([]*biz.Submission, error) {
-	entSubmissions, err := submissionRepo.data.db.SubmissionRecord.
-		Query().
-		Select(
-			submissionrecord.FieldProblemID,
-			submissionrecord.FieldSubmissionTime,
-			submissionrecord.FieldScore,
-		).
-		Where(
-			submissionrecord.ProblemIDEQ(request.ProblemID),
-			submissionrecord.ProblemSetIDEQ(request.ContestID),
-			submissionrecord.HasJudgeWith(
-				judgerecord.UserIDEQ(request.UserID),
-			),
-		).
+	query := submissionRepo.data.db.SubmissionRecord.Query()
+	if request.ProblemID != 0 {
+		query = query.Where(submissionrecord.ProblemIDEQ(request.ProblemID))
+	}
+	if request.ContestID != 0 {
+		query = query.Where(submissionrecord.ProblemSetIDEQ(request.ContestID))
+	}
+	if request.UserID != 0 {
+		query = query.Where(submissionrecord.HasJudgeWith(judgerecord.UserIDEQ(request.UserID)))
+	}
+	entSubmissions, err := query.
 		WithJudge(func(jrq *ent.JudgeRecordQuery) {
 			jrq.Select(
 				judgerecord.FieldUUID,
