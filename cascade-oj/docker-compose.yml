@@ -1,24 +1,23 @@
-version: '3.8'
-
 services:
-  gateway:
-    build:
-      context: ./
-      dockerfile: app/gateway/Dockerfile
-      args: 
-        VERSION : 0.1.0
-    image: cascade-oj/gateway:latest
-    restart: unless-stopped
-    depends_on:
-      - cascade_mysql
-      - cascade_rabbitmq
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./config/gateway:/data/conf
-    container_name: cascade_oj_gateway
-    networks:
-      - backend-network
+  # @Deprecated
+  # gateway:
+  #   build:
+  #     context: ./
+  #     dockerfile: app/gateway/Dockerfile
+  #     args: 
+  #       VERSION : 0.1.0
+  #   image: cascade-oj/gateway:latest
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - cascade_mysql
+  #     - cascade_rabbitmq
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./config/gateway:/data/conf
+  #   container_name: cascade_oj_gateway
+  #   networks:
+  #     - backend-network
 
   public:
     build:

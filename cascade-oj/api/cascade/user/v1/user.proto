@@ -98,8 +98,9 @@ service User {
         };
     };
 
+    // @Deprecated
     // Used for registering gateway clients
-    rpc Register(RegisterRequest) returns (RegisterReply) {};
+    // rpc Register(RegisterRequest) returns (RegisterReply) {};
 }
 
 message ContestMetadata {
@@ -284,14 +285,15 @@ message UpdateUserInfoReply {
     bool is_updated = 1; // Whether the user info is updated
 }
 
+// @Deprecated
 // Used for registering gateway clients
-message RegisterRequest {
-    string endpoint = 1;
-    string api_key = 2;
-}
-message RegisterReply {
-    string token = 1;
-}
+// message RegisterRequest {
+//     string endpoint = 1;
+//     string api_key = 2;
+// }
+// message RegisterReply {
+//     string token = 1;
+// }
 
 enum ErrorReason {
 	option (errors.default_code) = 500;
