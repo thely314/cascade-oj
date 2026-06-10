@@ -126,7 +126,7 @@ const submitRejudge = async () => {
     const resp = await rejudgeSubmission(detailModal.detail.metadata.submissionUuid)
     closeDetailModal()
     await fetchSubmissions()
-    const newUuid = (resp && (resp as any).newSubmissionUuid) || ''
+    const newUuid = resp?.newSubmissionUuid || ''
     globalThis.alert(newUuid ? `Rejudge requested successfully: ${newUuid}` : 'Rejudge requested successfully')
   } catch (err) {
     detailModal.error = 'Failed to rejudge submission'

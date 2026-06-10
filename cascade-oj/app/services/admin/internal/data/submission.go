@@ -49,6 +49,24 @@ func NewSubmissionRepo(data *Data, logger log.Logger) biz.SubmissionRepo {
 }
 
 func (submissionRepo *SubmissionRepo) GetSubmissions(ctx context.Context, request biz.SubmissionsRequestInfo) ([]*biz.Submission, error) {
+	const (
+		defaultPage     int32 = 1
+		defaultPageSize int32 = 10
+		maxPageSize     int32 = 100
+	)
+
+	page := request.Page
+	if page <= 0 {
+		page = defaultPage
+	}
+	pageSize := request.PageSize
+	if pageSize <= 0 {
+		pageSize = defaultPageSize
+	} else if pageSize > maxPageSize {
+		pageSize = maxPageSize
+	}
+	offset := int((page - 1) * pageSize)
+
 	query := submissionRepo.data.db.SubmissionRecord.Query()
 	if request.ProblemID != 0 {
 		query = query.Where(submissionrecord.ProblemIDEQ(request.ProblemID))
@@ -60,6 +78,10 @@ func (submissionRepo *SubmissionRepo) GetSubmissions(ctx context.Context, reques
 		query = query.Where(submissionrecord.HasJudgeWith(judgerecord.UserIDEQ(request.UserID)))
 	}
 	entSubmissions, err := query.
+		Order(
+			ent.Desc(submissionrecord.FieldSubmissionTime),
+			ent.Desc(submissionrecord.FieldID),
+		).
 		WithJudge(func(jrq *ent.JudgeRecordQuery) {
 			jrq.Select(
 				judgerecord.FieldUUID,
@@ -67,8 +89,8 @@ func (submissionRepo *SubmissionRepo) GetSubmissions(ctx context.Context, reques
 				judgerecord.FieldStatus,
 			)
 		}).
-		Offset(int((max(request.Page-1, 0) * request.PageSize))).
-		Limit(int(request.PageSize)).
+		Offset(offset).
+		Limit(int(pageSize)).
 		All(ctx)
 	if err != nil {
 		return nil, err
