@@ -116,7 +116,7 @@ export async function getSingleSubmission(submissionUuid: string): Promise<GetSi
 }
 
 export async function rejudgeSubmission(submissionUuid: string): Promise<RejudgeSubmissionReply> {
-    return service.post(`/admin/submissions/${submissionUuid}/rejudge`);
+    return service.post(`/admin/submissions/${submissionUuid}/rejudge`, {});
 }
 
 // Ranks
