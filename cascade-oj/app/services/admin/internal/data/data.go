@@ -6,6 +6,7 @@ import (
 
 	"cascade-oj/app/services/admin/internal/conf"
 	"cascade-oj/ent"
+	"cascade-oj/pkg/mq"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -17,8 +18,6 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-
-	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 // ProviderSet is data providers.
@@ -27,7 +26,7 @@ var ProviderSet = wire.NewSet(NewData, NewAnnouncementRepo, NewContestRepo, NewL
 type Data struct {
 	db         *ent.Client
 	redis      *redis.Client
-	mq_channel *amqp.Channel
+	mq_channel *mq.MQConnection
 }
 
 func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
@@ -71,10 +70,17 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		log.Errorf("failed connecting to redis: %v", err)
 		return nil, nil, err
 	}
+
 	// connect to mq
-	conn, err := amqp.Dial(c.Mq)
+	mqConn, err := mq.NewMQConnection(c.Mq)
 	if err != nil {
 		log.Errorf("failed connecting to mq: %v", err)
+		return nil, nil, err
+	}
+
+	conn, err := mqConn.GetConnection()
+	if err != nil {
+		log.Errorf("failed opening an init conn")
 		return nil, nil, err
 	}
 	ch, err := conn.Channel()
@@ -82,10 +88,52 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		log.Errorf("failed opening a channel")
 		return nil, nil, err
 	}
+	defer ch.Close()
+
+	// declare exchanges
+	exchangeNames := []string{
+		mq.ContestExchangeName,
+		mq.ProblemExchangeName,
+	}
+	for _, exchangeName := range exchangeNames {
+		err = mq.NewExchangeDeclare(ch, exchangeName, "topic")
+		if err != nil {
+			log.Errorf("failed declaring exchange: %v", err)
+			return nil, nil, err
+		}
+	}
+
+	// declare queues
+	queueNames := []string{
+		mq.ContestCacheQueueName,
+		mq.ProblemCacheQueueName,
+	}
+	for _, queueName := range queueNames {
+		_, err = mq.NewQueueDeclare(ch, queueName)
+		if err != nil {
+			log.Errorf("failed declaring queue: %v", err)
+			return nil, nil, err
+		}
+	}
+
+	// bind queues to exchanges
+	// declare bindings as a slice of [queueName, routingKey, exchangeName]
+	bindings := [][]string{
+		{mq.ContestCacheQueueName, "contest.cache.#", mq.ContestExchangeName},
+		{mq.ProblemCacheQueueName, "problem.cache.#", mq.ProblemExchangeName},
+	}
+	for _, binding := range bindings {
+		err = mq.NewBindingDeclare(ch, binding[0], binding[1], binding[2])
+		if err != nil {
+			log.Errorf("failed declaring binding: %v", err)
+			return nil, nil, err
+		}
+	}
+
 	return &Data{
 		db:         client,
 		redis:      redisClient,
-		mq_channel: ch,
+		mq_channel: mqConn,
 	}, cleanup, nil
 }
 

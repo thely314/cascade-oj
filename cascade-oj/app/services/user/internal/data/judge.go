@@ -14,6 +14,7 @@ import (
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset"
 	"cascade-oj/ent/submissionrecord"
+	"cascade-oj/pkg/cache"
 	"cascade-oj/pkg/middleware/auth"
 	"cascade-oj/pkg/mq"
 	"cascade-oj/pkg/util"
@@ -41,8 +42,12 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 		return "", err
 	}
 	ch, err := conn.Channel()
+	if err != nil {
+		log.Errorf("failed opening a channel")
+		return "", err
+	}
 	defer ch.Close()
-	// q, err := repo.data.mq_channel.QueueDeclare(
+
 	q, err := ch.QueueDeclare(
 		mq.GojudgeSelfTestQueueName, // name
 		true,                        // durable
@@ -76,7 +81,7 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 		return "", err
 	}
 	log.Infof("publish message: %s", jsonBody)
-	// err = repo.data.mq_channel.PublishWithContext(
+
 	err = ch.PublishWithContext(
 		ctx,
 		"",     // exchange
@@ -92,10 +97,12 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 		log.Errorf("error from PublishWithContext: %v", err)
 		return "", err
 	}
-	set := repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SelfTestType, selfTest.UserID, selfTest.UUID), jsonBody, 2*time.Hour)
-	if set.Err() != nil {
-		log.Errorf("error from redis: %v", set.Err())
-		return "", set.Err()
+
+	// set cache
+	err = repo.data.SetCache(ctx, fmt.Sprintf(cache.SelfTestCacheKeyFmt, selfTest.UserID, selfTest.UUID), jsonBody, 2*time.Hour)
+	if err != nil {
+		repo.log.Errorf("[cache] failed to set cache for self test: %v", err)
+		return "", err
 	}
 	return selfTest.UUID, nil
 }
@@ -135,8 +142,12 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 		return "", err
 	}
 	ch, err := conn.Channel()
+	if err != nil {
+		log.Errorf("failed opening a channel")
+		return "", err
+	}
 	defer ch.Close()
-	// q, err := repo.data.mq_channel.QueueDeclare(
+
 	q, err := ch.QueueDeclare(
 		mq.GojudgeSubmissionQueueName, // name
 		true,                          // durable
@@ -180,7 +191,7 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 		return "", err
 	}
 	log.Infof("publish message: %s", jsonBody)
-	// err = repo.data.mq_channel.PublishWithContext(
+
 	err = ch.PublishWithContext(
 		ctx,
 		"",     // exchange
@@ -196,48 +207,58 @@ func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Sub
 		log.Errorf("error from PublishWithContext: %v", err)
 		return "", err
 	}
-	set := repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, submission.UserID, submission.UUID), jsonBody, 2*time.Hour)
-	if set.Err() != nil {
-		log.Errorf("error from redis: %v", set.Err())
-		return "", set.Err()
+
+	// delete cache for submission list
+	repo.submissionListCacheUpdate(ctx, submission.UserID, submission.ProblemSetID, submission.ProblemID)
+	// set cache
+	err = repo.data.SetCache(ctx, fmt.Sprintf(cache.SubmissionDetailCacheKeyFmt, submission.UserID, submission.UUID), jsonBody, 2*time.Hour)
+	if err != nil {
+		repo.log.Errorf("[cache] failed to set cache for submission: %v", err)
+		return "", err
 	}
 	return submission.UUID, nil
 }
 
 func (repo *judgeRepo) GetSelfTest(ctx context.Context, selfTestUUID string) (*biz.SelfTest, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
-	var selfTestMsg *mq.SelfTestMessage
-	result, err := repo.data.redis.Get(ctx, fmt.Sprintf("%s:%d:%s", mq.SelfTestType, userID, selfTestUUID)).Result()
-	if err != nil {
-		return nil, err
+
+	cacheBytes, err := repo.data.GetCache(ctx, fmt.Sprintf(cache.SelfTestCacheKeyFmt, userID, selfTestUUID))
+	// cache hit
+	if err == nil && cacheBytes != nil {
+		repo.log.Infof("[cache] hit from user calling GetSelfTest")
+		var selftest *biz.SelfTest
+		if err := json.Unmarshal(cacheBytes, &selftest); err == nil {
+			return selftest, nil
+		}
+		repo.log.Errorf("[cache] failed to unmarshal self test from cache: %v", err)
 	}
-	err = json.Unmarshal([]byte(result), &selfTestMsg)
-	if err != nil {
-		return nil, err
-	}
-	selfTest := &biz.SelfTest{
-		UUID:       selfTestMsg.UUID,
-		UserID:     selfTestMsg.UserID,
-		ProblemID:  selfTestMsg.ProblemID,
-		Code:       selfTestMsg.Code,
-		Language:   selfTestMsg.Language,
-		Input:      selfTestMsg.Input,
-		IsCompiled: selfTestMsg.IsCompiled,
-		Stdout:     selfTestMsg.Stdout,
-		Stderr:     selfTestMsg.Stderr,
-		TimeCost:   int64(selfTestMsg.TimeCost),
-		MemoryCost: int64(selfTestMsg.MemoryCost),
-	}
-	return selfTest, nil
+
+	// cache miss, self test is not durable, no need to continue
+	return nil, err
 }
 
 func (repo *judgeRepo) GetSubmissions(ctx context.Context, contestID int64, problemID int64) ([]*biz.Submission, error) {
+	userID := ctx.Value("userInfo").(*auth.Claims).UserID
+	cacheBytes, err := repo.data.GetCache(ctx, fmt.Sprintf(cache.SubmissionListCacheKeyFmt, userID, contestID, problemID))
+	// cache hit
+	if err == nil && cacheBytes != nil {
+		repo.log.Infof("[cache] hit from user calling GetSubmissions")
+		var submissions []*biz.Submission
+		if err := json.Unmarshal(cacheBytes, &submissions); err == nil {
+			return submissions, nil
+		}
+		repo.log.Errorf("[cache] failed to unmarshal submission list from cache: %v", err)
+	}
+
+	// cache miss
+	repo.log.Infof("[cache] miss from user calling GetSubmissions")
+
 	// verify problem set exists
-	_, err := repo.data.db.ProblemSet.Get(ctx, contestID)
+	_, err = repo.data.db.ProblemSet.Get(ctx, contestID)
 	if err != nil {
 		return nil, err
 	}
-	userID := ctx.Value("userInfo").(*auth.Claims).UserID
+
 	// submission records don't carry user id directly, join via judge edge
 	po, err := repo.data.db.SubmissionRecord.Query().
 		Where(submissionrecord.ProblemSetIDEQ(contestID), submissionrecord.ProblemIDEQ(problemID), submissionrecord.HasJudgeWith(judgerecord.UserIDEQ(userID))).
@@ -264,65 +285,81 @@ func (repo *judgeRepo) GetSubmissions(ctx context.Context, contestID int64, prob
 			CaseVersion: int8(v.Edges.Problem.CaseVersion),
 		})
 	}
+
+	// set cache
+	cacheBytes, err = json.Marshal(submissions)
+	if err != nil {
+		repo.log.Errorf("[cache] failed to marshal submission list for caching: %v", err)
+	} else {
+		err = repo.data.SetCache(ctx, fmt.Sprintf(cache.SubmissionListCacheKeyFmt, userID, contestID, problemID), cacheBytes, 5*time.Minute)
+		if err != nil {
+			repo.log.Errorf("[cache] failed to set cache for submission list: %v", err)
+		}
+	}
+
 	return submissions, nil
 }
 
 func (repo *judgeRepo) GetSingleSubmission(ctx context.Context, submissionUUID string) (*biz.Submission, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
-	var res *biz.Submission
-	// try to get from redis by UUID
-	var submissionMsg *mq.SubmissionMessage
-	result, err := repo.data.redis.Get(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, userID, submissionUUID)).Result()
-	if err != nil {
-		// get from db
-		po, err := repo.data.db.SubmissionRecord.Query().
-			Where(submissionrecord.HasJudgeWith(judgerecord.UUIDEQ(submissionUUID))).
-			WithJudge().
-			WithProblem().
-			Only(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("no submission found: %s", submissionUUID)
+	cacheBytes, err := repo.data.GetCache(ctx, fmt.Sprintf(cache.SubmissionDetailCacheKeyFmt, userID, submissionUUID))
+	// cache hit
+	if err == nil && cacheBytes != nil {
+		repo.log.Infof("[cache] hit from user calling GetSingleSubmission")
+		var submission *biz.Submission
+		if err := json.Unmarshal(cacheBytes, &submission); err == nil {
+			return submission, nil
 		}
-		// load judge to get user/code/language/status
-		j, err := po.QueryJudge().Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		if j.UserID != userID {
-			return nil, fmt.Errorf("permission denied")
-		}
-		res = &biz.Submission{
-			UUID:        submissionUUID,
-			UserID:      j.UserID,
-			ProblemID:   po.ProblemID,
-			Code:        j.Code,
-			Language:    j.Language,
-			Status:      util.StatusToString(j.Status),
-			CreateTime:  po.SubmissionTime,
-			Score:       po.Score,
-			TimeCost:    int64(j.TimeCostMs),
-			MemoryCost:  int64(j.MemoryCostKB),
-			CaseVersion: int8(po.Edges.Problem.CaseVersion),
-		}
-		return res, nil
+		repo.log.Errorf("[cache] failed to unmarshal submission from cache: %v", err)
 	}
-	err = json.Unmarshal([]byte(result), &submissionMsg)
+
+	// cache miss
+	repo.log.Infof("[cache] miss from user calling GetSingleSubmission")
+
+	var res *biz.Submission
+
+	// get from db
+	po, err := repo.data.db.SubmissionRecord.Query().
+		Where(submissionrecord.HasJudgeWith(judgerecord.UUIDEQ(submissionUUID))).
+		WithJudge().
+		WithProblem().
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("no submission found: %s", submissionUUID)
+	}
+	// load judge to get user/code/language/status
+	j, err := po.QueryJudge().Only(ctx)
 	if err != nil {
 		return nil, err
 	}
-	res = &biz.Submission{
-		UUID:        submissionMsg.UUID,
-		UserID:      submissionMsg.UserID,
-		ProblemID:   submissionMsg.ProblemID,
-		Code:        submissionMsg.Code,
-		Language:    submissionMsg.Language,
-		Status:      util.StatusToString(submissionMsg.Status),
-		CreateTime:  submissionMsg.CreateTime,
-		Score:       submissionMsg.Score,
-		TimeCost:    int64(submissionMsg.TimeCost),
-		MemoryCost:  int64(submissionMsg.MemoryCost),
-		CaseVersion: int8(submissionMsg.CaseVersion),
+	if j.UserID != userID {
+		return nil, fmt.Errorf("permission denied")
 	}
+	res = &biz.Submission{
+		UUID:        submissionUUID,
+		UserID:      j.UserID,
+		ProblemID:   po.ProblemID,
+		Code:        j.Code,
+		Language:    j.Language,
+		Status:      util.StatusToString(j.Status),
+		CreateTime:  po.SubmissionTime,
+		Score:       po.Score,
+		TimeCost:    int64(j.TimeCostMs),
+		MemoryCost:  int64(j.MemoryCostKB),
+		CaseVersion: int8(po.Edges.Problem.CaseVersion),
+	}
+
+	// set cache
+	cacheBytes, err = json.Marshal(res)
+	if err != nil {
+		repo.log.Errorf("[cache] failed to marshal submission for caching: %v", err)
+	} else {
+		err = repo.data.SetCache(ctx, fmt.Sprintf(cache.SubmissionDetailCacheKeyFmt, userID, submissionUUID), cacheBytes, 5*time.Minute)
+		if err != nil {
+			repo.log.Errorf("[cache] failed to set cache for submission: %v", err)
+		}
+	}
+
 	return res, nil
 }
 
@@ -360,4 +397,23 @@ func (repo *judgeRepo) GetCases(ctx context.Context, submissionUUID string) ([]*
 		})
 	}
 	return cases, nil
+}
+
+// 延迟双删 Submission 列表
+func (repo *judgeRepo) submissionListCacheUpdate(ctx context.Context, userID, contestID, problemID int64) error {
+	key := fmt.Sprintf(cache.SubmissionListCacheKeyFmt, userID, contestID, problemID)
+	err := repo.data.DeleteCache(ctx, key)
+	if err != nil {
+		repo.log.Errorf("[cache] failed to delete cache for submission list: %v", err)
+		return err
+	}
+
+	go func() {
+		time.Sleep(200 * time.Millisecond)
+		err := repo.data.DeleteCache(ctx, key)
+		if err != nil {
+			repo.log.Errorf("[cache] failed to delayed delete cache for submission list: %v", err)
+		}
+	}()
+	return nil
 }

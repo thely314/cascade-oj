@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"cascade-oj/pkg/middleware/auth"
+	"cascade-oj/pkg/mq"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -28,6 +29,7 @@ type ContestRepo interface {
 	JoinContest(ctx context.Context, contestID int64, userID int64) (bool, error)
 	QuitContest(ctx context.Context, contestID int64, userID int64) (bool, error)
 	GetJoinStatus(ctx context.Context, contestID int64, userID int64) (bool, error)
+	ContestCacheConsumer(ctx context.Context, msg *mq.ContestCacheMsg) error
 }
 
 type ContestUsecase struct {
@@ -73,4 +75,8 @@ func (contestUsecase *ContestUsecase) QuitContest(ctx context.Context, contestID
 func (contestUsecase *ContestUsecase) GetJoinStatus(ctx context.Context, contestID int64) (bool, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
 	return contestUsecase.contestRepo.GetJoinStatus(ctx, contestID, userID)
+}
+
+func (contestUsecase *ContestUsecase) ContestCacheDelete(ctx context.Context, msg *mq.ContestCacheMsg) error {
+	return contestUsecase.contestRepo.ContestCacheConsumer(ctx, msg)
 }
