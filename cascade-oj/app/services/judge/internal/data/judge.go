@@ -15,6 +15,7 @@ import (
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/submissionrecord"
+	"cascade-oj/pkg/cache"
 	filemanage "cascade-oj/pkg/file_manage"
 	"cascade-oj/pkg/mq"
 	"cascade-oj/pkg/util"
@@ -40,7 +41,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		return err
 	}
 	// update redis cache
-	repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, msg_submission.UserID, msg_submission.UUID), msg_marshal, 1*time.Hour)
+	repo.data.redis.Set(ctx, fmt.Sprintf(cache.SubmissionDetailCacheKeyFmt, msg_submission.UserID, msg_submission.UUID), msg_marshal, 1*time.Hour)
 
 	// default error status, recover when judge completed
 	msg_submission.Status = util.StatusToInt16(util.SystemError)
@@ -51,7 +52,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		if err != nil {
 			repo.log.Errorf("failed to marshal submission message: %v", err)
 		}
-		err = repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, msg_submission.UserID, msg_submission.UUID), msg_marshal, 1*time.Hour).Err()
+		err = repo.data.redis.Set(ctx, fmt.Sprintf(cache.SubmissionDetailCacheKeyFmt, msg_submission.UserID, msg_submission.UUID), msg_marshal, 1*time.Hour).Err()
 		if err != nil {
 			repo.log.Errorf("failed to update submission message in redis: %v", err)
 		}
@@ -59,7 +60,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 
 	// get problem data from cache or database
 	var problemResult *ent.Problem
-	problemString, err := repo.data.redis.Get(ctx, fmt.Sprintf("problem:%d", msg_submission.ProblemID)).Result()
+	problemString, err := repo.data.redis.Get(ctx, fmt.Sprintf(cache.ProblemDetailCacheKeyFmt, msg_submission.ProblemID)).Result()
 	if err != nil {
 		// get from database
 		problemResult, err = repo.data.db.Problem.Query().
@@ -73,7 +74,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		if err != nil {
 			return err
 		}
-		err = repo.data.redis.Set(ctx, fmt.Sprintf("problem:%d", msg_submission.ProblemID), problemBytes, 1*time.Hour).Err()
+		err = repo.data.redis.Set(ctx, fmt.Sprintf(cache.ProblemDetailCacheKeyFmt, msg_submission.ProblemID), problemBytes, 1*time.Hour).Err()
 		if err != nil {
 			return err
 		}
@@ -403,7 +404,7 @@ func (repo *judgeRepo) JudgeSelfTest(ctx context.Context, msg_self_test *mq.Self
 			repo.log.Errorf("failed to marshal self-test message: %v", err)
 			return
 		}
-		err = repo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SelfTestType, msg_self_test.UserID, msg_self_test.UUID), msg_marshal, 1*time.Hour).Err()
+		err = repo.data.redis.Set(ctx, fmt.Sprintf(cache.SelfTestCacheKeyFmt, msg_self_test.UserID, msg_self_test.UUID), msg_marshal, 1*time.Hour).Err()
 		if err != nil {
 			repo.log.Errorf("failed to update redis cache: %v", err)
 		}

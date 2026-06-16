@@ -1,6 +1,9 @@
 package data
 
 import (
+	"context"
+	"time"
+
 	"cascade-oj/app/services/admin/internal/biz"
 	"cascade-oj/ent"
 	"cascade-oj/ent/competitor_list"
@@ -8,8 +11,7 @@ import (
 	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/problemsetmanager"
 	"cascade-oj/ent/user"
-	"context"
-	"time"
+	"cascade-oj/pkg/mq"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -26,6 +28,7 @@ func NewContestRepo(data *Data, logger log.Logger) biz.ContestRepo {
 	}
 }
 
+// 属于该管理员管理的比赛才能被查询到
 func (contestRepo *ContestRepo) GetContests(ctx context.Context, adminID int64) ([]*biz.Contest, error) {
 	now := time.Now()
 	entContests, err := contestRepo.data.db.ProblemSet.
@@ -214,6 +217,15 @@ func (contestRepo *ContestRepo) PostContest(ctx context.Context, contestCreateIn
 		return -1, err
 	}
 
+	// delete user cache for contest list
+	err = contestRepo.data.publishContestInvalidation(ctx, &mq.ContestCacheMsg{
+		ContestID: contest.ID,
+		Scale:     "list",
+	})
+	if err != nil {
+		contestRepo.log.Errorf("[cache] failed to publish contest cache invalidation message for contest list: %v", err)
+	}
+
 	return contest.ID, nil
 }
 
@@ -303,6 +315,23 @@ func (contestRepo *ContestRepo) PutContest(ctx context.Context, contestEditInfo 
 		return false, err
 	}
 
+	// delete user cache for contest
+	err = contestRepo.data.publishContestInvalidation(ctx, &mq.ContestCacheMsg{
+		ContestID: contestEditInfo.ID,
+		Scale:     "single",
+	})
+	if err != nil {
+		contestRepo.log.Errorf("[cache] failed to publish contest cache invalidation message for contest single: %v", err)
+	}
+	// delete user cache for problem list for this contest, since problem changes may affect the problem list page
+	err = contestRepo.data.publishProblemInvalidation(ctx, &mq.ProblemCacheMsg{
+		ProblemID: contestEditInfo.ID, // use contestID as problemID in this case
+		Scale:     "list",
+	})
+	if err != nil {
+		contestRepo.log.Errorf("[cache] failed to publish problem cache invalidation message for problem list: %v", err)
+	}
+
 	return true, nil
 }
 
@@ -311,6 +340,25 @@ func (contestRepo *ContestRepo) DeleteContest(ctx context.Context, contestID int
 	if err != nil {
 		return false, err
 	}
+
+	// delete user cache for contest list
+	err = contestRepo.data.publishContestInvalidation(ctx, &mq.ContestCacheMsg{
+		ContestID: contestID,
+		Scale:     "list",
+	})
+	if err != nil {
+		contestRepo.log.Errorf("[cache] failed to publish contest cache invalidation message for contest list: %v", err)
+	}
+
+	// delete user cache for contest
+	err = contestRepo.data.publishContestInvalidation(ctx, &mq.ContestCacheMsg{
+		ContestID: contestID,
+		Scale:     "single",
+	})
+	if err != nil {
+		contestRepo.log.Errorf("[cache] failed to publish contest cache invalidation message for contest single: %v", err)
+	}
+
 	return true, nil
 }
 

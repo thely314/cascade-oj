@@ -12,6 +12,7 @@ import (
 	"cascade-oj/ent/judgerecord"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/submissionrecord"
+	"cascade-oj/pkg/cache"
 	"cascade-oj/pkg/mq"
 	"cascade-oj/pkg/util"
 
@@ -179,12 +180,8 @@ func (submissionRepo *SubmissionRepo) GetSingleSubmission(ctx context.Context, s
 }
 
 func (submissionRepo *SubmissionRepo) RejudgeSubmission(ctx context.Context, submissionUUID string) (string, error) {
-	// get from redis first
-	// TODO get userID
-	// submissionMsg, err := submissionRepo.data.redis.Get(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, userID, submissionUUID)).Result()
-	// if err != nil {
-	// 	// get from db
-	// }
+	// cant get userID there so we cant get from cache
+	// but its ok since a rejudge operation always happens when cache already expires
 	entSubmission, err := submissionRepo.data.db.SubmissionRecord.
 		Query().
 		Select(
@@ -224,7 +221,20 @@ func (submissionRepo *SubmissionRepo) RejudgeSubmission(ctx context.Context, sub
 	if err != nil {
 		return "", err
 	}
-	q, err := submissionRepo.data.mq_channel.QueueDeclare(
+
+	conn, err := submissionRepo.data.mq_channel.GetConnection()
+	if err != nil {
+		log.Errorf("failed to get mq connection: %v", err)
+		return "", err
+	}
+	ch, err := conn.Channel()
+	if err != nil {
+		log.Errorf("failed to open mq channel: %v", err)
+		return "", err
+	}
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(
 		mq.GojudgeSubmissionQueueName, // name
 		true,                          // durable
 		false,                         // delete when unused
@@ -266,7 +276,8 @@ func (submissionRepo *SubmissionRepo) RejudgeSubmission(ctx context.Context, sub
 		return "", err
 	}
 	log.Infof("publish message: %s", jsonBody)
-	err = submissionRepo.data.mq_channel.PublishWithContext(
+
+	err = ch.PublishWithContext(
 		ctx,
 		"",     // exchange
 		q.Name, // routing key
@@ -280,8 +291,8 @@ func (submissionRepo *SubmissionRepo) RejudgeSubmission(ctx context.Context, sub
 	if err != nil {
 		return "", err
 	}
-	// TODO
-	set := submissionRepo.data.redis.Set(ctx, fmt.Sprintf("%s:%d:%s", mq.SubmissionType, submissionMsg.UserID, submissionMsg.UUID), jsonBody, 2*time.Hour)
+
+	set := submissionRepo.data.redis.Set(ctx, fmt.Sprintf(cache.SubmissionDetailCacheKeyFmt, submissionMsg.UserID, submissionMsg.UUID), jsonBody, 2*time.Hour)
 	if set.Err() != nil {
 		return "", set.Err()
 	}

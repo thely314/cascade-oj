@@ -21,6 +21,9 @@ RUN GOPROXY=https://goproxy.cn make build VERSION_FLAG=${VERSION}
 
 FROM debian:stable-slim
 
+# Debian apt-get 镜像源
+RUN sed -i 's@deb.debian.org@mirrors.ustc.edu.cn@g' /etc/apt/sources.list.d/debian.sources
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		ca-certificates  \
         netbase \

@@ -3,6 +3,8 @@ package biz
 import (
 	"context"
 
+	"cascade-oj/pkg/mq"
+
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -22,6 +24,7 @@ type DetailedProblem struct {
 type ProblemRepo interface {
 	GetProblems(ctx context.Context, contestID int64) ([]*Problem, error)
 	GetSingleProblem(ctx context.Context, problemID int64) (*DetailedProblem, error)
+	ProblemCacheConsumer(ctx context.Context, msg *mq.ProblemCacheMsg) error
 }
 
 type ProblemUsecase struct {
@@ -50,4 +53,8 @@ func (problemUsecase *ProblemUsecase) GetSingleProblem(ctx context.Context, prob
 		return nil, err
 	}
 	return detailedProblem, nil
+}
+
+func (problemUsecase *ProblemUsecase) ProblemCacheDelete(ctx context.Context, msg *mq.ProblemCacheMsg) error {
+	return problemUsecase.problemRepo.ProblemCacheConsumer(ctx, msg)
 }

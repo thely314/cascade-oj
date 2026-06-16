@@ -1,12 +1,14 @@
 package data
 
 import (
+	"context"
+
 	"cascade-oj/app/services/admin/internal/biz"
 	"cascade-oj/ent"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/problemtemplate"
-	"context"
+	"cascade-oj/pkg/mq"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -180,7 +182,21 @@ func (problemRepo *ProblemRepo) PutProblem(ctx context.Context, info biz.Problem
 		}
 		return 0, nil
 	})
-	return err == nil, err
+
+	if err != nil {
+		return false, err
+	}
+
+	// delete user cache for problem
+	err = problemRepo.data.publishProblemInvalidation(ctx, &mq.ProblemCacheMsg{
+		ProblemID: info.ID,
+		Scale:     "single",
+	})
+	if err != nil {
+		problemRepo.log.Errorf("[cache] failed to publish problem cache invalidation message for problem single: %v", err)
+	}
+
+	return true, nil
 }
 
 // 增加过滤条件，防止逻辑误复活
@@ -189,7 +205,21 @@ func (problemRepo *ProblemRepo) DeleteProblem(ctx context.Context, problemID int
 		Where(problem.IDEQ(problemID)).
 		SetUseStatus(problem.UseStatusDeleted).
 		Exec(ctx)
-	return err == nil, err
+
+	if err != nil {
+		return false, err
+	}
+
+	// delete user cache for problem
+	err = problemRepo.data.publishProblemInvalidation(ctx, &mq.ProblemCacheMsg{
+		ProblemID: problemID,
+		Scale:     "single",
+	})
+	if err != nil {
+		problemRepo.log.Errorf("[cache] failed to publish problem cache invalidation message for problem single: %v", err)
+	}
+
+	return true, nil
 }
 
 func (problemRepo *ProblemRepo) PublishProblem(ctx context.Context, problemID int64) (bool, error) {

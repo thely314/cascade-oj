@@ -111,6 +111,7 @@ func (contestUsecase *ContestUsecase) PutContestCompetitors(ctx context.Context,
 	return contestUsecase.contestRepo.PutContestCompetitors(ctx, contestID, userIDs)
 }
 
+// TODO
 // --- 以下为补齐的空壳方法，用于解决编译报错 ---
 func (uc *ContestUsecase) GetContestUsers(ctx context.Context, contestID int64) ([]*User, error) {
 	return nil, nil
