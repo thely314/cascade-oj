@@ -1,8 +1,15 @@
 <script setup lang="ts">
-defineProps<{
+withDefaults(defineProps<{
   title: string
   show: boolean
-}>()
+  cancelText?: string
+  submitText?: string
+  submitDisabled?: boolean
+}>(), {
+  cancelText: '取消',
+  submitText: '确定',
+  submitDisabled: false,
+})
 
 defineEmits<{
   (e: 'close'): void
@@ -16,7 +23,7 @@ defineEmits<{
       <div class="modal-container" @click.stop>
         <div class="modal-header">
           <h3>{{ title }}</h3>
-          <button class="close-btn" @click="$emit('close')">&times;</button>
+          <button type="button" class="close-btn" @click="$emit('close')">&times;</button>
         </div>
 
         <div class="modal-body">
@@ -24,8 +31,8 @@ defineEmits<{
         </div>
 
         <div class="modal-footer">
-          <button class="ghost" @click="$emit('close')">取消</button>
-          <button class="primary" @click="$emit('submit')">确定</button>
+          <button type="button" class="ghost" @click="$emit('close')">{{ cancelText }}</button>
+          <button type="button" class="primary" @click="$emit('submit')" :disabled="submitDisabled">{{ submitText }}</button>
         </div>
       </div>
     </div>
@@ -136,6 +143,13 @@ defineEmits<{
 :deep(.primary:hover) {
   transform: translateY(-1px);
   box-shadow: 0 10px 18px rgba(22, 163, 118, 0.32);
+}
+
+:deep(.primary:disabled) {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+  box-shadow: none;
 }
 
 .modal-enter-from {
