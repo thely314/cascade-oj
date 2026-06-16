@@ -136,6 +136,25 @@ func (adminService *AdminService) DeleteContest(ctx context.Context, request *pb
 	}, nil
 }
 
+func (adminService *AdminService) GetRanks(ctx context.Context, request *pb.GetRanksRequest) (*pb.GetRanksReply, error) {
+	ranks, err := adminService.contestUseCase.GetRanks(ctx, request.ContestId)
+	if err != nil {
+		return nil, err
+	}
+
+	pbRanks := make([]*pb.GetRanksReply_RankItem, 0, len(ranks))
+	for _, rank := range ranks {
+		pbRanks = append(pbRanks, &pb.GetRanksReply_RankItem{
+			UserId:   rank.UserID,
+			Username: rank.Username,
+			Rank:     rank.Rank,
+			Score:    rank.Score,
+		})
+	}
+
+	return &pb.GetRanksReply{Ranks: pbRanks}, nil
+}
+
 func (adminService *AdminService) GetContestCompetitors(ctx context.Context, request *pb.GetContestCompetitorsRequest) (*pb.GetContestCompetitorsReply, error) {
 	competitors, err := adminService.contestUseCase.GetContestCompetitors(ctx, request.ContestId)
 	if err != nil {
