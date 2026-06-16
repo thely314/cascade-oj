@@ -36,7 +36,7 @@ func (problemRepo *ProblemRepo) GetProblems(ctx context.Context, contestID int64
 			ID:            queryProblem.ID,
 			Title:         queryProblem.Title,
 			TimeLimitMs:   int32(queryProblem.TimeLimitMs),
-			MemoryLimitMb: int32(queryProblem.MemoryLimitKB),
+			MemoryLimitMb: int32(queryProblem.MemoryLimitKB / 1024),
 		})
 	}
 	return problems, nil
@@ -56,7 +56,7 @@ func (problemRepo *ProblemRepo) GetSingleProblem(ctx context.Context, problemID 
 			ID:            queryProblem.ID,
 			Title:         queryProblem.Title,
 			TimeLimitMs:   int32(queryProblem.TimeLimitMs),
-			MemoryLimitMb: int32(queryProblem.MemoryLimitKB),
+			MemoryLimitMb: int32(queryProblem.MemoryLimitKB / 1024),
 		},
 		CreatorUsername: queryProblem.Edges.Creator.Username,
 		Description:     queryProblem.Description,
