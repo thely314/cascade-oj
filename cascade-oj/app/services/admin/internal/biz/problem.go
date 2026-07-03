@@ -3,6 +3,7 @@ package biz
 import (
 	"context"
 	"errors"
+	"io"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -58,11 +59,12 @@ type ProblemEditInfo struct {
 type ProblemRepo interface {
 	GetProblems(ctx context.Context, contestID int64) ([]*Problem, error)
 	GetSingleProblem(ctx context.Context, problemID int64) (*DetailedProblem, error)
-	PostProblem(ctx context.Context, creatorID int64, info ProblemCreateInfo) (int64, error) // 改传 creatorID
+	PostProblem(ctx context.Context, creatorID int64, info ProblemCreateInfo) (int64, error)
 	PutProblem(ctx context.Context, info ProblemEditInfo) (bool, error)
 	DeleteProblem(ctx context.Context, problemID int64) (bool, error)
 	PublishProblem(ctx context.Context, problemID int64) (bool, error)
 	DisableProblem(ctx context.Context, problemID int64) (bool, error)
+	SaveTestCases(ctx context.Context, problemID int64, file io.Reader) error
 }
 
 type ProblemUsecase struct {
@@ -75,6 +77,10 @@ func NewProblemUsecase(repo ProblemRepo, logger log.Logger) *ProblemUsecase {
 		problemRepo: repo,
 		log:         log.NewHelper(logger),
 	}
+}
+
+func (uc *ProblemUsecase) HandleTestCasesUpload(ctx context.Context, problemID int64, file io.Reader, filename string) error {
+	return uc.problemRepo.SaveTestCases(ctx, problemID, file)
 }
 
 func (problemUsecase *ProblemUsecase) GetProblems(ctx context.Context, contestID int64) ([]*Problem, error) {

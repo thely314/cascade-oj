@@ -53,6 +53,7 @@ const OperationAdminRejudgeSubmission = "/api.cascade.admin.v1.Admin/RejudgeSubm
 const OperationAdminRemoveContestUser = "/api.cascade.admin.v1.Admin/RemoveContestUser"
 const OperationAdminUpdateUserInfo = "/api.cascade.admin.v1.Admin/UpdateUserInfo"
 const OperationAdminUpdateUserPassword = "/api.cascade.admin.v1.Admin/UpdateUserPassword"
+const OperationAdminUploadTestCases = "/api.cascade.admin.v1.Admin/UploadTestCases"
 
 type AdminHTTPServer interface {
 	AddContestUser(context.Context, *AddContestUserRequest) (*AddContestUserReply, error)
@@ -115,6 +116,7 @@ type AdminHTTPServer interface {
 	// UpdateUserInfo Update user information
 	UpdateUserInfo(context.Context, *UpdateUserInfoRequest) (*UpdateUserInfoReply, error)
 	UpdateUserPassword(context.Context, *UpdateUserPasswordRequest) (*UpdateUserPasswordReply, error)
+	UploadTestCases(context.Context, *UploadTestCasesRequest) (*UploadTestCasesReply, error)
 }
 
 func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
@@ -152,6 +154,7 @@ func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
 	r.GET("/admin/logs/files", _Admin_ListLogFiles0_HTTP_Handler(srv))
 	r.GET("/admin/logs/content", _Admin_QueryLogContent0_HTTP_Handler(srv))
 	r.POST("/admin/logs/download", _Admin_DownloadLogs0_HTTP_Handler(srv))
+	r.POST("/admin/problems/{problem_id}/testcases", _Admin_UploadTestCases0_HTTP_Handler(srv))
 }
 
 func _Admin_GetContests0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
@@ -889,6 +892,31 @@ func _Admin_DownloadLogs0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Contex
 	}
 }
 
+func _Admin_UploadTestCases0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UploadTestCasesRequest
+		if err := ctx.Bind(&in.File); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminUploadTestCases)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UploadTestCases(ctx, req.(*UploadTestCasesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UploadTestCasesReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AdminHTTPClient interface {
 	AddContestUser(ctx context.Context, req *AddContestUserRequest, opts ...http.CallOption) (rsp *AddContestUserReply, err error)
 	// DeleteAnnouncement Delete an announcement
@@ -950,6 +978,7 @@ type AdminHTTPClient interface {
 	// UpdateUserInfo Update user information
 	UpdateUserInfo(ctx context.Context, req *UpdateUserInfoRequest, opts ...http.CallOption) (rsp *UpdateUserInfoReply, err error)
 	UpdateUserPassword(ctx context.Context, req *UpdateUserPasswordRequest, opts ...http.CallOption) (rsp *UpdateUserPasswordReply, err error)
+	UploadTestCases(ctx context.Context, req *UploadTestCasesRequest, opts ...http.CallOption) (rsp *UploadTestCasesReply, err error)
 }
 
 type AdminHTTPClientImpl struct {
@@ -1410,6 +1439,19 @@ func (c *AdminHTTPClientImpl) UpdateUserPassword(ctx context.Context, in *Update
 	opts = append(opts, http.Operation(OperationAdminUpdateUserPassword))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AdminHTTPClientImpl) UploadTestCases(ctx context.Context, in *UploadTestCasesRequest, opts ...http.CallOption) (*UploadTestCasesReply, error) {
+	var out UploadTestCasesReply
+	pattern := "/admin/problems/{problem_id}/testcases"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAdminUploadTestCases))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in.File, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

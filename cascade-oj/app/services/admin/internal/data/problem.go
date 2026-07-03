@@ -2,20 +2,45 @@ package data
 
 import (
 	"context"
+	"strconv"
+	"strings"
 
+	"archive/zip"
 	"cascade-oj/app/services/admin/internal/biz"
 	"cascade-oj/ent"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/pkg/mq"
+	"io"
+	"os"
+	"path/filepath"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/pelletier/go-toml/v2"
 )
 
 type ProblemRepo struct {
 	data *Data
 	log  *log.Helper
+}
+
+type TestCaseConfig struct {
+	Score               int         `toml:"Score"`
+	TimeResourceLimit   int64       `toml:"TimeResourceLimit"`
+	MemoryResourceLimit int64       `toml:"MemoryResourceLimit"`
+	CaseGroups          []CaseGroup `toml:"CaseGroups"`
+}
+
+type CaseGroup struct {
+	GroupScore int    `toml:"GroupScore"`
+	Cases      []Case `toml:"Cases"`
+}
+
+type Case struct {
+	SubScore           int    `toml:"SubScore"`
+	InputFileLocation  string `toml:"InputFileLocation"`
+	AnswerFileLocation string `toml:"AnswerFileLocation"`
 }
 
 func NewProblemRepo(data *Data, logger log.Logger) biz.ProblemRepo {
@@ -236,4 +261,81 @@ func (problemRepo *ProblemRepo) DisableProblem(ctx context.Context, problemID in
 		SetUseStatus(problem.UseStatusUnavailable).
 		Exec(ctx)
 	return err == nil, err
+}
+
+func (r *ProblemRepo) SaveTestCases(ctx context.Context, problemID int64, file io.Reader) error {
+	// 1. 准备目录
+	basePath := filepath.Join("cases", strconv.FormatInt(problemID, 10), "testcase")
+	_ = os.RemoveAll(basePath)
+	_ = os.MkdirAll(basePath, 0755)
+
+	// 2. 保存临时 zip
+	zipPath := filepath.Join(basePath, "upload.zip")
+	tmpFile, err := os.Create(zipPath)
+	if err != nil {
+		return err
+	}
+	_, _ = io.Copy(tmpFile, file)
+	tmpFile.Close()
+
+	// 3. 解压文件
+	zr, err := zip.OpenReader(zipPath) // 改名 zr，避免与接收者 r 冲突
+	if err != nil {
+		return err
+	}
+	defer zr.Close()
+
+	var inputFiles []string
+	for _, f := range zr.File {
+		fpath := filepath.Join(basePath, f.Name) // 使用 fpath
+
+		if f.FileInfo().IsDir() {
+			_ = os.MkdirAll(fpath, f.Mode())
+			continue
+		}
+
+		// 写入解压后的文件
+		dstFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		if err != nil {
+			return err
+		}
+		srcFile, err := f.Open()
+		if err != nil {
+			dstFile.Close()
+			return err
+		}
+		_, _ = io.Copy(dstFile, srcFile)
+
+		dstFile.Close()
+		srcFile.Close()
+
+		if filepath.Ext(f.Name) == ".in" {
+			inputFiles = append(inputFiles, f.Name)
+		}
+	}
+
+	// 4. 生成 config.toml
+	config := TestCaseConfig{
+		Score:               100,
+		TimeResourceLimit:   500,
+		MemoryResourceLimit: 16,
+	}
+
+	group := CaseGroup{GroupScore: 100}
+	for _, in := range inputFiles {
+		ans := strings.TrimSuffix(in, ".in") + ".ans"
+		group.Cases = append(group.Cases, Case{
+			SubScore:           100 / len(inputFiles),
+			InputFileLocation:  in,
+			AnswerFileLocation: ans,
+		})
+	}
+	config.CaseGroups = append(config.CaseGroups, group)
+
+	tomlData, err := toml.Marshal(config)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(filepath.Join(basePath, "config.toml"), tomlData, 0644)
 }

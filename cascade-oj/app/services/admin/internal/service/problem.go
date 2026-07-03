@@ -6,6 +6,9 @@ import (
 	"cascade-oj/pkg/middleware/auth"
 	"context"
 	"errors"
+
+	"github.com/go-kratos/kratos/v2/transport"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 )
 
 func mapBizStatusToPbStatus(status biz.ProblemStatus) pb.ProblemStatus {
@@ -161,4 +164,24 @@ func mapBizTemplatesToPb(bizTemplates []*biz.ProblemTemplate) []*pb.CodeTemplate
 		})
 	}
 	return pbTemplates
+}
+
+func (adminService *AdminService) UploadTestCases(ctx context.Context, request *pb.UploadTestCasesRequest) (*pb.UploadTestCasesReply, error) {
+	if tr, ok := transport.FromServerContext(ctx); ok {
+		if ht, ok := tr.(*khttp.Transport); ok {
+			req := ht.Request()
+
+			file, handler, err := req.FormFile("file")
+			if err != nil {
+				return nil, err
+			}
+			defer file.Close()
+
+			err = adminService.problemUseCase.HandleTestCasesUpload(ctx, request.ProblemId, file, handler.Filename)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	return &pb.UploadTestCasesReply{IsSuccess: true, Message: "upload success"}, nil
 }
