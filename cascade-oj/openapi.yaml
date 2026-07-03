@@ -984,6 +984,8 @@ components:
                     type: string
                 code:
                     type: string
+                name:
+                    type: string
         ContestMetadata:
             type: object
             properties:

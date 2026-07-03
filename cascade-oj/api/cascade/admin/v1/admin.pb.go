@@ -946,6 +946,7 @@ type CodeTemplate struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Language      string                 `protobuf:"bytes,1,opt,name=language,proto3" json:"language,omitempty"`
 	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -990,6 +991,13 @@ func (x *CodeTemplate) GetLanguage() string {
 func (x *CodeTemplate) GetCode() string {
 	if x != nil {
 		return x.Code
+	}
+	return ""
+}
+
+func (x *CodeTemplate) GetName() string {
+	if x != nil {
+		return x.Name
 	}
 	return ""
 }
@@ -4162,10 +4170,11 @@ const file_api_cascade_admin_v1_admin_proto_rawDesc = "" +
 	"\rtime_limit_ms\x18\x03 \x01(\x05R\vtimeLimitMs\x12&\n" +
 	"\x0fmemory_limit_mb\x18\x04 \x01(\x05R\rmemoryLimitMb\x12 \n" +
 	"\vdescription\x18\x05 \x01(\tR\vdescription\x12;\n" +
-	"\x06status\x18\x06 \x01(\x0e2#.api.cascade.admin.v1.ProblemStatusR\x06status\">\n" +
+	"\x06status\x18\x06 \x01(\x0e2#.api.cascade.admin.v1.ProblemStatusR\x06status\"R\n" +
 	"\fCodeTemplate\x12\x1a\n" +
 	"\blanguage\x18\x01 \x01(\tR\blanguage\x12\x12\n" +
-	"\x04code\x18\x02 \x01(\tR\x04code\"3\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"3\n" +
 	"\x12GetProblemsRequest\x12\x1d\n" +
 	"\n" +
 	"contest_id\x18\x01 \x01(\x03R\tcontestId\"U\n" +

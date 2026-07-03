@@ -35,5 +35,6 @@ func NewHTTPServer(c *conf.Server, admin *service.AdminService, logger log.Logge
 	}
 	srv := http.NewServer(opts...)
 	pb.RegisterAdminHTTPServer(srv, admin)
+	srv.Route("/").POST("/admin/problems/{id}/upload_cases", admin.UploadTestCasesRaw)
 	return srv
 }

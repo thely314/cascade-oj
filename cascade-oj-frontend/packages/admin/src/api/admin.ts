@@ -19,6 +19,7 @@ import type {
     DeleteProblemReply,
     DisableProblemReply,
     PublishProblemReply,
+    UploadTestCasesReply,
     GetSubmissionsRequest,
     GetSubmissionsReply,
     GetSingleSubmissionReply,
@@ -104,6 +105,17 @@ export async function publishProblem(problemId: number): Promise<PublishProblemR
 
 export async function disableProblem(problemId: number): Promise<DisableProblemReply> {
     return service.post(`/admin/problems/${problemId}/disable`, {});
+}
+
+export async function uploadTestCases(problemId: number, file: File): Promise<UploadTestCasesReply> {
+    const formData = new FormData();
+    formData.append('file', file); 
+    
+    return service.post(`/admin/problems/${problemId}/upload_cases`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data', 
+        },
+    });
 }
 
 // Submissions

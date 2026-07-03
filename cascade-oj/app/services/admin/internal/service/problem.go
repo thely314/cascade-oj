@@ -6,6 +6,8 @@ import (
 	"cascade-oj/pkg/middleware/auth"
 	"context"
 	"errors"
+	"strconv"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
@@ -147,8 +149,10 @@ func (adminService *AdminService) DisableProblem(ctx context.Context, request *p
 func mapPbTemplatesToBiz(pbTemplates []*pb.CodeTemplate) []*biz.ProblemTemplate {
 	bizTemplates := make([]*biz.ProblemTemplate, 0, len(pbTemplates))
 	for _, t := range pbTemplates {
+		// 将语言和文件名拼接，例如 "cpp/main.cpp"
+		fileName := t.Language + "/" + t.Name
 		bizTemplates = append(bizTemplates, &biz.ProblemTemplate{
-			Name:    t.Language,
+			Name:    fileName,
 			Content: t.Code,
 		})
 	}
@@ -158,8 +162,18 @@ func mapPbTemplatesToBiz(pbTemplates []*pb.CodeTemplate) []*biz.ProblemTemplate 
 func mapBizTemplatesToPb(bizTemplates []*biz.ProblemTemplate) []*pb.CodeTemplate {
 	pbTemplates := make([]*pb.CodeTemplate, 0, len(bizTemplates))
 	for _, t := range bizTemplates {
+		parts := strings.SplitN(t.Name, "/", 2)
+		language := "cpp"
+		name := t.Name
+
+		if len(parts) == 2 {
+			language = parts[0]
+			name = parts[1]
+		}
+
 		pbTemplates = append(pbTemplates, &pb.CodeTemplate{
-			Language: t.Name,
+			Language: language,
+			Name:     name,
 			Code:     t.Content,
 		})
 	}
@@ -184,4 +198,26 @@ func (adminService *AdminService) UploadTestCases(ctx context.Context, request *
 		}
 	}
 	return &pb.UploadTestCasesReply{IsSuccess: true, Message: "upload success"}, nil
+}
+
+func (adminService *AdminService) UploadTestCasesRaw(ctx khttp.Context) error {
+	req := ctx.Request()
+	problemIdStr := ctx.Vars().Get("id")
+	problemId, _ := strconv.ParseInt(problemIdStr, 10, 64)
+
+	file, handler, err := req.FormFile("file")
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	err = adminService.problemUseCase.HandleTestCasesUpload(ctx, problemId, file, handler.Filename)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Result(200, map[string]interface{}{
+		"isSuccess": true,
+		"message":   "upload success",
+	})
 }

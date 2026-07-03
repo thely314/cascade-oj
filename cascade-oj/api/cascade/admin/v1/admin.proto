@@ -322,7 +322,8 @@ message ProblemMetadata {
 }
 message CodeTemplate {
     string language = 1; 
-    string code = 2;     
+    string code = 2; 
+    string name = 3;    
 }
 
 message GetProblemsRequest {
