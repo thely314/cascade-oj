@@ -55,11 +55,6 @@ func (adminService *AdminService) GetSingleProblem(ctx context.Context, request 
 		return nil, err
 	}
 
-	var templateStr string
-	if len(problem.Problem.Templates) > 0 {
-		templateStr = problem.Problem.Templates[0].Content
-	}
-
 	return &pb.GetSingleProblemReply{
 		Metadata: &pb.ProblemMetadata{
 			Id:            problem.Problem.ID,
@@ -69,9 +64,9 @@ func (adminService *AdminService) GetSingleProblem(ctx context.Context, request 
 			Status:        mapBizStatusToPbStatus(problem.Problem.Status),
 			Description:   problem.Problem.Description,
 		},
-		Creator:      problem.CreatorUsername,
-		Description:  problem.Description,
-		CodeTemplate: templateStr,
+		Creator:     problem.CreatorUsername,
+		Description: problem.Description,
+		Templates:   mapBizTemplatesToPb(problem.Problem.Templates),
 	}, nil
 }
 
@@ -87,12 +82,7 @@ func (adminService *AdminService) PostProblem(ctx context.Context, request *pb.P
 			TimeLimitMs:   request.Metadata.TimeLimitMs,
 			MemoryLimitKB: request.Metadata.MemoryLimitMb * 1024,
 			Description:   request.Description,
-			Templates: []*biz.ProblemTemplate{
-				{
-					Name:    "main.cpp",
-					Content: request.CodeTemplate,
-				},
-			},
+			Templates:     mapPbTemplatesToBiz(request.Templates),
 		})
 
 	if err != nil {
@@ -111,12 +101,7 @@ func (adminService *AdminService) PutProblem(ctx context.Context, request *pb.Pu
 			TimeLimitMs:   request.Metadata.TimeLimitMs,
 			MemoryLimitKB: request.Metadata.MemoryLimitMb * 1024,
 			Description:   request.Description,
-			Templates: []*biz.ProblemTemplate{
-				{
-					Name:    "main.cpp",
-					Content: request.CodeTemplate,
-				},
-			},
+			Templates:     mapPbTemplatesToBiz(request.Templates),
 		})
 	if err != nil {
 		return nil, err
@@ -154,4 +139,26 @@ func (adminService *AdminService) DisableProblem(ctx context.Context, request *p
 	return &pb.DisableProblemReply{
 		IsSuccess: isSuccess,
 	}, nil
+}
+
+func mapPbTemplatesToBiz(pbTemplates []*pb.CodeTemplate) []*biz.ProblemTemplate {
+	bizTemplates := make([]*biz.ProblemTemplate, 0, len(pbTemplates))
+	for _, t := range pbTemplates {
+		bizTemplates = append(bizTemplates, &biz.ProblemTemplate{
+			Name:    t.Language,
+			Content: t.Code,
+		})
+	}
+	return bizTemplates
+}
+
+func mapBizTemplatesToPb(bizTemplates []*biz.ProblemTemplate) []*pb.CodeTemplate {
+	pbTemplates := make([]*pb.CodeTemplate, 0, len(bizTemplates))
+	for _, t := range bizTemplates {
+		pbTemplates = append(pbTemplates, &pb.CodeTemplate{
+			Language: t.Name,
+			Code:     t.Content,
+		})
+	}
+	return pbTemplates
 }
