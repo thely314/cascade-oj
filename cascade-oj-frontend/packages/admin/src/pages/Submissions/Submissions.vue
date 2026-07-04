@@ -39,8 +39,8 @@ const statusTone: Record<string, string> = {
   'Wrong Answer': 'badge-dim',
 }
 
-const parseOptionalNumber = (value: string) => {
-  const normalizedValue = value.trim()
+const parseOptionalNumber = (value: string | number | null) => {
+  const normalizedValue = String(value ?? '').trim()
   if (!normalizedValue) return undefined
 
   const parsedValue = Number(normalizedValue)

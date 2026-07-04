@@ -262,6 +262,9 @@ export function useProblemDetail() {
         const routeIndex = String(index + 1); 
         problemIndexMap[routeIndex] = p.id;
         problemIdToIndex[p.id] = routeIndex;
+        // TODO debug
+        console.log(`映射 顺序->题目ID: ${routeIndex} -> ${p.id}`);
+        console.log(`反向映射: ${p.id} -> ${routeIndex}`);
       });
       
       const routeId = route.params.id as string;
@@ -289,7 +292,7 @@ export function useProblemDetail() {
 
   // 总题数：以接口返回为准，初始为 0
   const totalProblems = ref(0);
-  const currentIndex = computed(() => Number(problemIdToIndex[problemData.value.id]) || 1);
+  const currentIndex = computed(() => Number(route.params.id) || 1);
 
   const isFirstProblem = computed(() => currentIndex.value <= 1);
   const isLastProblem = computed(() => currentIndex.value >= totalProblems.value);
@@ -297,12 +300,16 @@ export function useProblemDetail() {
   // 上一题
   const handlePrevProblem = () => {
     if (isFirstProblem.value) return;
+    // TODO debug
+    console.log(`当前题目序号: ${currentIndex.value}, 上一题序号: ${currentIndex.value - 1}`);
     jumpToProblem(problemIndexMap[String(currentIndex.value - 1)]);
   };
 
   // 下一题
   const handleNextProblem = () => {
     if (isLastProblem.value) return;
+    // TODO debug
+    console.log(`当前题目序号: ${currentIndex.value}, 下一题序号: ${currentIndex.value + 1}`);
     jumpToProblem(problemIndexMap[String(currentIndex.value + 1)]);
   };
 

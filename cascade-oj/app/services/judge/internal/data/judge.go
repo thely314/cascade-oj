@@ -59,8 +59,9 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 	}()
 
 	// get problem data from cache or database
+	// 注意这里的缓存是用于测评的，数据结构与用户使用的题目缓存不同
 	var problemResult *ent.Problem
-	problemString, err := repo.data.redis.Get(ctx, fmt.Sprintf(cache.ProblemDetailCacheKeyFmt, msg_submission.ProblemID)).Result()
+	problemString, err := repo.data.redis.Get(ctx, fmt.Sprintf(cache.ProblemForJudgeCacheKeyFmt, msg_submission.ProblemID)).Result()
 	if err != nil {
 		// get from database
 		problemResult, err = repo.data.db.Problem.Query().
@@ -74,7 +75,7 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		if err != nil {
 			return err
 		}
-		err = repo.data.redis.Set(ctx, fmt.Sprintf(cache.ProblemDetailCacheKeyFmt, msg_submission.ProblemID), problemBytes, 1*time.Hour).Err()
+		err = repo.data.redis.Set(ctx, fmt.Sprintf(cache.ProblemForJudgeCacheKeyFmt, msg_submission.ProblemID), problemBytes, 1*time.Hour).Err()
 		if err != nil {
 			return err
 		}
@@ -155,7 +156,10 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 
 		// calculate new total rank score
 		oldRank, err := repo.data.db.Competitor_List.Query().
-			Where(competitor_list.UserIDEQ(msg_submission.UserID)).
+			Where(competitor_list.And(
+				competitor_list.UserIDEQ(msg_submission.UserID),
+				competitor_list.ProblemSetIDEQ(msg_submission.ProblemSetID),
+			)).
 			First(ctx)
 		if err != nil {
 			repo.log.Errorf("failed to query competitor list: %v", err)
@@ -164,7 +168,10 @@ func (repo *judgeRepo) JudgeSubmission(ctx context.Context, msg_submission *mq.S
 		if newRankScore > oldRank.TotalScore {
 			// update ranking info in competitor list
 			_, err = repo.data.db.Competitor_List.Update().
-				Where(competitor_list.UserIDEQ(msg_submission.UserID)).
+				Where(competitor_list.And(
+					competitor_list.UserIDEQ(msg_submission.UserID),
+					competitor_list.ProblemSetIDEQ(msg_submission.ProblemSetID),
+				)).
 				SetTotalScore(newRankScore).
 				Save(ctx)
 			if err != nil {
