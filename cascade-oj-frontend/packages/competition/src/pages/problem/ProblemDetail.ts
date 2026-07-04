@@ -262,9 +262,6 @@ export function useProblemDetail() {
         const routeIndex = String(index + 1); 
         problemIndexMap[routeIndex] = p.id;
         problemIdToIndex[p.id] = routeIndex;
-        // TODO debug
-        console.log(`映射 顺序->题目ID: ${routeIndex} -> ${p.id}`);
-        console.log(`反向映射: ${p.id} -> ${routeIndex}`);
       });
       
       const routeId = route.params.id as string;
@@ -300,16 +297,12 @@ export function useProblemDetail() {
   // 上一题
   const handlePrevProblem = () => {
     if (isFirstProblem.value) return;
-    // TODO debug
-    console.log(`当前题目序号: ${currentIndex.value}, 上一题序号: ${currentIndex.value - 1}`);
     jumpToProblem(problemIndexMap[String(currentIndex.value - 1)]);
   };
 
   // 下一题
   const handleNextProblem = () => {
     if (isLastProblem.value) return;
-    // TODO debug
-    console.log(`当前题目序号: ${currentIndex.value}, 下一题序号: ${currentIndex.value + 1}`);
     jumpToProblem(problemIndexMap[String(currentIndex.value + 1)]);
   };
 
