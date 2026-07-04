@@ -195,9 +195,10 @@ const fetchOverviewStats = async () => {
 	updateStats(2, problems.length)
 
 	let totalSubmissions = 0
-	const pageSize = 200
+	// 后端 pageSize 上限为 100
+	const pageSize = 100
 
-	for (let page = 1; page <= 200; page += 1) {
+	for (let page = 1; page <= 500; page += 1) {
 		const response = await getSubmissions({ page, pageSize })
 		const batch = response.submissions || []
 		totalSubmissions += batch.length

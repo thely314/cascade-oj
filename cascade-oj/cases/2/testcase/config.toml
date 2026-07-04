@@ -1,0 +1,20 @@
+# echo 示例，读取输入字符串然后原样输出
+# int
+Score = 100
+
+# int64 ms
+TimeResourceLimit = 1000
+
+# int64 MiBytes
+MemoryResourceLimit = 16
+
+# CaseGroup
+CaseGroups = [
+    { GroupScore = 60, Cases = [
+        { SubScore = 30, InputFileLocation = "1.in", AnswerFileLocation = "1.ans" },
+        { SubScore = 30, InputFileLocation = "2.in", AnswerFileLocation = "2.ans" }
+    ] },
+    { GroupScore = 40, Cases = [
+        { SubScore = 40, InputFileLocation = "3.in", AnswerFileLocation = "3.ans" }
+    ] }
+]
