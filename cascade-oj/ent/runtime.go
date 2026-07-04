@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"cascade-oj/ent/alertevent"
+	"cascade-oj/ent/alertreport"
 	"cascade-oj/ent/announcement"
 	"cascade-oj/ent/casegroupresult"
 	"cascade-oj/ent/caseresult"
@@ -25,6 +27,92 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	alerteventFields := schema.AlertEvent{}.Fields()
+	_ = alerteventFields
+	// alerteventDescSource is the schema descriptor for source field.
+	alerteventDescSource := alerteventFields[1].Descriptor()
+	// alertevent.SourceValidator is a validator for the "source" field. It is called by the builders before save.
+	alertevent.SourceValidator = func() func(string) error {
+		validators := alerteventDescSource.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(source string) error {
+			for _, fn := range fns {
+				if err := fn(source); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// alerteventDescMetricName is the schema descriptor for metric_name field.
+	alerteventDescMetricName := alerteventFields[3].Descriptor()
+	// alertevent.DefaultMetricName holds the default value on creation for the metric_name field.
+	alertevent.DefaultMetricName = alerteventDescMetricName.Default.(string)
+	// alertevent.MetricNameValidator is a validator for the "metric_name" field. It is called by the builders before save.
+	alertevent.MetricNameValidator = alerteventDescMetricName.Validators[0].(func(string) error)
+	// alerteventDescMetricValue is the schema descriptor for metric_value field.
+	alerteventDescMetricValue := alerteventFields[4].Descriptor()
+	// alertevent.DefaultMetricValue holds the default value on creation for the metric_value field.
+	alertevent.DefaultMetricValue = alerteventDescMetricValue.Default.(float64)
+	// alerteventDescThreshold is the schema descriptor for threshold field.
+	alerteventDescThreshold := alerteventFields[5].Descriptor()
+	// alertevent.DefaultThreshold holds the default value on creation for the threshold field.
+	alertevent.DefaultThreshold = alerteventDescThreshold.Default.(float64)
+	// alerteventDescReceivedAt is the schema descriptor for received_at field.
+	alerteventDescReceivedAt := alerteventFields[7].Descriptor()
+	// alertevent.DefaultReceivedAt holds the default value on creation for the received_at field.
+	alertevent.DefaultReceivedAt = alerteventDescReceivedAt.Default.(func() time.Time)
+	// alerteventDescAggregatedInto is the schema descriptor for aggregated_into field.
+	alerteventDescAggregatedInto := alerteventFields[8].Descriptor()
+	// alertevent.DefaultAggregatedInto holds the default value on creation for the aggregated_into field.
+	alertevent.DefaultAggregatedInto = alerteventDescAggregatedInto.Default.(int64)
+	// alerteventDescID is the schema descriptor for id field.
+	alerteventDescID := alerteventFields[0].Descriptor()
+	// alertevent.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	alertevent.IDValidator = alerteventDescID.Validators[0].(func(int64) error)
+	alertreportFields := schema.AlertReport{}.Fields()
+	_ = alertreportFields
+	// alertreportDescTitle is the schema descriptor for title field.
+	alertreportDescTitle := alertreportFields[1].Descriptor()
+	// alertreport.TitleValidator is a validator for the "title" field. It is called by the builders before save.
+	alertreport.TitleValidator = func() func(string) error {
+		validators := alertreportDescTitle.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(title string) error {
+			for _, fn := range fns {
+				if err := fn(title); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// alertreportDescSummary is the schema descriptor for summary field.
+	alertreportDescSummary := alertreportFields[2].Descriptor()
+	// alertreport.SummaryValidator is a validator for the "summary" field. It is called by the builders before save.
+	alertreport.SummaryValidator = alertreportDescSummary.Validators[0].(func(string) error)
+	// alertreportDescNoiseCount is the schema descriptor for noise_count field.
+	alertreportDescNoiseCount := alertreportFields[5].Descriptor()
+	// alertreport.DefaultNoiseCount holds the default value on creation for the noise_count field.
+	alertreport.DefaultNoiseCount = alertreportDescNoiseCount.Default.(int)
+	// alertreportDescRealRiskCount is the schema descriptor for real_risk_count field.
+	alertreportDescRealRiskCount := alertreportFields[6].Descriptor()
+	// alertreport.DefaultRealRiskCount holds the default value on creation for the real_risk_count field.
+	alertreport.DefaultRealRiskCount = alertreportDescRealRiskCount.Default.(int)
+	// alertreportDescCreatedAt is the schema descriptor for created_at field.
+	alertreportDescCreatedAt := alertreportFields[9].Descriptor()
+	// alertreport.DefaultCreatedAt holds the default value on creation for the created_at field.
+	alertreport.DefaultCreatedAt = alertreportDescCreatedAt.Default.(func() time.Time)
+	// alertreportDescID is the schema descriptor for id field.
+	alertreportDescID := alertreportFields[0].Descriptor()
+	// alertreport.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	alertreport.IDValidator = alertreportDescID.Validators[0].(func(int64) error)
 	announcementFields := schema.Announcement{}.Fields()
 	_ = announcementFields
 	// announcementDescPublisherID is the schema descriptor for publisher_id field.

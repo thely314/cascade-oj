@@ -1,0 +1,34 @@
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+    vueDevTools(),
+  ],
+  build: {
+    // 使用相对路径，避免路径拼接问题
+    outDir: '../../dist/aiops',
+    emptyOutDir: true,
+  },
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  server: {
+    host: 'localhost',
+    port: 15174,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8400',
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+})

@@ -114,9 +114,8 @@ const competitionHomeUrl = computed(() => {
   align-items: center;
   justify-content: center;
   padding: 40px;
-  /* 核心修改：右侧背景改为非常淡的透明黑，或者完全透明，消除割裂感 */
-  background: rgba(12, 17, 16, 0.3); 
-  backdrop-filter: blur(10px); /* 稍微加一点毛玻璃，防止文字和波浪线重叠看不清 */
+  /* 右侧背景不透明，避免 backdrop-filter 创建的层叠上下文 */
+  background: rgba(12, 17, 16, 0.85);
 }
 
 .auth-box {
@@ -205,5 +204,12 @@ const competitionHomeUrl = computed(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+</style>
+
+<!-- 非 scoped：确保 toast 不被登录页层叠上下文覆盖 -->
+<style>
+.Vue-Toastification__container {
+  z-index: 10000 !important;
 }
 </style>

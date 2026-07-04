@@ -1,5 +1,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
+import { useToast } from 'vue-toastification';
+import { useConfirmDialog } from '@/composables/useConfirmDialog';
 import { marked } from 'marked';
 import markedKatex from "marked-katex-extension";
 import "katex/dist/katex.min.css"; // 防止公式乱码
@@ -17,6 +19,8 @@ import {
 export function useProblemDetail() {
   const route = useRoute();
   const router = useRouter();
+  const toast = useToast();
+  const confirmDialog = useConfirmDialog();
 
   // 获取 URL 参数 (注意：如果用户直接输 URL 进来，这两个可能是 undefined，最好做个兜底)
   const contestId = computed(() => route.params.contestId as string || '1');
@@ -312,7 +316,13 @@ export function useProblemDetail() {
     runStats.stderr = '';
 
     try {
-      const codeToSend = activeFile.value?.content || '';
+      // 空代码校验
+      const codeToSend = (activeFile.value?.content || '').trim();
+      if (!codeToSend) {
+        toast.error('代码不能为空');
+        isRunning.value = false;
+        return;
+      }
 
       // 发起提交，获取 UUID
       const res = await submitCode({
@@ -367,10 +377,19 @@ export function useProblemDetail() {
   // 提交代码(集成轮询)
   const handleSubmit = async () => {
     if (isSubmitting.value) return;
+
+    // 空代码校验
+    const rawCode = (activeFile.value?.content || '').trim();
+    if (!rawCode) {
+      toast.error('代码不能为空');
+      isSubmitting.value = false;
+      return;
+    }
+
     isSubmitting.value = true;
     
     try {
-      const codeToSend = activeFile.value?.content || '';
+      const codeToSend = rawCode;
 
       // 1. 发起提交
       const res = await submitCode({
@@ -398,17 +417,17 @@ export function useProblemDetail() {
           },
           (err) => {
             isSubmitting.value = false;
-            alert("判题超时或失败: " + err.message);
+            toast.error('判题超时或失败: ' + err.message);
           }
         );
       } else {
         isSubmitting.value = false;
-        alert("提交失败，未获取到 ID");
+        toast.error('提交失败，未获取到 ID');
       }
 
     } catch (e) {
       console.error("提交代码出错:", e);
-      alert("提交失败，网络错误");
+      toast.error('提交失败，网络错误');
       isSubmitting.value = false;
     }
   };
@@ -476,15 +495,16 @@ export function useProblemDetail() {
   const copyCode = async () => {
     try {
       await navigator.clipboard.writeText(activeFile.value.content);
-      alert('代码已复制到剪贴板'); // 这里可以用个 Toast，暂时用 alert 替代
+      toast.success('代码已复制到剪贴板');
     } catch (err) {
       console.error('复制失败', err);
     }
   };
 
   // [新增] 重置代码
-  const resetCode = () => {
-    if (confirm('确定要重置当前文件代码吗？您的修改将丢失。')) {
+  const resetCode = async () => {
+    const ok = await confirmDialog('确定要重置当前文件代码吗？您的修改将丢失（点击确认）。');
+    if (ok) {
       // 简单粗暴：直接清空，或者恢复成特定模板
       // 如果之前 filesMap 初始化时有默认模板，这里可以恢复成那个值
       // 目前我们就置空，或者给个基础框架

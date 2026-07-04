@@ -14,12 +14,13 @@ import (
 	"cascade-oj/app/services/admin/internal/service"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"net/http"
 )
 
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, handler http.Handler) (*kratos.App, func(), error) {
 	dataData, cleanup, err := data.NewData(confData, logger)
 	if err != nil {
 		return nil, nil, err
@@ -38,7 +39,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	userUsecase := biz.NewUserUsecase(userRepo, logger)
 	adminService := service.NewAdminService(announcementUseCase, contestUsecase, logUseCase, problemUsecase, submissionUseCase, userUsecase, logger)
 	grpcServer := server.NewGRPCServer(confServer, adminService, logger)
-	httpServer := server.NewHTTPServer(confServer, adminService, logger)
+	httpServer := server.NewHTTPServer(confServer, adminService, handler, logger)
 	rabbitmqServer := server.NewMQServer(confServer, adminService, logger)
 	app := newApp(logger, grpcServer, httpServer, rabbitmqServer)
 	return app, func() {

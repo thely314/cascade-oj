@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, computed } from 'vue'
+import { useToast } from 'vue-toastification'
 import { VueDatePicker } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { PaginationBar } from 'v-page'
@@ -12,6 +13,7 @@ const logContent = ref<string[]>([])
 const loadingFiles = ref(false)
 const loadingContent = ref(false)
 const error = ref('')
+const toast = useToast()
 
 // 分页状态
 const filePagination = reactive({
@@ -86,7 +88,7 @@ const handleContentPageChange = (page: number) => {
 
 const handleQuery = async () => {
   if (selectedFiles.value.length !== 1) {
-    alert('Please select exactly one file to query.')
+    toast.warning('Please select exactly one file to query.')
     return
   }
   loadingContent.value = true
@@ -121,7 +123,7 @@ const handleQuery = async () => {
 
 const handleExport = async () => {
   if (selectedFiles.value.length === 0) {
-    alert('Please select files to export.')
+    toast.warning('Please select files to export.')
     return
   }
   try {

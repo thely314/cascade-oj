@@ -9,6 +9,73 @@ import (
 )
 
 var (
+	// AlertEventsColumns holds the columns for the "AlertEvents" table.
+	AlertEventsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "source", Type: field.TypeString, Size: 64},
+		{Name: "severity", Type: field.TypeEnum, Enums: []string{"critical", "warning", "info"}, Default: "warning"},
+		{Name: "metric_name", Type: field.TypeString, Size: 128, Default: ""},
+		{Name: "metric_value", Type: field.TypeFloat64, Default: 0},
+		{Name: "threshold", Type: field.TypeFloat64, Default: 0},
+		{Name: "raw_data", Type: field.TypeString, SchemaType: map[string]string{"mysql": "JSON"}},
+		{Name: "received_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP", SchemaType: map[string]string{"mysql": "datetime"}},
+		{Name: "aggregated_into", Type: field.TypeInt64, Default: 0},
+	}
+	// AlertEventsTable holds the schema information for the "AlertEvents" table.
+	AlertEventsTable = &schema.Table{
+		Name:       "AlertEvents",
+		Columns:    AlertEventsColumns,
+		PrimaryKey: []*schema.Column{AlertEventsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "alertevent_source_severity",
+				Unique:  false,
+				Columns: []*schema.Column{AlertEventsColumns[1], AlertEventsColumns[2]},
+			},
+			{
+				Name:    "alertevent_received_at",
+				Unique:  false,
+				Columns: []*schema.Column{AlertEventsColumns[7]},
+			},
+			{
+				Name:    "alertevent_aggregated_into",
+				Unique:  false,
+				Columns: []*schema.Column{AlertEventsColumns[8]},
+			},
+		},
+	}
+	// AlertReportsColumns holds the columns for the "AlertReports" table.
+	AlertReportsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "title", Type: field.TypeString, Size: 255},
+		{Name: "summary", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
+		{Name: "root_causes", Type: field.TypeString, SchemaType: map[string]string{"mysql": "JSON"}},
+		{Name: "suggested_actions", Type: field.TypeString, SchemaType: map[string]string{"mysql": "JSON"}},
+		{Name: "noise_count", Type: field.TypeInt, Default: 0},
+		{Name: "real_risk_count", Type: field.TypeInt, Default: 0},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"draft", "published", "acknowledged"}, Default: "draft"},
+		{Name: "full_report_markdown", Type: field.TypeString, SchemaType: map[string]string{"mysql": "TEXT"}},
+		{Name: "created_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP", SchemaType: map[string]string{"mysql": "datetime"}},
+		{Name: "acknowledged_at", Type: field.TypeTime, Nullable: true, SchemaType: map[string]string{"mysql": "datetime"}},
+	}
+	// AlertReportsTable holds the schema information for the "AlertReports" table.
+	AlertReportsTable = &schema.Table{
+		Name:       "AlertReports",
+		Columns:    AlertReportsColumns,
+		PrimaryKey: []*schema.Column{AlertReportsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "alertreport_status",
+				Unique:  false,
+				Columns: []*schema.Column{AlertReportsColumns[7]},
+			},
+			{
+				Name:    "alertreport_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{AlertReportsColumns[9]},
+			},
+		},
+	}
 	// AnnouncementsColumns holds the columns for the "Announcements" table.
 	AnnouncementsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -345,6 +412,8 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AlertEventsTable,
+		AlertReportsTable,
 		AnnouncementsTable,
 		CaseGroupResultsTable,
 		CaseResultsTable,
@@ -363,6 +432,12 @@ var (
 )
 
 func init() {
+	AlertEventsTable.Annotation = &entsql.Annotation{
+		Table: "AlertEvents",
+	}
+	AlertReportsTable.Annotation = &entsql.Annotation{
+		Table: "AlertReports",
+	}
 	AnnouncementsTable.ForeignKeys[0].RefTable = UsersTable
 	AnnouncementsTable.Annotation = &entsql.Annotation{
 		Table: "Announcements",

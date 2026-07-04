@@ -1,24 +1,4 @@
 services:
-  # @Deprecated
-  # gateway:
-  #   build:
-  #     context: ./
-  #     dockerfile: app/gateway/Dockerfile
-  #     args: 
-  #       VERSION : 0.1.0
-  #   image: cascade-oj/gateway:latest
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - cascade_mysql
-  #     - cascade_rabbitmq
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - ./config/gateway:/data/conf
-  #   container_name: cascade_oj_gateway
-  #   networks:
-  #     - backend-network
-
   public:
     build:
       context: ./
@@ -35,6 +15,14 @@ services:
       - ./config/public:/data/conf
       - ./data/logs:/data/logs
     container_name: cascade_oj_public
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+        reservations:
+          cpus: '0.125'
+          memory: 32M
     networks:
       - backend-network
 
@@ -56,6 +44,14 @@ services:
       - ./config/user:/data/conf
       - ./data/logs:/data/logs
     container_name: cascade_oj_user
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+        reservations:
+          cpus: '0.5'
+          memory: 128M
     networks:
       - backend-network
 
@@ -77,6 +73,14 @@ services:
       - ./cases:/cases
       - ./data/logs:/data/logs
     container_name: cascade_oj_judge
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.125'
+          memory: 64M
     networks:
       - backend-network
 
@@ -98,6 +102,42 @@ services:
       - ./config/admin:/data/conf
       - ./data/logs:/data/logs
     container_name: cascade_oj_admin
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.125'
+          memory: 128M
+    networks:
+      - backend-network
+
+  aiops:
+    build:
+      context: ./
+      dockerfile: app/services/aiops/Dockerfile
+      args: 
+        VERSION : 0.1.0
+    image: cascade-oj/aiops:latest
+    restart: unless-stopped
+    depends_on:
+      - cascade_mysql
+      - cascade_prometheus
+    ports:
+      - "8400:8000"
+    volumes:
+      - ./config/aiops:/data/conf
+      - ./data/logs:/data/logs
+    container_name: cascade_oj_aiops
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.125'
+          memory: 64M
     networks:
       - backend-network
 

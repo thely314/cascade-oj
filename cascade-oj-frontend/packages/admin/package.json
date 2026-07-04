@@ -22,7 +22,8 @@
     "monaco-editor": "^0.55.1",
     "v-page": "^3.5.0",
     "vue": "^3.5.25",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.4.5",
+    "vue-toastification": "2.0.0-rc.5"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",

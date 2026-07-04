@@ -64,10 +64,12 @@
 
 <script setup lang="ts">
 import { reactive, ref, defineProps } from 'vue';
+import { useToast } from 'vue-toastification';
 import { useRouter } from 'vue-router';
 import md5 from 'js-md5';
 import request from '../../utils/request';
 
+const toast = useToast();
 const router = useRouter();
 const loading = ref(false);
 const showPassword = ref(false);
@@ -111,13 +113,13 @@ const handleLogin = async () => {
       const redirectPath = props.sourceApp === 'admin' ? '/admin' : '/competition';
       window.location.href = redirectPath;
     } else {
-      alert('登录失败：未获取到 Token');
+      toast.error('登录失败：未获取到 Token');
     }
   } catch (e: any) {
     console.error(e);
     // 如果后端返回了错误信息，显示出来
     const msg = e.response?.data?.message || '登录失败，请检查账号密码';
-    alert(msg);
+    toast.error(msg);
   } finally {
     loading.value = false;
   }

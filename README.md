@@ -18,16 +18,18 @@
 - 自测（Playground）：在线编写并自测代码，查看编译输出与运行结果。
 - 管理后台：题目、比赛、公告、用户与提交管理界面（开发中）。
 - 异步评测流水线：提交消息通过 RabbitMQ 下发给判题服务，评测结果异步写回并可查询。
+- AIOps：使用 LLM 进行告警降噪和简单的根因分析
 
 ## 技术栈概述
 - 后端
-  - golang (1.24) + Kratos（微服务框架）
+  - golang (1.25) + Kratos（微服务框架）
   - ent ORM（维护实体/迁移）
   - gRPC / Protobuf（服务间 RPC）
   - RabbitMQ（消息队列）
   - Redis（缓存/短期状态）
   - MySQL（持久化）
   - go-judge（评测引擎）
+  - prometheus（监控）
 - 前端
   - Vue3 + typescript + Vite
   - pnpm workspaces（monorepo 管理）

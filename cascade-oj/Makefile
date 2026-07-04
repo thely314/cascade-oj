@@ -2,7 +2,7 @@ GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
 # GATEWAYDIR:=app/gateway
 SERVICESDIR:=app/services
-SUBDIRS:=public user judge admin
+SUBDIRS:=public user judge admin aiops
 # SUBPROJECTS:=$(addprefix $(SERVICESDIR)/,$(SUBDIRS)) $(GATEWAYDIR)
 SUBPROJECTS:=$(addprefix $(SERVICESDIR)/,$(SUBDIRS))
 export VERSION:="0.1.0"
@@ -31,7 +31,6 @@ init:
 	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
 	go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
-# 	go install github.com/google/wire/cmd/wire@latest
 # 	go mod tidy 可能将 wire 的依赖从 go.mod 删除，需要补全
 	go get github.com/google/wire/cmd/wire@v0.7.0
 	go install github.com/bufbuild/buf/cmd/buf@v1.59.0
@@ -64,6 +63,10 @@ api:
 				echo "Generating API code for admin module..."; \
 				cd api && buf generate -o cascade cascade/admin/v1/admin.proto; \
 				;; \
+			aiops) \
+				echo "Generating API code for aiops module..."; \
+				cd api && buf generate -o cascade cascade/aiops/v1/aiops.proto; \
+				;; \
 			*) \
 				echo "Error: Unknown module '$$MODULE'"; \
 				echo "Available modules: auth"; \
@@ -77,14 +80,14 @@ api:
 ent-init:
 	go get entgo.io/ent/cmd/ent
 	go mod download entgo.io/ent
-	go get entgo.io/ent/dialect/sql/schema@v0.14.5
-	go get entgo.io/ent/dialect@v0.14.5
-	go get entgo.io/ent/dialect/sql/schema@v0.14.5
-	go get entgo.io/ent/entc/load@v0.14.5
-	go get entgo.io/ent/cmd/internal/base@v0.14.5
-	go get entgo.io/ent/entc/gen@v0.14.5
-	go get entgo.io/ent/cmd/internal/printer@v0.14.5
-	go get entgo.io/ent/cmd/ent@v0.14.5
+	go get entgo.io/ent/dialect/sql/schema@v0.14.6
+	go get entgo.io/ent/dialect@v0.14.6
+	go get entgo.io/ent/dialect/sql/schema@v0.14.6
+	go get entgo.io/ent/entc/load@v0.14.6
+	go get entgo.io/ent/cmd/internal/base@v0.14.6
+	go get entgo.io/ent/entc/gen@v0.14.6
+	go get entgo.io/ent/cmd/internal/printer@v0.14.6
+	go get entgo.io/ent/cmd/ent@v0.14.6
 	go get github.com/go-sql-driver/mysql@v1.9.3
 	go mod download github.com/go-sql-driver/mysql
 
