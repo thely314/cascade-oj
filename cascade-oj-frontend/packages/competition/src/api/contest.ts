@@ -18,7 +18,7 @@ export async function getContestProblems(contestId: string): Promise<{ problems:
   return (await request.get(`/user/contests/${contestId}/problems`))?.data;
 }
 
-// TODO adjust API according to proto definition
+// adjust API according to proto definition
 export async function joinContest(contestId: string, userId?: string): Promise<{ isJoin: boolean }>{
   const body: Record<string, any> = { contestId }
   if (typeof userId !== 'undefined') body.userId = userId

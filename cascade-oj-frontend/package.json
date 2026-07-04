@@ -11,7 +11,9 @@
     "login:dev": "pnpm --filter login dev",
     "login:build": "cd ./packages/login && pnpm exec vite build --config ./vite.config.ts",
     "admin:dev": "pnpm --filter admin dev",
-    "admin:build": "cd ./packages/admin && pnpm exec vite build --config ./vite.config.ts"
+    "admin:build": "cd ./packages/admin && pnpm exec vite build --config ./vite.config.ts",
+    "aiops:dev": "pnpm --filter aiops dev",
+    "aiops:build": "cd ./packages/aiops && pnpm exec vite build --config ./vite.config.ts"
   },
   "keywords": [],
   "author": "",

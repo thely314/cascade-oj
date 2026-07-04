@@ -6,6 +6,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// AlertEvent is the predicate function for alertevent builders.
+type AlertEvent func(*sql.Selector)
+
+// AlertReport is the predicate function for alertreport builders.
+type AlertReport func(*sql.Selector)
+
 // Announcement is the predicate function for announcement builders.
 type Announcement func(*sql.Selector)
 

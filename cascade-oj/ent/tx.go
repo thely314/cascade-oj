@@ -12,6 +12,10 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// AlertEvent is the client for interacting with the AlertEvent builders.
+	AlertEvent *AlertEventClient
+	// AlertReport is the client for interacting with the AlertReport builders.
+	AlertReport *AlertReportClient
 	// Announcement is the client for interacting with the Announcement builders.
 	Announcement *AnnouncementClient
 	// CaseGroupResult is the client for interacting with the CaseGroupResult builders.
@@ -171,6 +175,8 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.AlertEvent = NewAlertEventClient(tx.config)
+	tx.AlertReport = NewAlertReportClient(tx.config)
 	tx.Announcement = NewAnnouncementClient(tx.config)
 	tx.CaseGroupResult = NewCaseGroupResultClient(tx.config)
 	tx.CaseResult = NewCaseResultClient(tx.config)
@@ -194,7 +200,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Announcement.QueryXXX(), the query will be executed
+// applies a query, for example: AlertEvent.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

@@ -15,7 +15,6 @@ import (
 
 func (s *UserService) PostSubmission(ctx context.Context, req *pb.PostSubmissionRequest) (*pb.PostSubmissionReply, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
-	// TODO
 	// check if user has joined the contest
 	// check if contest is ongoing at data layer
 	id := uuid.NewString()
@@ -41,7 +40,6 @@ func (s *UserService) PostSubmission(ctx context.Context, req *pb.PostSubmission
 
 func (s *UserService) PostSelfTest(ctx context.Context, req *pb.SelfTestRequest) (*pb.SelfTestReply, error) {
 	userID := ctx.Value("userInfo").(*auth.Claims).UserID
-	// TODO
 	// temporarily allow self test for login users at any time
 	id := uuid.NewString()
 	_, err := s.judgeUsecase.CreateSelfTest(ctx, &biz.SelfTest{

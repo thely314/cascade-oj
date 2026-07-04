@@ -9,7 +9,7 @@ cases/ 目录用于存放题目测试用例，同样挂载到容器，具体结�
 ### Environment
 
 ```
-go version: 1.24
+go version: 1.25
 kratos version: v2.9
 ```
 
@@ -33,6 +33,12 @@ make help
 推荐使用 Docker 部署，项目提供了相应的 Dockerfile 和 docker-compose
 
 ## Deploy
+
+注意：服务启动时不执行数据库初始化与迁移，需要使用后端仓库根目录的 `table_creator.go` 初始化数据库，可以使用 make 脚本：
+```bash
+# At cascade-oj/cascade-oj
+make db-init
+```
 
 仓库根目录下包含一个可复用的部署脚本 `deploy.sh`，以及示例 `docker-compose.yml` 和 `docker-compose.dependencies.yml`（后者包含 MySQL 等依赖）。脚本支持按服务部署或全部部署，并可选择在部署时构建镜像。
 

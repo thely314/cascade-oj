@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"cascade-oj/ent/alertevent"
+	"cascade-oj/ent/alertreport"
 	"cascade-oj/ent/announcement"
 	"cascade-oj/ent/casegroupresult"
 	"cascade-oj/ent/caseresult"
@@ -86,6 +88,8 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			alertevent.Table:          alertevent.ValidColumn,
+			alertreport.Table:         alertreport.ValidColumn,
 			announcement.Table:        announcement.ValidColumn,
 			casegroupresult.Table:     casegroupresult.ValidColumn,
 			caseresult.Table:          caseresult.ValidColumn,

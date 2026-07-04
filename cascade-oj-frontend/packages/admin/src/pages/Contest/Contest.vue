@@ -1,6 +1,10 @@
 <script setup lang="ts">import { ref, computed, onMounted } from 'vue';
+import { useToast } from 'vue-toastification';
+import { useConfirmDialog } from '../../composables/useConfirmDialog';
 import { getContests, getSingleContest, postContest, putContest, deleteContest, getProblems, getContestCompetitors, putContestCompetitors, getUsers } from '../../api/admin';
 import type { ContestMetadata, GetSingleContestReply, PostContestRequest, PutContestRequest, ProblemMetadata, UserInfo, GetContestCompetitorsReply, PutContestCompetitorsRequest } from '../../api/types';
+const toast = useToast();
+const confirmDialog = useConfirmDialog();
 const contests = ref<ContestMetadata[]>([]);
 const loading = ref(false);
 const error = ref('');
@@ -175,7 +179,7 @@ const handleSaveCompetitors = async () => {
 			userIds: selectedUsers.value
 		};
 		await putContestCompetitors(currentContest.value.id, data);
-		alert('参赛人员更新成功！');
+		toast.success('参赛人员更新成功！');
 		showCompetitorModal.value = false;
 	}
 	catch (err: any) {
@@ -186,24 +190,24 @@ const handleSaveCompetitors = async () => {
 		else if (err.message) {
 			errorMessage = err.message;
 		}
-		alert(`更新失败: ${errorMessage}`);
+		toast.error(`更新失败: ${errorMessage}`);
 	}
 };
 const handleSubmit = async (isEdit: boolean) => {
   if (!form.value.title) {
-    alert('请输入比赛标题');
+    toast.warning('请输入比赛标题');
     return;
   }
   if (!form.value.startTime || !form.value.endTime) {
-    alert('请选择开始时间和结束时间');
+    toast.warning('请选择开始时间和结束时间');
     return;
   }
   if (selectedProblems.value.length === 0) {
-    alert('请至少选择一个题目');
+    toast.warning('请至少选择一个题目');
     return;
   }
   if (new Date(form.value.startTime) >= new Date(form.value.endTime)) {
-    alert('结束时间必须晚于开始时间');
+    toast.warning('结束时间必须晚于开始时间');
     return;
   }
   try {
@@ -218,13 +222,13 @@ const handleSubmit = async (isEdit: boolean) => {
     };
     if (isEdit && currentContest.value) {
       await putContest(currentContest.value.id, data as PutContestRequest);
-      alert(`比赛 "${form.value.title}" 修改成功！`);
+      toast.success(`比赛 "${form.value.title}" 修改成功！`);
       showEditModal.value = false;
       fetchContests();
     }
     else {
       await postContest(data as PostContestRequest);
-      alert(`比赛 "${form.value.title}" 创建成功！`);
+      toast.success(`比赛 "${form.value.title}" 创建成功！`);
       showCreateModal.value = false;
       fetchContests();
     }
@@ -238,21 +242,22 @@ const handleSubmit = async (isEdit: boolean) => {
     } else if (err.response?.data?.error) {
       errorMessage = err.response.data.error;
     }
-    alert(`创建/修改失败: ${errorMessage}\n\n请检查表单内容并重试。`);
+    toast.error(`创建/修改失败: ${errorMessage}\n\n请检查表单内容并重试。`);
   }
 };
 const handleDelete = async (contestId: number) => {
- if (!confirm('Are you sure you want to delete this contest?')) {
+ const ok = await confirmDialog('Are you sure you want to delete this contest(Click to confirm)?');
+ if (!ok) {
  return;
  }
  try {
  await deleteContest(contestId);
- alert('Contest deleted successfully');
+ toast.success('Contest deleted successfully');
  fetchContests();
  }
  catch (err: any) {
  const errorMessage = err.response?.data?.message || 'Delete failed';
- alert(`Failed: ${errorMessage}`);
+ toast.error(`Failed: ${errorMessage}`);
  }
 };
 onMounted(() => {

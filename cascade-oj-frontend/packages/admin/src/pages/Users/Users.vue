@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
+import { useToast } from 'vue-toastification'
+import { useConfirmDialog } from '../../composables/useConfirmDialog'
 import md5 from 'js-md5'
 import { deleteUser, getUsers, updateUserInfo, updateUserPassword } from '../../api/admin'
 import type { UserInfo } from '../../api/types'
 import Modal from '../../components/Modal.vue'
+
+const toast = useToast()
+const confirmDialog = useConfirmDialog()
 
 const users = ref<UserInfo[]>([])
 const loading = ref(false)
@@ -51,7 +56,7 @@ const onEditUser = (user: UserInfo) => {
 
 const submitEdit = async () => {
   if (!editModal.username.trim() || !editModal.email.trim()) {
-    window.alert('请填写完整信息')
+    toast.warning('请填写完整信息')
     return
   }
   try {
@@ -63,7 +68,7 @@ const submitEdit = async () => {
     await fetchUsers()
   } catch (err) {
     console.error(err)
-    window.alert('修改用户信息失败')
+    toast.error('修改用户信息失败')
   }
 }
 
@@ -76,28 +81,29 @@ const onUpdatePassword = (user: UserInfo) => {
 
 const submitPassword = async () => {
   if (!passwordModal.password.trim()) {
-    window.alert('请输入新密码')
+    toast.warning('请输入新密码')
     return
   }
   try {
     const encryptedPwd = md5.md5(passwordModal.password.trim())
     await updateUserPassword(passwordModal.userId, { password: encryptedPwd })
     passwordModal.show = false
-    window.alert('密码已更新')
+    toast.success('密码已更新')
   } catch (err) {
     console.error(err)
-    window.alert('修改密码失败')
+    toast.error('修改密码失败')
   }
 }
 
 const onDeleteUser = async (user: UserInfo) => {
-  if (!window.confirm(`确认删除用户 ${user.username}（ID ${user.userId}）？`)) return
+  const ok = await confirmDialog(`确认删除用户 ${user.username}（ID ${user.userId}）（点击确认）？`)
+  if (!ok) return
   try {
     await deleteUser(user.userId)
     await fetchUsers()
   } catch (err) {
     console.error(err)
-    window.alert('删除用户失败')
+    toast.error('删除用户失败')
   }
 }
 </script>

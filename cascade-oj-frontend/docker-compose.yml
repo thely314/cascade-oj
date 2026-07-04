@@ -9,17 +9,18 @@ services:
       - "80:80"
       - "443:443"
       - "10086:10086"
+      - "11086:11086"
     volumes:
       - ./nginx/logs:/var/log/nginx
     container_name: cascade_oj_nginx
     deploy:
       resources:
         limits:
-          cpus: '1'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
+          cpus: '0.2'
           memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 32M
     networks:
       frontend-network:
         aliases:

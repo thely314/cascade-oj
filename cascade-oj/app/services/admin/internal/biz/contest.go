@@ -110,17 +110,3 @@ func (contestUsecase *ContestUsecase) GetContestCompetitors(ctx context.Context,
 func (contestUsecase *ContestUsecase) PutContestCompetitors(ctx context.Context, contestID int64, userIDs []int64) (bool, error) {
 	return contestUsecase.contestRepo.PutContestCompetitors(ctx, contestID, userIDs)
 }
-
-// TODO
-// --- 以下为补齐的空壳方法，用于解决编译报错 ---
-func (uc *ContestUsecase) GetContestUsers(ctx context.Context, contestID int64) ([]*User, error) {
-	return nil, nil
-}
-
-func (uc *ContestUsecase) AddContestUser(ctx context.Context, contestID int64, userID int64) (bool, error) {
-	return false, nil
-}
-
-func (uc *ContestUsecase) RemoveContestUser(ctx context.Context, contestID int64, userID int64) (bool, error) {
-	return false, nil
-}

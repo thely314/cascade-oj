@@ -6,6 +6,8 @@
 package main
 
 import (
+	"net/http"
+
 	"cascade-oj/app/services/admin/internal/biz"
 	"cascade-oj/app/services/admin/internal/conf"
 	"cascade-oj/app/services/admin/internal/data"
@@ -18,6 +20,6 @@ import (
 )
 
 // wireApp init kratos application.
-func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
+func wireApp(*conf.Server, *conf.Data, log.Logger, http.Handler) (*kratos.App, func(), error) {
 	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }

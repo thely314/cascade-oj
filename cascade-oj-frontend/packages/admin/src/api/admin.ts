@@ -154,17 +154,18 @@ export async function deleteUser(userId: number): Promise<DeleteUserReply> {
     return service.delete(`/admin/users/${userId}`);
 }
 
-export async function getContestUsers(contestId: number): Promise<GetContestUsersReply> {
-    return service.get(`/admin/contests/${contestId}/users`);
-}
-
-export async function addContestUser(contestId: number, userId: number): Promise<AddContestUserReply> {
-    return service.post(`/admin/contests/${contestId}/users/${userId}`);
-}
-
-export async function removeContestUser(contestId: number, userId: number): Promise<RemoveContestUserReply> {
-    return service.delete(`/admin/contests/${contestId}/users/${userId}`);
-}
+// deprecated
+// export async function getContestUsers(contestId: number): Promise<GetContestUsersReply> {
+//     return service.get(`/admin/contests/${contestId}/users`);
+// }
+// deprecated
+// export async function addContestUser(contestId: number, userId: number): Promise<AddContestUserReply> {
+//     return service.post(`/admin/contests/${contestId}/users/${userId}`);
+// }
+// deprecated
+// export async function removeContestUser(contestId: number, userId: number): Promise<RemoveContestUserReply> {
+//     return service.delete(`/admin/contests/${contestId}/users/${userId}`);
+// }
 
 export async function updateUserPassword(userId: number, data: UpdateUserPasswordRequest): Promise<UpdateUserPasswordReply> {
     return service.put(`/admin/users/${userId}/password`, data);

@@ -1,0 +1,29 @@
+server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 300s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 300s
+data:
+  database:
+    driver: mysql
+    source: cascade_oj:123456@tcp(cascade_mysql:3306)/cascade_oj_db?charset=utf8&parseTime=True&loc=Local
+  redis:
+    addr: cascade_redis:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+    db: 0
+llm:
+  api_key: ""
+  base_url: "https://api.deepseek.com"
+  model: "deepseek-v4-flash"
+  timeout: 180s
+  max_retries: 2
+prometheus:
+  addr: "http://cascade_oj_prometheus:9090"
+  timeout: 10s
+polling:
+  enabled: false
+  interval: 300s
+  alert_threshold: 3

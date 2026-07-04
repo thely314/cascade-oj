@@ -6,6 +6,7 @@ tags:
   - name: AuthService
   - name: User
   - name: Admin
+  - name: AIOps
 paths:
   public/login:
     post:
@@ -762,93 +763,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Status'
-  '/admin/contests/{contestId}/users':
-    get:
-      tags:
-        - Admin
-      operationId: Admin_GetContestUsers
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetContestUsersReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/contests/{contestId}/users/{userId}':
-    post:
-      tags:
-        - Admin
-      operationId: Admin_AddContestUser
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddContestUserRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddContestUserReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    delete:
-      tags:
-        - Admin
-      operationId: Admin_RemoveContestUser
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RemoveContestUserReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
   /admin/logs/content:
     get:
       tags:
@@ -1016,7 +930,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSingleProblemReply'
+                $ref: '#/components/schemas/GetSingleProblemReply1'
         default:
           description: Default error response
           content:
@@ -1071,6 +985,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeleteProblemReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/admin/problems/{problemId}/disable':
+    post:
+      tags:
+        - Admin
+      description: Disable a problem (change status to DISABLED)
+      operationId: Admin_DisableProblem
+      parameters:
+        - name: problemId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisableProblemRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisableProblemReply'
         default:
           description: Default error response
           content:
@@ -1295,6 +1240,7 @@ paths:
     put:
       tags:
         - Admin
+      description: Update user password
       operationId: Admin_UpdateUserPassword
       parameters:
         - name: userId
@@ -1340,6 +1286,150 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetRanksReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /aiops/v1/analysis/trigger:
+    post:
+      tags:
+        - AIOps
+      description: >-
+        TriggerAnalysis manually triggers an alert analysis and noise reduction
+        run.
+      operationId: AIOps_TriggerAnalysis
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerAnalysisRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriggerAnalysisReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /aiops/v1/metrics:
+    get:
+      tags:
+        - AIOps
+      description: GetMetricsSummary returns current metrics summary for debugging.
+      operationId: AIOps_GetMetricsSummary
+      parameters:
+        - name: services
+          in: query
+          description: Optional list of services to query (empty = all).
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMetricsSummaryReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /aiops/v1/reports:
+    get:
+      tags:
+        - AIOps
+      description: ListReports lists historical analysis reports.
+      operationId: AIOps_ListReports
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: statusFilter
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListReportsReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/aiops/v1/reports/{reportId}':
+    get:
+      tags:
+        - AIOps
+      description: GetReport retrieves a historical analysis report by ID or time range.
+      operationId: AIOps_GetReport
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReportReply'
+        default:
+          description: Default error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  '/aiops/v1/reports/{reportId}/ack':
+    post:
+      tags:
+        - AIOps
+      description: AckReport acknowledges a report.
+      operationId: AIOps_AckReport
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AckReportRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AckReportReply'
         default:
           description: Default error response
           content:
@@ -1543,7 +1633,7 @@ components:
       type: object
       properties:
         metadata:
-          $ref: '#/components/schemas/ProblemMetadata1'
+          $ref: '#/components/schemas/ProblemMetadata'
         creator:
           type: string
         description:
@@ -1698,18 +1788,6 @@ components:
           type: string
         email:
           type: string
-    AddContestUserReply:
-      type: object
-      properties:
-        isJoined:
-          type: boolean
-    AddContestUserRequest:
-      type: object
-      properties:
-        contestId:
-          type: string
-        userId:
-          type: string
     DeleteAnnouncementReply:
       type: object
       properties:
@@ -1730,6 +1808,16 @@ components:
       properties:
         isDeleted:
           type: boolean
+    DisableProblemReply:
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+    DisableProblemRequest:
+      type: object
+      properties:
+        problemId:
+          type: string
     DownloadLogsRequest:
       type: object
       properties:
@@ -1750,13 +1838,6 @@ components:
         statisticsJson:
           type: string
           description: TODO
-    GetContestUsersReply:
-      type: object
-      properties:
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserInfo'
     GetProblemsReply1:
       type: object
       properties:
@@ -1775,6 +1856,17 @@ components:
           type: array
           items:
             type: string
+    GetSingleProblemReply1:
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/ProblemMetadata1'
+        creator:
+          type: string
+        description:
+          type: string
+        codeTemplate:
+          type: string
     GetSubmissionsReply1:
       type: object
       properties:
@@ -1807,8 +1899,6 @@ components:
     PostAnnouncementRequest:
       type: object
       properties:
-        publisherName:
-          type: string
         title:
           type: string
         content:
@@ -1850,9 +1940,9 @@ components:
       properties:
         metadata:
           $ref: '#/components/schemas/ProblemMetadata1'
-        creator:
-          type: string
         description:
+          type: string
+        codeTemplate:
           type: string
     ProblemMetadata1:
       type: object
@@ -1869,6 +1959,9 @@ components:
           format: int32
         description:
           type: string
+        status:
+          type: integer
+          format: enum
     PublishProblemReply:
       type: object
       properties:
@@ -1950,6 +2043,8 @@ components:
           $ref: '#/components/schemas/ProblemMetadata1'
         description:
           type: string
+        codeTemplate:
+          type: string
     QueryLogContentReply:
       type: object
       properties:
@@ -1970,11 +2065,6 @@ components:
       properties:
         submissionUuid:
           type: string
-    RemoveContestUserReply:
-      type: object
-      properties:
-        isJoined:
-          type: boolean
     UpdateUserInfoRequest1:
       type: object
       properties:
@@ -2005,3 +2095,118 @@ components:
           type: string
         email:
           type: string
+    AckReportReply:
+      type: object
+      properties: {}
+    AckReportRequest:
+      type: object
+      properties:
+        reportId:
+          type: string
+    GetMetricsSummaryReply:
+      type: object
+      properties:
+        prometheusStatus:
+          type: string
+        metricsSnapshotJson:
+          type: string
+        queriedAt:
+          type: string
+          format: date-time
+      description: GetMetricsSummaryReply contains current metrics data.
+    GetReportReply:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        rootCausesJson:
+          type: string
+        suggestedActionsJson:
+          type: string
+        noiseCount:
+          type: integer
+          format: int32
+        realRiskCount:
+          type: integer
+          format: int32
+        status:
+          type: string
+        fullReportMarkdown:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        acknowledgedAt:
+          type: string
+          format: date-time
+      description: GetReportReply contains the full report details.
+    ListReportsReply:
+      type: object
+      properties:
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportSummary'
+        total:
+          type: integer
+          format: int32
+      description: ListReportsReply contains a paginated list of report summaries.
+    ReportSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        noiseCount:
+          type: integer
+          format: int32
+        realRiskCount:
+          type: integer
+          format: int32
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      description: ReportSummary is a brief report overview for list display.
+    TriggerAnalysisReply:
+      type: object
+      properties:
+        reportId:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        noiseCount:
+          type: integer
+          format: int32
+        realRiskCount:
+          type: integer
+          format: int32
+        fullReportMarkdown:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      description: TriggerAnalysisReply contains the analysis result.
+    TriggerAnalysisRequest:
+      type: object
+      properties:
+        timeRangeMinutes:
+          type: integer
+          description: Optional time range in minutes before now (default 15).
+          format: int32
+        services:
+          type: array
+          items:
+            type: string
+          description: Optional list of service names to analyze (empty = all).
+      description: >-
+        TriggerAnalysisRequest is the request for manually triggering an
+        analysis.

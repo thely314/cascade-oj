@@ -1,0 +1,337 @@
+/* ==================== Page Layout ==================== */
+
+.page {
+  min-height: 100vh;
+  background: #202020;
+  color: #cbd5c0;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  padding: 24px 32px;
+}
+
+/* ==================== Sections ==================== */
+
+.section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+  color: #e6f7ec;
+  border-bottom: 1px solid rgba(22, 163, 118, 0.15);
+  padding-bottom: 8px;
+}
+
+.subsection-title {
+  margin: 20px 0 12px;
+  font-size: 1rem;
+  color: #d0e8d8;
+}
+
+/* ==================== Toolbar ==================== */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  color: #8aa39b;
+  font-size: 0.875rem;
+}
+
+.filter-select {
+  background: #141816;
+  color: #cbd5c0;
+  border: 1px solid rgba(22, 163, 118, 0.2);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #16a376;
+}
+
+/* ==================== Buttons ==================== */
+
+.btn-refresh {
+  background: rgba(22, 163, 118, 0.1);
+  color: #cbd5c0;
+  border: 1px solid rgba(22, 163, 118, 0.2);
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.btn-refresh:hover {
+  background: rgba(22, 163, 118, 0.2);
+}
+
+.btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #16a376;
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  background: #1bc98a;
+}
+
+.btn-primary:disabled {
+  background: #3a5a4c;
+  color: #6b8a7a;
+  cursor: not-allowed;
+}
+
+/* ==================== Table ==================== */
+
+.table-container {
+  border: 1px solid rgba(22, 163, 118, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 0.875rem;
+  border-bottom: 1px solid rgba(22, 163, 118, 0.06);
+}
+
+.data-table th {
+  background: #141816;
+  color: #8aa39b;
+  font-weight: 600;
+}
+
+.data-table td {
+  background: #1a1d1c;
+  color: #cbd5c0;
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.clickable-row:hover td {
+  background: #1f2422;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #5a6a60;
+  padding: 32px 14px !important;
+}
+
+/* ==================== Status Tags ==================== */
+
+.status-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-pending {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
+}
+
+.status-acknowledged {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.status-closed {
+  background: rgba(107, 114, 128, 0.15);
+  color: #9ca3af;
+}
+
+/* ==================== Pagination ==================== */
+
+.pagination {
+  display: block;
+  margin-top: 12px;
+}
+
+/* ==================== Analysis Form ==================== */
+
+.analysis-form {
+  margin-top: 16px;
+  padding: 16px;
+  background: #141816;
+  border: 1px solid rgba(22, 163, 118, 0.08);
+  border-radius: 8px;
+}
+
+.form-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  color: #8aa39b;
+  white-space: nowrap;
+}
+
+.form-input {
+  background: #1a1d1c;
+  color: #cbd5c0;
+  border: 1px solid rgba(22, 163, 118, 0.15);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  min-width: 180px;
+}
+
+.form-input.short {
+  min-width: 80px;
+  width: 80px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #16a376;
+}
+
+/* ==================== Checkbox Group ==================== */
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #cbd5c0;
+}
+
+.checkbox-item input[type="checkbox"] {
+  accent-color: #16a376;
+}
+
+/* ==================== Result Card ==================== */
+
+.result-card {
+  margin-top: 12px;
+  padding: 16px;
+  background: #141816;
+  border: 1px solid rgba(22, 163, 118, 0.1);
+  border-radius: 8px;
+}
+
+.result-card p {
+  margin: 4px 0;
+  font-size: 0.875rem;
+}
+
+.text-ok {
+  color: #16a376;
+  font-weight: 600;
+}
+
+.text-warn {
+  color: #eab308;
+  font-weight: 600;
+}
+
+/* ==================== JSON / Markdown Preview ==================== */
+
+details {
+  margin-top: 8px;
+}
+
+details summary {
+  cursor: pointer;
+  color: #8aa39b;
+  font-size: 0.8rem;
+  padding: 4px 0;
+}
+
+details summary:hover {
+  color: #16a376;
+}
+
+.json-preview,
+.markdown-preview {
+  background: #0e1110;
+  color: #a0c0b0;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  max-height: 400px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-top: 8px;
+  border: 1px solid rgba(22, 163, 118, 0.06);
+}
+
+/* ==================== Modal Detail ==================== */
+
+.modal-loading {
+  text-align: center;
+  color: #8aa39b;
+  padding: 20px;
+}
+
+.report-detail p {
+  margin: 6px 0;
+  font-size: 0.875rem;
+}

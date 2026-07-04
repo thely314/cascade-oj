@@ -65,12 +65,6 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 		log.Errorf("failed opening connection to mysql: %v", err)
 		return nil, nil, err
 	}
-	// Run the auto migration tool.
-	if err := client.Schema.Create(ctx); err != nil {
-		log.Errorf("failed creating schema resources: %v", err)
-		return nil, nil, err
-	}
-
 	// check if ProblemJudgeConfig for gojudge engine are created
 	isExists, err := client.ProblemJudgeConfig.Query().Where(problemjudgeconfig.JudgeEngineEQ("gojudge")).Exist(ctx)
 	if err != nil {

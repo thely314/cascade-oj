@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useConfirmDialog } from '../../composables/useConfirmDialog'
 import { getProblems, publishProblem, disableProblem, deleteProblem } from '../../api/admin'
 import { ProblemStatus, type ProblemMetadata } from '../../api/types'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+const confirmDialog = useConfirmDialog()
 
 const handleCreate = () => {
   router.push('/problems/new') 
@@ -48,7 +50,8 @@ const handleDisable = async (id: number) => {
 }
 
 const handleDelete = async (id: number) => {
-  if (!confirm('确定要删除这道题吗？')) return
+  const ok = await confirmDialog('确定要删除这道题吗（点击确认）？')
+  if (!ok) return
   try {
     await deleteProblem(id)
     await fetchProblems() // 刷新列表

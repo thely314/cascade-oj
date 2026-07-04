@@ -1,0 +1,129 @@
+syntax = "proto3";
+package api.cascade.aiops.v1;
+
+option go_package = "cascade-oj/api/cascade/aiops/v1;v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+// AIOps provides intelligent operations analysis including alert noise reduction.
+service AIOps {
+    // TriggerAnalysis manually triggers an alert analysis and noise reduction run.
+    rpc TriggerAnalysis(TriggerAnalysisRequest) returns (TriggerAnalysisReply) {
+        option (google.api.http) = {
+            post: "/aiops/v1/analysis/trigger"
+            body: "*"
+        };
+    };
+
+    // GetReport retrieves a historical analysis report by ID or time range.
+    rpc GetReport(GetReportRequest) returns (GetReportReply) {
+        option (google.api.http) = {
+            get: "/aiops/v1/reports/{report_id}"
+        };
+    };
+
+    // ListReports lists historical analysis reports.
+    rpc ListReports(ListReportsRequest) returns (ListReportsReply) {
+        option (google.api.http) = {
+            get: "/aiops/v1/reports"
+        };
+    };
+
+    // GetMetricsSummary returns current metrics summary for debugging.
+    rpc GetMetricsSummary(GetMetricsSummaryRequest) returns (GetMetricsSummaryReply) {
+        option (google.api.http) = {
+            get: "/aiops/v1/metrics"
+        };
+    };
+
+    // AckReport acknowledges a report.
+    rpc AckReport(AckReportRequest) returns (AckReportReply) {
+        option (google.api.http) = {
+            post: "/aiops/v1/reports/{report_id}/ack"
+            body: "*"
+        };
+    };
+}
+
+// TriggerAnalysisRequest is the request for manually triggering an analysis.
+message TriggerAnalysisRequest {
+    // Optional time range in minutes before now (default 15).
+    int32 time_range_minutes = 1;
+    // Optional list of service names to analyze (empty = all).
+    repeated string services = 2;
+}
+
+// TriggerAnalysisReply contains the analysis result.
+message TriggerAnalysisReply {
+    int64 report_id = 1;
+    string title = 2;
+    string summary = 3;
+    int32 noise_count = 4;
+    int32 real_risk_count = 5;
+    string full_report_markdown = 6;
+    google.protobuf.Timestamp created_at = 7;
+}
+
+// GetReportRequest retrieves a single report by ID.
+message GetReportRequest {
+    int64 report_id = 1;
+}
+
+// GetReportReply contains the full report details.
+message GetReportReply {
+    int64 id = 1;
+    string title = 2;
+    string summary = 3;
+    string root_causes_json = 4;
+    string suggested_actions_json = 5;
+    int32 noise_count = 6;
+    int32 real_risk_count = 7;
+    string status = 8;
+    string full_report_markdown = 9;
+    google.protobuf.Timestamp created_at = 10;
+    google.protobuf.Timestamp acknowledged_at = 11;
+}
+
+// ListReportsRequest lists reports with optional filters.
+message ListReportsRequest {
+    int32 page = 1;
+    int32 page_size = 2;
+    string status_filter = 3;
+}
+
+// ListReportsReply contains a paginated list of report summaries.
+message ListReportsReply {
+    repeated ReportSummary reports = 1;
+    int32 total = 2;
+}
+
+// ReportSummary is a brief report overview for list display.
+message ReportSummary {
+    int64 id = 1;
+    string title = 2;
+    int32 noise_count = 3;
+    int32 real_risk_count = 4;
+    string status = 5;
+    google.protobuf.Timestamp created_at = 6;
+}
+
+// GetMetricsSummaryRequest is the debug request for current metrics.
+message GetMetricsSummaryRequest {
+    // Optional list of services to query (empty = all).
+    repeated string services = 1;
+}
+
+// GetMetricsSummaryReply contains current metrics data.
+message GetMetricsSummaryReply {
+    string prometheus_status = 1;
+    string metrics_snapshot_json = 2;
+    google.protobuf.Timestamp queried_at = 3;
+}
+
+message AckReportRequest {
+    int64 report_id = 1;
+}
+
+message AckReportReply {
+}
