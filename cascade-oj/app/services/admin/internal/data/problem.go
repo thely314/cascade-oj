@@ -17,7 +17,6 @@ import (
 	"path/filepath"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/pelletier/go-toml/v2"
 )
 
 type ProblemRepo struct {
@@ -264,78 +263,68 @@ func (problemRepo *ProblemRepo) DisableProblem(ctx context.Context, problemID in
 }
 
 func (r *ProblemRepo) SaveTestCases(ctx context.Context, problemID int64, file io.Reader) error {
-	// 1. 准备目录
 	basePath := filepath.Join("cases", strconv.FormatInt(problemID, 10), "testcase")
 	_ = os.RemoveAll(basePath)
 	_ = os.MkdirAll(basePath, 0755)
 
-	// 2. 保存临时 zip
 	zipPath := filepath.Join(basePath, "upload.zip")
 	tmpFile, err := os.Create(zipPath)
 	if err != nil {
 		return err
 	}
-	_, _ = io.Copy(tmpFile, file)
-	tmpFile.Close()
 
-	// 3. 解压文件
-	zr, err := zip.OpenReader(zipPath) // 改名 zr，避免与接收者 r 冲突
+	// 检查 io.Copy 错误，防止生成损坏的文件
+	if _, err := io.Copy(tmpFile, file); err != nil {
+		tmpFile.Close()
+		return err
+	}
+	tmpFile.Close() // 拷贝完立刻关闭，释放文件句柄
+
+	zr, err := zip.OpenReader(zipPath)
 	if err != nil {
 		return err
 	}
 	defer zr.Close()
 
-	var inputFiles []string
 	for _, f := range zr.File {
-		fpath := filepath.Join(basePath, f.Name) // 使用 fpath
+		// 防御 Zip Slip 路径穿越漏洞
+		cleanName := filepath.Clean(f.Name)
+		if cleanName == "." || cleanName == ".." || strings.HasPrefix(cleanName, ".."+string(os.PathSeparator)) || filepath.IsAbs(cleanName) {
+			r.log.Warnf("Zip extraction aborted: malicious path detected: %s", f.Name)
+			return os.ErrInvalid
+		}
+
+		fpath := filepath.Join(basePath, cleanName)
 
 		if f.FileInfo().IsDir() {
 			_ = os.MkdirAll(fpath, f.Mode())
 			continue
 		}
 
-		// 写入解压后的文件
+		// 确保文件的父目录存在
+		_ = os.MkdirAll(filepath.Dir(fpath), 0755)
+
 		dstFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 		if err != nil {
 			return err
 		}
+
 		srcFile, err := f.Open()
 		if err != nil {
 			dstFile.Close()
 			return err
 		}
-		_, _ = io.Copy(dstFile, srcFile)
 
+		// 同样检查解压过程中的 io.Copy 错误
+		_, copyErr := io.Copy(dstFile, srcFile)
 		dstFile.Close()
 		srcFile.Close()
 
-		if filepath.Ext(f.Name) == ".in" {
-			inputFiles = append(inputFiles, f.Name)
+		if copyErr != nil {
+			return copyErr
 		}
 	}
 
-	// 4. 生成 config.toml
-	config := TestCaseConfig{
-		Score:               100,
-		TimeResourceLimit:   500,
-		MemoryResourceLimit: 16,
-	}
-
-	group := CaseGroup{GroupScore: 100}
-	for _, in := range inputFiles {
-		ans := strings.TrimSuffix(in, ".in") + ".ans"
-		group.Cases = append(group.Cases, Case{
-			SubScore:           100 / len(inputFiles),
-			InputFileLocation:  in,
-			AnswerFileLocation: ans,
-		})
-	}
-	config.CaseGroups = append(config.CaseGroups, group)
-
-	tomlData, err := toml.Marshal(config)
-	if err != nil {
-		return err
-	}
-
-	return os.WriteFile(filepath.Join(basePath, "config.toml"), tomlData, 0644)
+	// 删除了 config.toml 自动生成的逻辑
+	return nil
 }

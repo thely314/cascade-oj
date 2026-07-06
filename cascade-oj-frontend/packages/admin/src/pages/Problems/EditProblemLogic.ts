@@ -10,9 +10,8 @@ export function useEditProblem() {
     const problemId = Number(route.params.id)
 
     // 1. 语言与文件状态管理
-    const supportedLangs = ['cpp', 'java', 'python', 'go']
-    const activeLang = ref('cpp')
-    const activeFileName = ref('main.cpp') // 追踪当前正在编辑的文件名
+    const activeLang = ref('') 
+    const activeFileName = ref('') 
 
     const form = reactive({
         title: '',
@@ -20,20 +19,15 @@ export function useEditProblem() {
         memoryLimitMb: 256,
         description: '',
         status: ProblemStatus.PROBLEM_STATUS_UNAVAILABLE,
-        templates: [] as CodeTemplate[] // 现在的模板是一个完整的数组
+        templates: [] as CodeTemplate[] 
     })
 
-    // 初始化默认的单文件结构（防止新题目一片空白）
-    const initDefaultFiles = () => {
-        if (form.templates.length === 0) {
-            form.templates = [
-                { language: 'cpp', name: 'main.cpp', code: '' },
-                { language: 'java', name: 'Main.java', code: '' },
-                { language: 'python', name: 'main.py', code: '' },
-                { language: 'go', name: 'main.go', code: '' }
-            ]
-        }
-    }
+    // 完全解耦 PL 列表。
+    // 不再写死支持的语言，而是动态从当前题目的模板数据中提取存在的语言
+    const existingLangs = computed(() => {
+        const langs = new Set(form.templates.map(t => t.language))
+        return Array.from(langs)
+    })
 
     // 2. 核心计算属性
     // 过滤出当前语言下的所有文件
@@ -51,21 +45,26 @@ export function useEditProblem() {
     const switchLang = (lang: string) => {
         activeLang.value = lang
         const files = form.templates.filter(t => t.language === lang)
-        // 切换语言时，默认选中该语言的第一个文件
         activeFileName.value = files.length > 0 ? files[0].name : ''
     }
 
+    // 允许管理员手动输入任何语言，实现高自由度自定义
     const addFile = () => {
-        const newName = prompt(`为 ${activeLang.value.toUpperCase()} 添加新文件，请输入文件名 :`)
+        const lang = prompt('请输入编程语言 :')
+        if (!lang) return
+        
+        const newName = prompt(`为 ${lang.toUpperCase()} 添加新文件，请输入文件名 :`)
         if (!newName) return
         
-        // 查重
-        if (form.templates.some(t => t.language === activeLang.value && t.name === newName)) {
-            alert('该文件名已存在！')
+        const lowerLang = lang.toLowerCase()
+        if (form.templates.some(t => t.language === lowerLang && t.name === newName)) {
+            alert('该语言下已存在同名文件！')
             return
         }
-        form.templates.push({ language: activeLang.value, name: newName, code: '' })
-        activeFileName.value = newName // 焦点切到新文件
+        
+        form.templates.push({ language: lowerLang, name: newName, code: '' })
+        activeLang.value = lowerLang
+        activeFileName.value = newName
     }
 
     const renameFile = (oldName: string) => {
@@ -100,21 +99,26 @@ export function useEditProblem() {
     // 4. API 交互逻辑
     const fetchDetail = async () => {
         try {
-            const res = await getSingleProblem(problemId)
-            form.title = res.metadata.title
-            form.timeLimitMs = res.metadata.timeLimitMs
-            form.memoryLimitMb = res.metadata.memoryLimitMb
-            form.description = res.description
-            form.status = res.metadata.status
+            const res: any = await getSingleProblem(problemId)
+            // 增加安全赋值，防止某一层级为 undefined 导致程序崩溃
+            if (res && res.metadata) {
+                form.title = res.metadata.title || ''
+                form.timeLimitMs = res.metadata.timeLimitMs || 1000
+                form.memoryLimitMb = res.metadata.memoryLimitMb || 256
+                form.status = res.metadata.status || ProblemStatus.PROBLEM_STATUS_UNAVAILABLE
+            }
+            form.description = res.description || ''
             
             if (res.templates && res.templates.length > 0) {
                 form.templates = res.templates
+                switchLang(form.templates[0].language) 
             } else {
-                initDefaultFiles()
+                form.templates = []
+                activeLang.value = ''
+                activeFileName.value = ''
             }
-            switchLang(activeLang.value) 
         } catch (err) {
-            console.error('Fetch detail failed', err)
+            console.error('Fetch detail failed:', err)
         }
     }
 
@@ -147,8 +151,8 @@ export function useEditProblem() {
                     description: form.description
                 },
                 description: form.description,
-                // 这里过滤掉没有任何代码，且是默认生成的 main 文件（保留用户特意创建的空文件）
-                templates: form.templates.filter(t => t.code.trim() !== '' || t.name !== 'main.cpp' && t.name !== 'Main.java')
+                // 删除了硬编码的过滤逻辑，直接原样提交管理员设定的所有文件
+                templates: form.templates 
             })
             alert('Update successful!')
             router.push('/problems')
@@ -163,7 +167,7 @@ export function useEditProblem() {
 
     return { 
         form, loading, router,
-        activeLang, supportedLangs, 
+        activeLang, existingLangs, 
         activeFileName, currentLangFiles, activeTemplate, 
         switchLang, addFile, renameFile, deleteFile,      
         handleFileUpload, handleUpdate

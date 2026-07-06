@@ -224,13 +224,6 @@ service Admin {
             body: "*"
         };
     };
-
-    rpc UploadTestCases(UploadTestCasesRequest) returns (UploadTestCasesReply) {
-    option (google.api.http) = {
-        post: "/admin/problems/{problem_id}/testcases"
-        body: "file" 
-    };
-};
 }
 
 message ContestMetadata {
@@ -572,14 +565,4 @@ message QueryLogContentReply {
 
 message DownloadLogsRequest {
     repeated string filenames = 1;
-}
-
-message UploadTestCasesRequest {
-    int64 problem_id = 1;
-    google.api.HttpBody file = 2; 
-}
-
-message UploadTestCasesReply {
-    bool is_success = 1;
-    string message = 2;
 }

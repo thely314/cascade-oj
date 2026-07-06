@@ -14,7 +14,7 @@ const {
   loading, 
   router,
   activeLang, 
-  supportedLangs,
+  existingLangs,
   activeTemplate,
   handleFileUpload,
   handleUpdate,
@@ -87,7 +87,7 @@ const {
             <span style="font-size: 13px; font-weight: bold; color: #42b983;">INITIAL CODE TEMPLATES</span>
             <div class="lang-tabs" style="display: flex; gap: 6px;">
               <button 
-                v-for="lang in supportedLangs" 
+                v-for="lang in existingLangs" 
                 :key="lang"
                 @click="switchLang(lang)"
                 :style="{

@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 )
 
@@ -180,40 +179,36 @@ func mapBizTemplatesToPb(bizTemplates []*biz.ProblemTemplate) []*pb.CodeTemplate
 	return pbTemplates
 }
 
-func (adminService *AdminService) UploadTestCases(ctx context.Context, request *pb.UploadTestCasesRequest) (*pb.UploadTestCasesReply, error) {
-	if tr, ok := transport.FromServerContext(ctx); ok {
-		if ht, ok := tr.(*khttp.Transport); ok {
-			req := ht.Request()
-
-			file, handler, err := req.FormFile("file")
-			if err != nil {
-				return nil, err
-			}
-			defer file.Close()
-
-			err = adminService.problemUseCase.HandleTestCasesUpload(ctx, request.ProblemId, file, handler.Filename)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-	return &pb.UploadTestCasesReply{IsSuccess: true, Message: "upload success"}, nil
-}
-
+// UploadTestCasesRaw 处理原生的文件流上传
 func (adminService *AdminService) UploadTestCasesRaw(ctx khttp.Context) error {
 	req := ctx.Request()
 	problemIdStr := ctx.Vars().Get("id")
-	problemId, _ := strconv.ParseInt(problemIdStr, 10, 64)
+
+	// [REVIEW FIX 4]: 修复路由参数解析错误忽略的问题 (Copilot 提示)
+	// 防止 ID 无效时覆盖 cases/0/testcase 目录
+	problemId, err := strconv.ParseInt(problemIdStr, 10, 64)
+	if err != nil || problemId <= 0 {
+		return ctx.Result(400, map[string]interface{}{
+			"isSuccess": false,
+			"message":   "invalid problem id",
+		})
+	}
 
 	file, handler, err := req.FormFile("file")
 	if err != nil {
-		return err
+		return ctx.Result(400, map[string]interface{}{
+			"isSuccess": false,
+			"message":   "missing file field: " + err.Error(),
+		})
 	}
 	defer file.Close()
 
 	err = adminService.problemUseCase.HandleTestCasesUpload(ctx, problemId, file, handler.Filename)
 	if err != nil {
-		return err
+		return ctx.Result(500, map[string]interface{}{
+			"isSuccess": false,
+			"message":   err.Error(),
+		})
 	}
 
 	return ctx.Result(200, map[string]interface{}{

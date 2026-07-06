@@ -136,7 +136,7 @@ export interface GetSingleProblemReply {
 export interface PostProblemRequest {
     metadata: ProblemMetadata;
     description: string;
-    codeTemplate: string; 
+    templates: CodeTemplate[]; 
 }
 
 export interface PostProblemReply {
