@@ -36,6 +36,13 @@ func NewJudgeRepo(data *Data, logger log.Logger) biz.JudgeRepo {
 }
 
 func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTest) (string, error) {
+	// check if self test code is empty
+	if selfTest.Code == "" {
+		err := errors.New("self test code is empty")
+		log.Errorf("error from user: %v", err)
+		return "", err
+	}
+
 	conn, err := repo.data.mq_channel.GetConnection()
 	if err != nil {
 		log.Errorf("failed to get mq connection: %v", err)
@@ -108,6 +115,13 @@ func (repo *judgeRepo) CreateSelfTest(ctx context.Context, selfTest *biz.SelfTes
 }
 
 func (repo *judgeRepo) CreateSubmission(ctx context.Context, submission *biz.Submission) (string, error) {
+	// check if submission code is empty
+	if submission.Code == "" {
+		err := errors.New("submission code is empty")
+		log.Errorf("error from user: %v", err)
+		return "", err
+	}
+
 	// check if user has joined the contest
 	_, err := repo.data.db.Competitor_List.Query().
 		Where(competitor_list.And(
@@ -410,7 +424,7 @@ func (repo *judgeRepo) submissionListCacheUpdate(ctx context.Context, userID, co
 
 	go func() {
 		time.Sleep(200 * time.Millisecond)
-		err := repo.data.DeleteCache(ctx, key)
+		err := repo.data.DeleteCache(context.Background(), key)
 		if err != nil {
 			repo.log.Errorf("[cache] failed to delayed delete cache for submission list: %v", err)
 		}

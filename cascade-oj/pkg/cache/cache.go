@@ -17,8 +17,9 @@ const (
 	ContestListCacheKey      = "contest_list_cache" // contest_list_cache
 	ContestDetailCacheKeyFmt = "contest_cache:%d"   // contest_cache:{contestID}
 
-	ProblemListCacheKeyFmt   = "problem_list_cache:%d" // problem_list_cache:{contestID}
-	ProblemDetailCacheKeyFmt = "problem_cache:%d"      // problem_cache:{problemID}
+	ProblemListCacheKeyFmt     = "problem_list_cache:%d"      // problem_list_cache:{contestID}
+	ProblemDetailCacheKeyFmt   = "problem_cache:%d"           // problem_cache:{problemID}
+	ProblemForJudgeCacheKeyFmt = "problem_for_judge_cache:%d" // problem_for_judge_cache:{problemID}
 
 	SubmissionListCacheKeyFmt   = "submission_list_cache:%d:%d:%d" // submission_cache:{userID}:{contestID}:{problemID}
 	SubmissionDetailCacheKeyFmt = "submission_cache:%d:%s"         // submission_cache:{userID}:{submissionUUID}

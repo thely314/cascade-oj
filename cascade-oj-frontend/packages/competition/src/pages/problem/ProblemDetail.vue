@@ -226,9 +226,10 @@
                 <span v-if="isRunning">⏳ 运行中...</span>
                 <span v-else>测试运行</span>
              </button>
-             <button class="btn-submit" :disabled="isSubmitting" @click="handleSubmit"
-                     :style="{ opacity: isSubmitting ? 0.6 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }">
+             <button class="btn-submit" :disabled="isSubmitting || !currentCode.trim()" @click="handleSubmit"
+                     :style="{ opacity: (isSubmitting || !currentCode.trim()) ? 0.6 : 1, cursor: (isSubmitting || !currentCode.trim()) ? 'not-allowed' : 'pointer' }">
                 <span v-if="isSubmitting">提交中...</span>
+                <span v-else-if="!currentCode.trim()">请输入代码</span>
                 <span v-else>➤ 提交</span>
              </button>
           </div>

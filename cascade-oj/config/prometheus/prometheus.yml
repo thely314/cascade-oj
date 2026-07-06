@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'cascade-oj-services'
+    static_configs:
+      - targets:
+          - 'cascade_oj_public:8000'
+          - 'cascade_oj_user:8000'
+          - 'cascade_oj_admin:8000'
+          - 'cascade_oj_judge:8000'
+          - 'cascade_oj_aiops:8000'
+        labels:
+          env: 'production'

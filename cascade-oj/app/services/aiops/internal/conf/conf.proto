@@ -1,0 +1,63 @@
+syntax = "proto3";
+package kratos.api;
+
+option go_package = "/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Bootstrap {
+  Server server = 1;
+  Data data = 2;
+  LLM llm = 3;
+  Prometheus prometheus = 4;
+  Polling polling = 5;
+}
+
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  message GRPC {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  HTTP http = 1;
+  GRPC grpc = 2;
+}
+
+message Data {
+  message Database {
+    string driver = 1;
+    string source = 2;
+  }
+  message Redis {
+    string addr = 1;
+    google.protobuf.Duration read_timeout = 2;
+    google.protobuf.Duration write_timeout = 3;
+    int32 db = 4;
+  }
+  Database database = 1;
+  Redis redis = 2;
+}
+
+message LLM {
+  string api_key = 1;
+  string base_url = 2;
+  string model = 3;
+  google.protobuf.Duration timeout = 4;
+  int32 max_retries = 5;
+}
+
+message Prometheus {
+  string addr = 1;
+  google.protobuf.Duration timeout = 2;
+}
+
+message Polling {
+  bool enabled = 1;
+  google.protobuf.Duration interval = 2;
+  int32 alert_threshold = 3;
+}

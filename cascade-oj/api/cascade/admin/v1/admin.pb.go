@@ -2974,286 +2974,6 @@ func (x *DeleteUserReply) GetIsDeleted() bool {
 	return false
 }
 
-type GetContestUsersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetContestUsersRequest) Reset() {
-	*x = GetContestUsersRequest{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[56]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetContestUsersRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetContestUsersRequest) ProtoMessage() {}
-
-func (x *GetContestUsersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[56]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetContestUsersRequest.ProtoReflect.Descriptor instead.
-func (*GetContestUsersRequest) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{56}
-}
-
-func (x *GetContestUsersRequest) GetContestId() int64 {
-	if x != nil {
-		return x.ContestId
-	}
-	return 0
-}
-
-type GetContestUsersReply struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Users         []*UserInfo            `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"` // Users currently in the contest
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetContestUsersReply) Reset() {
-	*x = GetContestUsersReply{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[57]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetContestUsersReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetContestUsersReply) ProtoMessage() {}
-
-func (x *GetContestUsersReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[57]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetContestUsersReply.ProtoReflect.Descriptor instead.
-func (*GetContestUsersReply) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{57}
-}
-
-func (x *GetContestUsersReply) GetUsers() []*UserInfo {
-	if x != nil {
-		return x.Users
-	}
-	return nil
-}
-
-type AddContestUserRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`          // User ID
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AddContestUserRequest) Reset() {
-	*x = AddContestUserRequest{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[58]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AddContestUserRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AddContestUserRequest) ProtoMessage() {}
-
-func (x *AddContestUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[58]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AddContestUserRequest.ProtoReflect.Descriptor instead.
-func (*AddContestUserRequest) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{58}
-}
-
-func (x *AddContestUserRequest) GetContestId() int64 {
-	if x != nil {
-		return x.ContestId
-	}
-	return 0
-}
-
-func (x *AddContestUserRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-type AddContestUserReply struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	IsJoined      bool                   `protobuf:"varint,1,opt,name=is_joined,json=isJoined,proto3" json:"is_joined,omitempty"` // Whether the user is in contest after operation
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AddContestUserReply) Reset() {
-	*x = AddContestUserReply{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[59]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AddContestUserReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AddContestUserReply) ProtoMessage() {}
-
-func (x *AddContestUserReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[59]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AddContestUserReply.ProtoReflect.Descriptor instead.
-func (*AddContestUserReply) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{59}
-}
-
-func (x *AddContestUserReply) GetIsJoined() bool {
-	if x != nil {
-		return x.IsJoined
-	}
-	return false
-}
-
-type RemoveContestUserRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ContestId     int64                  `protobuf:"varint,1,opt,name=contest_id,json=contestId,proto3" json:"contest_id,omitempty"` // Contest ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`          // User ID
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RemoveContestUserRequest) Reset() {
-	*x = RemoveContestUserRequest{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[60]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RemoveContestUserRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RemoveContestUserRequest) ProtoMessage() {}
-
-func (x *RemoveContestUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[60]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RemoveContestUserRequest.ProtoReflect.Descriptor instead.
-func (*RemoveContestUserRequest) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{60}
-}
-
-func (x *RemoveContestUserRequest) GetContestId() int64 {
-	if x != nil {
-		return x.ContestId
-	}
-	return 0
-}
-
-func (x *RemoveContestUserRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-type RemoveContestUserReply struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	IsJoined      bool                   `protobuf:"varint,1,opt,name=is_joined,json=isJoined,proto3" json:"is_joined,omitempty"` // Whether the user is in contest after operation
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RemoveContestUserReply) Reset() {
-	*x = RemoveContestUserReply{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[61]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RemoveContestUserReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RemoveContestUserReply) ProtoMessage() {}
-
-func (x *RemoveContestUserReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[61]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RemoveContestUserReply.ProtoReflect.Descriptor instead.
-func (*RemoveContestUserReply) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{61}
-}
-
-func (x *RemoveContestUserReply) GetIsJoined() bool {
-	if x != nil {
-		return x.IsJoined
-	}
-	return false
-}
-
 type UpdateUserPasswordRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // User ID
@@ -3264,7 +2984,7 @@ type UpdateUserPasswordRequest struct {
 
 func (x *UpdateUserPasswordRequest) Reset() {
 	*x = UpdateUserPasswordRequest{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[62]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3276,7 +2996,7 @@ func (x *UpdateUserPasswordRequest) String() string {
 func (*UpdateUserPasswordRequest) ProtoMessage() {}
 
 func (x *UpdateUserPasswordRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[62]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3289,7 +3009,7 @@ func (x *UpdateUserPasswordRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserPasswordRequest.ProtoReflect.Descriptor instead.
 func (*UpdateUserPasswordRequest) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{62}
+	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *UpdateUserPasswordRequest) GetUserId() int64 {
@@ -3315,7 +3035,7 @@ type UpdateUserPasswordReply struct {
 
 func (x *UpdateUserPasswordReply) Reset() {
 	*x = UpdateUserPasswordReply{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[63]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3327,7 +3047,7 @@ func (x *UpdateUserPasswordReply) String() string {
 func (*UpdateUserPasswordReply) ProtoMessage() {}
 
 func (x *UpdateUserPasswordReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[63]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3340,7 +3060,7 @@ func (x *UpdateUserPasswordReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateUserPasswordReply.ProtoReflect.Descriptor instead.
 func (*UpdateUserPasswordReply) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{63}
+	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *UpdateUserPasswordReply) GetIsUpdated() bool {
@@ -3359,7 +3079,7 @@ type GetContestStatisticsRequest struct {
 
 func (x *GetContestStatisticsRequest) Reset() {
 	*x = GetContestStatisticsRequest{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[64]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3371,7 +3091,7 @@ func (x *GetContestStatisticsRequest) String() string {
 func (*GetContestStatisticsRequest) ProtoMessage() {}
 
 func (x *GetContestStatisticsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[64]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3384,7 +3104,7 @@ func (x *GetContestStatisticsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContestStatisticsRequest.ProtoReflect.Descriptor instead.
 func (*GetContestStatisticsRequest) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{64}
+	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *GetContestStatisticsRequest) GetContestId() int64 {
@@ -3404,7 +3124,7 @@ type GetContestStatisticsReply struct {
 
 func (x *GetContestStatisticsReply) Reset() {
 	*x = GetContestStatisticsReply{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[65]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3416,7 +3136,7 @@ func (x *GetContestStatisticsReply) String() string {
 func (*GetContestStatisticsReply) ProtoMessage() {}
 
 func (x *GetContestStatisticsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[65]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3429,7 +3149,7 @@ func (x *GetContestStatisticsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContestStatisticsReply.ProtoReflect.Descriptor instead.
 func (*GetContestStatisticsReply) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{65}
+	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *GetContestStatisticsReply) GetStatisticsJson() string {
@@ -3449,7 +3169,7 @@ type ListLogFilesRequest struct {
 
 func (x *ListLogFilesRequest) Reset() {
 	*x = ListLogFilesRequest{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[66]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3461,7 +3181,7 @@ func (x *ListLogFilesRequest) String() string {
 func (*ListLogFilesRequest) ProtoMessage() {}
 
 func (x *ListLogFilesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[66]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3474,7 +3194,7 @@ func (x *ListLogFilesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLogFilesRequest.ProtoReflect.Descriptor instead.
 func (*ListLogFilesRequest) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{66}
+	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *ListLogFilesRequest) GetPageSize() int32 {
@@ -3501,7 +3221,7 @@ type ListLogFilesReply struct {
 
 func (x *ListLogFilesReply) Reset() {
 	*x = ListLogFilesReply{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[67]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3513,7 +3233,7 @@ func (x *ListLogFilesReply) String() string {
 func (*ListLogFilesReply) ProtoMessage() {}
 
 func (x *ListLogFilesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[67]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3526,7 +3246,7 @@ func (x *ListLogFilesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListLogFilesReply.ProtoReflect.Descriptor instead.
 func (*ListLogFilesReply) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{67}
+	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *ListLogFilesReply) GetFilenames() []string {
@@ -3557,7 +3277,7 @@ type QueryLogContentRequest struct {
 
 func (x *QueryLogContentRequest) Reset() {
 	*x = QueryLogContentRequest{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[68]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3569,7 +3289,7 @@ func (x *QueryLogContentRequest) String() string {
 func (*QueryLogContentRequest) ProtoMessage() {}
 
 func (x *QueryLogContentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[68]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3582,7 +3302,7 @@ func (x *QueryLogContentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryLogContentRequest.ProtoReflect.Descriptor instead.
 func (*QueryLogContentRequest) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{68}
+	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *QueryLogContentRequest) GetFilename() string {
@@ -3637,7 +3357,7 @@ type QueryLogContentReply struct {
 
 func (x *QueryLogContentReply) Reset() {
 	*x = QueryLogContentReply{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[69]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3649,7 +3369,7 @@ func (x *QueryLogContentReply) String() string {
 func (*QueryLogContentReply) ProtoMessage() {}
 
 func (x *QueryLogContentReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[69]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3662,7 +3382,7 @@ func (x *QueryLogContentReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryLogContentReply.ProtoReflect.Descriptor instead.
 func (*QueryLogContentReply) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{69}
+	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *QueryLogContentReply) GetLines() []string {
@@ -3688,7 +3408,7 @@ type DownloadLogsRequest struct {
 
 func (x *DownloadLogsRequest) Reset() {
 	*x = DownloadLogsRequest{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[70]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3700,7 +3420,7 @@ func (x *DownloadLogsRequest) String() string {
 func (*DownloadLogsRequest) ProtoMessage() {}
 
 func (x *DownloadLogsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[70]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3713,7 +3433,7 @@ func (x *DownloadLogsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownloadLogsRequest.ProtoReflect.Descriptor instead.
 func (*DownloadLogsRequest) Descriptor() ([]byte, []int) {
-	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{70}
+	return file_api_cascade_admin_v1_admin_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *DownloadLogsRequest) GetFilenames() []string {
@@ -3732,7 +3452,7 @@ type PostContestRequest_ProblemList struct {
 
 func (x *PostContestRequest_ProblemList) Reset() {
 	*x = PostContestRequest_ProblemList{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[71]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3744,7 +3464,7 @@ func (x *PostContestRequest_ProblemList) String() string {
 func (*PostContestRequest_ProblemList) ProtoMessage() {}
 
 func (x *PostContestRequest_ProblemList) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[71]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3776,7 +3496,7 @@ type PutContestRequest_ProblemList struct {
 
 func (x *PutContestRequest_ProblemList) Reset() {
 	*x = PutContestRequest_ProblemList{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[72]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3788,7 +3508,7 @@ func (x *PutContestRequest_ProblemList) String() string {
 func (*PutContestRequest_ProblemList) ProtoMessage() {}
 
 func (x *PutContestRequest_ProblemList) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[72]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3820,7 +3540,7 @@ type GetSingleSubmissionReply_CaseResults struct {
 
 func (x *GetSingleSubmissionReply_CaseResults) Reset() {
 	*x = GetSingleSubmissionReply_CaseResults{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[73]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3832,7 +3552,7 @@ func (x *GetSingleSubmissionReply_CaseResults) String() string {
 func (*GetSingleSubmissionReply_CaseResults) ProtoMessage() {}
 
 func (x *GetSingleSubmissionReply_CaseResults) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[73]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3867,7 +3587,7 @@ type GetRanksReply_RankItem struct {
 
 func (x *GetRanksReply_RankItem) Reset() {
 	*x = GetRanksReply_RankItem{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[74]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3879,7 +3599,7 @@ func (x *GetRanksReply_RankItem) String() string {
 func (*GetRanksReply_RankItem) ProtoMessage() {}
 
 func (x *GetRanksReply_RankItem) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[74]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3935,7 +3655,7 @@ type GetAnnouncementsReply_Announcement struct {
 
 func (x *GetAnnouncementsReply_Announcement) Reset() {
 	*x = GetAnnouncementsReply_Announcement{}
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[75]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3947,7 +3667,7 @@ func (x *GetAnnouncementsReply_Announcement) String() string {
 func (*GetAnnouncementsReply_Announcement) ProtoMessage() {}
 
 func (x *GetAnnouncementsReply_Announcement) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[75]
+	mi := &file_api_cascade_admin_v1_admin_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4214,24 +3934,7 @@ const file_api_cascade_admin_v1_admin_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"0\n" +
 	"\x0fDeleteUserReply\x12\x1d\n" +
 	"\n" +
-	"is_deleted\x18\x01 \x01(\bR\tisDeleted\"7\n" +
-	"\x16GetContestUsersRequest\x12\x1d\n" +
-	"\n" +
-	"contest_id\x18\x01 \x01(\x03R\tcontestId\"L\n" +
-	"\x14GetContestUsersReply\x124\n" +
-	"\x05users\x18\x01 \x03(\v2\x1e.api.cascade.admin.v1.UserInfoR\x05users\"O\n" +
-	"\x15AddContestUserRequest\x12\x1d\n" +
-	"\n" +
-	"contest_id\x18\x01 \x01(\x03R\tcontestId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"2\n" +
-	"\x13AddContestUserReply\x12\x1b\n" +
-	"\tis_joined\x18\x01 \x01(\bR\bisJoined\"R\n" +
-	"\x18RemoveContestUserRequest\x12\x1d\n" +
-	"\n" +
-	"contest_id\x18\x01 \x01(\x03R\tcontestId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"5\n" +
-	"\x16RemoveContestUserReply\x12\x1b\n" +
-	"\tis_joined\x18\x01 \x01(\bR\bisJoined\"P\n" +
+	"is_deleted\x18\x01 \x01(\bR\tisDeleted\"P\n" +
 	"\x19UpdateUserPasswordRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"8\n" +
@@ -4266,7 +3969,7 @@ const file_api_cascade_admin_v1_admin_proto_rawDesc = "" +
 	"\x1aPROBLEM_STATUS_UNAVAILABLE\x10\x00\x12\x1c\n" +
 	"\x18PROBLEM_STATUS_AVAILABLE\x10\x01\x12\x18\n" +
 	"\x14PROBLEM_STATUS_USING\x10\x02\x12\x1a\n" +
-	"\x16PROBLEM_STATUS_DELETED\x10\x032\xdd%\n" +
+	"\x16PROBLEM_STATUS_DELETED\x10\x032\xf5!\n" +
 	"\x05Admin\x12x\n" +
 	"\vGetContests\x12(.api.cascade.admin.v1.GetContestsRequest\x1a&.api.cascade.admin.v1.GetContestsReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/contests\x12\x94\x01\n" +
 	"\x10GetSingleContest\x12-.api.cascade.admin.v1.GetSingleContestRequest\x1a+.api.cascade.admin.v1.GetSingleContestReply\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/admin/contests/{contest_id}\x12{\n" +
@@ -4295,10 +3998,7 @@ const file_api_cascade_admin_v1_admin_proto_rawDesc = "" +
 	"\bGetUsers\x12%.api.cascade.admin.v1.GetUsersRequest\x1a#.api.cascade.admin.v1.GetUsersReply\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/admin/users\x12\x8b\x01\n" +
 	"\x0eUpdateUserInfo\x12+.api.cascade.admin.v1.UpdateUserInfoRequest\x1a).api.cascade.admin.v1.UpdateUserInfoReply\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\x1a\x16/admin/users/{user_id}\x12|\n" +
 	"\n" +
-	"DeleteUser\x12'.api.cascade.admin.v1.DeleteUserRequest\x1a%.api.cascade.admin.v1.DeleteUserReply\"\x1e\x82\xd3\xe4\x93\x02\x18*\x16/admin/users/{user_id}\x12\x97\x01\n" +
-	"\x0fGetContestUsers\x12,.api.cascade.admin.v1.GetContestUsersRequest\x1a*.api.cascade.admin.v1.GetContestUsersReply\"*\x82\xd3\xe4\x93\x02$\x12\"/admin/contests/{contest_id}/users\x12\xa1\x01\n" +
-	"\x0eAddContestUser\x12+.api.cascade.admin.v1.AddContestUserRequest\x1a).api.cascade.admin.v1.AddContestUserReply\"7\x82\xd3\xe4\x93\x021:\x01*\",/admin/contests/{contest_id}/users/{user_id}\x12\xa7\x01\n" +
-	"\x11RemoveContestUser\x12..api.cascade.admin.v1.RemoveContestUserRequest\x1a,.api.cascade.admin.v1.RemoveContestUserReply\"4\x82\xd3\xe4\x93\x02.*,/admin/contests/{contest_id}/users/{user_id}\x12\xa0\x01\n" +
+	"DeleteUser\x12'.api.cascade.admin.v1.DeleteUserRequest\x1a%.api.cascade.admin.v1.DeleteUserReply\"\x1e\x82\xd3\xe4\x93\x02\x18*\x16/admin/users/{user_id}\x12\xa0\x01\n" +
 	"\x12UpdateUserPassword\x12/.api.cascade.admin.v1.UpdateUserPasswordRequest\x1a-.api.cascade.admin.v1.UpdateUserPasswordReply\"*\x82\xd3\xe4\x93\x02$:\x01*\x1a\x1f/admin/users/{user_id}/password\x12\xab\x01\n" +
 	"\x14GetContestStatistics\x121.api.cascade.admin.v1.GetContestStatisticsRequest\x1a/.api.cascade.admin.v1.GetContestStatisticsReply\"/\x82\xd3\xe4\x93\x02)\x12'/admin/contests/{contest_id}/statistics\x12}\n" +
 	"\fListLogFiles\x12).api.cascade.admin.v1.ListLogFilesRequest\x1a'.api.cascade.admin.v1.ListLogFilesReply\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/admin/logs/files\x12\x88\x01\n" +
@@ -4318,7 +4018,7 @@ func file_api_cascade_admin_v1_admin_proto_rawDescGZIP() []byte {
 }
 
 var file_api_cascade_admin_v1_admin_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_api_cascade_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 76)
+var file_api_cascade_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 70)
 var file_api_cascade_admin_v1_admin_proto_goTypes = []any{
 	(ProblemStatus)(0),                           // 0: api.cascade.admin.v1.ProblemStatus
 	(*ContestMetadata)(nil),                      // 1: api.cascade.admin.v1.ContestMetadata
@@ -4377,40 +4077,34 @@ var file_api_cascade_admin_v1_admin_proto_goTypes = []any{
 	(*UpdateUserInfoReply)(nil),                  // 54: api.cascade.admin.v1.UpdateUserInfoReply
 	(*DeleteUserRequest)(nil),                    // 55: api.cascade.admin.v1.DeleteUserRequest
 	(*DeleteUserReply)(nil),                      // 56: api.cascade.admin.v1.DeleteUserReply
-	(*GetContestUsersRequest)(nil),               // 57: api.cascade.admin.v1.GetContestUsersRequest
-	(*GetContestUsersReply)(nil),                 // 58: api.cascade.admin.v1.GetContestUsersReply
-	(*AddContestUserRequest)(nil),                // 59: api.cascade.admin.v1.AddContestUserRequest
-	(*AddContestUserReply)(nil),                  // 60: api.cascade.admin.v1.AddContestUserReply
-	(*RemoveContestUserRequest)(nil),             // 61: api.cascade.admin.v1.RemoveContestUserRequest
-	(*RemoveContestUserReply)(nil),               // 62: api.cascade.admin.v1.RemoveContestUserReply
-	(*UpdateUserPasswordRequest)(nil),            // 63: api.cascade.admin.v1.UpdateUserPasswordRequest
-	(*UpdateUserPasswordReply)(nil),              // 64: api.cascade.admin.v1.UpdateUserPasswordReply
-	(*GetContestStatisticsRequest)(nil),          // 65: api.cascade.admin.v1.GetContestStatisticsRequest
-	(*GetContestStatisticsReply)(nil),            // 66: api.cascade.admin.v1.GetContestStatisticsReply
-	(*ListLogFilesRequest)(nil),                  // 67: api.cascade.admin.v1.ListLogFilesRequest
-	(*ListLogFilesReply)(nil),                    // 68: api.cascade.admin.v1.ListLogFilesReply
-	(*QueryLogContentRequest)(nil),               // 69: api.cascade.admin.v1.QueryLogContentRequest
-	(*QueryLogContentReply)(nil),                 // 70: api.cascade.admin.v1.QueryLogContentReply
-	(*DownloadLogsRequest)(nil),                  // 71: api.cascade.admin.v1.DownloadLogsRequest
-	(*PostContestRequest_ProblemList)(nil),       // 72: api.cascade.admin.v1.PostContestRequest.ProblemList
-	(*PutContestRequest_ProblemList)(nil),        // 73: api.cascade.admin.v1.PutContestRequest.ProblemList
-	(*GetSingleSubmissionReply_CaseResults)(nil), // 74: api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults
-	(*GetRanksReply_RankItem)(nil),               // 75: api.cascade.admin.v1.GetRanksReply.RankItem
-	(*GetAnnouncementsReply_Announcement)(nil),   // 76: api.cascade.admin.v1.GetAnnouncementsReply.Announcement
-	(*timestamppb.Timestamp)(nil),                // 77: google.protobuf.Timestamp
-	(*httpbody.HttpBody)(nil),                    // 78: google.api.HttpBody
+	(*UpdateUserPasswordRequest)(nil),            // 57: api.cascade.admin.v1.UpdateUserPasswordRequest
+	(*UpdateUserPasswordReply)(nil),              // 58: api.cascade.admin.v1.UpdateUserPasswordReply
+	(*GetContestStatisticsRequest)(nil),          // 59: api.cascade.admin.v1.GetContestStatisticsRequest
+	(*GetContestStatisticsReply)(nil),            // 60: api.cascade.admin.v1.GetContestStatisticsReply
+	(*ListLogFilesRequest)(nil),                  // 61: api.cascade.admin.v1.ListLogFilesRequest
+	(*ListLogFilesReply)(nil),                    // 62: api.cascade.admin.v1.ListLogFilesReply
+	(*QueryLogContentRequest)(nil),               // 63: api.cascade.admin.v1.QueryLogContentRequest
+	(*QueryLogContentReply)(nil),                 // 64: api.cascade.admin.v1.QueryLogContentReply
+	(*DownloadLogsRequest)(nil),                  // 65: api.cascade.admin.v1.DownloadLogsRequest
+	(*PostContestRequest_ProblemList)(nil),       // 66: api.cascade.admin.v1.PostContestRequest.ProblemList
+	(*PutContestRequest_ProblemList)(nil),        // 67: api.cascade.admin.v1.PutContestRequest.ProblemList
+	(*GetSingleSubmissionReply_CaseResults)(nil), // 68: api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults
+	(*GetRanksReply_RankItem)(nil),               // 69: api.cascade.admin.v1.GetRanksReply.RankItem
+	(*GetAnnouncementsReply_Announcement)(nil),   // 70: api.cascade.admin.v1.GetAnnouncementsReply.Announcement
+	(*timestamppb.Timestamp)(nil),                // 71: google.protobuf.Timestamp
+	(*httpbody.HttpBody)(nil),                    // 72: google.api.HttpBody
 }
 var file_api_cascade_admin_v1_admin_proto_depIdxs = []int32{
-	77, // 0: api.cascade.admin.v1.ContestMetadata.start_time:type_name -> google.protobuf.Timestamp
-	77, // 1: api.cascade.admin.v1.ContestMetadata.end_time:type_name -> google.protobuf.Timestamp
+	71, // 0: api.cascade.admin.v1.ContestMetadata.start_time:type_name -> google.protobuf.Timestamp
+	71, // 1: api.cascade.admin.v1.ContestMetadata.end_time:type_name -> google.protobuf.Timestamp
 	1,  // 2: api.cascade.admin.v1.GetContestsReply.contests:type_name -> api.cascade.admin.v1.ContestMetadata
 	1,  // 3: api.cascade.admin.v1.GetSingleContestReply.metadata:type_name -> api.cascade.admin.v1.ContestMetadata
-	77, // 4: api.cascade.admin.v1.PostContestRequest.start_time:type_name -> google.protobuf.Timestamp
-	77, // 5: api.cascade.admin.v1.PostContestRequest.end_time:type_name -> google.protobuf.Timestamp
-	72, // 6: api.cascade.admin.v1.PostContestRequest.problems:type_name -> api.cascade.admin.v1.PostContestRequest.ProblemList
-	77, // 7: api.cascade.admin.v1.PutContestRequest.start_time:type_name -> google.protobuf.Timestamp
-	77, // 8: api.cascade.admin.v1.PutContestRequest.end_time:type_name -> google.protobuf.Timestamp
-	73, // 9: api.cascade.admin.v1.PutContestRequest.problems:type_name -> api.cascade.admin.v1.PutContestRequest.ProblemList
+	71, // 4: api.cascade.admin.v1.PostContestRequest.start_time:type_name -> google.protobuf.Timestamp
+	71, // 5: api.cascade.admin.v1.PostContestRequest.end_time:type_name -> google.protobuf.Timestamp
+	66, // 6: api.cascade.admin.v1.PostContestRequest.problems:type_name -> api.cascade.admin.v1.PostContestRequest.ProblemList
+	71, // 7: api.cascade.admin.v1.PutContestRequest.start_time:type_name -> google.protobuf.Timestamp
+	71, // 8: api.cascade.admin.v1.PutContestRequest.end_time:type_name -> google.protobuf.Timestamp
+	67, // 9: api.cascade.admin.v1.PutContestRequest.problems:type_name -> api.cascade.admin.v1.PutContestRequest.ProblemList
 	50, // 10: api.cascade.admin.v1.GetContestCompetitorsReply.competitors:type_name -> api.cascade.admin.v1.UserInfo
 	0,  // 11: api.cascade.admin.v1.ProblemMetadata.status:type_name -> api.cascade.admin.v1.ProblemStatus
 	16, // 12: api.cascade.admin.v1.GetProblemsReply.problems:type_name -> api.cascade.admin.v1.ProblemMetadata
@@ -4420,88 +4114,81 @@ var file_api_cascade_admin_v1_admin_proto_depIdxs = []int32{
 	17, // 16: api.cascade.admin.v1.PostProblemRequest.templates:type_name -> api.cascade.admin.v1.CodeTemplate
 	16, // 17: api.cascade.admin.v1.PutProblemRequest.metadata:type_name -> api.cascade.admin.v1.ProblemMetadata
 	17, // 18: api.cascade.admin.v1.PutProblemRequest.templates:type_name -> api.cascade.admin.v1.CodeTemplate
-	77, // 19: api.cascade.admin.v1.SubmissionMetadata.submit_time:type_name -> google.protobuf.Timestamp
+	71, // 19: api.cascade.admin.v1.SubmissionMetadata.submit_time:type_name -> google.protobuf.Timestamp
 	32, // 20: api.cascade.admin.v1.GetSubmissionsReply.submissions:type_name -> api.cascade.admin.v1.SubmissionMetadata
 	32, // 21: api.cascade.admin.v1.GetSingleSubmissionReply.metadata:type_name -> api.cascade.admin.v1.SubmissionMetadata
-	74, // 22: api.cascade.admin.v1.GetSingleSubmissionReply.case_results:type_name -> api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults
-	75, // 23: api.cascade.admin.v1.GetRanksReply.ranks:type_name -> api.cascade.admin.v1.GetRanksReply.RankItem
-	76, // 24: api.cascade.admin.v1.GetAnnouncementsReply.announcements:type_name -> api.cascade.admin.v1.GetAnnouncementsReply.Announcement
+	68, // 22: api.cascade.admin.v1.GetSingleSubmissionReply.case_results:type_name -> api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults
+	69, // 23: api.cascade.admin.v1.GetRanksReply.ranks:type_name -> api.cascade.admin.v1.GetRanksReply.RankItem
+	70, // 24: api.cascade.admin.v1.GetAnnouncementsReply.announcements:type_name -> api.cascade.admin.v1.GetAnnouncementsReply.Announcement
 	50, // 25: api.cascade.admin.v1.GetUsersReply.users:type_name -> api.cascade.admin.v1.UserInfo
-	50, // 26: api.cascade.admin.v1.GetContestUsersReply.users:type_name -> api.cascade.admin.v1.UserInfo
-	77, // 27: api.cascade.admin.v1.QueryLogContentRequest.time_start:type_name -> google.protobuf.Timestamp
-	77, // 28: api.cascade.admin.v1.QueryLogContentRequest.time_end:type_name -> google.protobuf.Timestamp
-	35, // 29: api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults.cases:type_name -> api.cascade.admin.v1.CaseMetadata
-	2,  // 30: api.cascade.admin.v1.Admin.GetContests:input_type -> api.cascade.admin.v1.GetContestsRequest
-	4,  // 31: api.cascade.admin.v1.Admin.GetSingleContest:input_type -> api.cascade.admin.v1.GetSingleContestRequest
-	6,  // 32: api.cascade.admin.v1.Admin.PostContest:input_type -> api.cascade.admin.v1.PostContestRequest
-	8,  // 33: api.cascade.admin.v1.Admin.PutContest:input_type -> api.cascade.admin.v1.PutContestRequest
-	10, // 34: api.cascade.admin.v1.Admin.DeleteContest:input_type -> api.cascade.admin.v1.DeleteContestRequest
-	12, // 35: api.cascade.admin.v1.Admin.GetContestCompetitors:input_type -> api.cascade.admin.v1.GetContestCompetitorsRequest
-	14, // 36: api.cascade.admin.v1.Admin.PutContestCompetitors:input_type -> api.cascade.admin.v1.PutContestCompetitorsRequest
-	18, // 37: api.cascade.admin.v1.Admin.GetProblems:input_type -> api.cascade.admin.v1.GetProblemsRequest
-	20, // 38: api.cascade.admin.v1.Admin.GetSingleProblem:input_type -> api.cascade.admin.v1.GetSingleProblemRequest
-	22, // 39: api.cascade.admin.v1.Admin.PostProblem:input_type -> api.cascade.admin.v1.PostProblemRequest
-	24, // 40: api.cascade.admin.v1.Admin.PutProblem:input_type -> api.cascade.admin.v1.PutProblemRequest
-	26, // 41: api.cascade.admin.v1.Admin.DeleteProblem:input_type -> api.cascade.admin.v1.DeleteProblemRequest
-	28, // 42: api.cascade.admin.v1.Admin.PublishProblem:input_type -> api.cascade.admin.v1.PublishProblemRequest
-	30, // 43: api.cascade.admin.v1.Admin.DisableProblem:input_type -> api.cascade.admin.v1.DisableProblemRequest
-	33, // 44: api.cascade.admin.v1.Admin.GetSubmissions:input_type -> api.cascade.admin.v1.GetSubmissionsRequest
-	36, // 45: api.cascade.admin.v1.Admin.GetSingleSubmission:input_type -> api.cascade.admin.v1.GetSingleSubmissionRequest
-	38, // 46: api.cascade.admin.v1.Admin.RejudgeSubmission:input_type -> api.cascade.admin.v1.RejudgeSubmissionRequest
-	40, // 47: api.cascade.admin.v1.Admin.GetRanks:input_type -> api.cascade.admin.v1.GetRanksRequest
-	42, // 48: api.cascade.admin.v1.Admin.GetAnnouncements:input_type -> api.cascade.admin.v1.GetAnnouncementsRequest
-	44, // 49: api.cascade.admin.v1.Admin.PostAnnouncement:input_type -> api.cascade.admin.v1.PostAnnouncementRequest
-	46, // 50: api.cascade.admin.v1.Admin.PutAnnouncement:input_type -> api.cascade.admin.v1.PutAnnouncementRequest
-	48, // 51: api.cascade.admin.v1.Admin.DeleteAnnouncement:input_type -> api.cascade.admin.v1.DeleteAnnouncementRequest
-	51, // 52: api.cascade.admin.v1.Admin.GetUsers:input_type -> api.cascade.admin.v1.GetUsersRequest
-	53, // 53: api.cascade.admin.v1.Admin.UpdateUserInfo:input_type -> api.cascade.admin.v1.UpdateUserInfoRequest
-	55, // 54: api.cascade.admin.v1.Admin.DeleteUser:input_type -> api.cascade.admin.v1.DeleteUserRequest
-	57, // 55: api.cascade.admin.v1.Admin.GetContestUsers:input_type -> api.cascade.admin.v1.GetContestUsersRequest
-	59, // 56: api.cascade.admin.v1.Admin.AddContestUser:input_type -> api.cascade.admin.v1.AddContestUserRequest
-	61, // 57: api.cascade.admin.v1.Admin.RemoveContestUser:input_type -> api.cascade.admin.v1.RemoveContestUserRequest
-	63, // 58: api.cascade.admin.v1.Admin.UpdateUserPassword:input_type -> api.cascade.admin.v1.UpdateUserPasswordRequest
-	65, // 59: api.cascade.admin.v1.Admin.GetContestStatistics:input_type -> api.cascade.admin.v1.GetContestStatisticsRequest
-	67, // 60: api.cascade.admin.v1.Admin.ListLogFiles:input_type -> api.cascade.admin.v1.ListLogFilesRequest
-	69, // 61: api.cascade.admin.v1.Admin.QueryLogContent:input_type -> api.cascade.admin.v1.QueryLogContentRequest
-	71, // 62: api.cascade.admin.v1.Admin.DownloadLogs:input_type -> api.cascade.admin.v1.DownloadLogsRequest
-	3,  // 63: api.cascade.admin.v1.Admin.GetContests:output_type -> api.cascade.admin.v1.GetContestsReply
-	5,  // 64: api.cascade.admin.v1.Admin.GetSingleContest:output_type -> api.cascade.admin.v1.GetSingleContestReply
-	7,  // 65: api.cascade.admin.v1.Admin.PostContest:output_type -> api.cascade.admin.v1.PostContestReply
-	9,  // 66: api.cascade.admin.v1.Admin.PutContest:output_type -> api.cascade.admin.v1.PutContestReply
-	11, // 67: api.cascade.admin.v1.Admin.DeleteContest:output_type -> api.cascade.admin.v1.DeleteContestReply
-	13, // 68: api.cascade.admin.v1.Admin.GetContestCompetitors:output_type -> api.cascade.admin.v1.GetContestCompetitorsReply
-	15, // 69: api.cascade.admin.v1.Admin.PutContestCompetitors:output_type -> api.cascade.admin.v1.PutContestCompetitorsReply
-	19, // 70: api.cascade.admin.v1.Admin.GetProblems:output_type -> api.cascade.admin.v1.GetProblemsReply
-	21, // 71: api.cascade.admin.v1.Admin.GetSingleProblem:output_type -> api.cascade.admin.v1.GetSingleProblemReply
-	23, // 72: api.cascade.admin.v1.Admin.PostProblem:output_type -> api.cascade.admin.v1.PostProblemReply
-	25, // 73: api.cascade.admin.v1.Admin.PutProblem:output_type -> api.cascade.admin.v1.PutProblemReply
-	27, // 74: api.cascade.admin.v1.Admin.DeleteProblem:output_type -> api.cascade.admin.v1.DeleteProblemReply
-	29, // 75: api.cascade.admin.v1.Admin.PublishProblem:output_type -> api.cascade.admin.v1.PublishProblemReply
-	31, // 76: api.cascade.admin.v1.Admin.DisableProblem:output_type -> api.cascade.admin.v1.DisableProblemReply
-	34, // 77: api.cascade.admin.v1.Admin.GetSubmissions:output_type -> api.cascade.admin.v1.GetSubmissionsReply
-	37, // 78: api.cascade.admin.v1.Admin.GetSingleSubmission:output_type -> api.cascade.admin.v1.GetSingleSubmissionReply
-	39, // 79: api.cascade.admin.v1.Admin.RejudgeSubmission:output_type -> api.cascade.admin.v1.RejudgeSubmissionReply
-	41, // 80: api.cascade.admin.v1.Admin.GetRanks:output_type -> api.cascade.admin.v1.GetRanksReply
-	43, // 81: api.cascade.admin.v1.Admin.GetAnnouncements:output_type -> api.cascade.admin.v1.GetAnnouncementsReply
-	45, // 82: api.cascade.admin.v1.Admin.PostAnnouncement:output_type -> api.cascade.admin.v1.PostAnnouncementReply
-	47, // 83: api.cascade.admin.v1.Admin.PutAnnouncement:output_type -> api.cascade.admin.v1.PutAnnouncementReply
-	49, // 84: api.cascade.admin.v1.Admin.DeleteAnnouncement:output_type -> api.cascade.admin.v1.DeleteAnnouncementReply
-	52, // 85: api.cascade.admin.v1.Admin.GetUsers:output_type -> api.cascade.admin.v1.GetUsersReply
-	54, // 86: api.cascade.admin.v1.Admin.UpdateUserInfo:output_type -> api.cascade.admin.v1.UpdateUserInfoReply
-	56, // 87: api.cascade.admin.v1.Admin.DeleteUser:output_type -> api.cascade.admin.v1.DeleteUserReply
-	58, // 88: api.cascade.admin.v1.Admin.GetContestUsers:output_type -> api.cascade.admin.v1.GetContestUsersReply
-	60, // 89: api.cascade.admin.v1.Admin.AddContestUser:output_type -> api.cascade.admin.v1.AddContestUserReply
-	62, // 90: api.cascade.admin.v1.Admin.RemoveContestUser:output_type -> api.cascade.admin.v1.RemoveContestUserReply
-	64, // 91: api.cascade.admin.v1.Admin.UpdateUserPassword:output_type -> api.cascade.admin.v1.UpdateUserPasswordReply
-	66, // 92: api.cascade.admin.v1.Admin.GetContestStatistics:output_type -> api.cascade.admin.v1.GetContestStatisticsReply
-	68, // 93: api.cascade.admin.v1.Admin.ListLogFiles:output_type -> api.cascade.admin.v1.ListLogFilesReply
-	70, // 94: api.cascade.admin.v1.Admin.QueryLogContent:output_type -> api.cascade.admin.v1.QueryLogContentReply
-	78, // 95: api.cascade.admin.v1.Admin.DownloadLogs:output_type -> google.api.HttpBody
-	63, // [63:96] is the sub-list for method output_type
-	30, // [30:63] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	71, // 26: api.cascade.admin.v1.QueryLogContentRequest.time_start:type_name -> google.protobuf.Timestamp
+	71, // 27: api.cascade.admin.v1.QueryLogContentRequest.time_end:type_name -> google.protobuf.Timestamp
+	35, // 28: api.cascade.admin.v1.GetSingleSubmissionReply.CaseResults.cases:type_name -> api.cascade.admin.v1.CaseMetadata
+	2,  // 29: api.cascade.admin.v1.Admin.GetContests:input_type -> api.cascade.admin.v1.GetContestsRequest
+	4,  // 30: api.cascade.admin.v1.Admin.GetSingleContest:input_type -> api.cascade.admin.v1.GetSingleContestRequest
+	6,  // 31: api.cascade.admin.v1.Admin.PostContest:input_type -> api.cascade.admin.v1.PostContestRequest
+	8,  // 32: api.cascade.admin.v1.Admin.PutContest:input_type -> api.cascade.admin.v1.PutContestRequest
+	10, // 33: api.cascade.admin.v1.Admin.DeleteContest:input_type -> api.cascade.admin.v1.DeleteContestRequest
+	12, // 34: api.cascade.admin.v1.Admin.GetContestCompetitors:input_type -> api.cascade.admin.v1.GetContestCompetitorsRequest
+	14, // 35: api.cascade.admin.v1.Admin.PutContestCompetitors:input_type -> api.cascade.admin.v1.PutContestCompetitorsRequest
+	18, // 36: api.cascade.admin.v1.Admin.GetProblems:input_type -> api.cascade.admin.v1.GetProblemsRequest
+	20, // 37: api.cascade.admin.v1.Admin.GetSingleProblem:input_type -> api.cascade.admin.v1.GetSingleProblemRequest
+	22, // 38: api.cascade.admin.v1.Admin.PostProblem:input_type -> api.cascade.admin.v1.PostProblemRequest
+	24, // 39: api.cascade.admin.v1.Admin.PutProblem:input_type -> api.cascade.admin.v1.PutProblemRequest
+	26, // 40: api.cascade.admin.v1.Admin.DeleteProblem:input_type -> api.cascade.admin.v1.DeleteProblemRequest
+	28, // 41: api.cascade.admin.v1.Admin.PublishProblem:input_type -> api.cascade.admin.v1.PublishProblemRequest
+	30, // 42: api.cascade.admin.v1.Admin.DisableProblem:input_type -> api.cascade.admin.v1.DisableProblemRequest
+	33, // 43: api.cascade.admin.v1.Admin.GetSubmissions:input_type -> api.cascade.admin.v1.GetSubmissionsRequest
+	36, // 44: api.cascade.admin.v1.Admin.GetSingleSubmission:input_type -> api.cascade.admin.v1.GetSingleSubmissionRequest
+	38, // 45: api.cascade.admin.v1.Admin.RejudgeSubmission:input_type -> api.cascade.admin.v1.RejudgeSubmissionRequest
+	40, // 46: api.cascade.admin.v1.Admin.GetRanks:input_type -> api.cascade.admin.v1.GetRanksRequest
+	42, // 47: api.cascade.admin.v1.Admin.GetAnnouncements:input_type -> api.cascade.admin.v1.GetAnnouncementsRequest
+	44, // 48: api.cascade.admin.v1.Admin.PostAnnouncement:input_type -> api.cascade.admin.v1.PostAnnouncementRequest
+	46, // 49: api.cascade.admin.v1.Admin.PutAnnouncement:input_type -> api.cascade.admin.v1.PutAnnouncementRequest
+	48, // 50: api.cascade.admin.v1.Admin.DeleteAnnouncement:input_type -> api.cascade.admin.v1.DeleteAnnouncementRequest
+	51, // 51: api.cascade.admin.v1.Admin.GetUsers:input_type -> api.cascade.admin.v1.GetUsersRequest
+	53, // 52: api.cascade.admin.v1.Admin.UpdateUserInfo:input_type -> api.cascade.admin.v1.UpdateUserInfoRequest
+	55, // 53: api.cascade.admin.v1.Admin.DeleteUser:input_type -> api.cascade.admin.v1.DeleteUserRequest
+	57, // 54: api.cascade.admin.v1.Admin.UpdateUserPassword:input_type -> api.cascade.admin.v1.UpdateUserPasswordRequest
+	59, // 55: api.cascade.admin.v1.Admin.GetContestStatistics:input_type -> api.cascade.admin.v1.GetContestStatisticsRequest
+	61, // 56: api.cascade.admin.v1.Admin.ListLogFiles:input_type -> api.cascade.admin.v1.ListLogFilesRequest
+	63, // 57: api.cascade.admin.v1.Admin.QueryLogContent:input_type -> api.cascade.admin.v1.QueryLogContentRequest
+	65, // 58: api.cascade.admin.v1.Admin.DownloadLogs:input_type -> api.cascade.admin.v1.DownloadLogsRequest
+	3,  // 59: api.cascade.admin.v1.Admin.GetContests:output_type -> api.cascade.admin.v1.GetContestsReply
+	5,  // 60: api.cascade.admin.v1.Admin.GetSingleContest:output_type -> api.cascade.admin.v1.GetSingleContestReply
+	7,  // 61: api.cascade.admin.v1.Admin.PostContest:output_type -> api.cascade.admin.v1.PostContestReply
+	9,  // 62: api.cascade.admin.v1.Admin.PutContest:output_type -> api.cascade.admin.v1.PutContestReply
+	11, // 63: api.cascade.admin.v1.Admin.DeleteContest:output_type -> api.cascade.admin.v1.DeleteContestReply
+	13, // 64: api.cascade.admin.v1.Admin.GetContestCompetitors:output_type -> api.cascade.admin.v1.GetContestCompetitorsReply
+	15, // 65: api.cascade.admin.v1.Admin.PutContestCompetitors:output_type -> api.cascade.admin.v1.PutContestCompetitorsReply
+	19, // 66: api.cascade.admin.v1.Admin.GetProblems:output_type -> api.cascade.admin.v1.GetProblemsReply
+	21, // 67: api.cascade.admin.v1.Admin.GetSingleProblem:output_type -> api.cascade.admin.v1.GetSingleProblemReply
+	23, // 68: api.cascade.admin.v1.Admin.PostProblem:output_type -> api.cascade.admin.v1.PostProblemReply
+	25, // 69: api.cascade.admin.v1.Admin.PutProblem:output_type -> api.cascade.admin.v1.PutProblemReply
+	27, // 70: api.cascade.admin.v1.Admin.DeleteProblem:output_type -> api.cascade.admin.v1.DeleteProblemReply
+	29, // 71: api.cascade.admin.v1.Admin.PublishProblem:output_type -> api.cascade.admin.v1.PublishProblemReply
+	31, // 72: api.cascade.admin.v1.Admin.DisableProblem:output_type -> api.cascade.admin.v1.DisableProblemReply
+	34, // 73: api.cascade.admin.v1.Admin.GetSubmissions:output_type -> api.cascade.admin.v1.GetSubmissionsReply
+	37, // 74: api.cascade.admin.v1.Admin.GetSingleSubmission:output_type -> api.cascade.admin.v1.GetSingleSubmissionReply
+	39, // 75: api.cascade.admin.v1.Admin.RejudgeSubmission:output_type -> api.cascade.admin.v1.RejudgeSubmissionReply
+	41, // 76: api.cascade.admin.v1.Admin.GetRanks:output_type -> api.cascade.admin.v1.GetRanksReply
+	43, // 77: api.cascade.admin.v1.Admin.GetAnnouncements:output_type -> api.cascade.admin.v1.GetAnnouncementsReply
+	45, // 78: api.cascade.admin.v1.Admin.PostAnnouncement:output_type -> api.cascade.admin.v1.PostAnnouncementReply
+	47, // 79: api.cascade.admin.v1.Admin.PutAnnouncement:output_type -> api.cascade.admin.v1.PutAnnouncementReply
+	49, // 80: api.cascade.admin.v1.Admin.DeleteAnnouncement:output_type -> api.cascade.admin.v1.DeleteAnnouncementReply
+	52, // 81: api.cascade.admin.v1.Admin.GetUsers:output_type -> api.cascade.admin.v1.GetUsersReply
+	54, // 82: api.cascade.admin.v1.Admin.UpdateUserInfo:output_type -> api.cascade.admin.v1.UpdateUserInfoReply
+	56, // 83: api.cascade.admin.v1.Admin.DeleteUser:output_type -> api.cascade.admin.v1.DeleteUserReply
+	58, // 84: api.cascade.admin.v1.Admin.UpdateUserPassword:output_type -> api.cascade.admin.v1.UpdateUserPasswordReply
+	60, // 85: api.cascade.admin.v1.Admin.GetContestStatistics:output_type -> api.cascade.admin.v1.GetContestStatisticsReply
+	62, // 86: api.cascade.admin.v1.Admin.ListLogFiles:output_type -> api.cascade.admin.v1.ListLogFilesReply
+	64, // 87: api.cascade.admin.v1.Admin.QueryLogContent:output_type -> api.cascade.admin.v1.QueryLogContentReply
+	72, // 88: api.cascade.admin.v1.Admin.DownloadLogs:output_type -> google.api.HttpBody
+	59, // [59:89] is the sub-list for method output_type
+	29, // [29:59] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_api_cascade_admin_v1_admin_proto_init() }
@@ -4515,7 +4202,7 @@ func file_api_cascade_admin_v1_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_cascade_admin_v1_admin_proto_rawDesc), len(file_api_cascade_admin_v1_admin_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   76,
+			NumMessages:   70,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

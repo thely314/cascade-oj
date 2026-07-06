@@ -304,93 +304,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /admin/contests/{contestId}/users:
-        get:
-            tags:
-                - Admin
-            operationId: Admin_GetContestUsers
-            parameters:
-                - name: contestId
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/GetContestUsersReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    /admin/contests/{contestId}/users/{userId}:
-        post:
-            tags:
-                - Admin
-            operationId: Admin_AddContestUser
-            parameters:
-                - name: contestId
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-                - name: userId
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/AddContestUserRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/AddContestUserReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-        delete:
-            tags:
-                - Admin
-            operationId: Admin_RemoveContestUser
-            parameters:
-                - name: contestId
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-                - name: userId
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/RemoveContestUserReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     /admin/logs/content:
         get:
             tags:
@@ -868,6 +781,7 @@ paths:
         put:
             tags:
                 - Admin
+            description: Update user password
             operationId: Admin_UpdateUserPassword
             parameters:
                 - name: userId
@@ -921,18 +835,6 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        AddContestUserReply:
-            type: object
-            properties:
-                isJoined:
-                    type: boolean
-        AddContestUserRequest:
-            type: object
-            properties:
-                contestId:
-                    type: string
-                userId:
-                    type: string
         CaseMetadata:
             type: object
             properties:
@@ -1039,13 +941,6 @@ components:
                 statisticsJson:
                     type: string
                     description: TODO
-        GetContestUsersReply:
-            type: object
-            properties:
-                users:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/UserInfo'
         GetContestsReply:
             type: object
             properties:
@@ -1338,11 +1233,6 @@ components:
             properties:
                 submissionUuid:
                     type: string
-        RemoveContestUserReply:
-            type: object
-            properties:
-                isJoined:
-                    type: boolean
         Status:
             type: object
             properties:

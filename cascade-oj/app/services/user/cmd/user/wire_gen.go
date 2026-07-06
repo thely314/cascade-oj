@@ -14,18 +14,17 @@ import (
 	"cascade-oj/app/services/user/internal/service"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"net/http"
 )
 
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, handler http.Handler) (*kratos.App, func(), error) {
 	dataData, cleanup, err := data.NewData(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	registerRepo := data.NewRegisterRepo(dataData, logger)
-	registerUsecase := biz.NewRegisterUsecase(registerRepo, logger)
 	contestRepo := data.NewContestRepo(dataData, logger)
 	contestUsecase := biz.NewContestUsecase(contestRepo, logger)
 	problemRepo := data.NewProblemRepo(dataData, logger)
@@ -34,9 +33,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	miscUsecase := biz.NewMiscUsecase(miscRepo, logger)
 	judgeRepo := data.NewJudgeRepo(dataData, logger)
 	judgeUsecase := biz.NewJudgeUsecase(judgeRepo, logger)
-	userService := service.NewUserService(registerUsecase, contestUsecase, problemUsecase, miscUsecase, judgeUsecase)
+	userService := service.NewUserService(contestUsecase, problemUsecase, miscUsecase, judgeUsecase)
 	grpcServer := server.NewGRPCServer(confServer, userService, logger)
-	httpServer := server.NewHTTPServer(confServer, userService, logger)
+	httpServer := server.NewHTTPServer(confServer, userService, handler, logger)
 	rabbitmqServer := server.NewMQServer(confServer, userService, logger)
 	app := newApp(logger, grpcServer, httpServer, rabbitmqServer)
 	return app, func() {

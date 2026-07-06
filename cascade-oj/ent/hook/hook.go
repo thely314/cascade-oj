@@ -8,6 +8,30 @@ import (
 	"fmt"
 )
 
+// The AlertEventFunc type is an adapter to allow the use of ordinary
+// function as AlertEvent mutator.
+type AlertEventFunc func(context.Context, *ent.AlertEventMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AlertEventFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AlertEventMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlertEventMutation", m)
+}
+
+// The AlertReportFunc type is an adapter to allow the use of ordinary
+// function as AlertReport mutator.
+type AlertReportFunc func(context.Context, *ent.AlertReportMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AlertReportFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AlertReportMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlertReportMutation", m)
+}
+
 // The AnnouncementFunc type is an adapter to allow the use of ordinary
 // function as Announcement mutator.
 type AnnouncementFunc func(context.Context, *ent.AnnouncementMutation) (ent.Value, error)

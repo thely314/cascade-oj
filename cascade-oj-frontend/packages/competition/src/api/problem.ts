@@ -253,10 +253,6 @@ export interface SubmissionItem {
   status: string;      
   submitTime: string; // ISO 时间字符串
   score: number; 
-  //TODO:      
-  // 后端 proto 里 GetSubmissionsReply 列表项似乎没有 time/memory/language？
-  // 如果没有，暂时只能展示状态。如果有扩展，这里补上。
-  // 通常列表页也需要展示语言、耗时、内存，假设后端之后会补，我们先 Mock 出来
   language?: string;
   timeCost?: number;
   memoryCost?: number;

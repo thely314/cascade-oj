@@ -1,5 +1,6 @@
 import axios from 'axios';
 import router from '../router';
+import { getToast } from './toast';
 
 // 1. 创建 axios 实例
 const service = axios.create({
@@ -35,6 +36,7 @@ service.interceptors.response.use(
     return response;
   },
   (error) => {
+    const toast = getToast();
     // 处理 HTTP 错误状态码
     if (error.response) {
       const status = error.response.status;
@@ -47,13 +49,13 @@ service.interceptors.response.use(
           
           // 2. 只有当不在登录页时，才跳转，防止死循环
           if (router.currentRoute.value.path !== '/login') {
-            alert('登录已过期，请重新登录'); // 或者使用更优雅的 Toast
+            toast.error('登录已过期，请重新登录');
             router.push('/login');
           }
           break;
           
         case 403:
-          alert('您没有权限执行此操作');
+          toast.error('您没有权限执行此操作');
           break;
           
         case 404:
@@ -61,7 +63,7 @@ service.interceptors.response.use(
           break;
           
         case 500:
-          alert('服务器内部错误，请稍后重试');
+          toast.error('服务器内部错误，请稍后重试');
           break;
           
         default:
@@ -69,7 +71,7 @@ service.interceptors.response.use(
       }
     } else {
       //断网或请求超时
-      alert('网络连接异常，请检查网络');
+      toast.error('网络连接异常，请检查网络');
     }
     
     return Promise.reject(error);

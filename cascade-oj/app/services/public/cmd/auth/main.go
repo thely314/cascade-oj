@@ -6,6 +6,7 @@ import (
 
 	"cascade-oj/app/services/public/internal/conf"
 	newlog "cascade-oj/pkg/log"
+	"cascade-oj/pkg/metrics"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -13,13 +14,16 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-kratos/kratos/v2/transport/http"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
+
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string
+	Name = "public"
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
@@ -32,7 +36,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, hs *khttp.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -84,7 +88,16 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Jwt, logger)
+	// Initialize OTel + Prometheus metrics
+	metricsHandler, err := metrics.Init(Name, Version)
+	if err != nil {
+		panic(err)
+	}
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+		propagation.TraceContext{}, propagation.Baggage{},
+	))
+
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Jwt, logger, metricsHandler)
 	if err != nil {
 		panic(err)
 	}

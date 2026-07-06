@@ -91,8 +91,11 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+import { useToast } from 'vue-toastification';
 import md5 from 'js-md5';
 import request from '../../utils/request';
+
+const toast = useToast();
 
 // 定义 emit，注册成功后切换到登录 tab
 const emit = defineEmits(['success']);
@@ -111,7 +114,7 @@ const form = reactive({
 
 const handleRegister = async () => {
   if (form.password !== form.confirmPassword) {
-    alert('两次密码输入不一致');
+    toast.warning('两次密码输入不一致');
     return;
   }
 
@@ -127,7 +130,7 @@ const handleRegister = async () => {
       password: encryptedPwd
     });
 
-    alert('注册成功，请登录');
+    toast.success('注册成功，请登录');
     
     // 触发父组件切换到登录 Tab (需要在 AuthPage.vue 监听这个事件)
     // 或者直接 location.reload() 简单粗暴
@@ -136,7 +139,7 @@ const handleRegister = async () => {
   } catch (e: any) {
     console.error(e);
     const msg = e.response?.data?.message || '注册失败，请稍后重试';
-    alert(msg);
+    toast.error(msg);
   } finally {
     loading.value = false;
   }
