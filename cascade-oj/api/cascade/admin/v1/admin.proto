@@ -269,13 +269,6 @@ message DeleteContestReply {
     bool is_deleted = 1; // Whether the deletion was successful
 }
 
-// Problem status
-enum ProblemStatus {
-    PROBLEM_STATUS_UNAVAILABLE = 0;
-    PROBLEM_STATUS_AVAILABLE = 1;
-    PROBLEM_STATUS_USING = 2;
-    PROBLEM_STATUS_DELETED = 3;
-}
 message GetContestCompetitorsRequest {
     int64 contest_id = 1; // Contest ID
 }
@@ -290,6 +283,14 @@ message PutContestCompetitorsReply {
     bool is_updated = 1; // Whether the update was successful
 }
 
+// Problem status
+enum ProblemStatus {
+    PROBLEM_STATUS_UNAVAILABLE = 0;
+    PROBLEM_STATUS_AVAILABLE = 1;
+    PROBLEM_STATUS_USING = 2;
+    PROBLEM_STATUS_DELETED = 3;
+}
+
 message ProblemMetadata {
     int64 id = 1; // Problem ID
     string title = 2; // Problem Title
@@ -298,6 +299,12 @@ message ProblemMetadata {
     string description = 5; // Problem Description
     ProblemStatus status = 6;
 }
+message CodeTemplate {
+    string language = 1; 
+    string code = 2; 
+    string name = 3;    
+}
+
 message GetProblemsRequest {
     int64 contest_id = 1; // Contest ID
 }
@@ -312,13 +319,13 @@ message GetSingleProblemReply {
     ProblemMetadata metadata = 1; // Problem Metadata
     string creator = 2; // Problem Creator
     string description = 3; // Problem Description
-    string code_template = 4;
+    repeated CodeTemplate templates = 4;
 }
 
 message PostProblemRequest {
     ProblemMetadata metadata = 1; // Problem Metadata
     string description = 3; // Problem Description
-    string code_template = 4; 
+    repeated CodeTemplate templates = 4;
 }
 message PostProblemReply {
     int64 problem_id = 1; // Created Problem ID
@@ -328,7 +335,7 @@ message PutProblemRequest {
     int64 problem_id = 1; // Problem ID
     ProblemMetadata metadata = 2; // Problem Metadata
     string description = 3; // Problem Description
-    string code_template = 4;
+    repeated CodeTemplate templates = 4;
 }
 message PutProblemReply {
     bool is_updated = 1; // Whether the update was successful
@@ -346,6 +353,13 @@ message PublishProblemRequest {
 }
 message PublishProblemReply {
     bool is_success = 1; // Whether the publication was successful
+}
+
+message DisableProblemRequest {
+    int64 problem_id = 1; // Problem ID
+}
+message DisableProblemReply {
+    bool is_success = 1; // Whether the disable operation was successful
 }
 
 message SubmissionMetadata {
@@ -514,11 +528,4 @@ message QueryLogContentReply {
 
 message DownloadLogsRequest {
     repeated string filenames = 1;
-}
-
-message DisableProblemRequest {
-    int64 problem_id = 1; // Problem ID
-}
-message DisableProblemReply {
-    bool is_success = 1; // Whether the disable operation was successful
 }

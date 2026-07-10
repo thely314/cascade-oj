@@ -1,2212 +1,1305 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
 openapi: 3.0.3
 info:
-  title: AuthService API
-  version: 0.0.1
-tags:
-  - name: AuthService
-  - name: User
-  - name: Admin
-  - name: AIOps
+    title: Admin API
+    version: 0.0.1
 paths:
-  public/login:
-    post:
-      tags:
-        - AuthService
-      operationId: AuthService_Login
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoginReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  public/logout:
-    post:
-      tags:
-        - AuthService
-      operationId: AuthService_Logout
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LogoutRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LogoutReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  public/signup:
-    post:
-      tags:
-        - AuthService
-      operationId: AuthService_Signup
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SignupRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SignupReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /user/announcements:
-    get:
-      tags:
-        - User
-      operationId: User_GetAnnouncements
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetAnnouncementsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /user/contests:
-    get:
-      tags:
-        - User
-      operationId: User_GetContests
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetContestsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/user/contests/{contestId}':
-    get:
-      tags:
-        - User
-      operationId: User_GetSingleContest
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSingleContestReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/user/contests/{contestId}/join':
-    get:
-      tags:
-        - User
-      operationId: User_GetJoinStatus
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetJoinStatusReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    post:
-      tags:
-        - User
-      operationId: User_JoinContest
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/JoinContestRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JoinContestReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    delete:
-      tags:
-        - User
-      operationId: User_QuitContest
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/QuitContestReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/user/contests/{contestId}/problems':
-    get:
-      tags:
-        - User
-      operationId: User_GetProblems
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetProblemsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/user/problems/{problemId}':
-    get:
-      tags:
-        - User
-      operationId: User_GetSingleProblem
-      parameters:
-        - name: problemId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSingleProblemReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /user/selftests:
-    post:
-      tags:
-        - User
-      operationId: User_PostSelfTest
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SelfTestRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SelfTestReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/user/selftests/{selftestUuid}':
-    get:
-      tags:
-        - User
-      operationId: User_GetSelfTestResult
-      parameters:
-        - name: selftestUuid
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSelfTestResultReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /user/submissions:
-    get:
-      tags:
-        - User
-      operationId: User_GetSubmissions
-      parameters:
-        - name: problemId
-          in: query
-          schema:
-            type: string
-        - name: contestId
-          in: query
-          schema:
-            type: string
-        - name: userId
-          in: query
-          schema:
-            type: string
-        - name: page
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: pageSize
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSubmissionsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    post:
-      tags:
-        - User
-      operationId: User_PostSubmission
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostSubmissionRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PostSubmissionReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/user/submissions/{submissionUuid}':
-    get:
-      tags:
-        - User
-      operationId: User_GetSingleSubmission
-      parameters:
-        - name: submissionUuid
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSingleSubmissionReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /user/users:
-    get:
-      tags:
-        - User
-      operationId: User_GetUserInfo
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetUserInfoReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    put:
-      tags:
-        - User
-      operationId: User_UpdateUserInfo
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserInfoRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UpdateUserInfoReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/user/{contestId}/ranks':
-    get:
-      tags:
-        - User
-      operationId: User_GetRanks
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetRanksReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /admin/announcements:
-    get:
-      tags:
-        - Admin
-      description: Get a list of announcements
-      operationId: Admin_GetAnnouncements
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetAnnouncementsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    post:
-      tags:
-        - Admin
-      description: Create a new announcement
-      operationId: Admin_PostAnnouncement
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostAnnouncementRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PostAnnouncementReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/announcements/{announcementId}':
-    put:
-      tags:
-        - Admin
-      description: Update an existing announcement
-      operationId: Admin_PutAnnouncement
-      parameters:
-        - name: announcementId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PutAnnouncementRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PutAnnouncementReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    delete:
-      tags:
-        - Admin
-      description: Delete an announcement
-      operationId: Admin_DeleteAnnouncement
-      parameters:
-        - name: announcementId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteAnnouncementReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /admin/contests:
-    get:
-      tags:
-        - Admin
-      description: Get a list of contests
-      operationId: Admin_GetContests
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetContestsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    post:
-      tags:
-        - Admin
-      description: Create a new contest
-      operationId: Admin_PostContest
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostContestRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PostContestReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/contests/{contestId}':
-    get:
-      tags:
-        - Admin
-      description: Get a single contest's details
-      operationId: Admin_GetSingleContest
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSingleContestReply1'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    put:
-      tags:
-        - Admin
-      description: Update an existing contest
-      operationId: Admin_PutContest
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PutContestRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PutContestReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    delete:
-      tags:
-        - Admin
-      description: Delete a contest
-      operationId: Admin_DeleteContest
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteContestReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/contests/{contestId}/competitors':
-    get:
-      tags:
-        - Admin
-      operationId: Admin_GetContestCompetitors
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetContestCompetitorsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    put:
-      tags:
-        - Admin
-      operationId: Admin_PutContestCompetitors
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PutContestCompetitorsRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PutContestCompetitorsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/contests/{contestId}/statistics':
-    get:
-      tags:
-        - Admin
-      description: Get statistics for a contest
-      operationId: Admin_GetContestStatistics
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetContestStatisticsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /admin/logs/content:
-    get:
-      tags:
-        - Admin
-      description: Query content from a log file
-      operationId: Admin_QueryLogContent
-      parameters:
-        - name: filename
-          in: query
-          schema:
-            type: string
-        - name: level
-          in: query
-          schema:
-            type: string
-        - name: timeStart
-          in: query
-          schema:
-            type: string
-            format: date-time
-        - name: timeEnd
-          in: query
-          schema:
-            type: string
-            format: date-time
-        - name: pageSize
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: offset
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/QueryLogContentReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /admin/logs/download:
-    post:
-      tags:
-        - Admin
-      description: Download log files as a zip archive
-      operationId: Admin_DownloadLogs
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DownloadLogsRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            '*/*': {}
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /admin/logs/files:
-    get:
-      tags:
-        - Admin
-      description: List available log files
-      operationId: Admin_ListLogFiles
-      parameters:
-        - name: pageSize
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: offset
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListLogFilesReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /admin/problems:
-    get:
-      tags:
-        - Admin
-      description: Get a list of problems
-      operationId: Admin_GetProblems
-      parameters:
-        - name: contestId
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetProblemsReply1'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    post:
-      tags:
-        - Admin
-      description: Create a new problem
-      operationId: Admin_PostProblem
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostProblemRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PostProblemReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/problems/{problemId}':
-    get:
-      tags:
-        - Admin
-      description: Get a single problem's details
-      operationId: Admin_GetSingleProblem
-      parameters:
-        - name: problemId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSingleProblemReply1'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    put:
-      tags:
-        - Admin
-      description: Update an existing problem
-      operationId: Admin_PutProblem
-      parameters:
-        - name: problemId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PutProblemRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PutProblemReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    delete:
-      tags:
-        - Admin
-      description: Delete a problem
-      operationId: Admin_DeleteProblem
-      parameters:
-        - name: problemId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteProblemReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/problems/{problemId}/disable':
-    post:
-      tags:
-        - Admin
-      description: Disable a problem (change status to DISABLED)
-      operationId: Admin_DisableProblem
-      parameters:
-        - name: problemId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DisableProblemRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DisableProblemReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/problems/{problemId}/publish':
-    post:
-      tags:
-        - Admin
-      description: Publish a problem to make it visible
-      operationId: Admin_PublishProblem
-      parameters:
-        - name: problemId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PublishProblemRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PublishProblemReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /admin/submissions:
-    get:
-      tags:
-        - Admin
-      description: Get a list of submissions
-      operationId: Admin_GetSubmissions
-      parameters:
-        - name: problemId
-          in: query
-          schema:
-            type: string
-        - name: contestId
-          in: query
-          schema:
-            type: string
-        - name: userId
-          in: query
-          schema:
-            type: string
-        - name: page
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: pageSize
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSubmissionsReply1'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/submissions/{submissionUuid}':
-    get:
-      tags:
-        - Admin
-      description: Get a single submission's details
-      operationId: Admin_GetSingleSubmission
-      parameters:
-        - name: submissionUuid
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSingleSubmissionReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/submissions/{submissionUuid}/rejudge':
-    post:
-      tags:
-        - Admin
-      description: Rejudge a submission
-      operationId: Admin_RejudgeSubmission
-      parameters:
-        - name: submissionUuid
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RejudgeSubmissionRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RejudgeSubmissionReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /admin/users:
-    get:
-      tags:
-        - Admin
-      description: Get a list of users
-      operationId: Admin_GetUsers
-      parameters:
-        - name: page
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: pageSize
-          in: query
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetUsersReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/users/{userId}':
-    put:
-      tags:
-        - Admin
-      description: Update user information
-      operationId: Admin_UpdateUserInfo
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserInfoRequest1'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UpdateUserInfoReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-    delete:
-      tags:
-        - Admin
-      description: Delete a user
-      operationId: Admin_DeleteUser
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteUserReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/users/{userId}/password':
-    put:
-      tags:
-        - Admin
-      description: Update user password
-      operationId: Admin_UpdateUserPassword
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserPasswordRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UpdateUserPasswordReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/admin/{contestId}/ranks':
-    get:
-      tags:
-        - Admin
-      description: Get contest rankings
-      operationId: Admin_GetRanks
-      parameters:
-        - name: contestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetRanksReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /aiops/v1/analysis/trigger:
-    post:
-      tags:
-        - AIOps
-      description: >-
-        TriggerAnalysis manually triggers an alert analysis and noise reduction
-        run.
-      operationId: AIOps_TriggerAnalysis
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TriggerAnalysisRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TriggerAnalysisReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /aiops/v1/metrics:
-    get:
-      tags:
-        - AIOps
-      description: GetMetricsSummary returns current metrics summary for debugging.
-      operationId: AIOps_GetMetricsSummary
-      parameters:
-        - name: services
-          in: query
-          description: Optional list of services to query (empty = all).
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetMetricsSummaryReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  /aiops/v1/reports:
-    get:
-      tags:
-        - AIOps
-      description: ListReports lists historical analysis reports.
-      operationId: AIOps_ListReports
-      parameters:
-        - name: page
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: pageSize
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: statusFilter
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListReportsReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/aiops/v1/reports/{reportId}':
-    get:
-      tags:
-        - AIOps
-      description: GetReport retrieves a historical analysis report by ID or time range.
-      operationId: AIOps_GetReport
-      parameters:
-        - name: reportId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetReportReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-  '/aiops/v1/reports/{reportId}/ack':
-    post:
-      tags:
-        - AIOps
-      description: AckReport acknowledges a report.
-      operationId: AIOps_AckReport
-      parameters:
-        - name: reportId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AckReportRequest'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AckReportReply'
-        default:
-          description: Default error response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
+    /admin/announcements:
+        get:
+            tags:
+                - Admin
+            description: Get a list of announcements
+            operationId: Admin_GetAnnouncements
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetAnnouncementsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - Admin
+            description: Create a new announcement
+            operationId: Admin_PostAnnouncement
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PostAnnouncementRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PostAnnouncementReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/announcements/{announcementId}:
+        put:
+            tags:
+                - Admin
+            description: Update an existing announcement
+            operationId: Admin_PutAnnouncement
+            parameters:
+                - name: announcementId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PutAnnouncementRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PutAnnouncementReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Admin
+            description: Delete an announcement
+            operationId: Admin_DeleteAnnouncement
+            parameters:
+                - name: announcementId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteAnnouncementReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/contests:
+        get:
+            tags:
+                - Admin
+            description: Get a list of contests
+            operationId: Admin_GetContests
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetContestsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - Admin
+            description: Create a new contest
+            operationId: Admin_PostContest
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PostContestRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PostContestReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/contests/{contestId}:
+        get:
+            tags:
+                - Admin
+            description: Get a single contest's details
+            operationId: Admin_GetSingleContest
+            parameters:
+                - name: contestId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSingleContestReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        put:
+            tags:
+                - Admin
+            description: Update an existing contest
+            operationId: Admin_PutContest
+            parameters:
+                - name: contestId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PutContestRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PutContestReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Admin
+            description: Delete a contest
+            operationId: Admin_DeleteContest
+            parameters:
+                - name: contestId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteContestReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/contests/{contestId}/competitors:
+        get:
+            tags:
+                - Admin
+            operationId: Admin_GetContestCompetitors
+            parameters:
+                - name: contestId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetContestCompetitorsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        put:
+            tags:
+                - Admin
+            operationId: Admin_PutContestCompetitors
+            parameters:
+                - name: contestId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PutContestCompetitorsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PutContestCompetitorsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/contests/{contestId}/statistics:
+        get:
+            tags:
+                - Admin
+            description: Get statistics for a contest
+            operationId: Admin_GetContestStatistics
+            parameters:
+                - name: contestId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetContestStatisticsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/logs/content:
+        get:
+            tags:
+                - Admin
+            description: Query content from a log file
+            operationId: Admin_QueryLogContent
+            parameters:
+                - name: filename
+                  in: query
+                  schema:
+                    type: string
+                - name: level
+                  in: query
+                  schema:
+                    type: string
+                - name: timeStart
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: timeEnd
+                  in: query
+                  schema:
+                    type: string
+                    format: date-time
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: offset
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/QueryLogContentReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/logs/download:
+        post:
+            tags:
+                - Admin
+            description: Download log files as a zip archive
+            operationId: Admin_DownloadLogs
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/DownloadLogsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        '*/*': {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/logs/files:
+        get:
+            tags:
+                - Admin
+            description: List available log files
+            operationId: Admin_ListLogFiles
+            parameters:
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: offset
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListLogFilesReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/problems:
+        get:
+            tags:
+                - Admin
+            description: Get a list of problems
+            operationId: Admin_GetProblems
+            parameters:
+                - name: contestId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetProblemsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - Admin
+            description: Create a new problem
+            operationId: Admin_PostProblem
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PostProblemRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PostProblemReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/problems/{problemId}:
+        get:
+            tags:
+                - Admin
+            description: Get a single problem's details
+            operationId: Admin_GetSingleProblem
+            parameters:
+                - name: problemId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSingleProblemReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        put:
+            tags:
+                - Admin
+            description: Update an existing problem
+            operationId: Admin_PutProblem
+            parameters:
+                - name: problemId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PutProblemRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PutProblemReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Admin
+            description: Delete a problem
+            operationId: Admin_DeleteProblem
+            parameters:
+                - name: problemId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteProblemReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/problems/{problemId}/disable:
+        post:
+            tags:
+                - Admin
+            description: Disable a problem (change status to DISABLED)
+            operationId: Admin_DisableProblem
+            parameters:
+                - name: problemId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/DisableProblemRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DisableProblemReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/problems/{problemId}/publish:
+        post:
+            tags:
+                - Admin
+            description: Publish a problem to make it visible
+            operationId: Admin_PublishProblem
+            parameters:
+                - name: problemId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PublishProblemRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/PublishProblemReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/submissions:
+        get:
+            tags:
+                - Admin
+            description: Get a list of submissions
+            operationId: Admin_GetSubmissions
+            parameters:
+                - name: problemId
+                  in: query
+                  schema:
+                    type: string
+                - name: contestId
+                  in: query
+                  schema:
+                    type: string
+                - name: userId
+                  in: query
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSubmissionsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/submissions/{submissionUuid}:
+        get:
+            tags:
+                - Admin
+            description: Get a single submission's details
+            operationId: Admin_GetSingleSubmission
+            parameters:
+                - name: submissionUuid
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSingleSubmissionReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/submissions/{submissionUuid}/rejudge:
+        post:
+            tags:
+                - Admin
+            description: Rejudge a submission
+            operationId: Admin_RejudgeSubmission
+            parameters:
+                - name: submissionUuid
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RejudgeSubmissionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RejudgeSubmissionReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/users:
+        get:
+            tags:
+                - Admin
+            description: Get a list of users
+            operationId: Admin_GetUsers
+            parameters:
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetUsersReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/users/{userId}:
+        put:
+            tags:
+                - Admin
+            description: Update user information
+            operationId: Admin_UpdateUserInfo
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateUserInfoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateUserInfoReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Admin
+            description: Delete a user
+            operationId: Admin_DeleteUser
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteUserReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/users/{userId}/password:
+        put:
+            tags:
+                - Admin
+            description: Update user password
+            operationId: Admin_UpdateUserPassword
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateUserPasswordRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateUserPasswordReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /admin/{contestId}/ranks:
+        get:
+            tags:
+                - Admin
+            description: Get contest rankings
+            operationId: Admin_GetRanks
+            parameters:
+                - name: contestId
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetRanksReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
-  schemas:
-    GoogleProtobufAny:
-      type: object
-      properties:
-        '@type':
-          type: string
-          description: The type of the serialized message.
-      additionalProperties: true
-      description: >-
-        Contains an arbitrary serialized message along with a @type that
-        describes the type of the serialized message.
-    LoginReply:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-        token:
-          type: string
-    LoginRequest:
-      type: object
-      properties:
-        usernameOrEmail:
-          type: string
-        password:
-          type: string
-    LogoutReply:
-      type: object
-      properties:
-        success:
-          type: boolean
-    LogoutRequest:
-      type: object
-      properties: {}
-    SignupReply:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    SignupRequest:
-      type: object
-      properties:
-        username:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-    Status:
-      type: object
-      properties:
-        code:
-          type: integer
-          description: >-
-            The status code, which should be an enum value of
-            [google.rpc.Code][google.rpc.Code].
-          format: int32
-        message:
-          type: string
-          description: >-
-            A developer-facing error message, which should be in English. Any
-            user-facing error message should be localized and sent in the
-            [google.rpc.Status.details][google.rpc.Status.details] field, or
-            localized by the client.
-        details:
-          type: array
-          items:
-            $ref: '#/components/schemas/GoogleProtobufAny'
-          description: >-
-            A list of messages that carry the error details.  There is a common
-            set of message types for APIs to use.
-      description: >-
-        The `Status` type defines a logical error model that is suitable for
-        different programming environments, including REST APIs and RPC APIs. It
-        is used by [gRPC](https://github.com/grpc). Each `Status` message
-        contains three pieces of data: error code, error message, and error
-        details. You can find out more about this error model and how to work
-        with it in the [API Design
-        Guide](https://cloud.google.com/apis/design/errors).
-    CaseMetadata:
-      type: object
-      properties:
-        score:
-          type: integer
-          format: int32
-        status:
-          type: string
-        timeCost:
-          type: integer
-          format: int32
-        memoryCost:
-          type: integer
-          format: int32
-    ContestMetadata:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        startTime:
-          type: string
-          format: date-time
-        endTime:
-          type: string
-          format: date-time
-        status:
-          type: string
-    GetAnnouncementsReply:
-      type: object
-      properties:
-        announcements:
-          type: array
-          items:
-            $ref: '#/components/schemas/GetAnnouncementsReply_Announcement'
-    GetAnnouncementsReply_Announcement:
-      type: object
-      properties:
-        id:
-          type: string
-        publisherName:
-          type: string
-        title:
-          type: string
-        content:
-          type: string
-    GetContestsReply:
-      type: object
-      properties:
-        contests:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContestMetadata'
-    GetJoinStatusReply:
-      type: object
-      properties:
-        isJoin:
-          type: boolean
-    GetProblemsReply:
-      type: object
-      properties:
-        problems:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProblemMetadata'
-    GetRanksReply:
-      type: object
-      properties:
-        ranks:
-          type: array
-          items:
-            $ref: '#/components/schemas/GetRanksReply_RankItem'
-    GetRanksReply_RankItem:
-      type: object
-      properties:
-        userId:
-          type: string
-        username:
-          type: string
-        rank:
-          type: integer
-          format: int32
-        score:
-          type: integer
-          format: int32
-    GetSelfTestResultReply:
-      type: object
-      properties:
-        isCompiled:
-          type: boolean
-        stdout:
-          type: string
-        stderr:
-          type: string
-        timeCost:
-          type: integer
-          format: int32
-        memoryCost:
-          type: integer
-          format: int32
-    GetSingleContestReply:
-      type: object
-      properties:
-        metadata:
-          $ref: '#/components/schemas/ContestMetadata'
-        description:
-          type: string
-    GetSingleProblemReply:
-      type: object
-      properties:
-        metadata:
-          $ref: '#/components/schemas/ProblemMetadata'
-        creator:
-          type: string
-        description:
-          type: string
-    GetSingleSubmissionReply:
-      type: object
-      properties:
-        metadata:
-          $ref: '#/components/schemas/SubmissionMetadata'
-        code:
-          type: string
-        language:
-          type: string
-        timeCost:
-          type: integer
-          format: int32
-        memoryCost:
-          type: integer
-          format: int32
-        caseResults:
-          $ref: '#/components/schemas/GetSingleSubmissionReply_CaseResults'
-    GetSingleSubmissionReply_CaseResults:
-      type: object
-      properties:
-        cases:
-          type: array
-          items:
-            $ref: '#/components/schemas/CaseMetadata'
-    GetSubmissionsReply:
-      type: object
-      properties:
-        submissions:
-          type: array
-          items:
-            $ref: '#/components/schemas/GetSubmissionsReply_SubmissionResult'
-    GetSubmissionsReply_SubmissionResult:
-      type: object
-      properties:
-        submissionUuid:
-          type: string
-        status:
-          type: string
-        submitTime:
-          type: string
-          format: date-time
-        score:
-          type: integer
-          format: int32
-        language:
-          type: string
-        timeCost:
-          type: integer
-          format: int32
-        memoryCost:
-          type: integer
-          format: int32
-    GetUserInfoReply:
-      type: object
-      properties:
-        userId:
-          type: string
-        username:
-          type: string
-        email:
-          type: string
-    JoinContestReply:
-      type: object
-      properties:
-        isJoin:
-          type: boolean
-    JoinContestRequest:
-      type: object
-      properties:
-        contestId:
-          type: string
-    PostSubmissionReply:
-      type: object
-      properties:
-        uuid:
-          type: string
-    PostSubmissionRequest:
-      type: object
-      properties:
-        contestId:
-          type: string
-        problemId:
-          type: string
-        code:
-          type: string
-        language:
-          type: string
-    ProblemMetadata:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        timeLimitMs:
-          type: integer
-          format: int32
-        memoryLimitMb:
-          type: integer
-          format: int32
-    QuitContestReply:
-      type: object
-      properties:
-        isJoin:
-          type: boolean
-    SelfTestReply:
-      type: object
-      properties:
-        uuid:
-          type: string
-    SelfTestRequest:
-      type: object
-      properties:
-        problemId:
-          type: string
-        code:
-          type: string
-        language:
-          type: string
-        input:
-          type: string
-    SubmissionMetadata:
-      type: object
-      properties:
-        submissionUuid:
-          type: string
-        problemId:
-          type: string
-        userId:
-          type: string
-        status:
-          type: string
-        submitTime:
-          type: string
-          format: date-time
-        score:
-          type: integer
-          format: int32
-    UpdateUserInfoReply:
-      type: object
-      properties:
-        isUpdated:
-          type: boolean
-    UpdateUserInfoRequest:
-      type: object
-      properties:
-        username:
-          type: string
-        email:
-          type: string
-    DeleteAnnouncementReply:
-      type: object
-      properties:
-        isDeleted:
-          type: boolean
-    DeleteContestReply:
-      type: object
-      properties:
-        isDeleted:
-          type: boolean
-    DeleteProblemReply:
-      type: object
-      properties:
-        isDeleted:
-          type: boolean
-    DeleteUserReply:
-      type: object
-      properties:
-        isDeleted:
-          type: boolean
-    DisableProblemReply:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-    DisableProblemRequest:
-      type: object
-      properties:
-        problemId:
-          type: string
-    DownloadLogsRequest:
-      type: object
-      properties:
-        filenames:
-          type: array
-          items:
-            type: string
-    GetContestCompetitorsReply:
-      type: object
-      properties:
-        competitors:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserInfo'
-    GetContestStatisticsReply:
-      type: object
-      properties:
-        statisticsJson:
-          type: string
-          description: TODO
-    GetProblemsReply1:
-      type: object
-      properties:
-        problems:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProblemMetadata1'
-    GetSingleContestReply1:
-      type: object
-      properties:
-        metadata:
-          $ref: '#/components/schemas/ContestMetadata'
-        description:
-          type: string
-        problemIds:
-          type: array
-          items:
-            type: string
-    GetSingleProblemReply1:
-      type: object
-      properties:
-        metadata:
-          $ref: '#/components/schemas/ProblemMetadata1'
-        creator:
-          type: string
-        description:
-          type: string
-        codeTemplate:
-          type: string
-    GetSubmissionsReply1:
-      type: object
-      properties:
-        submissions:
-          type: array
-          items:
-            $ref: '#/components/schemas/SubmissionMetadata'
-    GetUsersReply:
-      type: object
-      properties:
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/UserInfo'
-    ListLogFilesReply:
-      type: object
-      properties:
-        filenames:
-          type: array
-          items:
-            type: string
-        total:
-          type: integer
-          format: int32
-    PostAnnouncementReply:
-      type: object
-      properties:
-        announcementId:
-          type: string
-    PostAnnouncementRequest:
-      type: object
-      properties:
-        title:
-          type: string
-        content:
-          type: string
-    PostContestReply:
-      type: object
-      properties:
-        contestId:
-          type: string
-    PostContestRequest:
-      type: object
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        startTime:
-          type: string
-          format: date-time
-        endTime:
-          type: string
-          format: date-time
-        problems:
-          $ref: '#/components/schemas/PostContestRequest_ProblemList'
-    PostContestRequest_ProblemList:
-      type: object
-      properties:
-        problemIds:
-          type: array
-          items:
-            type: string
-    PostProblemReply:
-      type: object
-      properties:
-        problemId:
-          type: string
-    PostProblemRequest:
-      type: object
-      properties:
-        metadata:
-          $ref: '#/components/schemas/ProblemMetadata1'
-        description:
-          type: string
-        codeTemplate:
-          type: string
-    ProblemMetadata1:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        timeLimitMs:
-          type: integer
-          format: int32
-        memoryLimitMb:
-          type: integer
-          format: int32
-        description:
-          type: string
-        status:
-          type: integer
-          format: enum
-    PublishProblemReply:
-      type: object
-      properties:
-        isSuccess:
-          type: boolean
-    PublishProblemRequest:
-      type: object
-      properties:
-        problemId:
-          type: string
-    PutAnnouncementReply:
-      type: object
-      properties:
-        isUpdated:
-          type: boolean
-    PutAnnouncementRequest:
-      type: object
-      properties:
-        announcementId:
-          type: string
-        title:
-          type: string
-        content:
-          type: string
-    PutContestCompetitorsReply:
-      type: object
-      properties:
-        isUpdated:
-          type: boolean
-    PutContestCompetitorsRequest:
-      type: object
-      properties:
-        contestId:
-          type: string
-        userIds:
-          type: array
-          items:
-            type: string
-    PutContestReply:
-      type: object
-      properties:
-        isUpdated:
-          type: boolean
-    PutContestRequest:
-      type: object
-      properties:
-        contestId:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        startTime:
-          type: string
-          format: date-time
-        endTime:
-          type: string
-          format: date-time
-        problems:
-          $ref: '#/components/schemas/PutContestRequest_ProblemList'
-    PutContestRequest_ProblemList:
-      type: object
-      properties:
-        problemIds:
-          type: array
-          items:
-            type: string
-    PutProblemReply:
-      type: object
-      properties:
-        isUpdated:
-          type: boolean
-    PutProblemRequest:
-      type: object
-      properties:
-        problemId:
-          type: string
-        metadata:
-          $ref: '#/components/schemas/ProblemMetadata1'
-        description:
-          type: string
-        codeTemplate:
-          type: string
-    QueryLogContentReply:
-      type: object
-      properties:
-        lines:
-          type: array
-          items:
-            type: string
-        total:
-          type: integer
-          format: int32
-    RejudgeSubmissionReply:
-      type: object
-      properties:
-        newSubmissionUuid:
-          type: string
-    RejudgeSubmissionRequest:
-      type: object
-      properties:
-        submissionUuid:
-          type: string
-    UpdateUserInfoRequest1:
-      type: object
-      properties:
-        userId:
-          type: string
-        username:
-          type: string
-        email:
-          type: string
-    UpdateUserPasswordReply:
-      type: object
-      properties:
-        isUpdated:
-          type: boolean
-    UpdateUserPasswordRequest:
-      type: object
-      properties:
-        userId:
-          type: string
-        password:
-          type: string
-    UserInfo:
-      type: object
-      properties:
-        userId:
-          type: string
-        username:
-          type: string
-        email:
-          type: string
-    AckReportReply:
-      type: object
-      properties: {}
-    AckReportRequest:
-      type: object
-      properties:
-        reportId:
-          type: string
-    GetMetricsSummaryReply:
-      type: object
-      properties:
-        prometheusStatus:
-          type: string
-        metricsSnapshotJson:
-          type: string
-        queriedAt:
-          type: string
-          format: date-time
-      description: GetMetricsSummaryReply contains current metrics data.
-    GetReportReply:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        summary:
-          type: string
-        rootCausesJson:
-          type: string
-        suggestedActionsJson:
-          type: string
-        noiseCount:
-          type: integer
-          format: int32
-        realRiskCount:
-          type: integer
-          format: int32
-        status:
-          type: string
-        fullReportMarkdown:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        acknowledgedAt:
-          type: string
-          format: date-time
-      description: GetReportReply contains the full report details.
-    ListReportsReply:
-      type: object
-      properties:
-        reports:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReportSummary'
-        total:
-          type: integer
-          format: int32
-      description: ListReportsReply contains a paginated list of report summaries.
-    ReportSummary:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        noiseCount:
-          type: integer
-          format: int32
-        realRiskCount:
-          type: integer
-          format: int32
-        status:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-      description: ReportSummary is a brief report overview for list display.
-    TriggerAnalysisReply:
-      type: object
-      properties:
-        reportId:
-          type: string
-        title:
-          type: string
-        summary:
-          type: string
-        noiseCount:
-          type: integer
-          format: int32
-        realRiskCount:
-          type: integer
-          format: int32
-        fullReportMarkdown:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-      description: TriggerAnalysisReply contains the analysis result.
-    TriggerAnalysisRequest:
-      type: object
-      properties:
-        timeRangeMinutes:
-          type: integer
-          description: Optional time range in minutes before now (default 15).
-          format: int32
-        services:
-          type: array
-          items:
-            type: string
-          description: Optional list of service names to analyze (empty = all).
-      description: >-
-        TriggerAnalysisRequest is the request for manually triggering an
-        analysis.
+    schemas:
+        CaseMetadata:
+            type: object
+            properties:
+                score:
+                    type: integer
+                    format: int32
+                status:
+                    type: string
+                timeCost:
+                    type: integer
+                    format: int32
+                memoryCost:
+                    type: integer
+                    format: int32
+        CodeTemplate:
+            type: object
+            properties:
+                language:
+                    type: string
+                code:
+                    type: string
+                name:
+                    type: string
+        ContestMetadata:
+            type: object
+            properties:
+                id:
+                    type: string
+                title:
+                    type: string
+                startTime:
+                    type: string
+                    format: date-time
+                endTime:
+                    type: string
+                    format: date-time
+                status:
+                    type: string
+        DeleteAnnouncementReply:
+            type: object
+            properties:
+                isDeleted:
+                    type: boolean
+        DeleteContestReply:
+            type: object
+            properties:
+                isDeleted:
+                    type: boolean
+        DeleteProblemReply:
+            type: object
+            properties:
+                isDeleted:
+                    type: boolean
+        DeleteUserReply:
+            type: object
+            properties:
+                isDeleted:
+                    type: boolean
+        DisableProblemReply:
+            type: object
+            properties:
+                isSuccess:
+                    type: boolean
+        DisableProblemRequest:
+            type: object
+            properties:
+                problemId:
+                    type: string
+        DownloadLogsRequest:
+            type: object
+            properties:
+                filenames:
+                    type: array
+                    items:
+                        type: string
+        GetAnnouncementsReply:
+            type: object
+            properties:
+                announcements:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GetAnnouncementsReply_Announcement'
+        GetAnnouncementsReply_Announcement:
+            type: object
+            properties:
+                id:
+                    type: string
+                publisherName:
+                    type: string
+                title:
+                    type: string
+                content:
+                    type: string
+        GetContestCompetitorsReply:
+            type: object
+            properties:
+                competitors:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfo'
+        GetContestStatisticsReply:
+            type: object
+            properties:
+                statisticsJson:
+                    type: string
+                    description: TODO
+        GetContestsReply:
+            type: object
+            properties:
+                contests:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ContestMetadata'
+        GetProblemsReply:
+            type: object
+            properties:
+                problems:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ProblemMetadata'
+        GetRanksReply:
+            type: object
+            properties:
+                ranks:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GetRanksReply_RankItem'
+        GetRanksReply_RankItem:
+            type: object
+            properties:
+                userId:
+                    type: string
+                username:
+                    type: string
+                rank:
+                    type: integer
+                    format: int32
+                score:
+                    type: integer
+                    format: int32
+        GetSingleContestReply:
+            type: object
+            properties:
+                metadata:
+                    $ref: '#/components/schemas/ContestMetadata'
+                description:
+                    type: string
+                problemIds:
+                    type: array
+                    items:
+                        type: string
+        GetSingleProblemReply:
+            type: object
+            properties:
+                metadata:
+                    $ref: '#/components/schemas/ProblemMetadata'
+                creator:
+                    type: string
+                description:
+                    type: string
+                templates:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/CodeTemplate'
+        GetSingleSubmissionReply:
+            type: object
+            properties:
+                metadata:
+                    $ref: '#/components/schemas/SubmissionMetadata'
+                code:
+                    type: string
+                language:
+                    type: string
+                timeCost:
+                    type: integer
+                    format: int32
+                memoryCost:
+                    type: integer
+                    format: int32
+                caseResults:
+                    $ref: '#/components/schemas/GetSingleSubmissionReply_CaseResults'
+        GetSingleSubmissionReply_CaseResults:
+            type: object
+            properties:
+                cases:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/CaseMetadata'
+        GetSubmissionsReply:
+            type: object
+            properties:
+                submissions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SubmissionMetadata'
+        GetUsersReply:
+            type: object
+            properties:
+                users:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfo'
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListLogFilesReply:
+            type: object
+            properties:
+                filenames:
+                    type: array
+                    items:
+                        type: string
+                total:
+                    type: integer
+                    format: int32
+        PostAnnouncementReply:
+            type: object
+            properties:
+                announcementId:
+                    type: string
+        PostAnnouncementRequest:
+            type: object
+            properties:
+                title:
+                    type: string
+                content:
+                    type: string
+        PostContestReply:
+            type: object
+            properties:
+                contestId:
+                    type: string
+        PostContestRequest:
+            type: object
+            properties:
+                title:
+                    type: string
+                description:
+                    type: string
+                startTime:
+                    type: string
+                    format: date-time
+                endTime:
+                    type: string
+                    format: date-time
+                problems:
+                    $ref: '#/components/schemas/PostContestRequest_ProblemList'
+        PostContestRequest_ProblemList:
+            type: object
+            properties:
+                problemIds:
+                    type: array
+                    items:
+                        type: string
+        PostProblemReply:
+            type: object
+            properties:
+                problemId:
+                    type: string
+        PostProblemRequest:
+            type: object
+            properties:
+                metadata:
+                    $ref: '#/components/schemas/ProblemMetadata'
+                description:
+                    type: string
+                templates:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/CodeTemplate'
+        ProblemMetadata:
+            type: object
+            properties:
+                id:
+                    type: string
+                title:
+                    type: string
+                timeLimitMs:
+                    type: integer
+                    format: int32
+                memoryLimitMb:
+                    type: integer
+                    format: int32
+                description:
+                    type: string
+                status:
+                    type: integer
+                    format: enum
+        PublishProblemReply:
+            type: object
+            properties:
+                isSuccess:
+                    type: boolean
+        PublishProblemRequest:
+            type: object
+            properties:
+                problemId:
+                    type: string
+        PutAnnouncementReply:
+            type: object
+            properties:
+                isUpdated:
+                    type: boolean
+        PutAnnouncementRequest:
+            type: object
+            properties:
+                announcementId:
+                    type: string
+                title:
+                    type: string
+                content:
+                    type: string
+        PutContestCompetitorsReply:
+            type: object
+            properties:
+                isUpdated:
+                    type: boolean
+        PutContestCompetitorsRequest:
+            type: object
+            properties:
+                contestId:
+                    type: string
+                userIds:
+                    type: array
+                    items:
+                        type: string
+        PutContestReply:
+            type: object
+            properties:
+                isUpdated:
+                    type: boolean
+        PutContestRequest:
+            type: object
+            properties:
+                contestId:
+                    type: string
+                title:
+                    type: string
+                description:
+                    type: string
+                startTime:
+                    type: string
+                    format: date-time
+                endTime:
+                    type: string
+                    format: date-time
+                problems:
+                    $ref: '#/components/schemas/PutContestRequest_ProblemList'
+        PutContestRequest_ProblemList:
+            type: object
+            properties:
+                problemIds:
+                    type: array
+                    items:
+                        type: string
+        PutProblemReply:
+            type: object
+            properties:
+                isUpdated:
+                    type: boolean
+        PutProblemRequest:
+            type: object
+            properties:
+                problemId:
+                    type: string
+                metadata:
+                    $ref: '#/components/schemas/ProblemMetadata'
+                description:
+                    type: string
+                templates:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/CodeTemplate'
+        QueryLogContentReply:
+            type: object
+            properties:
+                lines:
+                    type: array
+                    items:
+                        type: string
+                total:
+                    type: integer
+                    format: int32
+        RejudgeSubmissionReply:
+            type: object
+            properties:
+                newSubmissionUuid:
+                    type: string
+        RejudgeSubmissionRequest:
+            type: object
+            properties:
+                submissionUuid:
+                    type: string
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        SubmissionMetadata:
+            type: object
+            properties:
+                submissionUuid:
+                    type: string
+                problemId:
+                    type: string
+                userId:
+                    type: string
+                status:
+                    type: string
+                submitTime:
+                    type: string
+                    format: date-time
+                score:
+                    type: integer
+                    format: int32
+        UpdateUserInfoReply:
+            type: object
+            properties:
+                isUpdated:
+                    type: boolean
+        UpdateUserInfoRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                username:
+                    type: string
+                email:
+                    type: string
+        UpdateUserPasswordReply:
+            type: object
+            properties:
+                isUpdated:
+                    type: boolean
+        UpdateUserPasswordRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+                password:
+                    type: string
+        UserInfo:
+            type: object
+            properties:
+                userId:
+                    type: string
+                username:
+                    type: string
+                email:
+                    type: string
+tags:
+    - name: Admin

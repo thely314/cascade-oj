@@ -18,8 +18,8 @@ export interface ProblemMetadata {
     title: string;
     timeLimitMs: number;
     memoryLimitMb: number;
-    status: ProblemStatus;
     description: string;
+    status: ProblemStatus;
 }
 
 export interface SubmissionMetadata {
@@ -130,13 +130,13 @@ export interface GetSingleProblemReply {
     metadata: ProblemMetadata;
     creator: string;
     description: string;
-    codeTemplate: string;
+    templates: CodeTemplate[]; 
 }
 
 export interface PostProblemRequest {
     metadata: ProblemMetadata;
     description: string;
-    codeTemplate: string; 
+    templates: CodeTemplate[]; 
 }
 
 export interface PostProblemReply {
@@ -147,7 +147,7 @@ export interface PutProblemRequest {
     problemId: number;
     metadata: ProblemMetadata;
     description: string;
-    codeTemplate: string; 
+    templates: CodeTemplate[]; 
 }
 
 export interface PutProblemReply {
@@ -305,4 +305,15 @@ export interface QueryLogContentReply {
 
 export interface DownloadLogsRequest {
     filenames: string[];
+}
+
+export interface CodeTemplate {
+    language: string;
+    name: string;
+    code: string;
+}
+
+export interface UploadTestCasesReply {
+    isSuccess: boolean;
+    message: string;
 }

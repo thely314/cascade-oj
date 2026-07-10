@@ -6,6 +6,10 @@ import (
 	"cascade-oj/pkg/middleware/auth"
 	"context"
 	"errors"
+	"strconv"
+	"strings"
+
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 )
 
 func mapBizStatusToPbStatus(status biz.ProblemStatus) pb.ProblemStatus {
@@ -55,11 +59,6 @@ func (adminService *AdminService) GetSingleProblem(ctx context.Context, request 
 		return nil, err
 	}
 
-	var templateStr string
-	if len(problem.Problem.Templates) > 0 {
-		templateStr = problem.Problem.Templates[0].Content
-	}
-
 	return &pb.GetSingleProblemReply{
 		Metadata: &pb.ProblemMetadata{
 			Id:            problem.Problem.ID,
@@ -69,9 +68,9 @@ func (adminService *AdminService) GetSingleProblem(ctx context.Context, request 
 			Status:        mapBizStatusToPbStatus(problem.Problem.Status),
 			Description:   problem.Problem.Description,
 		},
-		Creator:      problem.CreatorUsername,
-		Description:  problem.Description,
-		CodeTemplate: templateStr,
+		Creator:     problem.CreatorUsername,
+		Description: problem.Description,
+		Templates:   mapBizTemplatesToPb(problem.Problem.Templates),
 	}, nil
 }
 
@@ -87,12 +86,7 @@ func (adminService *AdminService) PostProblem(ctx context.Context, request *pb.P
 			TimeLimitMs:   request.Metadata.TimeLimitMs,
 			MemoryLimitKB: request.Metadata.MemoryLimitMb * 1024,
 			Description:   request.Description,
-			Templates: []*biz.ProblemTemplate{
-				{
-					Name:    "main.cpp",
-					Content: request.CodeTemplate,
-				},
-			},
+			Templates:     mapPbTemplatesToBiz(request.Templates),
 		})
 
 	if err != nil {
@@ -111,12 +105,7 @@ func (adminService *AdminService) PutProblem(ctx context.Context, request *pb.Pu
 			TimeLimitMs:   request.Metadata.TimeLimitMs,
 			MemoryLimitKB: request.Metadata.MemoryLimitMb * 1024,
 			Description:   request.Description,
-			Templates: []*biz.ProblemTemplate{
-				{
-					Name:    "main.cpp",
-					Content: request.CodeTemplate,
-				},
-			},
+			Templates:     mapPbTemplatesToBiz(request.Templates),
 		})
 	if err != nil {
 		return nil, err
@@ -154,4 +143,76 @@ func (adminService *AdminService) DisableProblem(ctx context.Context, request *p
 	return &pb.DisableProblemReply{
 		IsSuccess: isSuccess,
 	}, nil
+}
+
+func mapPbTemplatesToBiz(pbTemplates []*pb.CodeTemplate) []*biz.ProblemTemplate {
+	bizTemplates := make([]*biz.ProblemTemplate, 0, len(pbTemplates))
+	for _, t := range pbTemplates {
+		// 将语言和文件名拼接，例如 "cpp/main.cpp"
+		fileName := t.Language + "/" + t.Name
+		bizTemplates = append(bizTemplates, &biz.ProblemTemplate{
+			Name:    fileName,
+			Content: t.Code,
+		})
+	}
+	return bizTemplates
+}
+
+func mapBizTemplatesToPb(bizTemplates []*biz.ProblemTemplate) []*pb.CodeTemplate {
+	pbTemplates := make([]*pb.CodeTemplate, 0, len(bizTemplates))
+	for _, t := range bizTemplates {
+		parts := strings.SplitN(t.Name, "/", 2)
+		language := "cpp"
+		name := t.Name
+
+		if len(parts) == 2 {
+			language = parts[0]
+			name = parts[1]
+		}
+
+		pbTemplates = append(pbTemplates, &pb.CodeTemplate{
+			Language: language,
+			Name:     name,
+			Code:     t.Content,
+		})
+	}
+	return pbTemplates
+}
+
+// UploadTestCasesRaw 处理原生的文件流上传
+func (adminService *AdminService) UploadTestCasesRaw(ctx khttp.Context) error {
+	req := ctx.Request()
+	problemIdStr := ctx.Vars().Get("id")
+
+	// [REVIEW FIX 4]: 修复路由参数解析错误忽略的问题 (Copilot 提示)
+	// 防止 ID 无效时覆盖 cases/0/testcase 目录
+	problemId, err := strconv.ParseInt(problemIdStr, 10, 64)
+	if err != nil || problemId <= 0 {
+		return ctx.Result(400, map[string]interface{}{
+			"isSuccess": false,
+			"message":   "invalid problem id",
+		})
+	}
+
+	file, handler, err := req.FormFile("file")
+	if err != nil {
+		return ctx.Result(400, map[string]interface{}{
+			"isSuccess": false,
+			"message":   "missing file field: " + err.Error(),
+		})
+	}
+	defer file.Close()
+
+	err = adminService.problemUseCase.HandleTestCasesUpload(ctx, problemId, file, handler.Filename)
+	if err != nil {
+		return ctx.Result(500, map[string]interface{}{
+			"isSuccess": false,
+			"message":   err.Error(),
+		})
+	}
+
+	return ctx.Result(200, map[string]interface{}{
+		"isSuccess": true,
+		"message":   "upload success",
+	})
 }

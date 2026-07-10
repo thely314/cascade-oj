@@ -38,5 +38,6 @@ func NewHTTPServer(c *conf.Server, admin *service.AdminService, metricsHandler h
 	srv.Handle("/metrics", metricsHandler)
 
 	pb.RegisterAdminHTTPServer(srv, admin)
+	srv.Route("/").POST("/admin/problems/{id}/upload_cases", admin.UploadTestCasesRaw)
 	return srv
 }

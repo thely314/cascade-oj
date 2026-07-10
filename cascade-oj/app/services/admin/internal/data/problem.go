@@ -2,13 +2,19 @@ package data
 
 import (
 	"context"
+	"strconv"
+	"strings"
 
+	"archive/zip"
 	"cascade-oj/app/services/admin/internal/biz"
 	"cascade-oj/ent"
 	"cascade-oj/ent/problem"
 	"cascade-oj/ent/problemset_includes"
 	"cascade-oj/ent/problemtemplate"
 	"cascade-oj/pkg/mq"
+	"io"
+	"os"
+	"path/filepath"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -16,6 +22,24 @@ import (
 type ProblemRepo struct {
 	data *Data
 	log  *log.Helper
+}
+
+type TestCaseConfig struct {
+	Score               int         `toml:"Score"`
+	TimeResourceLimit   int64       `toml:"TimeResourceLimit"`
+	MemoryResourceLimit int64       `toml:"MemoryResourceLimit"`
+	CaseGroups          []CaseGroup `toml:"CaseGroups"`
+}
+
+type CaseGroup struct {
+	GroupScore int    `toml:"GroupScore"`
+	Cases      []Case `toml:"Cases"`
+}
+
+type Case struct {
+	SubScore           int    `toml:"SubScore"`
+	InputFileLocation  string `toml:"InputFileLocation"`
+	AnswerFileLocation string `toml:"AnswerFileLocation"`
 }
 
 func NewProblemRepo(data *Data, logger log.Logger) biz.ProblemRepo {
@@ -236,4 +260,71 @@ func (problemRepo *ProblemRepo) DisableProblem(ctx context.Context, problemID in
 		SetUseStatus(problem.UseStatusUnavailable).
 		Exec(ctx)
 	return err == nil, err
+}
+
+func (r *ProblemRepo) SaveTestCases(ctx context.Context, problemID int64, file io.Reader) error {
+	basePath := filepath.Join("cases", strconv.FormatInt(problemID, 10), "testcase")
+	_ = os.RemoveAll(basePath)
+	_ = os.MkdirAll(basePath, 0755)
+
+	zipPath := filepath.Join(basePath, "upload.zip")
+	tmpFile, err := os.Create(zipPath)
+	if err != nil {
+		return err
+	}
+
+	// 检查 io.Copy 错误，防止生成损坏的文件
+	if _, err := io.Copy(tmpFile, file); err != nil {
+		tmpFile.Close()
+		return err
+	}
+	tmpFile.Close() // 拷贝完立刻关闭，释放文件句柄
+
+	zr, err := zip.OpenReader(zipPath)
+	if err != nil {
+		return err
+	}
+	defer zr.Close()
+
+	for _, f := range zr.File {
+		// 防御 Zip Slip 路径穿越漏洞
+		cleanName := filepath.Clean(f.Name)
+		if cleanName == "." || cleanName == ".." || strings.HasPrefix(cleanName, ".."+string(os.PathSeparator)) || filepath.IsAbs(cleanName) {
+			r.log.Warnf("Zip extraction aborted: malicious path detected: %s", f.Name)
+			return os.ErrInvalid
+		}
+
+		fpath := filepath.Join(basePath, cleanName)
+
+		if f.FileInfo().IsDir() {
+			_ = os.MkdirAll(fpath, f.Mode())
+			continue
+		}
+
+		// 确保文件的父目录存在
+		_ = os.MkdirAll(filepath.Dir(fpath), 0755)
+
+		dstFile, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		if err != nil {
+			return err
+		}
+
+		srcFile, err := f.Open()
+		if err != nil {
+			dstFile.Close()
+			return err
+		}
+
+		// 同样检查解压过程中的 io.Copy 错误
+		_, copyErr := io.Copy(dstFile, srcFile)
+		dstFile.Close()
+		srcFile.Close()
+
+		if copyErr != nil {
+			return copyErr
+		}
+	}
+
+	// 删除了 config.toml 自动生成的逻辑
+	return nil
 }
